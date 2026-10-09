@@ -1,4 +1,4 @@
-"""SaveRoom: byte-preserving save inspection and explicit field patches.
+"""UniversalSaveEditor: byte-preserving save inspection and explicit field patches.
 
 SPDX-License-Identifier: GPL-3.0-or-later
 Format references and attribution: SOURCES.md.
@@ -12,6 +12,7 @@ import os
 import struct
 import uuid
 import zlib
+from kh_items import ITEMS
 
 MAX_SIZE = 64 * 1024 * 1024
 
@@ -27,6 +28,20 @@ class Field:
     fmt: str
     minimum: int = 0
     maximum: int = 999999
+    group: str = ''
+    decimal: bool = False
+
+    def parse(self, text):
+        try:
+            value = float(text) if self.decimal else int(text)
+        except (ValueError, TypeError):
+            raise ValueError('introduce un número válido' if self.decimal else 'introduce un número entero')
+        self.validate(value)
+        return value
+
+    def validate(self, value):
+        if type(value) not in ((int, float) if self.decimal else (int,)) or not math.isfinite(value) or not self.minimum <= value <= self.maximum:
+            raise ValueError(f'{self.label}: usa un valor entre {self.minimum} y {self.maximum}.')
 
 @dataclass
 class Slot:
@@ -160,6 +175,39 @@ class Save:
                 if not isinstance(limit,int) or limit < 0:
                     raise FormatError('Capacidad de cebo inválida.')
                 fields.append(Field('bait:'+bait,'Cebo · '+bait,amount,node[0],node[1],0,limit))
+        def add(path, key, label, low, high, group, decimal=False):
+            node=reader.nodes.get(path)
+            if node and node[1] in ('<i','<q','<f','<d'):
+                if not math.isfinite(node[2]):
+                    raise FormatError('Valor no válido: '+label)
+                fields.append(Field(key,label,node[2],node[0],node[1],low,high,group,decimal and node[1] in ('<f','<d')))
+        for key,label,low,high,group,decimal in [
+            ('level','Nivel',1,50,'Progreso',False),
+            ('xp','Experiencia (XP)',0,9999999,'Progreso',True),
+            ('fish_caught','Peces capturados',0,9999999,'Progreso',False),
+            ('cash_total','Dinero ganado en total',0,9999999,'Economía',False),
+            ('max_bait','Capacidad de cebos',1,9999,'Cebos',False),
+            ('rod_power','Potencia de caña',0,5,'Mejoras',False),
+            ('rod_speed','Velocidad de caña',0,5,'Mejoras',False),
+            ('rod_chance','Probabilidad de caña',0,5,'Mejoras',False),
+            ('rod_luck','Suerte de caña',0,5,'Mejoras',False),
+            ('buddy_level','Nivel del compañero',0,5,'Mejoras',False),
+            ('buddy_speed','Velocidad del compañero',0,5,'Mejoras',False),
+        ]: add((key,),key,label,low,high,group,decimal)
+        for index,item in enumerate(self.info['inventory']):
+            if not isinstance(item,dict):continue
+            name=f'{index+1} · {item.get("id","Objeto")}'
+            add(('inventory',index,'quality'),f'item:{index}:quality',name+' · calidad (0–5)',0,5,'Inventario')
+            add(('inventory',index,'size'),f'item:{index}:size',name+' · tamaño',0.001,999999,'Inventario',True)
+        journal=self.info.get('journal',{})
+        if isinstance(journal,dict):
+            for category,entries in journal.items():
+                if not isinstance(entries,dict):continue
+                for fish,entry in entries.items():
+                    if not isinstance(entry,dict):continue
+                    name=f'{category} / {fish}'
+                    add(('journal',category,fish,'count'),f'journal:{category}:{fish}:count',name+' · capturas',0,9999999,'Diario')
+                    add(('journal',category,fish,'record'),f'journal:{category}:{fish}:record',name+' · récord',0,999999,'Diario',True)
         self.slots = [Slot(f'Nivel {self.info["level"]} · {len(self.info["inventory"])} objetos',fields)]
 
     def _kh1(self):
@@ -194,8 +242,12 @@ class Save:
             fields = [Field('munny','Platines (munny)',struct.unpack_from('<I',self.raw,record+0x1641c)[0],record+0x1641c,'<I',0,999999)]
             for char,namechar in enumerate(('Sora','Donald','Goofy')):
                 stat = record+4+char*0x74
-                for delta,keyname,label,low,high in [(2,'hp','VT base',1,255),(4,'mp','PM base',1,255),(5,'ap','PH base',0,255),(6,'strength','Fuerza',0,255),(7,'defense','Defensa',0,255)]:
+                for delta,keyname,label,low,high in [(1,'hp_current','VT actuales',0,255),(2,'hp','VT base',1,255),(3,'mp_current','PM actuales',0,255),(4,'mp','PM base',1,255),(5,'ap','PH base',0,255),(6,'strength','Fuerza',0,255),(7,'defense','Defensa',0,255)]:
                     fields.append(Field(f'{char}:{keyname}',f'{namechar} · {label}',self.raw[stat+delta],stat+delta,'<B',low,high))
+            for item_id,item_name,category in ITEMS:
+                offset=record+0x499+item_id
+                group={'Synthesis':'Materiales','Accessory':'Accesorios','Keyblade':'Armas','Staff':'Armas','Shield':'Armas'}.get(category,'Objetos')
+                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group))
             level = self.raw[record+4]
             self.slots.append(Slot(f'{name or str(index+1)} · Sora nivel {level}',fields))
         if not self.slots:
@@ -210,16 +262,22 @@ class Save:
             if key not in known:
                 raise ValueError('Campo no autorizado.')
             field = known[key]
-            if type(value) is not int or not field.minimum <= value <= field.maximum:
-                raise ValueError(f'{field.label}: usa un entero entre {field.minimum} y {field.maximum}.')
+            field.validate(value)
             struct.pack_into(field.fmt,result,field.offset,value)
+        if self.game == 'webfishing':
+            capacity=changes.get((0,'max_bait'),self.info.get('max_bait',100))
+            for field in self.slots[0].fields:
+                if field.key.startswith('bait:') and changes.get((0,field.key),field.value)>capacity:
+                    raise ValueError('La cantidad de cebo supera la capacidad seleccionada.')
         for start,end in self.crc_regions:
             struct.pack_into('>I',result,end,zlib.crc32(result[start-4:end]))
         output = bytes(result)
         # Reparse and assert every requested field before returning data to the UI.
         check = Save(output,self.game)
         for (index,key),value in changes.items():
-            if next(f.value for f in check.slots[index].fields if f.key == key) != value:
+            field=known[(index,key)]
+            expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0]
+            if next(f.value for f in check.slots[index].fields if f.key == key) != expected:
                 raise FormatError('La verificación de la exportación falló.')
         return output
 

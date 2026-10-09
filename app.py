@@ -1,4 +1,4 @@
-"""SaveRoom desktop interface. SPDX-License-Identifier: GPL-3.0-or-later."""
+"""UniversalSaveEditor desktop interface. SPDX-License-Identifier: GPL-3.0-or-later."""
 import sys
 from pathlib import Path
 from PySide6.QtCore import Qt, QUrl
@@ -48,7 +48,7 @@ def number_text(value):
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('SaveRoom — tu biblioteca de partidas')
+        self.setWindowTitle('UniversalSaveEditor — tu biblioteca de partidas')
         self.resize(1320,900)
         self.setMinimumSize(1060,740)
         self.setAcceptDrops(True)
@@ -60,7 +60,7 @@ class Window(QMainWindow):
         side=QFrame();side.setObjectName('sidebar');side.setFixedWidth(218)
         nav=layout(side,True,20,12)
         nav.addSpacing(12)
-        nav.addWidget(label('SAVE / ROOM','brand'))
+        nav.addWidget(label('Universal\nSaveEditor','brand'))
         nav.addWidget(label('TU PRÓXIMO PUNTO DE GUARDADO','small',True))
         nav.addSpacing(30)
         nav.addWidget(label('ESPACIO PERSONAL','eyebrow'))
@@ -76,7 +76,7 @@ class Window(QMainWindow):
         nav.addWidget(label('Local. Sin cuentas.\nEl original siempre se conserva.','muted',True))
         nav.addSpacing(8)
         nav.addWidget(button('Guía de uso',self.open_guide))
-        nav.addWidget(label('v0.2  /  EN DESARROLLO','small'))
+        nav.addWidget(label('v0.3  /  EN DESARROLLO','small'))
         shell.addWidget(side)
         self.stack=QStackedWidget();shell.addWidget(self.stack,1)
         self.build_library();self.build_editor()
@@ -130,7 +130,7 @@ class Window(QMainWindow):
         self.repair=QCheckBox('Reparar la comprobación de integridad al exportar la copia')
         self.repair.toggled.connect(self.update_summary);outer.addWidget(self.repair)
         body=QHBoxLayout();body.setSpacing(22)
-        self.tabs=QTabWidget();body.addWidget(self.tabs,1)
+        self.tabs=QTabWidget();self.tabs.setUsesScrollButtons(True);body.addWidget(self.tabs,1)
         side=QFrame();side.setObjectName('panel');side.setFixedWidth(275);summary=layout(side,True,18,12)
         summary.addWidget(label('ANTES DE GUARDAR','eyebrow'))
         self.change_count=label('Sin cambios','section');summary.addWidget(self.change_count)
@@ -260,6 +260,7 @@ class Window(QMainWindow):
         for field in self.save.slots[self.slot_index].fields:
             if self.save.game=='webfishing':group='Cebos' if field.key.startswith('bait:') else 'Economía'
             else:group={'0':'Sora','1':'Donald','2':'Goofy'}.get(field.key.split(':')[0],'Economía')
+            group=field.group or group
             groups.setdefault(group,[]).append(field)
         for name,fields in groups.items():
             scroll=QScrollArea();scroll.setWidgetResizable(True)
@@ -281,7 +282,7 @@ class Window(QMainWindow):
 
     def mark_entry(self,entry,field,text):
         changed=text.strip()!=number_text(field.value)
-        try:value=int(text);valid=field.minimum<=value<=field.maximum
+        try:value=field.parse(text);valid=True
         except ValueError:valid=False
         entry.setProperty('invalid',changed and not valid);entry.setProperty('changed',changed)
         entry.style().unpolish(entry);entry.style().polish(entry)
@@ -295,8 +296,8 @@ class Window(QMainWindow):
         changes={}
         for (index,key),text in self.edits.items():
             field=next(f for f in self.save.slots[index].fields if f.key==key)
-            try:value=int(text)
-            except ValueError:raise ValueError(f'{field.label}: introduce un número entero.')
+            try:value=field.parse(text)
+            except ValueError as error:raise ValueError(f'{field.label}: {error}')
             if not field.minimum<=value<=field.maximum:raise ValueError(f'{field.label}: usa un valor entre {field.minimum} y {field.maximum}.')
             changes[(index,key)]=value
         return changes
@@ -346,7 +347,7 @@ class Window(QMainWindow):
         box.addWidget(label('La carga dentro del juego aún necesita validación.','small',True))
         actions=QHBoxLayout();actions.addWidget(button('Volver',dialog.reject));actions.addStretch()
         def write():
-            filename,_=QFileDialog.getSaveFileName(dialog,'Exportar copia',str(ROOT/(self.path.stem+'.edited'+self.path.suffix)),f'Partida (*{self.path.suffix})')
+            filename,_=QFileDialog.getSaveFileName(dialog,'Exportar copia',str(self.path.parent/(self.path.stem+'.edited'+self.path.suffix)),f'Partida (*{self.path.suffix})')
             if not filename:return
             try:backup=export_copy(self.path,self.save.raw,output,filename)
             except (ValueError,OSError) as error:
@@ -358,7 +359,7 @@ class Window(QMainWindow):
         dialog.exec()
 
     def open_guide(self):
-        dialog=QDialog(self);dialog.setWindowTitle('Guía de SaveRoom');dialog.resize(760,650)
+        dialog=QDialog(self);dialog.setWindowTitle('Guía de UniversalSaveEditor');dialog.resize(760,650)
         box=layout(dialog,True,24,16);box.addWidget(label('Antes de volver al juego','title'))
         text=QTextEdit();text.setReadOnly(True);text.setMarkdown((ROOT/'README.md').read_text(encoding='utf-8'))
         box.addWidget(text,1);box.addWidget(button('Entendido',dialog.accept));dialog.exec()
@@ -375,7 +376,7 @@ class Window(QMainWindow):
 
 def main():
     app=QApplication(sys.argv)
-    app.setApplicationName('SaveRoom');app.setOrganizationName('SaveRoom')
+    app.setApplicationName('UniversalSaveEditor');app.setOrganizationName('UniversalSaveEditor')
     app.setStyle('Fusion')
     window=Window();window.show()
     sys.exit(app.exec())

@@ -1,5 +1,16 @@
 # Cambios
 
+## 0.3
+- Nombre UniversalSaveEditor en ventana, navegación, guía y ejecutable.
+- Seis portadas originales con fuentes registradas.
+- WEBFISHING: progreso, mejoras, inventario existente y diario.
+- KH Final Mix: 154 objetos con nombre y VT/PM actuales.
+- Decimales con conservación del tipo binario, verificación y respaldo.
+- Distribución portátil de Windows con PyInstaller.
+- 16 pruebas automatizadas. Validación dentro de los juegos pendiente.
+
+# Cambios
+
 ## 0.2 — Interfaz PySide6
 
 - Sustituye la interfaz Tkinter por una aplicación Qt Widgets.
