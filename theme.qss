@@ -8,6 +8,7 @@ QLabel#title { font-size: 30px; font-weight: 700; }
 QLabel#section { font-size: 18px; font-weight: 650; }
 QLabel#muted { color: #99a6ba; }
 QLabel#small { color: #99a6ba; font-size: 11px; }
+QLabel#cardDescription { color: #c7cfdb; font-size: 11px; line-height: 1.35; }
 QLabel#badge { background: #22372c; color: #b6e7aa; border-radius: 5px; padding: 5px 8px; font-size: 10px; font-weight: 700; }
 QLabel#pending { background: #282b37; color: #c0bdd0; border-radius: 5px; padding: 5px 8px; font-size: 10px; font-weight: 700; }
 QLabel#warning { background: #332d22; color: #eed6a7; padding: 12px; border: 1px solid #655038; border-radius: 8px; }

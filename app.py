@@ -166,7 +166,7 @@ class Window(QMainWindow):
         clear(self.grid)
         for row in range(self.grid.rowCount()):self.grid.setRowStretch(row,0)
         search=self.search.text().casefold().strip()
-        games=[g for g in GAMES if search in (g.title+' '+g.subtitle+' '+g.family).casefold() and (self.filter=='all' or g.editable==(self.filter=='ready'))]
+        games=[g for g in GAMES if search in (g.title+' '+g.subtitle+' '+g.family+' '+g.description).casefold() and (self.filter=='all' or g.editable==(self.filter=='ready'))]
         self.visible_games=[g.id for g in games]
         for index,game in enumerate(games):
             card=QFrame();card.setObjectName('card');card.setMinimumWidth(240)
@@ -174,6 +174,9 @@ class Window(QMainWindow):
             box.addWidget(Artwork(game))
             row=QHBoxLayout();row.addWidget(label('EDITOR DISPONIBLE' if game.editable else 'EN DESARROLLO','badge' if game.editable else 'pending'));row.addStretch();box.addLayout(row)
             box.addWidget(label(game.title,'section',True));box.addWidget(label(game.subtitle,'muted',True))
+            features=label(game.description,'cardDescription',True)
+            features.setAccessibleName('Funciones del editor de '+game.title)
+            box.addWidget(features)
             count=sum(g==game.id for g,p in self.files)
             box.addWidget(label(f'{count} archivo'+('s' if count!=1 else '')+' detectado'+('s' if count!=1 else '') if count else 'Sin partidas detectadas','small'))
             box.addWidget(button('Abrir editor  →' if game.editable else 'Ver compatibilidad',lambda checked=False,g=game:self.select_game(g)))

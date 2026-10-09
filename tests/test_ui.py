@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton
+from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel
 from app import Window
 from core import Save
 from test_core import fishing, kingdom
@@ -32,7 +32,13 @@ class InterfaceTests(unittest.TestCase):
 
     def test_search_and_compatibility(self):
         w=self.window
+        descriptions={item.accessibleName():item.text() for item in w.findChildren(QLabel) if item.accessibleName().startswith('Funciones del editor de ')}
+        self.assertIn('Nivel y XP',descriptions['Funciones del editor de WEBFISHING'])
+        self.assertIn('Objetos',descriptions['Funciones del editor de KINGDOM HEARTS'])
+        self.assertIn('Editor en desarrollo',descriptions['Funciones del editor de MAX PAYNE'])
         w.set_filter('ready');self.assertEqual(w.visible_games,['webfishing','kh1'])
+        w.search.setText('XP');self.assertEqual(w.visible_games,['webfishing'])
+        w.search.clear()
         w.set_filter('pending');self.assertEqual(len(w.visible_games),4)
         w.collection('KINGDOM HEARTS');self.assertEqual(len(w.visible_games),4)
         w.search.setText('not a game');self.assertEqual(w.visible_games,[])
