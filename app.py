@@ -1,7 +1,7 @@
 """UniversalSaveEditor desktop interface. SPDX-License-Identifier: GPL-3.0-or-later."""
 import sys
 from pathlib import Path
-from PySide6.QtCore import Qt, QUrl
+from PySide6.QtCore import Qt, QUrl, QTimer
 from PySide6.QtGui import QDesktopServices, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QFrame, QLabel, QPushButton, QLineEdit,
@@ -379,6 +379,18 @@ def main():
     app.setApplicationName('UniversalSaveEditor');app.setOrganizationName('UniversalSaveEditor')
     app.setStyle('Fusion')
     window=Window();window.show()
+    if '--smoke-test' in sys.argv:
+        # Used by release validation; exercises the packaged resources and Qt.
+        import json
+        destination=Path(sys.argv[sys.argv.index('--smoke-test')+1])
+        def check_startup():
+            covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
+            report={'title':window.windowTitle(),'covers':covers,
+                    'games':len(window.visible_games),'frozen':bool(getattr(sys,'frozen',False))}
+            destination.write_text(json.dumps(report,indent=2),encoding='utf-8')
+            window.grab().save(str(destination.with_suffix('.png')))
+            app.exit(0 if all(covers.values()) else 1)
+        QTimer.singleShot(1000,check_startup)
     sys.exit(app.exec())
 
 if __name__=='__main__':main()
