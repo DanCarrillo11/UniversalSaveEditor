@@ -1,6 +1,7 @@
 # Cambios
 
 ## 0.3
+- WEBFISHING actualiza también `bait_unlocked`: una cantidad positiva desbloquea el cebo y puede corregir cebos editados anteriormente.
 - WEBFISHING aplica los cambios al save slot activo, con respaldo y reemplazo atómico; ya no genera un archivo `.edited.sav`.
 - Nombre UniversalSaveEditor en ventana, navegación, guía y ejecutable.
 - Seis portadas originales con fuentes registradas.

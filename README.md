@@ -32,7 +32,7 @@ Esta entrega amplía los campos de los dos editores existentes. Los otros cuatro
 
 | Juego | Disponible |
 |---|---|
-| WEBFISHING | Dinero, deuda, dinero acumulado, nivel, XP, capturas, cebos y capacidad, seis mejoras, tamaño y calidad de objetos existentes, capturas y récords del diario. |
+| WEBFISHING | Dinero, deuda, dinero acumulado, nivel, XP, capturas, cantidades y desbloqueo de cebos, capacidad, seis mejoras, tamaño y calidad de objetos existentes, capturas y récords del diario. |
 | Kingdom Hearts Final Mix, HD 1.5 + 2.5 ReMIX, Steam | Selección de partida, platines, VT/PM actuales y base, PH, fuerza y defensa de Sora, Donald y Goofy; cantidades de 154 objetos, materiales, armas y accesorios identificados. |
 | Re:Chain of Memories, Steam | Detección del archivo; edición pendiente. |
 | KH II Final Mix y Birth by Sleep, Steam | Edición pendiente. No se afirma compatibilidad con toda la colección. |

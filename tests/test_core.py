@@ -17,7 +17,7 @@ def variant(value):
     return struct.pack('<Ii',2,value)
 
 def fishing():
-    raw=variant({'inventory':[], 'money':150.0,'loan_left':20,'bait_inv':{'worms':3},'max_bait':10,'level':1,'unrelated':{'keep':'unchanged'}})
+    raw=variant({'inventory':[], 'money':150.0,'loan_left':20,'bait_inv':{'worms':3,'cricket':0},'bait_unlocked':['','worms'],'max_bait':10,'level':1,'unrelated':{'keep':'unchanged'}})
     return struct.pack('<I',len(raw))+raw
 
 def chunk(name,data):
@@ -55,6 +55,19 @@ class CoreTests(unittest.TestCase):
         save=Save(fishing(),'webfishing')
         for changes in ({(0,'bait:worms'):11},{(0,'money'):-1},{(0,'money'):1.5},{(0,'fake'):3},{(9,'money'):3}):
             with self.assertRaises(ValueError):save.patched(changes)
+
+    def test_bait_quantity_unlocks_unpurchased_bait(self):
+        raw=fishing(); save=Save(raw,'webfishing')
+        output=save.patched({(0,'bait:cricket'):5})
+        parsed=Save(output,'webfishing')
+        self.assertEqual(parsed.info['bait_inv']['cricket'],5)
+        self.assertIn('cricket',parsed.info['bait_unlocked'])
+        self.assertEqual(struct.unpack_from('<I',output)[0],len(output)-4)
+
+    def test_locked_bait_can_be_unlocked_without_changing_quantity(self):
+        save=Save(fishing(),'webfishing')
+        output=save.patched({(0,'bait_unlock:cricket'):1})
+        self.assertIn('cricket',Save(output,'webfishing').info['bait_unlocked'])
 
     def test_truncated_or_wrong_input(self):
         for raw in (b'',b'garbage',fishing()[:-1],struct.pack('<II',4,17)):

@@ -50,7 +50,7 @@ class Slot:
 
 class GodotReader:
     def __init__(self, data):
-        self.data, self.pos, self.nodes = data, 4, {}
+        self.data, self.pos, self.nodes, self.spans = data, 4, {}, {}
         if len(data) < 8 or struct.unpack_from('<I', data)[0] != len(data)-4:
             raise FormatError('Longitud de partida Godot incorrecta.')
 
@@ -71,6 +71,12 @@ class GodotReader:
         return value
 
     def read(self, path=(), depth=0):
+        start = self.pos
+        value = self._read(path, depth)
+        self.spans[path] = (start, self.pos)
+        return value
+
+    def _read(self, path=(), depth=0):
         if depth > 64:
             raise FormatError('Estructura demasiado profunda.')
         header = self.number('I')
@@ -117,6 +123,15 @@ class GodotReader:
             return [self.string() for _ in range(count)]
         raise FormatError(f'Tipo Godot {kind} no compatible. No se editará el archivo.')
 
+def godot_string_array(values):
+    result = bytearray(struct.pack('<II', 19, len(values)))
+    for value in values:
+        raw = value.encode('utf-8')
+        result.extend(struct.pack('<II', 4, len(raw)))
+        result.extend(raw)
+        result.extend(bytes((-len(raw)) % 4))
+    return bytes(result)
+
 def png_chunks(raw, allow_sqex_crc=False):
     if not raw.startswith(b'\x89PNG\r\n\x1a\n'):
         raise FormatError('No es un contenedor PNG de Kingdom Hearts.')
@@ -158,6 +173,10 @@ class Save:
             raise FormatError('No parece una partida de jugador de WEBFISHING.')
         if not isinstance(self.info['inventory'],list) or not isinstance(self.info['bait_inv'],dict):
             raise FormatError('Inventario o cebos con estructura no compatible.')
+        unlocked = self.info.get('bait_unlocked', [])
+        if not isinstance(unlocked, list) or any(not isinstance(value, str) for value in unlocked):
+            raise FormatError('Lista de cebos desbloqueados no compatible.')
+        self.bait_unlocked_span = reader.spans.get(('bait_unlocked',))
         fields = []
         specs = [('money','Dinero',9999999), ('loan_left','Deuda pendiente',9999999)]
         for key,label,limit in specs:
@@ -175,6 +194,8 @@ class Save:
                 if not isinstance(limit,int) or limit < 0:
                     raise FormatError('Capacidad de cebo inválida.')
                 fields.append(Field('bait:'+bait,'Cebo · '+bait,amount,node[0],node[1],0,limit))
+                owned = int(bait in unlocked)
+                fields.append(Field('bait_unlock:'+bait,'Cebo · '+bait+' · comprado/desbloqueado',owned,-1,'',owned,1,'Cebos'))
         def add(path, key, label, low, high, group, decimal=False):
             node=reader.nodes.get(path)
             if node and node[1] in ('<i','<q','<f','<d'):
@@ -263,12 +284,30 @@ class Save:
                 raise ValueError('Campo no autorizado.')
             field = known[key]
             field.validate(value)
-            struct.pack_into(field.fmt,result,field.offset,value)
+            if field.fmt:
+                struct.pack_into(field.fmt,result,field.offset,value)
         if self.game == 'webfishing':
             capacity=changes.get((0,'max_bait'),self.info.get('max_bait',100))
             for field in self.slots[0].fields:
                 if field.key.startswith('bait:') and changes.get((0,field.key),field.value)>capacity:
                     raise ValueError('La cantidad de cebo supera la capacidad seleccionada.')
+            unlocked = list(self.info.get('bait_unlocked', []))
+            for bait in self.info['bait_inv']:
+                if not bait:
+                    continue
+                amount_key = (0, 'bait:'+bait)
+                unlock_key = (0, 'bait_unlock:'+bait)
+                should_unlock = changes.get(unlock_key, int(bait in unlocked)) == 1
+                if amount_key in changes and changes[amount_key] > 0:
+                    should_unlock = True
+                if should_unlock and bait not in unlocked:
+                    unlocked.append(bait)
+            if unlocked != self.info.get('bait_unlocked', []):
+                if not self.bait_unlocked_span:
+                    raise FormatError('No se encontró la lista de cebos desbloqueados.')
+                start, end = self.bait_unlocked_span
+                result[start:end] = godot_string_array(unlocked)
+                struct.pack_into('<I', result, 0, len(result)-4)
         for start,end in self.crc_regions:
             struct.pack_into('>I',result,end,zlib.crc32(result[start-4:end]))
         output = bytes(result)
@@ -276,7 +315,7 @@ class Save:
         check = Save(output,self.game)
         for (index,key),value in changes.items():
             field=known[(index,key)]
-            expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0]
+            expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
             if next(f.value for f in check.slots[index].fields if f.key == key) != expected:
                 raise FormatError('La verificación de la exportación falló.')
         return output

@@ -6,7 +6,7 @@ from test_core import variant, kingdom
 class ExtendedTests(unittest.TestCase):
     def fixture(self):
         payload=variant({'inventory':[{'id':'fish_salmon','quality':1,'size':1.0,'ref':73}],
-            'money':100.0,'bait_inv':{'worms':8},'max_bait':10,'level':2,'xp':3.0,
+            'money':100.0,'bait_inv':{'worms':8},'bait_unlocked':['','worms'],'max_bait':10,'level':2,'xp':3.0,
             'rod_power':0,'journal':{'lake':{'salmon':{'count':1,'record':1.0}}}})
         return struct.pack('<I',len(payload))+payload
 
