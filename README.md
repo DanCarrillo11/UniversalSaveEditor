@@ -4,13 +4,13 @@ Editor local de partidas para Windows, en español, con una interfaz inspirada e
 
 ## Abrir como usuario
 
-Descarga **UniversalSaveEditor.exe** de una distribución de Windows y ábrelo con doble clic. Es portátil: no necesita instalar Python, ejecutar comandos ni usar los archivos `.cmd`. No requiere conexión para editar partidas. El primer inicio puede tardar unos segundos mientras se extraen sus componentes temporales.
+En GitHub, pulsa **Code → Download ZIP**, extrae la carpeta descargada y abre **UniversalSaveEditor.exe** con doble clic. Es portátil: no necesita instalar Python ni ejecutar comandos. No requiere conexión para editar partidas. El primer inicio puede tardar unos segundos mientras se extraen sus componentes temporales.
 
-El botón **Code → Download ZIP** de GitHub descarga el código fuente, no el ejecutable. En una publicación de GitHub, el ejecutable aparece en **Releases → Assets**.
+El ejecutable está incluido en la raíz del repositorio junto al código fuente. No hay archivos `.cmd` que debas ejecutar. Las versiones anteriores también están disponibles en **Releases → Assets**.
 
 ### Ejecutar el código fuente (desarrollo)
 
-Necesitas Python de 64 bits. Ejecuta **Instalar.cmd** una vez y después **Iniciar.cmd**. También puedes crear `.venv`, instalar `requirements.txt` y ejecutar `app.py`.
+Solo para desarrollar: con Python de 64 bits, crea un entorno `.venv`, instala `requirements.txt` y ejecuta `app.py`.
 
 ### Crear el ejecutable
 

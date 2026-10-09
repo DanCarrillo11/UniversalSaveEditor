@@ -1,0 +1,59 @@
+name: Include portable EXE in Download ZIP
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/package-download.yml'
+      - '*.py'
+      - '*.qss'
+      - '*.spec'
+      - 'requirements*.txt'
+      - 'README.md'
+      - 'SOURCES.md'
+      - 'assets/**'
+permissions:
+  contents: write
+concurrency:
+  group: portable-main
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-build.txt
+      - name: Test save editors
+        run: python -m unittest discover -s tests -v
+      - name: Build portable application
+        run: python -m PyInstaller --clean --noconfirm UniversalSaveEditor.spec
+      - name: Verify executable resources
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP 'portable-smoke.json'
+          $process = Start-Process -FilePath '.\dist\UniversalSaveEditor.exe' -ArgumentList '--smoke-test', $report -PassThru -WindowStyle Hidden
+          if (-not $process.WaitForExit(60000)) { $process.Kill(); throw 'Executable startup timed out' }
+          if ($process.ExitCode -ne 0) { throw 'Executable startup failed' }
+          $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
+          if (-not $result.frozen -or $result.games -ne 6 -or $result.covers.PSObject.Properties.Value -contains $false) { throw 'Missing packaged resources' }
+      - name: Include tested executable in repository
+        shell: pwsh
+        run: |
+          Copy-Item -LiteralPath 'dist/UniversalSaveEditor.exe' -Destination 'UniversalSaveEditor.exe' -Force
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- UniversalSaveEditor.exe
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) { exit 0 }
+          git commit -m 'Include verified portable EXE in Download ZIP'
+          if ($LASTEXITCODE -ne 0) { throw 'Could not commit executable' }
+          git push origin HEAD:main
+          if ($LASTEXITCODE -ne 0) { throw 'main changed during build; rerun packaging' }
