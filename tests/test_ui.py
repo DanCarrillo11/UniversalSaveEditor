@@ -68,24 +68,23 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(w.inputs[(0,'munny')].text(),'111')
         self.assertEqual(w.validated_changes(),{(0,'munny'):111,(1,'munny'):222})
 
-    def test_review_export_creates_copy_and_backup(self):
+    def test_review_applies_webfishing_and_creates_backup(self):
         w=self.window;w.load('webfishing',self.source)
         w.inputs[(0,'money')].setText('987')
-        destination=self.root/'edited.sav'
         clicked=[]
-        def export_dialog():
+        def apply_dialog():
             dialog=self.app.activeModalWidget()
             for b in dialog.findChildren(QPushButton):
-                if b.text()=='Elegir destino y exportar':
+                if b.text()=='Aplicar al save slot actual':
                     clicked.append(True);b.click();return
             dialog.reject()
-        with patch('app.QFileDialog.getSaveFileName',return_value=(str(destination),'')),patch('app.QMessageBox.information'):
-            QTimer.singleShot(0,export_dialog)
+        with patch('app.QMessageBox.information'):
+            QTimer.singleShot(0,apply_dialog)
             w.review()
         self.assertTrue(clicked)
-        self.assertEqual(self.source.read_bytes(),fishing())
-        self.assertEqual(next(self.root.glob('edited.sav.original-*.bak')).read_bytes(),fishing())
-        self.assertEqual(Save(destination.read_bytes(),'webfishing').slots[0].fields[0].value,987)
+        self.assertEqual(Save(self.source.read_bytes(),'webfishing').slots[0].fields[0].value,987)
+        self.assertEqual(next(self.root.glob('webfishing_save_slot_0.sav.original-*.bak')).read_bytes(),fishing())
+        self.assertFalse(list(self.root.glob('*.edited.sav')))
         self.assertTrue(w.may_discard())
 
 if __name__=='__main__':unittest.main()

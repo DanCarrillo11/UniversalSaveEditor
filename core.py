@@ -333,3 +333,36 @@ def export_copy(source, original, edited, target):
     if hashlib.sha256(target.read_bytes()).digest() != hashlib.sha256(edited).digest():
         raise OSError('La verificación del archivo exportado falló.')
     return backup
+
+def replace_current(source, original, edited):
+    """Atomically replace the active save after creating an exact backup."""
+    source = Path(source).resolve()
+    if source.read_bytes() != original:
+        raise ValueError('La partida original cambió. Vuelve a abrirla antes de aplicar los cambios.')
+    token = uuid.uuid4().hex[:8]
+    backup = source.with_name(source.name+'.original-'+token+'.bak')
+    temporary = source.with_name(source.name+'.update-'+token+'.tmp')
+    with backup.open('xb') as file:
+        file.write(original)
+        file.flush()
+        os.fsync(file.fileno())
+    try:
+        with temporary.open('xb') as file:
+            file.write(edited)
+            file.flush()
+            os.fsync(file.fileno())
+        if hashlib.sha256(temporary.read_bytes()).digest() != hashlib.sha256(edited).digest():
+            raise OSError('La verificación del archivo temporal falló.')
+        # Recheck immediately before replacement so an in-game save is never lost.
+        if source.read_bytes() != original:
+            raise ValueError('La partida cambió mientras editabas. No se reemplazó el archivo.')
+        os.replace(temporary,source)
+        if hashlib.sha256(source.read_bytes()).digest() != hashlib.sha256(edited).digest():
+            restore = source.with_name(source.name+'.restore-'+token+'.tmp')
+            restore.write_bytes(original)
+            os.replace(restore,source)
+            raise OSError('La verificación falló y se restauró la partida original.')
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    return backup

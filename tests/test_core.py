@@ -3,7 +3,7 @@ import tempfile
 import unittest
 import zlib
 from pathlib import Path
-from core import Save, FormatError, export_copy, png_chunks
+from core import Save, FormatError, export_copy, replace_current, png_chunks
 
 def variant(value):
     if isinstance(value,dict):
@@ -99,5 +99,16 @@ class CoreTests(unittest.TestCase):
             with self.assertRaises(ValueError):export_copy(source,original,edited,target)
             source.write_bytes(b'changed')
             with self.assertRaises(ValueError):export_copy(source,original,edited,Path(root)/'other.sav')
+
+    def test_replace_current_creates_backup_and_replaces_active_save(self):
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as root:
+            source=Path(root)/'webfishing_save_slot_0.sav'
+            original=fishing();source.write_bytes(original)
+            edited=Save(original,'webfishing').patched({(0,'money'):777})
+            backup=replace_current(source,original,edited)
+            self.assertEqual(source.read_bytes(),edited)
+            self.assertEqual(backup.read_bytes(),original)
+            self.assertFalse(list(Path(root).glob('*.tmp')))
+            with self.assertRaises(ValueError):replace_current(source,original,edited)
 
 if __name__=='__main__':unittest.main()

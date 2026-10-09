@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QGridLayout, QScrollArea, QStackedWidget, QComboBox,
     QTabWidget, QCheckBox, QMessageBox, QFileDialog, QDialog, QTextEdit,
 )
-from core import Save, discover, read_limited, export_copy
+from core import Save, discover, read_limited, export_copy, replace_current
 from catalog import GAMES, BY_ID
 from artwork import Artwork
 
@@ -142,7 +142,7 @@ class Window(QMainWindow):
         self.review_button=button('Revisar y exportar  →',self.review,'primary');summary.addWidget(self.review_button)
         self.reset_button=button('Restablecer cambios',self.reset);summary.addWidget(self.reset_button)
         body.addWidget(side);outer.addLayout(body,1)
-        outer.addWidget(label('Exportar crea una partida editada y un respaldo del original. No instala la copia en el juego.','small',True))
+        self.install_note=label('','small',True);outer.addWidget(self.install_note)
         self.stack.addWidget(page)
 
     def scan(self):
@@ -233,6 +233,12 @@ class Window(QMainWindow):
         self.editor_title.setText(gameinfo.title)
         self.editor_eyebrow.setText('EDITOR / '+gameinfo.subtitle.upper())
         self.editor_subtitle.setText(gameinfo.description)
+        if game=='webfishing':
+            self.review_button.setText('Revisar y aplicar  →')
+            self.install_note.setText('Aplicar reemplaza el save slot actual de WEBFISHING y conserva un respaldo exacto junto al archivo.')
+        else:
+            self.review_button.setText('Revisar y exportar  →')
+            self.install_note.setText('Exportar crea una partida editada y un respaldo del original. No instala la copia en el juego.')
         self.file_combo.blockSignals(True);self.file_combo.clear()
         paths=[p for g,p in self.files if g==game]
         if self.path not in paths:paths.append(self.path)
@@ -336,10 +342,11 @@ class Window(QMainWindow):
         try:output=self.save.patched(self.validated_changes(),repair_crc=self.repair.isChecked())
         except ValueError as error:
             QMessageBox.warning(self,'Revisa los ajustes',str(error));return
-        dialog=QDialog(self);dialog.setWindowTitle('Revisar y exportar');dialog.resize(650,550)
+        direct=self.save.game=='webfishing'
+        dialog=QDialog(self);dialog.setWindowTitle('Revisar y aplicar' if direct else 'Revisar y exportar');dialog.resize(650,550)
         box=layout(dialog,True,24,16)
         box.addWidget(label('UN ÚLTIMO VISTAZO','eyebrow'));box.addWidget(label('Tu nueva partida','title'))
-        box.addWidget(label('Crearemos otro archivo y un respaldo exacto del original.','muted',True))
+        box.addWidget(label('Reemplazaremos el save slot actual y conservaremos un respaldo exacto del original.' if direct else 'Crearemos otro archivo y un respaldo exacto del original.','muted',True))
         text=QTextEdit();text.setReadOnly(True)
         lines=[]
         for (index,key),value in self.validated_changes().items():
@@ -350,6 +357,15 @@ class Window(QMainWindow):
         box.addWidget(label('La carga dentro del juego aún necesita validación.','small',True))
         actions=QHBoxLayout();actions.addWidget(button('Volver',dialog.reject));actions.addStretch()
         def write():
+            if direct:
+                try:backup=replace_current(self.path,self.save.raw,output)
+                except (ValueError,OSError) as error:
+                    QMessageBox.warning(dialog,'No se pudo aplicar',str(error));return
+                self.exported_state=self.state_signature();dialog.accept()
+                QMessageBox.information(self,'Cambios aplicados',f'Partida activa reemplazada:\n{self.path}\n\nRespaldo original:\n{backup}')
+                self.load(self.save.game,self.path)
+                self.statusBar().showMessage('Cambios aplicados a WEBFISHING · Respaldo original conservado')
+                return
             filename,_=QFileDialog.getSaveFileName(dialog,'Exportar copia',str(self.path.parent/(self.path.stem+'.edited'+self.path.suffix)),f'Partida (*{self.path.suffix})')
             if not filename:return
             try:backup=export_copy(self.path,self.save.raw,output,filename)
@@ -358,7 +374,7 @@ class Window(QMainWindow):
             self.exported_state=self.state_signature();dialog.accept()
             self.statusBar().showMessage('Copia exportada y verificada · Original intacto')
             QMessageBox.information(self,'Copia lista',f'Partida editada:\n{filename}\n\nRespaldo original:\n{backup}\n\nConsulta la guía para probarla dentro del juego.')
-        actions.addWidget(button('Elegir destino y exportar',write,'primary'));box.addLayout(actions)
+        actions.addWidget(button('Aplicar al save slot actual' if direct else 'Elegir destino y exportar',write,'primary'));box.addLayout(actions)
         dialog.exec()
 
     def open_guide(self):

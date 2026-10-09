@@ -1,6 +1,7 @@
 # Cambios
 
 ## 0.3
+- WEBFISHING aplica los cambios al save slot activo, con respaldo y reemplazo atómico; ya no genera un archivo `.edited.sav`.
 - Nombre UniversalSaveEditor en ventana, navegación, guía y ejecutable.
 - Seis portadas originales con fuentes registradas.
 - WEBFISHING: progreso, mejoras, inventario existente y diario.

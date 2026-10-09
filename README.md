@@ -44,16 +44,16 @@ Los límites del editor son límites conservadores de entrada, no garantías de 
 
 1. Elige **Abrir editor** en la tarjeta del juego, o usa **Abrir partida**.
 2. Selecciona el registro de KH que quieres editar. Cambia los valores deseados.
-3. Pulsa **Revisar y exportar**. Revisa la lista de modificaciones y elige un nombre nuevo.
-4. Obtendrás el archivo editado y una copia `.bak` exacta del original en la misma carpeta. El programa nunca sobrescribe el archivo que abriste ni un destino existente.
-5. Para probar la copia, cierra el juego, conserva un respaldo independiente de la carpeta de partidas y sustituye manualmente el archivo correspondiente con la copia, usando el nombre original. En Steam, comprueba que la sincronización no sustituya tu copia por otra versión. El editor no instala archivos ni cambia Steam Cloud.
-6. Carga la partida dentro del juego y verifica los cambios. Si no funciona, vuelve a colocar el original con su nombre original.
+3. En WEBFISHING, pulsa **Revisar y aplicar**. El programa crea una copia `.bak` exacta y reemplaza de forma segura el save slot actual, conservando su nombre original.
+4. En Kingdom Hearts, pulsa **Revisar y exportar** y elige otro archivo. Su instalación directa seguirá desactivada hasta validar las copias dentro del juego.
+5. Cierra el juego antes de aplicar cambios. Steam Cloud puede sustituir una partida local si conserva otra versión.
+6. Carga la partida dentro del juego y verifica los cambios. Si no funciona, restaura el archivo `.bak` generado por el editor.
 
 Si el bloque `sqEX` de KH tiene un CRC que no coincide, la aplicación permite inspeccionarlo y explica el problema. Para exportarlo, debes marcar **Reparar la comprobación de integridad al exportar la copia**. Reparar ese CRC no corrige otros posibles daños internos.
 
 ## Verificación realizada
 
-- 16 pruebas automatizadas con partidas sintéticas: límites, archivos truncados, conservación de bytes ajenos a la edición, varios registros de KH, CRC, respaldo y rechazo de sobrescrituras; búsqueda, filtros, navegación con cambios, cancelación y exportación a través del diálogo de Qt.
+- 17 pruebas automatizadas con partidas sintéticas: límites, archivos truncados, conservación de bytes ajenos a la edición, reemplazo atómico con respaldo, varios registros de KH, CRC y rechazo de sobrescrituras; búsqueda, filtros, navegación con cambios, cancelación y aplicación a través del diálogo de Qt.
 - Revisión visual de biblioteca y editor mediante capturas renderizadas por Qt.
 - Lectura y edición en memoria verificadas con un archivo local real de WEBFISHING y uno de KH Final Mix de Steam. Ninguno se incluye en el proyecto.
 - Los originales no se modificaron. **La carga de las copias dentro de los juegos todavía no se ha probado.**
