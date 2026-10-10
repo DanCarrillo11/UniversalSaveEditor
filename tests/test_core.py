@@ -20,6 +20,12 @@ def fishing():
     raw=variant({'inventory':[], 'money':150.0,'loan_left':20,'bait_inv':{'worms':3,'cricket':0},'bait_unlocked':['','worms'],'max_bait':10,'level':1,'unrelated':{'keep':'unchanged'}})
     return struct.pack('<I',len(raw))+raw
 
+def ror2():
+    return (b'<?xml version="1.0" encoding="utf-8"?><UserProfile><coins>7</coins>'
+        b'<stats><stat name="totalGamesPlayed">2</stat><stat name="totalKills">15</stat>'
+        b'<stat name="totalDamageDealt">123.5</stat><stat name="unknownValue">44</stat>'
+        b'<unlock>Characters.Huntress</unlock></stats><name>Test</name></UserProfile>')
+
 def chunk(name,data):
     return struct.pack('>I',len(data))+name+data+struct.pack('>I',zlib.crc32(name+data))
 
@@ -67,6 +73,24 @@ class CoreTests(unittest.TestCase):
     def test_truncated_or_wrong_input(self):
         for raw in (b'',b'garbage',fishing()[:-1],struct.pack('<II',4,17)):
             with self.assertRaises(ValueError):Save(raw,'webfishing')
+
+    def test_ror2_edits_xml_fields_and_preserves_unknown_content(self):
+        raw=ror2();save=Save(raw,'ror2')
+        self.assertEqual(save.patched({}),raw)
+        output=save.patched({(0,'coins'):999,(0,'stat:totalKills'):321,
+            (0,'stat:totalDamageDealt'):456.25})
+        parsed=Save(output,'ror2')
+        values={field.key:field.value for field in parsed.slots[0].fields}
+        self.assertEqual(values['coins'],999)
+        self.assertEqual(values['stat:totalKills'],321)
+        self.assertEqual(values['stat:totalDamageDealt'],456.25)
+        self.assertIn(b'<stat name="unknownValue">44</stat>',output)
+        self.assertIn(b'<name>Test</name>',output)
+        with self.assertRaises(ValueError):save.patched({(0,'coins'):-1})
+
+    def test_ror2_rejects_malformed_or_unrelated_xml(self):
+        for raw in (b'<broken',b'<Other><coins>1</coins></Other>'):
+            with self.assertRaises(ValueError):Save(raw,'ror2')
 
     def test_kh_slots_and_crc(self):
         raw=kingdom(); save=Save(raw,'kh1')

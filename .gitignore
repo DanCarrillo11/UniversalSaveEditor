@@ -3,6 +3,7 @@ __pycache__/
 *.sav
 *.bak
 *.mps
+*.xml
 KH*.png
 build/
 dist/

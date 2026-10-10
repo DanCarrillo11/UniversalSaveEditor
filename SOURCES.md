@@ -19,7 +19,10 @@ El icono de memory card se obtuvo de la imagen aportada por el autor del reposit
 - [bbs](https://www.khwiki.com/File:Kingdom_Hearts_Birth_by_Sleep_Final_Mix_Boxart_JP.png): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
 - [webfishing](https://store.steampowered.com/app/3146520/): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
 - [maxpayne](https://store.steampowered.com/app/12140/): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
+- [ror2](https://store.steampowered.com/app/632360/): arte oficial de biblioteca de Steam; URL y tamaño registrados en `assets/covers/sources.json`.
 
-Las ediciones Final Mix usan las portadas japonesas de sus lanzamientos originales (KH II Final Mix+ incluye Re:CoM); no se presentan como cajas de una edición individual de Steam. WEBFISHING y Max Payne usan el arte de biblioteca de Steam.
+Las ediciones Final Mix usan las portadas japonesas de sus lanzamientos originales (KH II Final Mix+ incluye Re:CoM); no se presentan como cajas de una edición individual de Steam. WEBFISHING, Risk of Rain 2 y Max Payne usan el arte de biblioteca de Steam.
+
+La compatibilidad con Risk of Rain 2 se validó contra la estructura de un perfil local de Steam aportado por el autor. El perfil contiene datos personales y no se incluye en el repositorio.
 
 La tabla `kh_items.py` adapta `KHSave.Lib1/Types/EquipmentType.cs` de Xeeynamo/KingdomSaveEditor (GPL-3.0); conserva su atribución y excluye objetos de historia y entradas sin uso.

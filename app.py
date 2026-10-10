@@ -204,7 +204,7 @@ class Window(QMainWindow):
 
     def open_file(self,game=None):
         if not isinstance(game,str):game=None
-        filename,_=QFileDialog.getOpenFileName(self,'Abrir una partida','', 'Partidas (*.sav *.png);;Todos los archivos (*)')
+        filename,_=QFileDialog.getOpenFileName(self,'Abrir una partida','', 'Partidas (*.sav *.png *.xml);;Todos los archivos (*)')
         if filename:self.open_path(Path(filename),game)
 
     def open_path(self,path,game=None):
@@ -212,7 +212,7 @@ class Window(QMainWindow):
             name=path.name.lower()
             if name.startswith(('khrecom','kh2','khbbs')):
                 QMessageBox.information(self,'Formato pendiente','Ese juego todavía no tiene un editor disponible.');return
-            game='webfishing' if path.suffix.lower()=='.sav' else 'kh1'
+            game={'.sav':'webfishing','.xml':'ror2'}.get(path.suffix.lower(),'kh1')
         self.load(game,path)
 
     def state_signature(self):
@@ -233,9 +233,9 @@ class Window(QMainWindow):
         self.editor_title.setText(gameinfo.title)
         self.editor_eyebrow.setText('EDITOR / '+gameinfo.subtitle.upper())
         self.editor_subtitle.setText(gameinfo.description)
-        if game=='webfishing':
+        if game in ('webfishing','ror2'):
             self.review_button.setText('Revisar y aplicar  →')
-            self.install_note.setText('Aplicar reemplaza el save slot actual de WEBFISHING y conserva un respaldo exacto junto al archivo.')
+            self.install_note.setText('Aplicar reemplaza el archivo activo y conserva un respaldo exacto junto al original.')
         else:
             self.review_button.setText('Revisar y exportar  →')
             self.install_note.setText('Exportar crea una partida editada y un respaldo del original. No instala la copia en el juego.')
@@ -342,7 +342,7 @@ class Window(QMainWindow):
         try:output=self.save.patched(self.validated_changes(),repair_crc=self.repair.isChecked())
         except ValueError as error:
             QMessageBox.warning(self,'Revisa los ajustes',str(error));return
-        direct=self.save.game=='webfishing'
+        direct=self.save.game in ('webfishing','ror2')
         dialog=QDialog(self);dialog.setWindowTitle('Revisar y aplicar' if direct else 'Revisar y exportar');dialog.resize(650,550)
         box=layout(dialog,True,24,16)
         box.addWidget(label('UN ÚLTIMO VISTAZO','eyebrow'));box.addWidget(label('Tu nueva partida','title'))

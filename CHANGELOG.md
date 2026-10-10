@@ -1,18 +1,17 @@
 # Cambios
 
-## 0.3
+## 0.4
+- Compatibilidad inicial con perfiles XML de Risk of Rain 2: monedas lunares y estadísticas de progreso, combate y economía, con detección, respaldo y reemplazo seguro.
 - Nuevo icono de memory card con fondo transparente para la aplicación y el ejecutable de Windows.
 - WEBFISHING actualiza automáticamente `bait_unlocked`: cualquier cebo con cantidad positiva queda comprado y desbloqueado sin mostrar otro control.
 - WEBFISHING aplica los cambios al save slot activo, con respaldo y reemplazo atómico; ya no genera un archivo `.edited.sav`.
 - Nombre UniversalSaveEditor en ventana, navegación, guía y ejecutable.
-- Seis portadas originales con fuentes registradas.
+- Siete portadas originales con fuentes registradas.
 - WEBFISHING: progreso, mejoras, inventario existente y diario.
 - KH Final Mix: 154 objetos con nombre y VT/PM actuales.
 - Decimales con conservación del tipo binario, verificación y respaldo.
 - Distribución portátil de Windows con PyInstaller.
-- 16 pruebas automatizadas. Validación dentro de los juegos pendiente.
-
-# Cambios
+- 20 pruebas automatizadas. Validación dentro de los juegos pendiente.
 
 ## 0.2 — Interfaz PySide6
 

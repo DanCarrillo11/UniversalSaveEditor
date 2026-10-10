@@ -36,7 +36,7 @@ class InterfaceTests(unittest.TestCase):
         self.assertIn('Nivel y XP',descriptions['Funciones del editor de WEBFISHING'])
         self.assertIn('Objetos',descriptions['Funciones del editor de KINGDOM HEARTS'])
         self.assertIn('Editor en desarrollo',descriptions['Funciones del editor de MAX PAYNE'])
-        w.set_filter('ready');self.assertEqual(w.visible_games,['webfishing','kh1'])
+        w.set_filter('ready');self.assertEqual(w.visible_games,['webfishing','ror2','kh1'])
         w.search.setText('XP');self.assertEqual(w.visible_games,['webfishing'])
         w.search.clear()
         w.set_filter('pending');self.assertEqual(len(w.visible_games),4)

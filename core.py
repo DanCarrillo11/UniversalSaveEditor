@@ -9,8 +9,10 @@ import ctypes
 import hashlib
 import math
 import os
+import re
 import struct
 import uuid
+import xml.etree.ElementTree as ET
 import zlib
 from kh_items import ITEMS
 
@@ -159,6 +161,8 @@ class Save:
         self.warnings = []
         if game == 'webfishing':
             self._webfishing()
+        elif game == 'ror2':
+            self._ror2()
         elif game == 'kh1':
             self._kh1()
         else:
@@ -229,6 +233,63 @@ class Save:
                     add(('journal',category,fish,'record'),f'journal:{category}:{fish}:record',name+' · récord',0,999999,'Diario',True)
         self.slots = [Slot(f'Nivel {self.info["level"]} · {len(self.info["inventory"])} objetos',fields)]
 
+    def _ror2(self):
+        try:
+            text = self.raw.decode('utf-8')
+            root = ET.fromstring(text)
+        except (UnicodeDecodeError, ET.ParseError) as error:
+            raise FormatError('Perfil XML de Risk of Rain 2 no compatible.') from error
+        if root.tag != 'UserProfile':
+            raise FormatError('No parece un perfil de Risk of Rain 2.')
+        self.xml_text = text
+        fields = []
+        def add_value(key, label, raw_value, start, low, high, group, decimal=False):
+            if raw_value is None:
+                return
+            raw_value = raw_value.strip()
+            try:
+                value = float(raw_value) if decimal else int(raw_value)
+            except ValueError as error:
+                raise FormatError('Valor inválido en '+key) from error
+            fields.append(Field(key,label,value,start,
+                'xml-float' if decimal else 'xml-int',low,high,group,decimal))
+        coins = re.search(r'<coins>([^<]*)</coins>',text)
+        if coins:
+            add_value('coins','Monedas lunares',coins.group(1),coins.start(1),0,2147483647,'Economía')
+        stat_specs = {
+            'totalGamesPlayed':('Partidas jugadas',0,999999999,'Progreso',False),
+            'totalTimeAlive':('Tiempo total con vida (segundos)',0,1e15,'Progreso',True),
+            'highestLevel':('Nivel más alto',0,999999,'Progreso',False),
+            'totalItemsCollected':('Objetos recogidos',0,999999999999,'Progreso',False),
+            'highestItemsCollected':('Máximo de objetos en una partida',0,999999999,'Progreso',False),
+            'totalStagesCompleted':('Escenarios completados',0,999999999,'Progreso',False),
+            'highestStagesCompleted':('Máximo de escenarios en una partida',0,999999,'Progreso',False),
+            'highestInfiniteTowerWaveReached':('Oleada máxima de Simulacrum',0,999999,'Progreso',False),
+            'totalKills':('Enemigos eliminados',0,999999999999,'Combate',False),
+            'totalMinionKills':('Eliminaciones de aliados',0,999999999999,'Combate',False),
+            'totalDeaths':('Muertes',0,999999999,'Combate',False),
+            'totalDamageDealt':('Daño total infligido',0,1e15,'Combate',True),
+            'highestDamageDealt':('Mayor golpe de daño',0,1e15,'Combate',True),
+            'totalDamageTaken':('Daño total recibido',0,1e15,'Combate',True),
+            'totalHealthHealed':('Salud total recuperada',0,1e15,'Combate',True),
+            'totalEliteKills':('Élites eliminados',0,999999999999,'Combate',False),
+            'totalGoldCollected':('Oro total recogido',0,1e15,'Economía',True),
+            'maxGoldCollected':('Máximo de oro en una partida',0,1e15,'Economía',True),
+            'totalPurchases':('Compras realizadas',0,999999999999,'Economía',False),
+        }
+        seen = set()
+        for match in re.finditer(r'<stat\s+name="([^"]+)"\s*>([^<]*)</stat>',text):
+            name = match.group(1)
+            if name not in stat_specs or name in seen:
+                continue
+            seen.add(name); label,low,high,group,decimal = stat_specs[name]
+            add_value('stat:'+name,label,match.group(2),match.start(2),low,high,group,decimal)
+        if not fields or not any(field.key == 'coins' for field in fields):
+            raise FormatError('El perfil no contiene los campos esperados de Risk of Rain 2.')
+        stats_node = root.find('stats')
+        unlocks = sum(1 for child in stats_node if child.tag == 'unlock') if stats_node is not None else 0
+        self.slots = [Slot(f'Perfil de Steam · {unlocks} desbloqueos',fields)]
+
     def _kh1(self):
         chunks = png_chunks(self.raw, allow_sqex_crc=True)
         regions = [(start,end) for name,start,end in chunks if name == b'sqEX']
@@ -282,7 +343,7 @@ class Save:
                 raise ValueError('Campo no autorizado.')
             field = known[key]
             field.validate(value)
-            if field.fmt:
+            if field.fmt and not field.fmt.startswith('xml-'):
                 struct.pack_into(field.fmt,result,field.offset,value)
         if self.game == 'webfishing':
             capacity=changes.get((0,'max_bait'),self.info.get('max_bait',100))
@@ -303,6 +364,19 @@ class Save:
                 start, end = self.bait_unlocked_span
                 result[start:end] = godot_string_array(unlocked)
                 struct.pack_into('<I', result, 0, len(result)-4)
+        elif self.game == 'ror2':
+            text = self.xml_text
+            replacements = []
+            for key,value in changes.items():
+                field = known[key]
+                rendered = str(value)
+                current_end = field.offset
+                while current_end < len(text) and text[current_end] not in '<':
+                    current_end += 1
+                replacements.append((field.offset,current_end,rendered))
+            for start,end,rendered in sorted(replacements,reverse=True):
+                text = text[:start]+rendered+text[end:]
+            result = bytearray(text.encode('utf-8'))
         for start,end in self.crc_regions:
             struct.pack_into('>I',result,end,zlib.crc32(result[start-4:end]))
         output = bytes(result)
@@ -310,7 +384,10 @@ class Save:
         check = Save(output,self.game)
         for (index,key),value in changes.items():
             field=known[(index,key)]
-            expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
+            if field.fmt.startswith('xml-'):
+                expected=value
+            else:
+                expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
             if next(f.value for f in check.slots[index].fields if f.key == key) != expected:
                 raise FormatError('La verificación de la exportación falló.')
         return output
@@ -327,6 +404,13 @@ def discover():
     appdata = Path(os.environ.get('APPDATA',str(Path.home())))
     for p in (appdata/'Godot/app_userdata/webfishing_2_newver').glob('webfishing_save_slot_*.sav'):
         found.append(('webfishing',p))
+    steam_roots = {
+        Path(os.environ.get('PROGRAMFILES(X86)','C:/Program Files (x86)'))/'Steam/userdata',
+        Path(os.environ.get('PROGRAMFILES','C:/Program Files'))/'Steam/userdata',
+    }
+    for steam in steam_roots:
+        for p in steam.glob('*/632360/remote/UserProfiles/*.xml'):
+            found.append(('ror2',p))
     docs = documents_folder()
     base = docs/'My Games/KINGDOM HEARTS HD 1.5+2.5 ReMIX/Steam'
     for name,game in [('KHFM_WW.png','kh1'),('KHReCoM_WW.png','recom'),('KH2FM_WW.png','kh2'),('KHBbS_WW.png','bbs')]:
