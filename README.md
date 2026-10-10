@@ -53,7 +53,7 @@ Si el bloque `sqEX` de KH tiene un CRC que no coincide, la aplicación permite i
 
 ## Verificación realizada
 
-- 17 pruebas automatizadas con partidas sintéticas: límites, archivos truncados, conservación de bytes ajenos a la edición, reemplazo atómico con respaldo, varios registros de KH, CRC y rechazo de sobrescrituras; búsqueda, filtros, navegación con cambios, cancelación y aplicación a través del diálogo de Qt.
+- 18 pruebas automatizadas con partidas sintéticas: límites, archivos truncados, conservación de bytes ajenos a la edición, desbloqueo automático de cebos, reemplazo atómico con respaldo, varios registros de KH, CRC y rechazo de sobrescrituras; búsqueda, filtros, navegación con cambios, cancelación y aplicación a través del diálogo de Qt.
 - Revisión visual de biblioteca y editor mediante capturas renderizadas por Qt.
 - Lectura y edición en memoria verificadas con un archivo local real de WEBFISHING y uno de KH Final Mix de Steam. Ninguno se incluye en el proyecto.
 - Los originales no se modificaron. **La carga de las copias dentro de los juegos todavía no se ha probado.**

@@ -9,6 +9,8 @@ El proyecto se distribuye bajo GPL-3.0-or-later. La implementación es Python y 
 
 Los nombres de juegos pertenecen a sus respectivos titulares. UniversalSaveEditor es un proyecto independiente.
 
+El icono de memory card se obtuvo de la imagen aportada por el autor del repositorio y se preparó como recorte PNG transparente. Las marcas y logotipos visibles pertenecen a sus titulares respectivos y no están cubiertos por la licencia GPL del código.
+
 ## Portadas
 
 - [kh1](https://www.khwiki.com/File:Kingdom_Hearts_Final_Mix_Boxart_JP.png): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.

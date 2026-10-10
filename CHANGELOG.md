@@ -1,6 +1,7 @@
 # Cambios
 
 ## 0.3
+- Nuevo icono de memory card con fondo transparente para la aplicación y el ejecutable de Windows.
 - WEBFISHING actualiza automáticamente `bait_unlocked`: cualquier cebo con cantidad positiva queda comprado y desbloqueado sin mostrar otro control.
 - WEBFISHING aplica los cambios al save slot activo, con respaldo y reemplazo atómico; ya no genera un archivo `.edited.sav`.
 - Nombre UniversalSaveEditor en ventana, navegación, guía y ejecutable.
