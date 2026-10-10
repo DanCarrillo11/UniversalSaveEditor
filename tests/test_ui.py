@@ -33,10 +33,10 @@ class InterfaceTests(unittest.TestCase):
 
     def test_search_and_compatibility(self):
         w=self.window
-        descriptions={item.accessibleName():item.text() for item in w.findChildren(QLabel) if item.accessibleName().startswith('Funciones del editor de ')}
-        self.assertIn('Nivel y XP',descriptions['Funciones del editor de WEBFISHING'])
-        self.assertIn('Objetos',descriptions['Funciones del editor de KINGDOM HEARTS'])
-        self.assertIn('Editor en desarrollo',descriptions['Funciones del editor de MAX PAYNE'])
+        descriptions={item.accessibleName():item.text() for item in w.findChildren(QLabel) if item.accessibleName().startswith('Editor features for ')}
+        self.assertIn('Level and XP',descriptions['Editor features for WEBFISHING'])
+        self.assertIn('Items',descriptions['Editor features for KINGDOM HEARTS'])
+        self.assertIn('Editor in development',descriptions['Editor features for MAX PAYNE'])
         w.set_filter('ready');self.assertEqual(w.visible_games,['webfishing','ror2','kh1'])
         w.search.setText('XP');self.assertEqual(w.visible_games,['webfishing'])
         w.search.clear()
@@ -76,7 +76,7 @@ class InterfaceTests(unittest.TestCase):
         def apply_dialog():
             dialog=self.app.activeModalWidget()
             for b in dialog.findChildren(QPushButton):
-                if b.text()=='Aplicar al save slot actual':
+                if b.text()=='Apply to active save':
                     clicked.append(True);b.click();return
             dialog.reject()
         with patch('app.QMessageBox.information'):
@@ -99,7 +99,7 @@ class InterfaceTests(unittest.TestCase):
             (0,'unlock:Characters.Acolyte'):1,
             (0,'unlock:Characters.Huntress'):0,
         })
-        characters=[field for field in w.save.slots[0].fields if field.group=='Personajes']
+        characters=[field for field in w.save.slots[0].fields if field.group=='Characters']
         w.set_unlock_fields(characters,1)
         self.assertTrue(all(w.inputs[(0,field.key)].isChecked() for field in characters))
 

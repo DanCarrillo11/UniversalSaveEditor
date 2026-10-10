@@ -458,13 +458,13 @@ UNLOCK_IDS = (
 )
 
 GROUPS = {
-    'Characters': 'Personajes',
-    'Skills': 'Habilidades',
-    'Skins': 'Skins y recolores',
-    'Artifacts': 'Artefactos',
-    'Items': 'Objetos y equipo',
-    'Logs': 'Registros',
-    'NewtStatue': 'Altares de Newt',
+    'Characters': 'Characters',
+    'Skills': 'Skills',
+    'Skins': 'Skins and recolors',
+    'Artifacts': 'Artifacts',
+    'Items': 'Items and equipment',
+    'Logs': 'Logs',
+    'NewtStatue': 'Newt Altars',
 }
 
 NAMES = {

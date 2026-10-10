@@ -97,8 +97,8 @@ class CoreTests(unittest.TestCase):
         unlock_fields=[field for field in save.slots[0].fields if field.fmt=='xml-unlock']
         self.assertEqual(len(unlock_fields),454)
         self.assertEqual({field.group for field in unlock_fields},{
-            'Personajes','Habilidades','Skins y recolores','Artefactos',
-            'Objetos y equipo','Registros','Altares de Newt',
+            'Characters','Skills','Skins and recolors','Artifacts',
+            'Items and equipment','Logs','Newt Altars',
         })
         output=save.patched({
             (0,'unlock:Characters.Huntress'):0,

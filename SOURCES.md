@@ -1,28 +1,28 @@
-# Referencias y atribuciones
+# References and attribution
 
-El proyecto se distribuye bajo GPL-3.0-or-later. La implementación es Python y utiliza la biblioteca estándar. No incluye partidas personales. Las portadas se incluyen como recursos visuales de identificación; sus derechos pertenecen a los titulares respectivos y no están cubiertos por la licencia GPL del código.
+The project is distributed under GPL-3.0-or-later. Its implementation uses Python and the standard library. Personal save files are not included. Cover images are included as identification resources; their rights remain with their respective owners and are not covered by the source-code license.
 
-- [Godot 3.5 binary serialization API](https://docs.godotengine.org/en/3.5/tutorials/io/binary_serialization_api.html): tipos, tamaños y flags de Variant.
-- [NotNite/webfishing-save-editor](https://github.com/NotNite/webfishing-save-editor): referencia para el envoltorio del archivo y nombres de campos WEBFISHING (`src/game/types.ts`, `src/App.svelte`). No se incluyen sus recursos visuales ni su interfaz.
-- [Xeeynamo/KingdomSaveEditor](https://github.com/Xeeynamo/KingdomSaveEditor), GPL-3.0: formato de archivo PC y posiciones de campos de KH Final Mix; archivos `KHSave.Archives/PcSaveArchive.cs`, `KHSave.Archives/Factories/PcKh1Factory.cs`, `KHSave.Lib1/SaveKh1.FinalMix.cs`, `KHSave.Lib1/Models/Character.cs`. Copyright de los autores originales conservado. UniversalSaveEditor adapta el conocimiento de esas estructuras a un editor que preserva los bytes originales.
-- [KatRewrites/kh1-save-editor](https://github.com/KatRewrites/kh1-save-editor), GPL-3.0: referencia consultada sobre los contenedores PNG/sqEX y la necesidad de conservar registros relacionados. No se incorporan sus tablas ni su interfaz.
+- [Godot 3.5 binary serialization API](https://docs.godotengine.org/en/3.5/tutorials/io/binary_serialization_api.html): Variant types, sizes, and flags.
+- [NotNite/webfishing-save-editor](https://github.com/NotNite/webfishing-save-editor): reference for the WEBFISHING file wrapper and field names in `src/game/types.ts` and `src/App.svelte`. Its interface and visual resources are not included.
+- [Xeeynamo/KingdomSaveEditor](https://github.com/Xeeynamo/KingdomSaveEditor), GPL-3.0: reference for the PC format and Kingdom Hearts Final Mix field positions in `KHSave.Archives/PcSaveArchive.cs`, `KHSave.Archives/Factories/PcKh1Factory.cs`, `KHSave.Lib1/SaveKh1.FinalMix.cs`, and `KHSave.Lib1/Models/Character.cs`. UniversalSaveEditor adapts knowledge of these structures to a byte-preserving editor.
+- [KatRewrites/kh1-save-editor](https://github.com/KatRewrites/kh1-save-editor), GPL-3.0: reference for PNG/sqEX containers and the need to preserve related records. Its tables and interface are not included.
 
-Los nombres de juegos pertenecen a sus respectivos titulares. UniversalSaveEditor es un proyecto independiente.
+Game names belong to their respective owners. UniversalSaveEditor is an independent project.
 
-El icono de memory card se obtuvo de la imagen aportada por el autor del repositorio y se preparó como recorte PNG transparente. Las marcas y logotipos visibles pertenecen a sus titulares respectivos y no están cubiertos por la licencia GPL del código.
+The memory-card icon was prepared as a transparent PNG crop from an image supplied by the repository author. Visible marks and logos belong to their respective owners and are not covered by the source-code license.
 
-## Portadas
+## Cover art
 
-- [kh1](https://www.khwiki.com/File:Kingdom_Hearts_Final_Mix_Boxart_JP.png): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
-- [recom](https://www.khwiki.com/File:Kingdom_Hearts_ReChain_of_Memories_Boxart_NA.png): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
-- [kh2](https://www.khwiki.com/File:Kingdom_Hearts_II_Final_Mix%2B_Boxart_JP.png): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
-- [bbs](https://www.khwiki.com/File:Kingdom_Hearts_Birth_by_Sleep_Final_Mix_Boxart_JP.png): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
-- [webfishing](https://store.steampowered.com/app/3146520/): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
-- [maxpayne](https://store.steampowered.com/app/12140/): archivo original, URL de imagen y procedencia en `assets/covers/sources.json`.
-- [ror2](https://store.steampowered.com/app/632360/): arte oficial de biblioteca de Steam; URL y tamaño registrados en `assets/covers/sources.json`.
+- [kh1](https://www.khwiki.com/File:Kingdom_Hearts_Final_Mix_Boxart_JP.png): original file, image URL, and provenance are recorded in `assets/covers/sources.json`.
+- [recom](https://www.khwiki.com/File:Kingdom_Hearts_ReChain_of_Memories_Boxart_NA.png): original file, image URL, and provenance are recorded in `assets/covers/sources.json`.
+- [kh2](https://www.khwiki.com/File:Kingdom_Hearts_II_Final_Mix%2B_Boxart_JP.png): original file, image URL, and provenance are recorded in `assets/covers/sources.json`.
+- [bbs](https://www.khwiki.com/File:Kingdom_Hearts_Birth_by_Sleep_Final_Mix_Boxart_JP.png): original file, image URL, and provenance are recorded in `assets/covers/sources.json`.
+- [webfishing](https://store.steampowered.com/app/3146520/): source page and original image URL are recorded in `assets/covers/sources.json`.
+- [maxpayne](https://store.steampowered.com/app/12140/): source page and original image URL are recorded in `assets/covers/sources.json`.
+- [ror2](https://store.steampowered.com/app/632360/): official Steam library artwork; URL and file size are recorded in `assets/covers/sources.json`.
 
-Las ediciones Final Mix usan las portadas japonesas de sus lanzamientos originales (KH II Final Mix+ incluye Re:CoM); no se presentan como cajas de una edición individual de Steam. WEBFISHING, Risk of Rain 2 y Max Payne usan el arte de biblioteca de Steam.
+The Final Mix entries use Japanese cover art from their original releases. Kingdom Hearts II Final Mix+ also includes Re:Chain of Memories and is not presented as an individual Steam box. WEBFISHING, Risk of Rain 2, and Max Payne use Steam library artwork.
 
-La compatibilidad con Risk of Rain 2 se validó contra la estructura de un perfil local de Steam aportado por el autor. Los identificadores de desbloqueo de `ror2_unlocks.py` se extrajeron de los nombres de recursos incluidos en `Risk of Rain 2_Data/StreamingAssets/aa/catalog.json` de esa instalación. El catálogo y el perfil contienen material o datos ajenos y no se incluyen en el repositorio.
+Risk of Rain 2 compatibility was validated against a local Steam profile supplied by the repository author. Unlock identifiers in `ror2_unlocks.py` were extracted from resource names in `Risk of Rain 2_Data/StreamingAssets/aa/catalog.json` from that installation. The content catalog and profile contain third-party or personal data and are not included.
 
-La tabla `kh_items.py` adapta `KHSave.Lib1/Types/EquipmentType.cs` de Xeeynamo/KingdomSaveEditor (GPL-3.0); conserva su atribución y excluye objetos de historia y entradas sin uso.
+The `kh_items.py` table adapts `KHSave.Lib1/Types/EquipmentType.cs` from Xeeynamo/KingdomSaveEditor under GPL-3.0. It preserves attribution and excludes story items and unused entries.

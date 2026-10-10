@@ -38,13 +38,13 @@ class Field:
         try:
             value = float(text) if self.decimal else int(text)
         except (ValueError, TypeError):
-            raise ValueError('introduce un número válido' if self.decimal else 'introduce un número entero')
+            raise ValueError('enter a valid number' if self.decimal else 'enter a whole number')
         self.validate(value)
         return value
 
     def validate(self, value):
         if type(value) not in ((int, float) if self.decimal else (int,)) or not math.isfinite(value) or not self.minimum <= value <= self.maximum:
-            raise ValueError(f'{self.label}: usa un valor entre {self.minimum} y {self.maximum}.')
+            raise ValueError(f'{self.label}: use a value between {self.minimum} and {self.maximum}.')
 
 @dataclass
 class Slot:
@@ -55,11 +55,11 @@ class GodotReader:
     def __init__(self, data):
         self.data, self.pos, self.nodes, self.spans = data, 4, {}, {}
         if len(data) < 8 or struct.unpack_from('<I', data)[0] != len(data)-4:
-            raise FormatError('Longitud de partida Godot incorrecta.')
+            raise FormatError('Invalid Godot save length.')
 
     def take(self, count):
         if count < 0 or self.pos + count > len(self.data):
-            raise FormatError('Partida truncada.')
+            raise FormatError('The save file is truncated.')
         result = self.data[self.pos:self.pos+count]
         self.pos += count
         return result
@@ -81,11 +81,11 @@ class GodotReader:
 
     def _read(self, path=(), depth=0):
         if depth > 64:
-            raise FormatError('Estructura demasiado profunda.')
+            raise FormatError('The save structure is too deeply nested.')
         header = self.number('I')
         kind, flags = header & 65535, header >> 16
         if flags and (kind not in (2, 3) or flags != 1):
-            raise FormatError('Flags Godot no compatibles.')
+            raise FormatError('Unsupported Godot flags.')
         start = self.pos
         if kind == 0:
             return None
@@ -99,13 +99,13 @@ class GodotReader:
         if kind in (18, 19):
             count = self.number('I') & 0x7fffffff
             if count > (len(self.data)-self.pos)//4:
-                raise FormatError('Cantidad de elementos inválida.')
+                raise FormatError('Invalid element count.')
             result = {} if kind == 18 else []
             for index in range(count):
                 if kind == 18:
                     key = self.read((), depth+1)
                     if not isinstance(key, (str, int)) or key in result:
-                        raise FormatError('Clave Godot no compatible o duplicada.')
+                        raise FormatError('Unsupported or duplicate Godot key.')
                     result[key] = self.read(path+(key,), depth+1)
                 else:
                     result.append(self.read(path+(index,), depth+1))
@@ -122,9 +122,9 @@ class GodotReader:
         if kind == 23:
             count = self.number('I')
             if count > (len(self.data)-self.pos)//4:
-                raise FormatError('Array inválido.')
+                raise FormatError('Invalid array.')
             return [self.string() for _ in range(count)]
-        raise FormatError(f'Tipo Godot {kind} no compatible. No se editará el archivo.')
+        raise FormatError(f'Godot type {kind} is unsupported. The file will not be edited.')
 
 def godot_string_array(values):
     result = bytearray(struct.pack('<II', 19, len(values)))
@@ -137,27 +137,27 @@ def godot_string_array(values):
 
 def png_chunks(raw, allow_sqex_crc=False):
     if not raw.startswith(b'\x89PNG\r\n\x1a\n'):
-        raise FormatError('No es un contenedor PNG de Kingdom Hearts.')
+        raise FormatError('This is not a Kingdom Hearts PNG container.')
     pos, chunks = 8, []
     while pos + 12 <= len(raw):
         size = struct.unpack_from('>I', raw, pos)[0]
         name, start, end = raw[pos+4:pos+8], pos+8, pos+8+size
         if end+4 > len(raw):
-            raise FormatError('Contenedor truncado.')
+            raise FormatError('The container is truncated.')
         if zlib.crc32(raw[pos+4:end]) != struct.unpack_from('>I', raw, end)[0] and not (allow_sqex_crc and name == b'sqEX'):
-            raise FormatError(f'CRC inválido en {name!r}.')
+            raise FormatError(f'Invalid CRC in {name!r}.')
         chunks.append((name,start,end))
         pos = end+4
         if name == b'IEND':
             if pos != len(raw):
-                raise FormatError('Datos inesperados tras IEND.')
+                raise FormatError('Unexpected data after IEND.')
             return chunks
-    raise FormatError('Falta IEND.')
+    raise FormatError('The IEND chunk is missing.')
 
 class Save:
     def __init__(self, raw, game):
         if not raw or len(raw) > MAX_SIZE:
-            raise FormatError('Tamaño de archivo no compatible (máximo 64 MB).')
+            raise FormatError('Unsupported file size (64 MB maximum).')
         self.raw, self.game, self.slots, self.crc_regions = raw, game, [], []
         self.warnings = []
         if game == 'webfishing':
@@ -167,28 +167,28 @@ class Save:
         elif game == 'kh1':
             self._kh1()
         else:
-            raise FormatError('La edición de este juego todavía no está implementada.')
+            raise FormatError('Editing is not implemented for this game yet.')
 
     def _webfishing(self):
         reader = GodotReader(self.raw)
         self.info = reader.read()
         if reader.pos != len(self.raw) or not isinstance(self.info,dict):
-            raise FormatError('Estructura WEBFISHING no compatible.')
+            raise FormatError('Unsupported WEBFISHING save structure.')
         if not {'inventory','money','bait_inv','level'} <= self.info.keys():
-            raise FormatError('No parece una partida de jugador de WEBFISHING.')
+            raise FormatError('This does not appear to be a WEBFISHING player save.')
         if not isinstance(self.info['inventory'],list) or not isinstance(self.info['bait_inv'],dict):
-            raise FormatError('Inventario o cebos con estructura no compatible.')
+            raise FormatError('The inventory or bait structure is unsupported.')
         unlocked = self.info.get('bait_unlocked', [])
         if not isinstance(unlocked, list) or any(not isinstance(value, str) for value in unlocked):
-            raise FormatError('Lista de cebos desbloqueados no compatible.')
+            raise FormatError('The unlocked bait list is unsupported.')
         self.bait_unlocked_span = reader.spans.get(('bait_unlocked',))
         fields = []
-        specs = [('money','Dinero',9999999), ('loan_left','Deuda pendiente',9999999)]
+        specs = [('money','Money',9999999), ('loan_left','Outstanding debt',9999999)]
         for key,label,limit in specs:
             node = reader.nodes.get((key,))
             if node and node[1] in ('<i','<q','<f','<d'):
                 if not math.isfinite(node[2]):
-                    raise FormatError('Valor numérico no válido en '+key)
+                    raise FormatError('Invalid numeric value in '+key)
                 fields.append(Field(key,label,node[2],node[0],node[1],0,limit))
         for bait, amount in self.info['bait_inv'].items():
             if not bait:
@@ -197,32 +197,32 @@ class Save:
             if node and node[1] in ('<i','<q'):
                 limit = self.info.get('max_bait',100)
                 if not isinstance(limit,int) or limit < 0:
-                    raise FormatError('Capacidad de cebo inválida.')
-                fields.append(Field('bait:'+bait,'Cebo · '+bait,amount,node[0],node[1],0,limit))
+                    raise FormatError('Invalid bait capacity.')
+                fields.append(Field('bait:'+bait,'Bait · '+bait,amount,node[0],node[1],0,limit))
         def add(path, key, label, low, high, group, decimal=False):
             node=reader.nodes.get(path)
             if node and node[1] in ('<i','<q','<f','<d'):
                 if not math.isfinite(node[2]):
-                    raise FormatError('Valor no válido: '+label)
+                    raise FormatError('Invalid value: '+label)
                 fields.append(Field(key,label,node[2],node[0],node[1],low,high,group,decimal and node[1] in ('<f','<d')))
         for key,label,low,high,group,decimal in [
-            ('level','Nivel',1,50,'Progreso',False),
-            ('xp','Experiencia (XP)',0,9999999,'Progreso',True),
-            ('fish_caught','Peces capturados',0,9999999,'Progreso',False),
-            ('cash_total','Dinero ganado en total',0,9999999,'Economía',False),
-            ('max_bait','Capacidad de cebos',1,9999,'Cebos',False),
-            ('rod_power','Potencia de caña',0,5,'Mejoras',False),
-            ('rod_speed','Velocidad de caña',0,5,'Mejoras',False),
-            ('rod_chance','Probabilidad de caña',0,5,'Mejoras',False),
-            ('rod_luck','Suerte de caña',0,5,'Mejoras',False),
-            ('buddy_level','Nivel del compañero',0,5,'Mejoras',False),
-            ('buddy_speed','Velocidad del compañero',0,5,'Mejoras',False),
+            ('level','Level',1,50,'Progress',False),
+            ('xp','Experience (XP)',0,9999999,'Progress',True),
+            ('fish_caught','Fish caught',0,9999999,'Progress',False),
+            ('cash_total','Total money earned',0,9999999,'Economy',False),
+            ('max_bait','Bait capacity',1,9999,'Bait',False),
+            ('rod_power','Rod power',0,5,'Upgrades',False),
+            ('rod_speed','Rod speed',0,5,'Upgrades',False),
+            ('rod_chance','Rod chance',0,5,'Upgrades',False),
+            ('rod_luck','Rod luck',0,5,'Upgrades',False),
+            ('buddy_level','Buddy level',0,5,'Upgrades',False),
+            ('buddy_speed','Buddy speed',0,5,'Upgrades',False),
         ]: add((key,),key,label,low,high,group,decimal)
         for index,item in enumerate(self.info['inventory']):
             if not isinstance(item,dict):continue
-            name=f'{index+1} · {item.get("id","Objeto")}'
-            add(('inventory',index,'quality'),f'item:{index}:quality',name+' · calidad (0–5)',0,5,'Inventario')
-            add(('inventory',index,'size'),f'item:{index}:size',name+' · tamaño',0.001,999999,'Inventario',True)
+            name=f'{index+1} · {item.get("id","Item")}'
+            add(('inventory',index,'quality'),f'item:{index}:quality',name+' · quality (0–5)',0,5,'Inventory')
+            add(('inventory',index,'size'),f'item:{index}:size',name+' · size',0.001,999999,'Inventory',True)
         journal=self.info.get('journal',{})
         if isinstance(journal,dict):
             for category,entries in journal.items():
@@ -230,18 +230,18 @@ class Save:
                 for fish,entry in entries.items():
                     if not isinstance(entry,dict):continue
                     name=f'{category} / {fish}'
-                    add(('journal',category,fish,'count'),f'journal:{category}:{fish}:count',name+' · capturas',0,9999999,'Diario')
-                    add(('journal',category,fish,'record'),f'journal:{category}:{fish}:record',name+' · récord',0,999999,'Diario',True)
-        self.slots = [Slot(f'Nivel {self.info["level"]} · {len(self.info["inventory"])} objetos',fields)]
+                    add(('journal',category,fish,'count'),f'journal:{category}:{fish}:count',name+' · catches',0,9999999,'Journal')
+                    add(('journal',category,fish,'record'),f'journal:{category}:{fish}:record',name+' · record',0,999999,'Journal',True)
+        self.slots = [Slot(f'Level {self.info["level"]} · {len(self.info["inventory"])} items',fields)]
 
     def _ror2(self):
         try:
             text = self.raw.decode('utf-8')
             root = ET.fromstring(text)
         except (UnicodeDecodeError, ET.ParseError) as error:
-            raise FormatError('Perfil XML de Risk of Rain 2 no compatible.') from error
+            raise FormatError('Unsupported Risk of Rain 2 XML profile.') from error
         if root.tag != 'UserProfile':
-            raise FormatError('No parece un perfil de Risk of Rain 2.')
+            raise FormatError('This does not appear to be a Risk of Rain 2 profile.')
         self.xml_text = text
         fields = []
         def add_value(key, label, raw_value, start, low, high, group, decimal=False):
@@ -251,32 +251,32 @@ class Save:
             try:
                 value = float(raw_value) if decimal else int(raw_value)
             except ValueError as error:
-                raise FormatError('Valor inválido en '+key) from error
+                raise FormatError('Invalid value in '+key) from error
             fields.append(Field(key,label,value,start,
                 'xml-float' if decimal else 'xml-int',low,high,group,decimal))
         coins = re.search(r'<coins>([^<]*)</coins>',text)
         if coins:
-            add_value('coins','Monedas lunares',coins.group(1),coins.start(1),0,2147483647,'Economía')
+            add_value('coins','Lunar Coins',coins.group(1),coins.start(1),0,2147483647,'Economy')
         stat_specs = {
-            'totalGamesPlayed':('Partidas jugadas',0,999999999,'Progreso',False),
-            'totalTimeAlive':('Tiempo total con vida (segundos)',0,1e15,'Progreso',True),
-            'highestLevel':('Nivel más alto',0,999999,'Progreso',False),
-            'totalItemsCollected':('Objetos recogidos',0,999999999999,'Progreso',False),
-            'highestItemsCollected':('Máximo de objetos en una partida',0,999999999,'Progreso',False),
-            'totalStagesCompleted':('Escenarios completados',0,999999999,'Progreso',False),
-            'highestStagesCompleted':('Máximo de escenarios en una partida',0,999999,'Progreso',False),
-            'highestInfiniteTowerWaveReached':('Oleada máxima de Simulacrum',0,999999,'Progreso',False),
-            'totalKills':('Enemigos eliminados',0,999999999999,'Combate',False),
-            'totalMinionKills':('Eliminaciones de aliados',0,999999999999,'Combate',False),
-            'totalDeaths':('Muertes',0,999999999,'Combate',False),
-            'totalDamageDealt':('Daño total infligido',0,1e15,'Combate',True),
-            'highestDamageDealt':('Mayor golpe de daño',0,1e15,'Combate',True),
-            'totalDamageTaken':('Daño total recibido',0,1e15,'Combate',True),
-            'totalHealthHealed':('Salud total recuperada',0,1e15,'Combate',True),
-            'totalEliteKills':('Élites eliminados',0,999999999999,'Combate',False),
-            'totalGoldCollected':('Oro total recogido',0,1e15,'Economía',True),
-            'maxGoldCollected':('Máximo de oro en una partida',0,1e15,'Economía',True),
-            'totalPurchases':('Compras realizadas',0,999999999999,'Economía',False),
+            'totalGamesPlayed':('Games played',0,999999999,'Progress',False),
+            'totalTimeAlive':('Total time alive (seconds)',0,1e15,'Progress',True),
+            'highestLevel':('Highest level',0,999999,'Progress',False),
+            'totalItemsCollected':('Items collected',0,999999999999,'Progress',False),
+            'highestItemsCollected':('Most items in one run',0,999999999,'Progress',False),
+            'totalStagesCompleted':('Stages completed',0,999999999,'Progress',False),
+            'highestStagesCompleted':('Most stages in one run',0,999999,'Progress',False),
+            'highestInfiniteTowerWaveReached':('Highest Simulacrum wave',0,999999,'Progress',False),
+            'totalKills':('Enemies killed',0,999999999999,'Combat',False),
+            'totalMinionKills':('Ally kills',0,999999999999,'Combat',False),
+            'totalDeaths':('Deaths',0,999999999,'Combat',False),
+            'totalDamageDealt':('Total damage dealt',0,1e15,'Combat',True),
+            'highestDamageDealt':('Highest single hit',0,1e15,'Combat',True),
+            'totalDamageTaken':('Total damage taken',0,1e15,'Combat',True),
+            'totalHealthHealed':('Total health healed',0,1e15,'Combat',True),
+            'totalEliteKills':('Elite kills',0,999999999999,'Combat',False),
+            'totalGoldCollected':('Total gold collected',0,1e15,'Economy',True),
+            'maxGoldCollected':('Most gold in one run',0,1e15,'Economy',True),
+            'totalPurchases':('Purchases made',0,999999999999,'Economy',False),
         }
         seen = set()
         for match in re.finditer(r'<stat\s+name="([^"]+)"\s*>([^<]*)</stat>',text):
@@ -286,30 +286,30 @@ class Save:
             seen.add(name); label,low,high,group,decimal = stat_specs[name]
             add_value('stat:'+name,label,match.group(2),match.start(2),low,high,group,decimal)
         if not fields or not any(field.key == 'coins' for field in fields):
-            raise FormatError('El perfil no contiene los campos esperados de Risk of Rain 2.')
+            raise FormatError('The profile does not contain the expected Risk of Rain 2 fields.')
         stats_node = root.find('stats')
         if stats_node is None:
-            raise FormatError('El perfil no contiene la sección de desbloqueos de Risk of Rain 2.')
+            raise FormatError('The profile does not contain the Risk of Rain 2 unlock section.')
         unlocked = [child.text or '' for child in stats_node if child.tag == 'unlock']
         self.ror2_unlocked = unlocked
         for identifier in UNLOCK_IDS:
             fields.append(Field('unlock:'+identifier,unlock_label(identifier),
                 int(identifier in unlocked),-1,'xml-unlock',0,1,unlock_group(identifier)))
-        self.slots = [Slot(f'Perfil de Steam · {len(unlocked)} desbloqueos',fields)]
+        self.slots = [Slot(f'Steam profile · {len(unlocked)} unlocks',fields)]
 
     def _kh1(self):
         chunks = png_chunks(self.raw, allow_sqex_crc=True)
         regions = [(start,end) for name,start,end in chunks if name == b'sqEX']
         if len(regions) != 1:
-            raise FormatError('Falta un bloque sqEX único.')
+            raise FormatError('A single sqEX block is required.')
         start,end = regions[0]
         self.crc_regions = regions
         if zlib.crc32(self.raw[start-4:end]) != struct.unpack_from('>I',self.raw,end)[0]:
-            self.warnings.append('El CRC del bloque de guardado no coincide. Puedes inspeccionar la partida; exportarla requiere reparar el CRC de la copia. Esto no demuestra que los datos internos estén íntegros.')
+            self.warnings.append('The save block CRC does not match. You may inspect the save, but exporting requires repairing the CRC in the copy. This does not prove that the internal data is intact.')
         # PC archive: 200 entries, 0x158-byte descriptors, 0x16c40-byte records.
         archive = start+16
         if archive != 0x70 or not 0 <= end-(archive+200*0x158+200*0x16c40) < 0x400:
-            raise FormatError('Distribución KH Final Mix de Steam no reconocida.')
+            raise FormatError('Unrecognized Kingdom Hearts Final Mix Steam layout.')
         table = bytearray(self.raw[archive:archive+200*0x158])
         key = bytes(table[0xe0:0xf0])
         for i in range(0xf0):
@@ -321,33 +321,33 @@ class Save:
             if length == 0:
                 continue
             if length > 0x16c40:
-                raise FormatError('Registro KHFM fuera de límites.')
+                raise FormatError('The KHFM record is out of bounds.')
             record = base+index*0x16c40
             if length < 0x16c00 or self.raw[record:record+4] != b'\x05\0\0\0':
                 continue
             name = bytes(table[desc:desc+0x40]).split(b'\0')[0].decode('ascii',errors='replace')
-            fields = [Field('munny','Platines (munny)',struct.unpack_from('<I',self.raw,record+0x1641c)[0],record+0x1641c,'<I',0,999999)]
+            fields = [Field('munny','Munny',struct.unpack_from('<I',self.raw,record+0x1641c)[0],record+0x1641c,'<I',0,999999)]
             for char,namechar in enumerate(('Sora','Donald','Goofy')):
                 stat = record+4+char*0x74
-                for delta,keyname,label,low,high in [(1,'hp_current','VT actuales',0,255),(2,'hp','VT base',1,255),(3,'mp_current','PM actuales',0,255),(4,'mp','PM base',1,255),(5,'ap','PH base',0,255),(6,'strength','Fuerza',0,255),(7,'defense','Defensa',0,255)]:
+                for delta,keyname,label,low,high in [(1,'hp_current','Current HP',0,255),(2,'hp','Base HP',1,255),(3,'mp_current','Current MP',0,255),(4,'mp','Base MP',1,255),(5,'ap','Base AP',0,255),(6,'strength','Strength',0,255),(7,'defense','Defense',0,255)]:
                     fields.append(Field(f'{char}:{keyname}',f'{namechar} · {label}',self.raw[stat+delta],stat+delta,'<B',low,high))
             for item_id,item_name,category in ITEMS:
                 offset=record+0x499+item_id
-                group={'Synthesis':'Materiales','Accessory':'Accesorios','Keyblade':'Armas','Staff':'Armas','Shield':'Armas'}.get(category,'Objetos')
+                group={'Synthesis':'Materials','Accessory':'Accessories','Keyblade':'Weapons','Staff':'Weapons','Shield':'Weapons'}.get(category,'Items')
                 fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group))
             level = self.raw[record+4]
-            self.slots.append(Slot(f'{name or str(index+1)} · Sora nivel {level}',fields))
+            self.slots.append(Slot(f'{name or str(index+1)} · Sora level {level}',fields))
         if not self.slots:
-            raise FormatError('No se encontraron partidas KH Final Mix compatibles.')
+            raise FormatError('No compatible Kingdom Hearts Final Mix saves were found.')
 
     def patched(self, changes, repair_crc=False):
         if self.warnings and not repair_crc:
-            raise ValueError('Marca la reparación del CRC para exportar esta copia.')
+            raise ValueError('Enable CRC repair before exporting this copy.')
         result = bytearray(self.raw)
         known = {(i,f.key):f for i,s in enumerate(self.slots) for f in s.fields}
         for key,value in changes.items():
             if key not in known:
-                raise ValueError('Campo no autorizado.')
+                raise ValueError('Unauthorized field.')
             field = known[key]
             field.validate(value)
             if field.fmt and not field.fmt.startswith('xml-'):
@@ -356,7 +356,7 @@ class Save:
             capacity=changes.get((0,'max_bait'),self.info.get('max_bait',100))
             for field in self.slots[0].fields:
                 if field.key.startswith('bait:') and changes.get((0,field.key),field.value)>capacity:
-                    raise ValueError('La cantidad de cebo supera la capacidad seleccionada.')
+                    raise ValueError('The bait amount exceeds the selected capacity.')
             unlocked = list(self.info.get('bait_unlocked', []))
             for bait, original_amount in self.info['bait_inv'].items():
                 if not bait:
@@ -367,7 +367,7 @@ class Save:
                     unlocked.append(bait)
             if unlocked != self.info.get('bait_unlocked', []):
                 if not self.bait_unlocked_span:
-                    raise FormatError('No se encontró la lista de cebos desbloqueados.')
+                    raise FormatError('The unlocked bait list was not found.')
                 start, end = self.bait_unlocked_span
                 result[start:end] = godot_string_array(unlocked)
                 struct.pack_into('<I', result, 0, len(result)-4)
@@ -400,7 +400,7 @@ class Save:
                 )
                 closing = text.find('</stats>')
                 if closing < 0:
-                    raise FormatError('No se encontró el cierre de la sección de desbloqueos.')
+                    raise FormatError('The end of the unlock section was not found.')
                 additions = ''.join(
                     '<unlock>'+identifier+'</unlock>'
                     for identifier,value in unlock_changes.items() if value
@@ -419,7 +419,7 @@ class Save:
             else:
                 expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
             if next(f.value for f in check.slots[index].fields if f.key == key) != expected:
-                raise FormatError('La verificación de la exportación falló.')
+                raise FormatError('Export verification failed.')
         return output
 
 def documents_folder():
@@ -454,17 +454,17 @@ def read_limited(path):
     with Path(path).open('rb') as file:
         data = file.read(MAX_SIZE+1)
     if len(data)>MAX_SIZE:
-        raise FormatError('El archivo supera 64 MB.')
+        raise FormatError('The file exceeds 64 MB.')
     return data
 
 def export_copy(source, original, edited, target):
     source, target = Path(source).resolve(), Path(target).resolve()
     if source == target or (target.exists() and os.path.samefile(source,target)):
-        raise ValueError('Elige un archivo distinto del original.')
+        raise ValueError('Choose a file other than the original.')
     if source.read_bytes() != original:
-        raise ValueError('La partida original cambió. Vuelve a abrirla antes de exportar.')
+        raise ValueError('The original save changed. Reopen it before exporting.')
     if target.exists():
-        raise ValueError('Ese archivo ya existe. Elige otro nombre para conservarlo.')
+        raise ValueError('That file already exists. Choose another name to preserve it.')
     backup = target.parent / (target.name+'.original-'+uuid.uuid4().hex[:8]+'.bak')
     with backup.open('xb') as file:
         file.write(original)
@@ -479,14 +479,14 @@ def export_copy(source, original, edited, target):
         # Keep the original backup even if exporting fails.
         raise
     if hashlib.sha256(target.read_bytes()).digest() != hashlib.sha256(edited).digest():
-        raise OSError('La verificación del archivo exportado falló.')
+        raise OSError('Exported file verification failed.')
     return backup
 
 def replace_current(source, original, edited):
     """Atomically replace the active save after creating an exact backup."""
     source = Path(source).resolve()
     if source.read_bytes() != original:
-        raise ValueError('La partida original cambió. Vuelve a abrirla antes de aplicar los cambios.')
+        raise ValueError('The original save changed. Reopen it before applying changes.')
     token = uuid.uuid4().hex[:8]
     backup = source.with_name(source.name+'.original-'+token+'.bak')
     temporary = source.with_name(source.name+'.update-'+token+'.tmp')
@@ -500,16 +500,16 @@ def replace_current(source, original, edited):
             file.flush()
             os.fsync(file.fileno())
         if hashlib.sha256(temporary.read_bytes()).digest() != hashlib.sha256(edited).digest():
-            raise OSError('La verificación del archivo temporal falló.')
+            raise OSError('Temporary file verification failed.')
         # Recheck immediately before replacement so an in-game save is never lost.
         if source.read_bytes() != original:
-            raise ValueError('La partida cambió mientras editabas. No se reemplazó el archivo.')
+            raise ValueError('The save changed while you were editing. The file was not replaced.')
         os.replace(temporary,source)
         if hashlib.sha256(source.read_bytes()).digest() != hashlib.sha256(edited).digest():
             restore = source.with_name(source.name+'.restore-'+token+'.tmp')
             restore.write_bytes(original)
             os.replace(restore,source)
-            raise OSError('La verificación falló y se restauró la partida original.')
+            raise OSError('Verification failed and the original save was restored.')
     finally:
         if temporary.exists():
             temporary.unlink()

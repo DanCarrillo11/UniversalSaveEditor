@@ -1,37 +1,35 @@
-# Cambios
+# Changelog
 
 ## 0.5
-- Gestor de 454 desbloqueables de Risk of Rain 2 extraídos del catálogo instalado: personajes, habilidades, skins y recolores, artefactos, objetos, registros y altares de Newt.
-- Checkboxes, búsqueda y acciones para desbloquear o restaurar categorías completas.
-- Los desbloqueos se agregan o eliminan sin reserializar el resto del perfil XML.
-- 22 pruebas automatizadas, incluida la edición masiva de desbloqueos sobre una copia de un perfil real.
+
+- Added a manager for 454 Risk of Rain 2 unlock identifiers discovered in the installed content catalog: characters, skills, skins and recolors, artifacts, items, logs, and Newt Altars.
+- Added checkboxes, search, and actions to unlock or restore complete categories.
+- Unlock entries are added or removed without reserializing the rest of the XML profile.
+- Expanded the automated suite to 22 tests, including bulk unlock editing on a copy of a real profile.
+- Translated the application, documentation, field labels, validation messages, and repository-facing text to English.
 
 ## 0.4
-- Compatibilidad inicial con perfiles XML de Risk of Rain 2: monedas lunares y estadísticas de progreso, combate y economía, con detección, respaldo y reemplazo seguro.
-- Nuevo icono de memory card con fondo transparente para la aplicación y el ejecutable de Windows.
-- WEBFISHING actualiza automáticamente `bait_unlocked`: cualquier cebo con cantidad positiva queda comprado y desbloqueado sin mostrar otro control.
-- WEBFISHING aplica los cambios al save slot activo, con respaldo y reemplazo atómico; ya no genera un archivo `.edited.sav`.
-- Nombre UniversalSaveEditor en ventana, navegación, guía y ejecutable.
-- Siete portadas originales con fuentes registradas.
-- WEBFISHING: progreso, mejoras, inventario existente y diario.
-- KH Final Mix: 154 objetos con nombre y VT/PM actuales.
-- Decimales con conservación del tipo binario, verificación y respaldo.
-- Distribución portátil de Windows con PyInstaller.
-- 20 pruebas automatizadas. Validación dentro de los juegos pendiente.
 
-## 0.2 — Interfaz PySide6
+- Added initial Risk of Rain 2 XML profile support for Lunar Coins and progress, combat, and economy statistics, including automatic discovery, backups, and safe replacement.
+- Added the transparent memory-card icon to the application and Windows executable.
+- WEBFISHING now updates `bait_unlocked` automatically when a positive bait quantity is selected.
+- WEBFISHING applies changes to the active save slot with an exact backup and atomic replacement instead of creating an `.edited.sav` file.
+- Standardized the UniversalSaveEditor name across the window, navigation, guide, and executable.
+- Added seven sourced original covers.
+- Expanded WEBFISHING progress, upgrades, existing inventory, and journal editing.
+- Expanded Kingdom Hearts Final Mix editing to 154 named items and current HP/MP.
+- Added decimal type preservation, output verification, and portable PyInstaller distribution.
 
-- Sustituye la interfaz Tkinter por una aplicación Qt Widgets.
-- Biblioteca de seis juegos con disponibilidad explícita; dos editores implementados.
-- Ilustraciones vectoriales originales para las tarjetas, sin descargas ni recursos de juegos.
-- Búsqueda, filtros y navegación por colecciones.
-- Editor con categorías, resumen en vivo, campos modificados y errores visibles.
-- Conservación de ajustes al cambiar de pestaña, registro o sección.
-- Revisión de cambios, exportación con respaldo y detección de cambios externos del original.
-- Guía integrada, arrastrar y soltar y atajos de teclado.
-- 13 pruebas automatizadas. Falta validar las copias dentro de los juegos.
+## 0.2 — PySide6 interface
 
-## 0.1 — Base funcional
+- Replaced the Tkinter interface with a Qt Widgets application.
+- Added a six-game library with explicit availability and two implemented editors.
+- Added original vector card artwork, search, filters, and collection navigation.
+- Added categorized editing, a live change summary, modified-field styling, and visible errors.
+- Preserved pending edits when moving between tabs, records, and sections.
+- Added change review, backup export, external source-change detection, an integrated guide, drag and drop, and keyboard shortcuts.
 
-- Lectura de WEBFISHING y KH Final Mix de Steam.
-- Edición puntual de campos, respaldo y validación de integridad.
+## 0.1 — Functional foundation
+
+- Added WEBFISHING and Kingdom Hearts Final Mix Steam readers.
+- Added targeted field editing, backups, and integrity validation.
