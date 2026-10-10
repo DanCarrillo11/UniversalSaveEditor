@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.sav
+*.bak
+*.mps
+*.xml
+KH*.png
+build/
+dist/
+.venv/
+*.psd
+*.PSD
+work/
+smoke.json
+smoke.png
+*.bundle
+*.tmp

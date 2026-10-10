@@ -1,0 +1,75 @@
+QWidget { background: #101923; color: #e9effa; font-family: 'Segoe UI'; font-size: 13px; }
+QLabel { background: transparent; }
+QMainWindow, QDialog { background: #101923; }
+QFrame#appHeader { background: #0c151f; border-bottom: 1px solid #26384a; }
+QFrame#appHeader QLabel { background: transparent; }
+QFrame#sidebar { background: #0e1823; border-right: 1px solid #26384a; }
+QFrame#sidebar QLabel, QFrame#sidebar QWidget { background: transparent; }
+QLabel#brand { color: #edf4ff; font-size: 22px; font-weight: 700; }
+QLabel#eyebrow { color: #8195aa; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+QLabel#title { font-size: 30px; font-weight: 700; }
+QLabel#section { font-size: 18px; font-weight: 650; }
+QLabel#detailTitle { font-size: 21px; font-weight: 750; }
+QLabel#cardTitle { color: #f0f5fd; font-size: 13px; font-weight: 650; }
+QLabel#cardMeta { color: #8194a9; font-size: 10px; }
+QLabel#muted { color: #9bacc0; }
+QLabel#small { color: #8fa1b5; font-size: 11px; }
+QLabel#headerStatus { color: #71aef8; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+QLabel#readyStatus { color: #4bd59a; font-size: 11px; }
+QLabel#detailDescription { color: #c5d1df; line-height: 1.5; }
+QLabel#saveName { color: #e7eef8; font-size: 12px; font-weight: 650; }
+QLabel#cardDescription { color: #c7cfdb; font-size: 11px; line-height: 1.35; }
+QLabel#badge { background: #173b62; color: #74b9ff; border-radius: 5px; padding: 5px 8px; font-size: 10px; font-weight: 700; }
+QLabel#pending { background: #292f39; color: #aeb8c5; border-radius: 5px; padding: 5px 8px; font-size: 10px; font-weight: 700; }
+QLabel#warning { background: #332d22; color: #eed6a7; padding: 12px; border: 1px solid #655038; border-radius: 8px; }
+QLabel#success { color: #b6e7aa; }
+QFrame#libraryPanel, QFrame#detailPanel { background: #131f2b; border: 1px solid #26384a; border-radius: 12px; }
+QFrame#libraryPanel QLabel, QFrame#detailPanel QLabel { border: none; }
+QFrame#gameCard { background: #172431; border: 1px solid #293b4e; border-radius: 8px; }
+QFrame#gameCard:hover { background: #1b2a39; border-color: #587590; }
+QFrame#gameCard[selected="true"] { background: #192c3e; border: 3px solid #3288ef; }
+QFrame#gameCard[selected="true"] QLabel#cardTitle { color: #ffffff; }
+QFrame#gameCard QLabel, QFrame#gameCard QWidget { background: transparent; }
+QFrame#coverFrame { background: #0c131b; border: none; border-radius: 5px; }
+QFrame#saveRow { background: #172433; border: 1px solid #293c50; border-radius: 8px; }
+QFrame#divider { background: #2a3a4b; border: none; }
+QFrame#panel { background: #191f2a; border: 1px solid #303848; border-radius: 10px; }
+QFrame#panel QLabel { background: transparent; border: none; }
+QFrame#topbar { border-bottom: 1px solid #293241; }
+QFrame#field { border-bottom: 1px solid #28313f; }
+QPushButton { background: #222b3a; border: 1px solid #364154; border-radius: 7px; padding: 10px 15px; font-weight: 600; }
+QPushButton:hover { background: #2d3a4d; border-color: #657b91; }
+QPushButton:pressed { background: #17202c; }
+QPushButton:focus { border: 1px solid #c5f0b8; }
+QPushButton:disabled { color: #697688; background: #1d2430; border-color: #29313e; }
+QPushButton#primary { background: #2f83ea; color: white; border: 1px solid #4696f5; }
+QPushButton#primary:hover { background: #4093f5; }
+QPushButton#primary:disabled { background: #263a4e; color: #687f95; border-color: #30465c; }
+QPushButton#nav { background: transparent; border: none; text-align: left; padding: 13px 16px; color: #9daac0; }
+QPushButton#nav:checked { background: #1e4775; color: #e5f2ff; border-left: 3px solid #459cff; }
+QPushButton#nav:hover { background: #202735; }
+QPushButton#filter { background: transparent; color: #a8b4c7; border-color: #303b4c; padding: 7px 14px; }
+QPushButton#filter:checked { color: #d3edcd; background: #24342c; border-color: #6d8e71; }
+QPushButton#cardAction { background: transparent; border: none; color: #86bdf8; text-align: left; padding: 5px 2px; font-size: 11px; }
+QPushButton#cardAction:hover { color: #ffffff; }
+QPushButton#iconButton { min-width: 18px; padding: 10px 12px; font-size: 17px; }
+QPushButton#rowMenu { background: transparent; border: none; padding: 6px; min-width: 24px; }
+QLineEdit, QComboBox { background: #151c27; border: 1px solid #39465a; border-radius: 7px; padding: 10px; selection-background-color: #49664b; }
+QLineEdit:focus, QComboBox:focus { border-color: #4095f4; }
+QLineEdit[invalid="true"] { border-color: #e49591; background: #302227; }
+QLineEdit[changed="true"] { color: #c5f0b8; }
+QComboBox::drop-down { border: none; width: 26px; }
+QComboBox QAbstractItemView { background: #202a38; selection-background-color: #344f43; color: #edf3f5; border: 1px solid #45556a; }
+QScrollArea { border: none; background: transparent; }
+QScrollBar:vertical { width: 8px; background: #121923; margin: 0; }
+QScrollBar::handle:vertical { background: #3d4c61; border-radius: 4px; min-height: 28px; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QTabWidget::pane { border: none; border-top: 1px solid #354052; padding-top: 15px; }
+QTabBar::tab { background: transparent; padding: 11px 16px; color: #a4b1c5; border-bottom: 2px solid transparent; }
+QTabBar::tab:selected { color: #c5f0b8; border-bottom-color: #b6e7aa; }
+QCheckBox { spacing: 8px; }
+QCheckBox::indicator { width: 17px; height: 17px; border: 1px solid #6e8299; border-radius: 3px; background: #17202c; }
+QCheckBox::indicator:checked { background: #b6e7aa; border: 3px solid #324d36; }
+QToolTip { background: #263448; color: #edf3f5; border: 1px solid #526784; padding: 7px; }
+QStatusBar { border-top: 1px solid #293241; color: #9daac0; font-size: 11px; }
+QTextEdit { background: #151c27; border: 1px solid #344155; border-radius: 8px; padding: 12px; }

@@ -1,0 +1,125 @@
+name: Prepare verified release
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['release.json']
+permissions:
+  contents: write
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Validate release request
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $config = Get-Content release.json -Raw | ConvertFrom-Json
+          $version = python -c "from version import VERSION; print(VERSION)"
+          if ($LASTEXITCODE -ne 0 -or $version -ne $config.version) { throw 'Release version mismatch' }
+          if ($config.version -notmatch '^\d+\.\d+\.\d+(-[a-z0-9.]+)?$') { throw 'Invalid release version' }
+          gh release view "v$($config.version)" --repo $env:GITHUB_REPOSITORY 2>$null
+          if ($LASTEXITCODE -eq 0) { throw 'This release already exists' }
+          $global:LASTEXITCODE = 0
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-build.txt
+      - name: Test save editors and interface
+        run: python -m unittest discover -s tests -v
+      - name: Build portable application
+        run: python -m PyInstaller --clean --noconfirm UniversalSaveEditor.spec
+      - name: Verify packaged application
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP 'portable-smoke.json'
+          $process = Start-Process -FilePath '.\dist\UniversalSaveEditor.exe' -ArgumentList '--smoke-test', $report -PassThru -WindowStyle Hidden
+          if (-not $process.WaitForExit(60000)) { $process.Kill(); throw 'Executable startup timed out' }
+          if ($process.ExitCode -ne 0) { throw 'Executable startup failed' }
+          $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
+          $config = Get-Content release.json -Raw | ConvertFrom-Json
+          if (-not $result.frozen -or -not $result.icon -or $result.version -ne $config.version -or $result.games -ne 8 -or $result.ror2Unlocks -ne 454 -or $result.covers.PSObject.Properties.Value -contains $false) { throw 'Packaged resources are incomplete' }
+      - name: Preserve previous history
+        shell: pwsh
+        run: |
+          $backup = Join-Path $env:RUNNER_TEMP 'UniversalSaveEditor-history.bundle'
+          git bundle create $backup --all
+          if ($LASTEXITCODE -ne 0) { throw 'Could not preserve Git history' }
+          git bundle verify $backup
+          if ($LASTEXITCODE -ne 0) { throw 'History backup did not verify' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: history-before-release-${{ github.run_id }}
+          path: ${{ runner.temp }}/UniversalSaveEditor-history.bundle
+          retention-days: 90
+          if-no-files-found: error
+      - name: Commit verified release
+        id: commit
+        shell: pwsh
+        run: |
+          $remote = git ls-remote --heads origin main
+          if ($LASTEXITCODE -ne 0) { throw 'Could not verify main' }
+          $expected = ($remote -split '\s+')[0]
+          if ($expected -ne $env:GITHUB_SHA) { throw 'main changed during build; release stopped' }
+          Copy-Item -LiteralPath 'dist/UniversalSaveEditor.exe' -Destination 'UniversalSaveEditor.exe' -Force
+          $hash = (Get-FileHash UniversalSaveEditor.exe -Algorithm SHA256).Hash.ToLower()
+          "$hash  UniversalSaveEditor.exe" | Set-Content SHA256SUMS.txt -Encoding utf8NoBOM
+          $config = Get-Content release.json -Raw | ConvertFrom-Json
+          $consolidate = $config.consolidate_history
+          $config.consolidate_history = $false
+          $config | ConvertTo-Json | Set-Content release.json -Encoding utf8NoBOM
+          git config user.name 'DanCarrillo11'
+          git config user.email '129711656+DanCarrillo11@users.noreply.github.com'
+          git add --all
+          if ($LASTEXITCODE -ne 0) { throw 'Could not stage release' }
+          $tree = git write-tree
+          if ($LASTEXITCODE -ne 0) { throw 'Could not write release tree' }
+          if ($consolidate) {
+            $commit = git commit-tree $tree -m "Release v$($config.version)"
+          } else {
+            $commit = git commit-tree $tree -p $env:GITHUB_SHA -m "Release v$($config.version)"
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'Could not create release commit' }
+          git push "--force-with-lease=refs/heads/main:$expected" origin "${commit}:refs/heads/main"
+          if ($LASTEXITCODE -ne 0) { throw 'main changed; release commit was not published' }
+          "sha=$commit" >> $env:GITHUB_OUTPUT
+          "tag=v$($config.version)" >> $env:GITHUB_OUTPUT
+          $releaseDir = Join-Path $env:RUNNER_TEMP 'portable-release'
+          New-Item -ItemType Directory -Path $releaseDir -Force | Out-Null
+          Copy-Item UniversalSaveEditor.exe,SHA256SUMS.txt,README.md,LICENSE -Destination $releaseDir
+          Compress-Archive -Path "$releaseDir/*" -DestinationPath "UniversalSaveEditor-v$($config.version)-Windows.zip" -Force
+      - name: Publish private repository pre-release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_COMMIT: ${{ steps.commit.outputs.sha }}
+          RELEASE_TAG: ${{ steps.commit.outputs.tag }}
+        run: |
+          $config = Get-Content release.json -Raw | ConvertFrom-Json
+          $arguments = @('release','create',$env:RELEASE_TAG,'--repo',$env:GITHUB_REPOSITORY,'--target',$env:RELEASE_COMMIT,'--title',"UniversalSaveEditor $env:RELEASE_TAG",'--notes-file','RELEASE_NOTES.md','UniversalSaveEditor.exe','SHA256SUMS.txt',"UniversalSaveEditor-$env:RELEASE_TAG-Windows.zip")
+          if ($config.prerelease) { $arguments += '--prerelease' }
+          & gh @arguments
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-portable-release
+          path: |
+            UniversalSaveEditor.exe
+            SHA256SUMS.txt
+            assets/covers/kh1.png
+            assets/covers/kh2.png
+            assets/covers/recom.png
+            ${{ runner.temp }}/portable-smoke.json
+            ${{ runner.temp }}/portable-smoke.png
+          retention-days: 30

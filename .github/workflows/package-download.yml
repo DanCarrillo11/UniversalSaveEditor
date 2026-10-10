@@ -1,0 +1,35 @@
+name: Build portable application
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['*.py', '*.qss', '*.spec', 'requirements*.txt', 'assets/**']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r requirements-build.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python -m PyInstaller --clean --noconfirm UniversalSaveEditor.spec
+      - name: Verify executable resources
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP 'portable-smoke.json'
+          $process = Start-Process -FilePath '.\dist\UniversalSaveEditor.exe' -ArgumentList '--smoke-test', $report -PassThru -WindowStyle Hidden
+          if (-not $process.WaitForExit(60000)) { $process.Kill(); throw 'Executable startup timed out' }
+          if ($process.ExitCode -ne 0) { throw 'Executable startup failed' }
+          $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
+          if (-not $result.frozen -or -not $result.icon -or $result.games -ne 8 -or $result.ror2Unlocks -ne 454 -or $result.covers.PSObject.Properties.Value -contains $false) { throw 'Missing packaged resources' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: UniversalSaveEditor-Windows
+          path: dist/UniversalSaveEditor.exe
+          if-no-files-found: error

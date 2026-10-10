@@ -1,0 +1,47 @@
+[
+  {
+    "game": "bbs",
+    "page": "https://www.khwiki.com/File:Kingdom_Hearts_Birth_by_Sleep_Final_Mix_Boxart_JP.png",
+    "image": "https://www.khwiki.com/images/5/53/Kingdom_Hearts_Birth_by_Sleep_Final_Mix_Boxart_JP.png?ceb40",
+    "bytes": 4473446
+  },
+  {
+    "game": "webfishing",
+    "page": "https://store.steampowered.com/app/3146520/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3146520/library_600x900_2x.jpg",
+    "bytes": 124449
+  },
+  {
+    "game": "maxpayne",
+    "page": "https://store.steampowered.com/app/12140/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/12140/library_600x900_2x.jpg",
+    "bytes": 167561
+  },
+  {
+    "game": "ror2",
+    "page": "https://store.steampowered.com/app/632360/",
+    "image": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/632360/library_600x900_2x.jpg",
+    "bytes": 156195
+  },
+  {
+    "game": "alice",
+    "page": "https://store.steampowered.com/app/19680/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/19680/library_600x900_2x.jpg",
+    "bytes": 388238
+  },
+  {
+    "game": "kh1",
+    "source": "Replacement cover supplied by the repository author",
+    "bytes": 1547957
+  },
+  {
+    "game": "kh2",
+    "source": "Replacement cover supplied by the repository author",
+    "bytes": 2214352
+  },
+  {
+    "game": "recom",
+    "source": "Replacement cover supplied by the repository author",
+    "bytes": 1612759
+  }
+]
