@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 from core import Save, discover, read_limited, replace_current, identify_game, backup_files, restore_backup
 from catalog import GAMES, BY_ID
 from artwork import Artwork
+from editor_layout import organize_fields
 from ror2_unlocks import UNLOCK_IDS
 from version import VERSION
 
@@ -83,6 +84,7 @@ class Window(QMainWindow):
         self.setStyleSheet((ROOT/'theme.qss').read_text(encoding='utf-8'))
         self.files=[];self.save=None;self.path=None;self.inputs={};self.edits={}
         self.exported_state=None;self.slot_index=0;self.filter='all';self.selected_game='kh1'
+        self.editor_view_state={};self.editor_page_game=None
         self.grid_columns=0;self.grid_available_width=0;self._reflow_pending=False
         root=QWidget();self.setCentralWidget(root)
         window=layout(root,True,0,0)
@@ -391,71 +393,118 @@ class Window(QMainWindow):
         if self.save and index>=0:self.slot_index=index;self.render_fields()
 
     def render_fields(self):
+        previous=self.tabs.tabText(self.tabs.currentIndex()) if self.editor_page_game==self.save.game else ''
+        self.editor_page_game=self.save.game
         self.inputs={}
         while self.tabs.count():
             widget=self.tabs.widget(0);self.tabs.removeTab(0);widget.deleteLater()
-        groups={}
-        for field in self.save.slots[self.slot_index].fields:
-            if self.save.game=='webfishing':group='Bait' if field.key.startswith('bait:') else 'Economy'
-            else:group={'0':'Sora','1':'Donald','2':'Goofy'}.get(field.key.split(':')[0],'Economy')
-            group=field.group or group
-            groups.setdefault(group,[]).append(field)
-        preferred=['Economy','Difficulty','Weapons','Skills','Health','Dresses','Memories','Bottles','Snouts','Radula rooms','Story and chapters','Chapter select','Characters','Skins and recolors','Artifacts','Items and equipment','Logs','Newt Altars','Progress','Combat']
-        ordered=sorted(groups,key=lambda name:(preferred.index(name) if name in preferred else len(preferred),name))
-        for name in ordered:
-            fields=groups[name]
-            scroll=QScrollArea();scroll.setWidgetResizable(True)
-            content=QWidget();box=layout(content,True,4,12)
-            box.addWidget(label(name,'section'))
-            box.addWidget(label('Only fields you change will be modified.','muted',True))
-            unlock_fields=[field for field in fields if field.fmt == 'xml-unlock' or field.boolean]
+        for category in organize_fields(self.save.game,self.save.slots[self.slot_index].fields):
+            self.tabs.addTab(self.build_category(category),category.name)
+        for index in range(self.tabs.count()):
+            if self.tabs.tabText(index)==previous:self.tabs.setCurrentIndex(index);break
+        self.update_summary()
+
+    def build_category(self,category):
+        page=QWidget();box=layout(page,True,4,10)
+        scroll=QScrollArea();scroll.setWidgetResizable(True)
+        content=QWidget();sections_box=layout(content,True,0,12)
+        box.addWidget(label(category.name,'section'))
+        box.addWidget(label(category.description,'muted',True))
+        state=self.editor_view_state.setdefault((self.save.game,str(self.path),category.name),{})
+        selections=list(dict.fromkeys(section.selection for section in category.sections))
+        selector=QComboBox(page);selector.setObjectName('sectionSelector')
+        selector.setAccessibleName(category.selector_label+' in '+category.name)
+        if category.selector_label!='Character':selector.addItem('All sections','')
+        for name in selections:selector.addItem(name,name)
+        default='' if category.name in ('Progress','Records') else selections[0]
+        selected=state.get('selection',default)
+        selector.setCurrentIndex(max(0,selector.findData(selected)))
+        if len(selections)>1:
+            controls=QHBoxLayout();controls.addWidget(label(category.selector_label,'muted'))
+            controls.addWidget(selector,1);box.addLayout(controls)
+        else:selector.hide()
+        field_filter=QLineEdit();field_filter.setObjectName('fieldSearch')
+        field_filter.setPlaceholderText('Search the selected section by name or item ID…')
+        field_filter.setAccessibleName('Search '+category.name);field_filter.setClearButtonEnabled(True)
+        field_filter.setText(state.get('query',''));box.addWidget(field_filter)
+        empty=label('No fields match this section and search.','muted');empty.hide();sections_box.addWidget(empty)
+        blocks=[]
+        for section in category.sections:
+            block=QFrame();block.setObjectName('editorSection');section_box=layout(block,True,10,6)
+            header=button('',lambda:None,'sectionToggle');header.setCheckable(True)
+            header.setAccessibleName(section.selection+' · '+section.name)
+            collapsed=state.setdefault('collapsed',{}).get((section.selection,section.name),section.name.endswith(' form'))
+            header.setChecked(not collapsed);section_box.addWidget(header)
+            body=QWidget();body_box=layout(body,True,0,8)
+            unlock_fields=[field for field in section.fields if field.fmt=='xml-unlock' or field.boolean]
             if unlock_fields:
                 actions=QHBoxLayout()
-                actions.addWidget(button('Unlock category' if self.save.game=='ror2' else 'Enable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,1),'primary'))
+                actions.addWidget(button('Unlock section' if self.save.game=='ror2' else 'Enable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,1),'primary'))
                 if self.save.game=='alice':actions.addWidget(button('Disable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,0)))
-                actions.addWidget(button('Restore category',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,None)))
-                actions.addStretch();box.addLayout(actions)
-            field_filter=QLineEdit();field_filter.setObjectName('fieldSearch');field_filter.setPlaceholderText('Search fields or item IDs…')
-            field_filter.setAccessibleName('Search '+name);field_filter.setClearButtonEnabled(True);box.addWidget(field_filter)
-            empty=label('No fields match this search.','muted');empty.hide();box.addWidget(empty)
+                actions.addWidget(button('Restore section',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,None)))
+                actions.addStretch();body_box.addLayout(actions)
             rows=[]
-            for field in fields:
-                row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
-                caption=QVBoxLayout();caption.addWidget(label(field.label))
-                if field.fmt == 'xml-unlock' or field.boolean or field.choices:
-                    caption.addWidget(label(f'Original: {value_text(field,field.value)}  ·  {field.key.removeprefix("unlock:")}','small',True))
-                else:
-                    caption.addWidget(label(f'Original: {number_text(field.value)}  ·  Range: {field.minimum:,}–{field.maximum:,}','small',True))
-                if field.note:caption.addWidget(label(field.note,'small',True))
-                line.addLayout(caption,1)
-                key=(self.slot_index,field.key)
-                if field.fmt == 'xml-unlock' or field.boolean:
-                    entry=QCheckBox('Unlocked' if self.save.game=='ror2' else 'Enabled')
-                    entry.setChecked(bool(int(self.edits.get(key,field.value))))
-                    entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
-                    self.mark_unlock(entry,field,entry.isChecked())
-                elif field.choices:
-                    entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(190)
-                    entry.setCurrentIndex(int(self.edits.get(key,field.value)))
-                    entry.currentIndexChanged.connect(lambda value,k=key,f=field,e=entry:self.choice_changed(k,f,e,value))
-                    self.mark_unlock(entry,field,entry.currentIndex())
-                else:
-                    entry=QLineEdit(self.edits.get(key,number_text(field.value)))
-                    entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
-                    entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
-                    self.mark_entry(entry,field,entry.text())
-                entry.setAccessibleName(field.label)
-                self.inputs[key]=entry;line.addWidget(entry)
-                box.addWidget(row);rows.append((field.label.casefold()+' '+field.key.casefold(),row))
-            def filter_rows(text,rs=rows,message=empty):
-                query=text.casefold().strip()
-                matches=0
-                for searchable,row in rs:
-                    visible=query in searchable;row.setVisible(visible);matches+=visible
-                message.setVisible(not matches)
-            field_filter.textChanged.connect(filter_rows)
-            box.addStretch();scroll.setWidget(content);self.tabs.addTab(scroll,name)
-        self.update_summary()
+            for field in section.fields:
+                row=self.build_field_row(field)
+                body_box.addWidget(row)
+                searchable=' '.join((field.label,field.key,section.name,section.selection)).casefold()
+                rows.append((searchable,row))
+            section_box.addWidget(body);sections_box.addWidget(block)
+            blocks.append((section,block,header,body,rows))
+
+        def filter_sections():
+            query=field_filter.text().casefold().strip();selection=selector.currentData()
+            state['query']=field_filter.text();state['selection']=selection
+            total=0
+            for section,block,header,body,rows in blocks:
+                eligible=not selection or selection==section.selection
+                count=0
+                for searchable,row in rows:
+                    visible=eligible and query in searchable
+                    row.setVisible(visible);count+=visible
+                block.setVisible(bool(count));total+=count
+                header.setText(('▾  ' if header.isChecked() or query else '▸  ')+section.name+f'  ·  {count}')
+                body.setVisible(header.isChecked() or bool(query))
+            empty.setVisible(not total)
+        def toggle_section(checked,section):
+            state['collapsed'][(section.selection,section.name)]=not checked
+            filter_sections()
+        for section,block,header,body,rows in blocks:
+            header.toggled.connect(lambda checked,s=section:toggle_section(checked,s))
+        selector.currentIndexChanged.connect(lambda:filter_sections())
+        field_filter.textChanged.connect(lambda:filter_sections())
+        filter_sections()
+        sections_box.addStretch();scroll.setWidget(content);box.addWidget(scroll,1)
+        return page
+
+    def build_field_row(self,field):
+        row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
+        caption=QVBoxLayout();caption.addWidget(label(field.label))
+        if field.fmt == 'xml-unlock' or field.boolean or field.choices:
+            caption.addWidget(label(f'Original: {value_text(field,field.value)}  ·  {field.key.removeprefix("unlock:")}','small',True))
+        else:
+            caption.addWidget(label(f'Original: {number_text(field.value)}  ·  Range: {field.minimum:,}–{field.maximum:,}','small',True))
+        if field.note:caption.addWidget(label(field.note,'small',True))
+        line.addLayout(caption,1)
+        key=(self.slot_index,field.key)
+        if field.fmt == 'xml-unlock' or field.boolean:
+            entry=QCheckBox('Unlocked' if self.save.game=='ror2' else 'Enabled')
+            entry.setChecked(bool(int(self.edits.get(key,field.value))))
+            entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
+            self.mark_unlock(entry,field,entry.isChecked())
+        elif field.choices:
+            entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(190)
+            entry.setCurrentIndex(int(self.edits.get(key,field.value)))
+            entry.currentIndexChanged.connect(lambda value,k=key,f=field,e=entry:self.choice_changed(k,f,e,value))
+            self.mark_unlock(entry,field,entry.currentIndex())
+        else:
+            entry=QLineEdit(self.edits.get(key,number_text(field.value)))
+            entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
+            entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
+            self.mark_entry(entry,field,entry.text())
+        entry.setAccessibleName(field.label)
+        self.inputs[key]=entry;line.addWidget(entry)
+        return row
 
     def set_unlock_fields(self,fields,value):
         for field in fields:

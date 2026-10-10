@@ -1,0 +1,133 @@
+"""Game-specific editor navigation, independent of save-format parsing.
+
+SPDX-License-Identifier: GPL-3.0-or-later
+"""
+from dataclasses import dataclass, field
+
+
+@dataclass
+class Section:
+    name: str
+    fields: list = field(default_factory=list)
+    selection: str = ''
+
+
+@dataclass
+class Category:
+    name: str
+    description: str
+    selector_label: str
+    sections: list = field(default_factory=list)
+
+
+DESCRIPTIONS = {
+    'Progress': 'Currency, progression, and save-wide settings.',
+    'Characters': 'Choose a character to edit their attributes and progression.',
+    'Character': 'Alice\'s health, weapons, and abilities.',
+    'Equipment': 'Fishing equipment, upgrades, and bait.',
+    'Collection': 'Browse your items and collected records by section.',
+    'Unlocks': 'Choose a section to manage its unlocks.',
+    'Records': 'Profile statistics, run records, and combat totals.',
+}
+
+
+def kh2_inventory_section(key):
+    """Group the named IDs already exposed by the KH II adapter."""
+    identifier = int(key.split(':')[1])
+    if identifier in (*range(1, 8), 126, *range(274, 280)):
+        return 'Items'
+    if identifier in (41, 42, 43):
+        return 'Weapons'
+    if identifier in (*range(285, 289), *range(290, 294), *range(295, 299), *range(300, 308)):
+        return 'Equipment'
+    if identifier in (*range(280, 284), *range(316, 320)):
+        return 'Materials'
+    if identifier in (*range(21, 28), *range(29, 33), 87, 88, 161, 162, *range(225, 238)):
+        return 'Special items'
+    return 'Other entries'
+
+
+def organize_fields(game, fields):
+    """Assign every field exactly once, with at most three top-level categories."""
+    order = {
+        'kh1': ('Progress', 'Characters', 'Collection'),
+        'kh2': ('Progress', 'Characters', 'Collection'),
+        'webfishing': ('Progress', 'Equipment', 'Collection'),
+        'ror2': ('Progress', 'Unlocks', 'Records'),
+        'alice': ('Progress', 'Character', 'Collection'),
+    }.get(game, ('Progress', 'Collection'))
+    categories = {name: Category(name, DESCRIPTIONS[name],
+                  'Character' if name == 'Characters' else 'Section') for name in order}
+
+    for item in fields:
+        group = item.group or 'Economy'
+        category, section, selection = 'Progress', group, group
+        if game in ('kh1', 'kh2'):
+            if item.key.startswith('inventory:'):
+                category = 'Collection'
+                if game == 'kh2':
+                    section = kh2_inventory_section(item.key)
+                else:
+                    section = group
+                selection = section
+            elif item.key.startswith('form:'):
+                category, selection = 'Characters', 'Sora'
+                section = item.label.split(' · ')[0] + ' form'
+            elif item.key.startswith('character:') or item.key.split(':')[0] in ('0', '1', '2'):
+                character = int(item.key.split(':')[1] if game == 'kh2' else item.key.split(':')[0])
+                selection = ('Sora', 'Donald', 'Goofy')[character]
+                category, section = 'Characters', 'Attributes'
+            elif item.key.startswith('drive_'):
+                category, section, selection = 'Characters', 'Drive Gauge', 'Sora'
+            else:
+                section = {'Difficulty': 'Difficulty', 'Economy': 'Currency', 'Progress': 'Level and experience'}.get(group, group)
+                selection = section
+        elif game == 'webfishing':
+            if item.key.startswith('bait:') or group in ('Bait', 'Upgrades'):
+                category = 'Equipment'
+                section = 'Bait' if item.key.startswith('bait:') or group == 'Bait' else 'Rod and buddy upgrades'
+            elif group in ('Inventory', 'Journal'):
+                category, section = 'Collection', 'Items' if group == 'Inventory' else 'Fishing journal'
+            else:
+                section = 'Currency' if group == 'Economy' else 'Level and fishing progress'
+            selection = section
+        elif game == 'ror2':
+            if item.fmt == 'xml-unlock':
+                category, section = 'Unlocks', group
+            elif group in ('Progress', 'Combat') or item.key.startswith('stat:'):
+                category, section = 'Records', {'Progress': 'Run records', 'Combat': 'Combat statistics', 'Economy': 'Economy statistics'}.get(group, group)
+            else:
+                section = 'Currency'
+            selection = section
+        elif game == 'alice':
+            if group in ('Health', 'Weapons', 'Skills', 'Dresses', 'DLC'):
+                category = 'Character'
+                section = {'Skills': 'Abilities', 'Dresses': 'Dress abilities', 'DLC': 'DLC weapon flags'}.get(group, group)
+            elif group in ('Memories', 'Bottles', 'Snouts', 'Radula rooms', 'Enemy journal', 'Cinematics'):
+                category, section = 'Collection', group
+            else:
+                section = {'Economy': 'Currency', 'Story and chapters': 'Story completion'}.get(group, group)
+            selection = section
+
+        target = categories[category]
+        existing = next((entry for entry in target.sections if (entry.name, entry.selection) == (section, selection)), None)
+        if existing is None:
+            existing = Section(section, selection=selection)
+            target.sections.append(existing)
+        existing.fields.append(item)
+
+    # Stable, useful first sections, regardless of the serialization order.
+    priorities = ('Currency', 'Difficulty', 'Level and experience', 'Level and fishing progress',
+                  'Story completion', 'Chapter select', 'Statistics', 'Attributes', 'Drive Gauge',
+                  'Health', 'Weapons', 'Abilities', 'Dress abilities', 'DLC weapon flags',
+                  'Items', 'Inventory', 'Materials', 'Accessories', 'Bait', 'Rod and buddy upgrades',
+                  'Characters', 'Skills', 'Skins and recolors', 'Artifacts', 'Items and equipment',
+                  'Memories', 'Bottles', 'Snouts', 'Radula rooms', 'Enemy journal', 'Cinematics')
+    for category in categories.values():
+        section_order = ('Items', 'Inventory', 'Materials', 'Weapons', 'Accessories', 'Equipment', 'Special items', 'Other entries',
+                         'Fishing journal', 'Memories', 'Bottles', 'Snouts', 'Radula rooms',
+                         'Enemy journal', 'Cinematics') if category.name == 'Collection' else priorities
+        category.sections.sort(key=lambda section: (
+            ('Sora', 'Donald', 'Goofy').index(section.selection) if category.name == 'Characters' else 0,
+            section_order.index(section.name) if section.name in section_order else len(section_order)))
+    return [category for category in categories.values() if category.sections]

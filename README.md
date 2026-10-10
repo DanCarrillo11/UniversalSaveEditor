@@ -3,8 +3,9 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.9.0-alpha** is a pre-release. All available editors now save directly to the
-opened file, keeping its name and location. No automatic backups are created.
+**v0.10.0-alpha** is a pre-release. Editors now use a few game-specific categories
+with section selectors and foldable blocks. All available editors save directly
+to the opened file, keeping its name and location. No automatic backups are created.
 
 ## Download and run
 
@@ -19,7 +20,10 @@ executable included at its root. Startup can take a few seconds.
 - Responsive game library with full cover art, search, filters, and sorting.
 - Click a compatible cover to open its detected save directly.
 - Automatic discovery, manual file selection, and drag and drop.
-- Categories and field search, including inventory IDs and unlocks.
+- Up to three main categories per editor, with section and character selectors.
+- Foldable sections and field search, including inventory IDs and unlocks.
+- Navigation and search stay visible while scrolling; pending edits survive
+  character, category, and slot changes.
 - Change review, input validation, and preservation of unrelated save data.
 - Apply directly to the opened save without exports, renaming, or automatic backups.
 - Browse and restore existing backups without creating additional files.
@@ -59,6 +63,21 @@ Risk of Rain 2 DLC content still requires ownership of the corresponding DLC.
 WEBFISHING level and XP are independent and do not automatically grant rewards.
 
 ## Editing a save
+
+| Editor | Main categories |
+|---|---|
+| KH Final Mix / KH II Final Mix | Progress, Characters, Collection |
+| WEBFISHING | Progress, Equipment, Collection |
+| Risk of Rain 2 | Progress, Unlocks, Records |
+| Alice persistent profile | Progress, Character, Collection |
+| Alice configuration | Progress |
+
+Characters uses one selector for Sora, Donald, and Goofy. KH II's Drive Gauge and
+Drive Forms are sections within Sora, rather than additional tabs. Collection,
+Equipment, Unlocks, and Alice's Character category use section selectors to
+browse related controls. Fold or expand a section by clicking its heading.
+Section-wide actions only affect that section. This reorganizes existing fields
+and does not add new characters or change game compatibility.
 
 1. Close the game, then click its cover or use **Open save**.
 2. Choose a slot if the game has several. Search a category to find a field.

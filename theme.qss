@@ -37,6 +37,11 @@ QFrame#panel { background: #191f2a; border: 1px solid #303848; border-radius: 10
 QFrame#panel QLabel { background: transparent; border: none; }
 QFrame#topbar { border-bottom: 1px solid #293241; }
 QFrame#field { border-bottom: 1px solid #28313f; }
+QFrame#editorSection { border: 1px solid #293c50; border-radius: 8px; background: #131f2b; }
+QFrame#editorSection QWidget { background: transparent; }
+QFrame#editorSection QLineEdit, QFrame#editorSection QComboBox { background: #151c27; }
+QPushButton#sectionToggle { text-align: left; background: #192938; border: none; padding: 10px 12px; color: #d6e7fa; }
+QPushButton#sectionToggle:hover { background: #22394f; }
 QPushButton { background: #222b3a; border: 1px solid #364154; border-radius: 7px; padding: 10px 15px; font-weight: 600; }
 QPushButton:hover { background: #2d3a4d; border-color: #657b91; }
 QPushButton:pressed { background: #17202c; }

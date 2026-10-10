@@ -1,40 +1,41 @@
-# UniversalSaveEditor v0.9.0-alpha
+# UniversalSaveEditor v0.10.0-alpha
 
-Save changes directly to the opened file for every available editor, including
-Kingdom Hearts Final Mix and Kingdom Hearts II Final Mix on Steam.
+A simpler editor layout: a few main categories for each game, with section
+selectors and foldable blocks inside them.
 
-- Review your changes and select **Apply to active save**.
-- Keep the same filename and location. No `.edited` export, destination dialog,
-  manual renaming, or installation of a separate save is needed.
-- No automatic backups are created when editing or restoring an existing backup.
-- Explicit integrity repair updates the opened KH save and refreshes its status.
-- Keep the selected KH slot after applying and reload its updated values.
-- Preserve validation, checksum updates, verified atomic writes, and detection
-  of files changed by the game while editing.
+| Editor | Main categories |
+|---|---|
+| KH Final Mix / KH II Final Mix | Progress, Characters, Collection |
+| WEBFISHING | Progress, Equipment, Collection |
+| Risk of Rain 2 | Progress, Unlocks, Records |
+| Alice persistent profile | Progress, Character, Collection |
+| Alice configuration | Progress |
+
+- Choose Sora, Donald, or Goofy within Characters instead of separate tabs.
+- Find KH II's Drive Gauge and Drive Forms inside Sora.
+- Browse inventory, equipment, collectibles, or unlock types with a section selector.
+- Fold or expand sections. Search and navigation remain visible while scrolling.
+- Keep pending edits when changing character, category, or save slot.
+- Keep the selected category, character, search, and fold state when refreshing.
+- Batch actions apply only to their own section; hidden invalid edits still
+  block saving and all pending edits appear in review.
 
 ## Download and run
 
-Download UniversalSaveEditor.exe and open it directly. No installer, Python,
-or command-line setup is required. **Code → Download ZIP** also includes the
-executable. Close the game, open its save, edit values, then review and apply.
-If an integrity warning appears, explicitly enable repair before applying.
+Download UniversalSaveEditor.exe and double-click it. No installer, Python,
+or command-line setup is required. Code → Download ZIP also includes the exe.
+Close the game, open its save, then use Review and apply → Apply to active save.
+Changes update the opened file directly. No automatic backup or .edited copy
+is created. Existing integrity failures still require explicit repair.
 
-Applying overwrites the opened file. The application does not automatically
-keep its previous version. **Restore existing backup** works with backups you
-already have and does not create another backup.
+## Validation and scope
 
-## Validation and limits
+62 automated tests cover save editing, direct writes, UI behavior, complete field
+coverage, character and slot navigation, Drive Form placement, section actions,
+search, and hidden invalid edits. The release build checks packaged startup.
 
-58 automated tests cover the save editors and interface, including direct KH
-writes, CRC repair, selected-slot preservation, cancellation, failed writes,
-concurrent game saves, and the absence of backup or exported files.
-The release build verifies executable startup and packaged resources.
+This update reorganizes existing features; it does not add new characters or
+new game compatibility. KH II and Alice remain experimental, and in-game
+validation of KH difficulty changes is still pending.
 
-Actual in-game behavior after changing KH difficulty remains unverified. Changing
-the mode does not recreate starting stats, bonuses, or abilities. KH II requires
-a populated saved slot and remains experimental, as does Alice. All previous
-editing features are included; Alice checkpoint editing and outfit selection
-remain outside its scope.
-
-See docs/KH_DIFFICULTY.md and docs/ALICE_FORMAT.md for mapped formats and limits.
 SHA256SUMS.txt contains the hash of the downloadable executable.

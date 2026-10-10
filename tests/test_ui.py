@@ -11,6 +11,8 @@ from core import Save
 from catalog import BY_ID
 from test_core import fishing, kingdom, kingdom2, alice, ror2
 from test_alice import configuration
+import test_extended
+from editor_layout import organize_fields
 
 class InterfaceTests(unittest.TestCase):
     @classmethod
@@ -135,7 +137,7 @@ class InterfaceTests(unittest.TestCase):
 
     def test_inventory_search_keeps_pending_changes_and_editor_focus(self):
         w=self.window;w.load('kh1',self.kh)
-        inventory=next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)=='Items')
+        inventory=next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)=='Collection')
         w.tabs.setCurrentIndex(inventory);tab=w.tabs.currentWidget()
         entry=w.inputs[(0,'inventory:1')];entry.setText('20')
         search=tab.findChild(QLineEdit,'fieldSearch');search.setText('Potion')
@@ -167,7 +169,7 @@ class InterfaceTests(unittest.TestCase):
         w.file_combo.setCurrentIndex(w.file_combo.findData(config))
         w.file_combo.activated.emit(w.file_combo.currentIndex())
         self.assertEqual(w.path,config)
-        self.assertEqual(w.tabs.tabText(0),'Difficulty')
+        self.assertEqual(w.tabs.tabText(0),'Progress')
         w.inputs[(0,'current_difficulty')].setCurrentIndex(0)
         def apply_dialog():
             from PySide6.QtWidgets import QTextEdit
@@ -255,5 +257,73 @@ class InterfaceTests(unittest.TestCase):
             available=w.library_scroll.viewport().width()
             for card in w.game_cards.values():
                 self.assertLessEqual(card.geometry().right(),available)
+
+    def test_game_categories_preserve_every_existing_control(self):
+        fixtures=(
+            ('kh1',kingdom(),['Progress','Characters','Collection']),
+            ('kh2',kingdom2(),['Progress','Characters','Collection']),
+            ('webfishing',test_extended.ExtendedTests().fixture(),['Progress','Equipment','Collection']),
+            ('ror2',ror2(),['Progress','Unlocks','Records']),
+            ('alice',alice(),['Progress','Character','Collection']),
+            ('alice',configuration(),['Progress']),
+        )
+        for number,(game,raw,expected) in enumerate(fixtures):
+            with self.subTest(game=game,number=number):
+                path=self.root/f'categories-{number}.save';path.write_bytes(raw)
+                w=self.window;w.load(game,path)
+                self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],expected)
+                original=w.save.slots[0].fields
+                mapped=[field.key for category in organize_fields(game,original) for section in category.sections for field in section.fields]
+                self.assertCountEqual(mapped,[field.key for field in original])
+                self.assertEqual(len(mapped),len(set(mapped)))
+                self.assertEqual(set(w.inputs),{(0,field.key) for field in original})
+
+    def test_character_selector_and_slot_changes_keep_edits_and_view(self):
+        w=self.window;w.load('kh1',self.kh)
+        w.tabs.setCurrentIndex(1)
+        selector=w.tabs.currentWidget().findChild(QComboBox,'sectionSelector')
+        sora=w.inputs[(0,'0:strength')];donald=w.inputs[(0,'1:strength')]
+        sora.setText('120')
+        selector.setCurrentIndex(selector.findData('Donald'))
+        self.assertTrue(sora.parentWidget().isHidden())
+        self.assertFalse(donald.parentWidget().isHidden())
+        donald.setText('115')
+        w.change_slot(1)
+        self.assertEqual(w.tabs.tabText(w.tabs.currentIndex()),'Characters')
+        self.assertEqual(w.tabs.currentWidget().findChild(QComboBox,'sectionSelector').currentData(),'Donald')
+        w.inputs[(1,'1:strength')].setText('110')
+        w.change_slot(0)
+        self.assertEqual(w.inputs[(0,'0:strength')].text(),'120')
+        self.assertEqual(w.inputs[(0,'1:strength')].text(),'115')
+        self.assertEqual(w.validated_changes(),{(0,'0:strength'):120,(0,'1:strength'):115,(1,'1:strength'):110})
+
+    def test_drive_forms_are_inside_sora_and_hidden_for_companions(self):
+        path=self.root/'KHIIFM_WW.png';path.write_bytes(kingdom2())
+        w=self.window;w.load('kh2',path);w.tabs.setCurrentIndex(1)
+        tab=w.tabs.currentWidget();selector=tab.findChild(QComboBox,'sectionSelector')
+        form=w.inputs[(0,'form:0:level')]
+        header=next(b for b in tab.findChildren(QPushButton,'sectionToggle') if 'Valor form' in b.text())
+        self.assertFalse(header.isChecked())
+        header.click();self.assertTrue(header.isChecked())
+        form.setText('5')
+        selector.setCurrentIndex(selector.findData('Donald'))
+        self.assertTrue(form.parentWidget().isHidden())
+        selector.setCurrentIndex(selector.findData('Sora'))
+        self.assertFalse(form.parentWidget().isHidden())
+        self.assertEqual(form.text(),'5')
+        self.assertEqual(w.validated_changes(),{(0,'form:0:level'):5})
+
+    def test_hidden_invalid_field_still_blocks_apply_and_section_actions_are_scoped(self):
+        w=self.window;w.load('ror2',self.ror);w.tabs.setCurrentIndex(1)
+        tab=w.tabs.currentWidget();selector=tab.findChild(QComboBox,'sectionSelector')
+        selector.setCurrentIndex(selector.findData('Skills'))
+        block=next(b for b in tab.findChildren(QFrame,'editorSection') if not b.isHidden())
+        next(b for b in block.findChildren(QPushButton) if b.text()=='Unlock section').click()
+        self.assertTrue(w.edits)
+        self.assertTrue(all(key.startswith('unlock:Skills.') for index,key in w.edits))
+        w.inputs[(0,'coins')].setText('-1')
+        self.assertFalse(w.review_button.isEnabled())
+        selector.setCurrentIndex(selector.findData('Characters'))
+        self.assertFalse(w.review_button.isEnabled())
 
 if __name__=='__main__':unittest.main()

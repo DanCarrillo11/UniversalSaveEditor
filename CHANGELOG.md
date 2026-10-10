@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.10.0-alpha
+
+- Replace the long row of field-group tabs with up to three categories per game.
+- KH I / KH II: Progress, Characters, Collection. Select Sora, Donald, or Goofy
+  within Characters; KH II Drive Gauge and foldable Drive Forms belong to Sora.
+- WEBFISHING: Progress, Equipment, Collection. Risk of Rain 2: Progress, Unlocks,
+  Records. Alice: Progress, Character, Collection; configuration difficulty is
+  grouped under Progress.
+- Add section selectors, foldable sections, and fixed navigation/search controls
+  above the field list. Batch actions affect only their own section.
+- Group named KH II inventory entries; retain all other entries in their own
+  section without changing the save parser or available fields.
+- Preserve pending edits, the selected category/character, and search/fold state
+  when switching slots or refreshing the editor. Hidden invalid edits still
+  block saving and all pending edits remain in the review.
+- Add navigation regression coverage and retain direct saving without backups.
+
 ## v0.9.0-alpha
 
 - Apply edits directly to the opened file for every available editor, including
