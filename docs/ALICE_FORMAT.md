@@ -65,7 +65,7 @@ also lowers the historical minimum when needed. An explicit minimum above the
 current difficulty is rejected. All remaining configuration bytes are preserved.
 
 **Experimental.** Automated tests verify preservation, variable-length edits,
-new records, coupled fields, malformed input, UI controls, and backups. In-game
+new records, coupled fields, malformed input, UI controls, and direct save updates. In-game
 validation of all categories is still pending.
 
 - The previous alpha's Teeth offset selected the Ruin-defeat statistic. Walking
@@ -82,5 +82,5 @@ validation of all categories is still pending.
 - Statistics do not directly grant Steam achievements; some are updated by the
   game on its next save.
 
-Close Alice before applying. Keep the exact original backup until in-game checks
-have succeeded.
+Close Alice before applying. Changes update the opened profile or configuration
+directly, without creating an automatic backup.

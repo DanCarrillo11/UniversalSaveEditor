@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.9.0-alpha
+
+- Apply edits directly to the opened file for every available editor, including
+  Kingdom Hearts Final Mix and Kingdom Hearts II Final Mix.
+- Keep the original filename and location; remove the export destination dialog
+  and automatic backup creation from editing and restoration.
+- Retain input validation, explicit integrity repair, checksum updates, verified
+  atomic writes, and checks for changes made by the game while editing.
+- Keep the selected KH slot after saving and refresh its values and CRC status.
+- Update the interface and guide to describe direct saving without backups.
+- Test direct KH CRC repair, slot preservation, cancellation, failed writes,
+  concurrent game saves, and the absence of extra output files.
+
 ## v0.8.1-alpha
 
 - Widen mode selectors so Final Mix (Standard) is displayed in full.

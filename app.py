@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QTabWidget, QCheckBox, QMessageBox, QFileDialog, QDialog, QTextEdit,
     QLayout,
 )
-from core import Save, discover, read_limited, export_copy, replace_current, identify_game, backup_files, restore_backup
+from core import Save, discover, read_limited, replace_current, identify_game, backup_files, restore_backup
 from catalog import GAMES, BY_ID
 from artwork import Artwork
 from ror2_unlocks import UNLOCK_IDS
@@ -91,7 +91,7 @@ class Window(QMainWindow):
         icon=QLabel();icon.setPixmap(QPixmap(str(ROOT/'assets/memory-card-icon.png')).scaled(42,42,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation));icon.setFixedSize(48,48)
         head.addWidget(icon)
         brand=QVBoxLayout();brand.setSpacing(1);brand.addWidget(label('UniversalSaveEditor','brand'));brand.addWidget(label('Your games. Your progress. One editor.','muted'))
-        head.addLayout(brand);head.addStretch();head.addWidget(label('LOCAL  •  PRIVATE  •  BACKED UP','headerStatus'))
+        head.addLayout(brand);head.addStretch();head.addWidget(label('LOCAL  •  PRIVATE  •  DIRECT SAVING','headerStatus'))
         window.addWidget(header)
         shell=QHBoxLayout();shell.setContentsMargins(0,0,0,0);shell.setSpacing(0);window.addLayout(shell,1)
         side=QFrame();side.setObjectName('sidebar');side.setFixedWidth(208)
@@ -106,8 +106,8 @@ class Window(QMainWindow):
         for name in dict.fromkeys(game.family for game in GAMES):
             nav.addWidget(button(name.title(),lambda checked=False,n=name:self.collection(n),'nav'))
         nav.addStretch()
-        nav.addWidget(label('SAFE EDITING','eyebrow'))
-        nav.addWidget(label('Changes stay local. A backup is created before applying them.','muted',True))
+        nav.addWidget(label('LOCAL EDITING','eyebrow'))
+        nav.addWidget(label('Apply updates the opened save directly. No automatic backups.','muted',True))
         nav.addSpacing(8)
         nav.addWidget(button('?   Guide and about',self.open_guide,'nav'))
         nav.addWidget(label('v'+VERSION+'  /  PRE-RELEASE','small'))
@@ -154,7 +154,7 @@ class Window(QMainWindow):
         self.editor_eyebrow=label('SAVE EDITOR','eyebrow');self.editor_title=label('Your save','title')
         titles.addWidget(self.editor_eyebrow);titles.addWidget(self.editor_title);top.addLayout(titles);top.addStretch()
         top.addWidget(button('Open another…',self.open_file));outer.addLayout(top)
-        self.backup_button=button('Backups and restore',self.open_backups)
+        self.backup_button=button('Restore existing backup',self.open_backups)
         top.addWidget(self.backup_button)
         self.editor_subtitle=label('','muted',True);outer.addWidget(self.editor_subtitle)
         self.file_combo=QComboBox();self.file_combo.setAccessibleName('Save file');self.file_combo.activated.connect(self.select_file)
@@ -162,7 +162,7 @@ class Window(QMainWindow):
         self.slot_combo=QComboBox();self.slot_combo.setAccessibleName('Save slot');self.slot_combo.activated.connect(self.change_slot)
         outer.addWidget(self.slot_combo)
         self.warning=label('','warning',True);outer.addWidget(self.warning)
-        self.repair=QCheckBox('Repair the integrity check when exporting the copy')
+        self.repair=QCheckBox('Repair the integrity check when applying changes')
         self.repair.toggled.connect(self.update_summary);outer.addWidget(self.repair)
         body=QHBoxLayout();body.setSpacing(22)
         self.tabs=QTabWidget();self.tabs.setUsesScrollButtons(True);body.addWidget(self.tabs,1)
@@ -173,9 +173,9 @@ class Window(QMainWindow):
         scroll=QScrollArea();scroll.setWidgetResizable(True)
         self.summary_content=QWidget();self.summary_box=layout(self.summary_content,True,0,10)
         scroll.setWidget(self.summary_content);summary.addWidget(scroll,1)
-        self.save_steps=label('01  Review values\n02  Save your changes\n03  Keep your backup','small',True)
+        self.save_steps=label('01  Review values\n02  Apply to the opened save\n03  Return to the game','small',True)
         summary.addWidget(self.save_steps)
-        self.review_button=button('Review and export  →',self.review,'primary');summary.addWidget(self.review_button)
+        self.review_button=button('Review and apply  →',self.review,'primary');summary.addWidget(self.review_button)
         self.reset_button=button('Reset changes',self.reset);summary.addWidget(self.reset_button)
         body.addWidget(side);outer.addLayout(body,1)
         self.install_note=label('','small',True);outer.addWidget(self.install_note)
@@ -363,12 +363,8 @@ class Window(QMainWindow):
         self.editor_title.setText(gameinfo.title)
         self.editor_eyebrow.setText('EDITOR / '+gameinfo.subtitle.upper())
         self.editor_subtitle.setText(gameinfo.description)
-        if game in ('webfishing','ror2','alice'):
-            self.review_button.setText('Review and apply  →')
-            self.install_note.setText('Apply replaces the active file after preserving an exact backup beside it.')
-        else:
-            self.review_button.setText('Review and export  →')
-            self.install_note.setText('Export creates an edited save and an original backup. It does not install the copy in the game.')
+        self.review_button.setText('Review and apply  →')
+        self.install_note.setText('Apply updates the opened file in its current location and keeps its name. No automatic backup is created. Close the game before applying.')
         self.file_combo.blockSignals(True);self.file_combo.clear()
         paths=[p for g,p in self.files if g==game]
         if self.path not in paths:paths.append(self.path)
@@ -380,11 +376,10 @@ class Window(QMainWindow):
         self.warning.setText('\n'.join(notices));self.warning.setVisible(bool(notices))
         self.repair.blockSignals(True);self.repair.setChecked(False);self.repair.setVisible(bool(save.warnings));self.repair.blockSignals(False)
         self.editor_nav.setEnabled(True)
-        self.save_steps.setText('01  Review values\n02  Apply to active save\n03  Keep your backup' if game in ('webfishing','ror2','alice') else '01  Review values\n02  Export a separate copy\n03  Keep your backup')
         if gameinfo.experimental:
             self.install_note.setText(self.install_note.text()+' Experimental support: in-game validation is still pending.')
         self.render_fields();self.show_editor()
-        self.statusBar().showMessage(f'{self.path.name} · Original preserved · Editing in memory')
+        self.statusBar().showMessage(f'{self.path.name} · Changes pending until applied')
         return True
 
     def select_file(self,index):
@@ -520,7 +515,7 @@ class Window(QMainWindow):
         if len(visible_edits)>80:
             self.summary_box.addWidget(label(f'+ {len(visible_edits)-80} more changes','muted',True))
         if not count:self.summary_box.addWidget(label('Your edits will appear here.','muted',True))
-        if self.repair.isChecked():self.summary_box.addWidget(label('The CRC will be repaired in the copy.','success',True))
+        if self.repair.isChecked():self.summary_box.addWidget(label('The CRC will be repaired in the opened save.','success',True))
         valid=True
         try:self.validated_changes()
         except ValueError as error:
@@ -540,17 +535,16 @@ class Window(QMainWindow):
         try:output=self.save.patched(self.validated_changes(),repair_crc=self.repair.isChecked())
         except ValueError as error:
             QMessageBox.warning(self,'Review your edits',str(error));return
-        direct=self.save.game in ('webfishing','ror2','alice')
-        dialog=QDialog(self);dialog.setWindowTitle('Review and apply' if direct else 'Review and export');dialog.resize(650,550)
+        dialog=QDialog(self);dialog.setWindowTitle('Review and apply');dialog.resize(650,550)
         box=layout(dialog,True,24,16)
         box.addWidget(label('ONE LAST LOOK','eyebrow'));box.addWidget(label('Your edited save','title'))
-        box.addWidget(label('The active save will be replaced after an exact backup is created.' if direct else 'A separate edited file and an exact original backup will be created.','muted',True))
+        box.addWidget(label(f'Changes will be saved directly to {self.path.name}. No automatic backup is created.','muted',True))
         text=QTextEdit();text.setReadOnly(True)
         lines=[]
         for (index,key),value in self.validated_changes().items():
             field=next(f for f in self.save.slots[index].fields if f.key==key)
             lines.append(f'{self.save.slots[index].name}\n{field.label}: {value_text(field,field.value)} → {value_text(field,value)}')
-        if self.repair.isChecked():lines.append('Repair the save block CRC in the copy.')
+        if self.repair.isChecked():lines.append('Repair the save block CRC in the opened save.')
         text.setPlainText('\n\n'.join(lines));box.addWidget(text,1)
         if self.save.game=='alice':
             updated=Save(output,'alice')
@@ -564,34 +558,27 @@ class Window(QMainWindow):
             if automatic:
                 text.setPlainText(text.toPlainText()+'\n\nAutomatic related changes\n'+'\n'.join(automatic))
             box.addWidget(label('Related state is synchronized automatically when affected; automatic field changes are listed above.','small',True))
-        box.addWidget(label('Loading edited copies in each game still requires validation.','small',True))
+        if BY_ID[self.save.game].experimental:
+            box.addWidget(label('Experimental support: in-game validation is still pending.','small',True))
         actions=QHBoxLayout();actions.addWidget(button('Back',dialog.reject));actions.addStretch()
         def write():
-            if direct:
-                try:backup=replace_current(self.path,self.save.raw,output)
-                except (ValueError,OSError) as error:
-                    QMessageBox.warning(dialog,'Could not apply changes',str(error));return
-                self.exported_state=self.state_signature();dialog.accept()
-                QMessageBox.information(self,'Changes applied',f'Active save replaced:\n{self.path}\n\nOriginal backup:\n{backup}')
-                self.load(self.save.game,self.path)
-                self.statusBar().showMessage(f'Changes applied to {BY_ID[self.save.game].title} · Original backup preserved')
-                return
-            filename,_=QFileDialog.getSaveFileName(dialog,'Export copy',str(self.path.parent/(self.path.stem+'.edited'+self.path.suffix)),f'Save file (*{self.path.suffix})')
-            if not filename:return
-            try:backup=export_copy(self.path,self.save.raw,output,filename)
+            try:replace_current(self.path,self.save.raw,output)
             except (ValueError,OSError) as error:
-                QMessageBox.warning(dialog,'Could not export',str(error));return
+                QMessageBox.warning(dialog,'Could not apply changes',str(error));return
+            slot_index=self.slot_index
             self.exported_state=self.state_signature();dialog.accept()
-            self.statusBar().showMessage('Copy exported and verified · Original unchanged')
-            QMessageBox.information(self,'Copy ready',f'Edited save:\n{filename}\n\nOriginal backup:\n{backup}\n\nSee the guide before loading it in the game.')
-        actions.addWidget(button('Apply to active save' if direct else 'Choose destination and export',write,'primary'));box.addLayout(actions)
+            self.load(self.save.game,self.path)
+            self.slot_combo.setCurrentIndex(slot_index);self.change_slot(slot_index)
+            self.statusBar().showMessage(f'Changes applied to {BY_ID[self.save.game].title} · Save updated and verified')
+            QMessageBox.information(self,'Changes applied',f'Save updated:\n{self.path}')
+        actions.addWidget(button('Apply to active save',write,'primary'));box.addLayout(actions)
         dialog.exec()
 
     def open_backups(self):
         if not self.save:return
-        dialog=QDialog(self);dialog.setWindowTitle('Backups and restore');dialog.resize(720,440)
+        dialog=QDialog(self);dialog.setWindowTitle('Restore existing backup');dialog.resize(720,440)
         box=layout(dialog,True,24,14);box.addWidget(label('Restore a previous save','title'))
-        box.addWidget(label('Restoring creates a backup of your current file first. Close the game before restoring.','muted',True))
+        box.addWidget(label('Restore a backup you already have. This replaces the opened save without creating a new backup. Close the game before restoring.','muted',True))
         choice=QComboBox();choice.setAccessibleName('Available backups');box.addWidget(choice)
         details=label('','muted',True);box.addWidget(details)
         try:backups=backup_files(self.path)
@@ -618,14 +605,14 @@ class Window(QMainWindow):
             except (ValueError,OSError) as error:
                 QMessageBox.warning(dialog,'Invalid backup',str(error));return
             if not self.may_discard():return
-            answer=QMessageBox.question(dialog,'Restore backup','Restore this backup to the active save?\n\n'+str(path)+'\n\nThe current save will be backed up first.',QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel,QMessageBox.StandardButton.Cancel)
+            answer=QMessageBox.question(dialog,'Restore backup','Restore this backup to the opened save?\n\n'+str(path)+'\n\nThe current file will be replaced. No new backup will be created.',QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel,QMessageBox.StandardButton.Cancel)
             if answer!=QMessageBox.StandardButton.Yes:return
-            try:backup=restore_backup(self.path,path,self.save.game)
+            try:restore_backup(self.path,path,self.save.game)
             except (ValueError,OSError) as error:
                 QMessageBox.warning(dialog,'Could not restore backup',str(error));return
             self.edits={};self.repair.setChecked(False);dialog.accept()
             self.load(self.save.game,self.path)
-            QMessageBox.information(self,'Backup restored','Save restored. Your previous file is preserved at:\n'+str(backup))
+            QMessageBox.information(self,'Backup restored','Save restored:\n'+str(self.path))
         restore=button('Restore selected backup',apply_backup,'primary');restore.setEnabled(bool(backups));actions.addWidget(restore);box.addLayout(actions)
         dialog.exec()
 

@@ -13,7 +13,7 @@ The factual mapping is cross-referenced against KingdomSaveEditor's
 `Types/DifficultyType.cs` enums in each library (GPL-3.0). See `SOURCES.md`.
 
 Only the selected slot's difficulty byte is changed. Other character attributes,
-inventory, progress and save descriptors remain untouched. Export updates the
+inventory, progress and save descriptors remain untouched. Applying updates the
 outer sqEX CRC and, for KH II, the changed slot's internal checksum. Existing
 integrity failures require the normal explicit repair option. Unsupported mode
 values are rejected instead of silently mapped to a known mode.
@@ -27,6 +27,6 @@ Automated checks cover every supported mode, exact preservation of other data,
 multiple slots, checksums, input rejection and UI selection. A local KH I profile
 was read and exported in memory; the original was not replaced. The local KH II
 container has no saved slots, so its mode edits were tested with synthetic records.
-Actual in-game loading
-and behavior after a mode change still require validation. Keep the original
-backup and use the exported copy for testing.
+Actual in-game loading and behavior after a mode change still require validation.
+The application now applies changes to the opened file with its existing name
+and location. It does not create an automatic backup or exported copy.

@@ -315,7 +315,7 @@ class Save:
         start,end = regions[0]
         self.crc_regions = regions
         if zlib.crc32(self.raw[start-4:end]) != struct.unpack_from('>I',self.raw,end)[0]:
-            self.warnings.append('The save block CRC does not match. You may inspect the save, but exporting requires repairing the CRC in the copy. This does not prove that the internal data is intact.')
+            self.warnings.append('The save block CRC does not match. Enable integrity repair before applying changes. A CRC mismatch alone does not prove that the save data is damaged.')
         # PC archive: 200 entries, 0x158-byte descriptors, 0x16c40-byte records.
         archive = start+16
         if archive != 0x70 or not 0 <= end-(archive+200*0x158+200*0x16c40) < 0x400:
@@ -463,7 +463,7 @@ class Save:
 
     def patched(self, changes, repair_crc=False):
         if self.warnings and not repair_crc:
-            raise ValueError('Enable CRC repair before exporting this copy.')
+            raise ValueError('Enable integrity repair before applying changes.')
         if not changes and not repair_crc:
             return bytes(self.raw)
         result = bytearray(self.raw)
@@ -621,7 +621,7 @@ def backup_files(source):
     return sorted(backups, key=lambda path:path.stat().st_mtime_ns, reverse=True)
 
 def restore_backup(source, backup, game):
-    """Validate a backup and preserve the active file before restoring it."""
+    """Validate an existing backup and restore it without creating another."""
     source, backup = Path(source).resolve(), Path(backup).resolve()
     if source == backup or os.path.samefile(source,backup):
         raise ValueError('Choose a backup other than the active save.')
@@ -663,17 +663,12 @@ def export_copy(source, original, edited, target):
     return backup
 
 def replace_current(source, original, edited):
-    """Atomically replace the active save after creating an exact backup."""
+    """Verify and atomically update the opened save without creating a backup."""
     source = Path(source).resolve()
     if source.read_bytes() != original:
         raise ValueError('The original save changed. Reopen it before applying changes.')
     token = uuid.uuid4().hex[:8]
-    backup = source.with_name(source.name+'.original-'+token+'.bak')
     temporary = source.with_name(source.name+'.update-'+token+'.tmp')
-    with backup.open('xb') as file:
-        file.write(original)
-        file.flush()
-        os.fsync(file.fileno())
     try:
         with temporary.open('xb') as file:
             file.write(edited)
@@ -686,11 +681,13 @@ def replace_current(source, original, edited):
             raise ValueError('The save changed while you were editing. The file was not replaced.')
         os.replace(temporary,source)
         if hashlib.sha256(source.read_bytes()).digest() != hashlib.sha256(edited).digest():
-            restore = source.with_name(source.name+'.restore-'+token+'.tmp')
-            restore.write_bytes(original)
-            os.replace(restore,source)
+            with temporary.open('xb') as file:
+                file.write(original)
+                file.flush()
+                os.fsync(file.fileno())
+            os.replace(temporary,source)
             raise OSError('Verification failed and the original save was restored.')
     finally:
         if temporary.exists():
             temporary.unlink()
-    return backup
+    return source

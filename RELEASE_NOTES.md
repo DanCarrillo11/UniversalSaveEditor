@@ -1,44 +1,40 @@
-# UniversalSaveEditor v0.8.1-alpha
+# UniversalSaveEditor v0.9.0-alpha
 
-Change the saved difficulty of an existing Kingdom Hearts Final Mix or
-Kingdom Hearts II Final Mix Steam slot from the new **Difficulty** category.
+Save changes directly to the opened file for every available editor, including
+Kingdom Hearts Final Mix and Kingdom Hearts II Final Mix on Steam.
 
-- KH Final Mix: Beginner, Final Mix (Standard), and Proud.
-- KH II Final Mix: Beginner, Standard, Proud, and Critical.
-- Named mode selectors and review of the chosen mode before export.
-- Wider selectors so Final Mix (Standard) is displayed in full.
-- Other slots, character attributes, inventory, and progress are preserved.
-- The affected KH II record checksum and the outer Steam-container CRC are
-  updated on export. Existing integrity failures require explicit repair.
+- Review your changes and select **Apply to active save**.
+- Keep the same filename and location. No `.edited` export, destination dialog,
+  manual renaming, or installation of a separate save is needed.
+- No automatic backups are created when editing or restoring an existing backup.
+- Explicit integrity repair updates the opened KH save and refreshes its status.
+- Keep the selected KH slot after applying and reload its updated values.
+- Preserve validation, checksum updates, verified atomic writes, and detection
+  of files changed by the game while editing.
 
 ## Download and run
 
 Download UniversalSaveEditor.exe and open it directly. No installer, Python,
 or command-line setup is required. **Code → Download ZIP** also includes the
-executable. Select your saved slot, open **Difficulty**, choose a mode, then use
-**Review and export** to create a copy and preserve the original backup.
+executable. Close the game, open its save, edit values, then review and apply.
+If an integrity warning appears, explicitly enable repair before applying.
+
+Applying overwrites the opened file. The application does not automatically
+keep its previous version. **Restore existing backup** works with backups you
+already have and does not create another backup.
 
 ## Validation and limits
 
-54 automated tests cover the save editors, interface, backups, every supported
-KH difficulty, multiple-slot isolation, exact byte preservation, and checksums.
+58 automated tests cover the save editors and interface, including direct KH
+writes, CRC repair, selected-slot preservation, cancellation, failed writes,
+concurrent game saves, and the absence of backup or exported files.
 The release build verifies executable startup and packaged resources.
 
-A local KH I profile was exported in memory for each mode without replacing the
-original. The local KH II container has no saved slots; KH II mode changes were
-tested using synthetic records. Create a slot at an in-game save point before
-opening that container. Actual in-game behavior after changing modes remains
-unverified for both games.
-
-Changing the saved mode does not recreate a new-game setup. Existing character
-stats, starting bonuses, and awarded abilities are not recalculated. Selecting
-Critical does not add its starting bonuses or rebuild existing stats. The editor
-does not directly award Steam achievements.
-
-KH II and Alice remain experimental. Alice's profile and difficulty features from
-v0.7.0-alpha are included; checkpoint editing and outfit selection remain outside
-its scope. Close the game before installing an edited save and keep your backup
-until you have checked it in-game.
+Actual in-game behavior after changing KH difficulty remains unverified. Changing
+the mode does not recreate starting stats, bonuses, or abilities. KH II requires
+a populated saved slot and remains experimental, as does Alice. All previous
+editing features are included; Alice checkpoint editing and outfit selection
+remain outside its scope.
 
 See docs/KH_DIFFICULTY.md and docs/ALICE_FORMAT.md for mapped formats and limits.
 SHA256SUMS.txt contains the hash of the downloadable executable.

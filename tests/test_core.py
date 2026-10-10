@@ -3,6 +3,7 @@ import tempfile
 import unittest
 import zlib
 from pathlib import Path
+from unittest.mock import patch
 from core import Save, FormatError, export_copy, replace_current, png_chunks, identify_game, backup_files, restore_backup
 
 def variant(value):
@@ -273,17 +274,19 @@ class CoreTests(unittest.TestCase):
             self.assertEqual(identify_game(target),'kh2')
         with self.assertRaises(FormatError):identify_game('notes.txt')
 
-    def test_restore_preserves_current_save_and_ignores_unrelated_backups(self):
+    def test_restore_uses_existing_backup_without_creating_another(self):
         with tempfile.TemporaryDirectory(dir=Path.cwd()) as root:
             source=Path(root)/'webfishing_save_slot_0.sav';original=fishing();source.write_bytes(original)
             edited=Save(original,'webfishing').patched({(0,'money'):900})
-            backup=replace_current(source,original,edited)
+            backup=Path(root)/'webfishing_save_slot_0.sav.original-abcd.bak'
+            backup.write_bytes(original)
+            replace_current(source,original,edited)
             (Path(root)/'another-game.original-abcd.bak').write_bytes(original)
             self.assertEqual(backup_files(source),[backup])
-            before_restore=restore_backup(source,backup,'webfishing')
+            restore_backup(source,backup,'webfishing')
             self.assertEqual(source.read_bytes(),original)
-            self.assertEqual(before_restore.read_bytes(),edited)
             self.assertEqual(backup.read_bytes(),original)
+            self.assertEqual(backup_files(source),[backup])
 
     def test_invalid_backup_does_not_replace_current_file(self):
         with tempfile.TemporaryDirectory(dir=Path.cwd()) as root:
@@ -311,15 +314,34 @@ class CoreTests(unittest.TestCase):
             source.write_bytes(b'changed')
             with self.assertRaises(ValueError):export_copy(source,original,edited,Path(root)/'other.sav')
 
-    def test_replace_current_creates_backup_and_replaces_active_save(self):
+    def test_replace_current_updates_active_save_without_extra_files(self):
         with tempfile.TemporaryDirectory(dir=Path.cwd()) as root:
             source=Path(root)/'webfishing_save_slot_0.sav'
             original=fishing();source.write_bytes(original)
             edited=Save(original,'webfishing').patched({(0,'money'):777})
-            backup=replace_current(source,original,edited)
+            replace_current(source,original,edited)
             self.assertEqual(source.read_bytes(),edited)
-            self.assertEqual(backup.read_bytes(),original)
-            self.assertFalse(list(Path(root).glob('*.tmp')))
+            self.assertEqual(list(Path(root).iterdir()),[source])
             with self.assertRaises(ValueError):replace_current(source,original,edited)
+
+    def test_failed_replacement_preserves_source_and_cleans_temporary_file(self):
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as root:
+            source=Path(root)/'current.sav';original=fishing();source.write_bytes(original)
+            edited=Save(original,'webfishing').patched({(0,'money'):777})
+            with patch('core.os.replace',side_effect=PermissionError('File is locked')):
+                with self.assertRaises(PermissionError):replace_current(source,original,edited)
+            self.assertEqual(source.read_bytes(),original)
+            self.assertEqual(list(Path(root).iterdir()),[source])
+
+    def test_game_save_during_write_is_not_overwritten(self):
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as root:
+            source=Path(root)/'current.sav';original=fishing();source.write_bytes(original)
+            save=Save(original,'webfishing')
+            edited=save.patched({(0,'money'):777})
+            game_output=save.patched({(0,'money'):250})
+            with patch('core.os.fsync',side_effect=lambda fd:source.write_bytes(game_output)):
+                with self.assertRaisesRegex(ValueError,'save changed'):replace_current(source,original,edited)
+            self.assertEqual(source.read_bytes(),game_output)
+            self.assertEqual(list(Path(root).iterdir()),[source])
 
 if __name__=='__main__':unittest.main()

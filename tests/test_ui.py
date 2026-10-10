@@ -77,7 +77,7 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(w.inputs[(0,'munny')].text(),'111')
         self.assertEqual(w.validated_changes(),{(0,'munny'):111,(1,'munny'):222})
 
-    def test_review_applies_webfishing_and_creates_backup(self):
+    def test_review_applies_webfishing_without_backup_or_copy(self):
         w=self.window;w.load('webfishing',self.source)
         w.inputs[(0,'money')].setText('987')
         clicked=[]
@@ -92,7 +92,8 @@ class InterfaceTests(unittest.TestCase):
             w.review()
         self.assertTrue(clicked)
         self.assertEqual(Save(self.source.read_bytes(),'webfishing').slots[0].fields[0].value,987)
-        self.assertEqual(next(self.root.glob('webfishing_save_slot_0.sav.original-*.bak')).read_bytes(),fishing())
+        self.assertFalse(list(self.root.glob('*.bak')))
+        self.assertFalse(list(self.root.glob('*.tmp')))
         self.assertFalse(list(self.root.glob('*.edited.sav')))
         self.assertTrue(w.may_discard())
 
@@ -118,7 +119,7 @@ class InterfaceTests(unittest.TestCase):
             self.assertEqual(self.window.save.game,game)
             self.assertEqual(self.window.stack.currentIndex(),1)
 
-    def test_alice_apply_replaces_active_profile_and_keeps_backup(self):
+    def test_alice_apply_replaces_active_profile_without_backup(self):
         path=self.root/'PersistentData_PC.PSD';original=alice();path.write_bytes(original)
         w=self.window;w.open_path(path);w.inputs[(0,'teeth')].setText('1234')
         self.assertIn('apply',w.review_button.text())
@@ -130,7 +131,7 @@ class InterfaceTests(unittest.TestCase):
         with patch('app.QMessageBox.information'):
             QTimer.singleShot(0,apply_dialog);w.review()
         self.assertEqual(Save(path.read_bytes(),'alice').slots[0].fields[0].value,1234)
-        self.assertEqual(next(self.root.glob('*.bak')).read_bytes(),original)
+        self.assertFalse(list(self.root.glob('*.bak')))
 
     def test_inventory_search_keeps_pending_changes_and_editor_focus(self):
         w=self.window;w.load('kh1',self.kh)
@@ -181,7 +182,50 @@ class InterfaceTests(unittest.TestCase):
             QTimer.singleShot(0,apply_dialog);w.review()
         self.assertEqual(profile.read_bytes(),alice())
         self.assertEqual(config.read_bytes()[16:],original[16:])
-        self.assertEqual(next(self.root.glob('*.bak')).read_bytes(),original)
+        self.assertFalse(list(self.root.glob('*.bak')))
+
+    def test_kh_apply_repairs_crc_in_original_file_and_keeps_selected_slot(self):
+        w=self.window
+        for game,path,raw in (
+            ('kh1',self.kh,kingdom()),
+            ('kh2',self.root/'KHIIFM_WW.png',kingdom2()),
+        ):
+            damaged=bytearray(raw);end=Save(raw,game).crc_regions[0][1]
+            damaged[end]^=1;path.write_bytes(damaged)
+            w.load(game,path)
+            slot=1 if game=='kh1' else 0
+            w.slot_combo.setCurrentIndex(slot);w.change_slot(slot)
+            w.inputs[(slot,'munny')].setText('987')
+            self.assertFalse(w.review_button.isEnabled())
+            w.repair.setChecked(True);self.assertTrue(w.review_button.isEnabled())
+            def apply_dialog():
+                dialog=self.app.activeModalWidget()
+                self.assertEqual(dialog.windowTitle(),'Review and apply')
+                for item in dialog.findChildren(QPushButton):
+                    if item.text()=='Apply to active save':item.click();return
+                dialog.reject()
+            with patch('app.QMessageBox.information'),patch('app.QFileDialog.getSaveFileName') as chooser:
+                QTimer.singleShot(0,apply_dialog);w.review()
+                chooser.assert_not_called()
+            saved=Save(path.read_bytes(),game)
+            self.assertEqual(saved.slots[slot].fields[0].value,987)
+            if game=='kh1':self.assertEqual(saved.slots[0].fields[0].value,500)
+            self.assertFalse(saved.warnings)
+            self.assertEqual(w.slot_index,slot)
+            self.assertEqual(w.inputs[(slot,'munny')].text(),'987')
+            self.assertFalse(list(self.root.glob('*.edited.*')))
+            self.assertFalse(list(self.root.glob('*.bak')))
+            self.assertFalse(list(self.root.glob('*.tmp')))
+            self.assertTrue(w.may_discard())
+
+    def test_cancel_kh_review_does_not_write_any_files(self):
+        w=self.window;w.load('kh1',self.kh)
+        w.inputs[(0,'munny')].setText('987')
+        before={path.name:path.read_bytes() for path in self.root.iterdir()}
+        QTimer.singleShot(0,lambda:self.app.activeModalWidget().reject())
+        w.review()
+        self.assertEqual({path.name:path.read_bytes() for path in self.root.iterdir()},before)
+        self.assertEqual(w.edits[(0,'munny')],'987')
 
     def test_kingdom_hearts_difficulty_uses_named_modes_per_slot(self):
         w=self.window
