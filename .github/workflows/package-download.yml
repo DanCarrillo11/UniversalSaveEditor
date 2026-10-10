@@ -43,7 +43,7 @@ jobs:
           if (-not $process.WaitForExit(60000)) { $process.Kill(); throw 'Executable startup timed out' }
           if ($process.ExitCode -ne 0) { throw 'Executable startup failed' }
           $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
-          if (-not $result.frozen -or -not $result.icon -or $result.games -ne 7 -or $result.covers.PSObject.Properties.Value -contains $false) { throw 'Missing packaged resources' }
+          if (-not $result.frozen -or -not $result.icon -or $result.games -ne 7 -or $result.ror2Unlocks -ne 454 -or $result.covers.PSObject.Properties.Value -contains $false) { throw 'Missing packaged resources' }
       - name: Include tested executable in repository
         shell: pwsh
         run: |

@@ -1,5 +1,11 @@
 # Cambios
 
+## 0.5
+- Gestor de 454 desbloqueables de Risk of Rain 2 extraídos del catálogo instalado: personajes, habilidades, skins y recolores, artefactos, objetos, registros y altares de Newt.
+- Checkboxes, búsqueda y acciones para desbloquear o restaurar categorías completas.
+- Los desbloqueos se agregan o eliminan sin reserializar el resto del perfil XML.
+- 22 pruebas automatizadas, incluida la edición masiva de desbloqueos sobre una copia de un perfil real.
+
 ## 0.4
 - Compatibilidad inicial con perfiles XML de Risk of Rain 2: monedas lunares y estadísticas de progreso, combate y economía, con detección, respaldo y reemplazo seguro.
 - Nuevo icono de memory card con fondo transparente para la aplicación y el ejecutable de Windows.

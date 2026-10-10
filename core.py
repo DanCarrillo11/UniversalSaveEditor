@@ -15,6 +15,7 @@ import uuid
 import xml.etree.ElementTree as ET
 import zlib
 from kh_items import ITEMS
+from ror2_unlocks import UNLOCK_IDS, unlock_group, unlock_label
 
 MAX_SIZE = 64 * 1024 * 1024
 
@@ -287,8 +288,14 @@ class Save:
         if not fields or not any(field.key == 'coins' for field in fields):
             raise FormatError('El perfil no contiene los campos esperados de Risk of Rain 2.')
         stats_node = root.find('stats')
-        unlocks = sum(1 for child in stats_node if child.tag == 'unlock') if stats_node is not None else 0
-        self.slots = [Slot(f'Perfil de Steam · {unlocks} desbloqueos',fields)]
+        if stats_node is None:
+            raise FormatError('El perfil no contiene la sección de desbloqueos de Risk of Rain 2.')
+        unlocked = [child.text or '' for child in stats_node if child.tag == 'unlock']
+        self.ror2_unlocked = unlocked
+        for identifier in UNLOCK_IDS:
+            fields.append(Field('unlock:'+identifier,unlock_label(identifier),
+                int(identifier in unlocked),-1,'xml-unlock',0,1,unlock_group(identifier)))
+        self.slots = [Slot(f'Perfil de Steam · {len(unlocked)} desbloqueos',fields)]
 
     def _kh1(self):
         chunks = png_chunks(self.raw, allow_sqex_crc=True)
@@ -369,6 +376,8 @@ class Save:
             replacements = []
             for key,value in changes.items():
                 field = known[key]
+                if field.fmt == 'xml-unlock':
+                    continue
                 rendered = str(value)
                 current_end = field.offset
                 while current_end < len(text) and text[current_end] not in '<':
@@ -376,6 +385,27 @@ class Save:
                 replacements.append((field.offset,current_end,rendered))
             for start,end,rendered in sorted(replacements,reverse=True):
                 text = text[:start]+rendered+text[end:]
+            unlock_changes = {
+                field.key.removeprefix('unlock:'): value
+                for key,value in changes.items()
+                for field in (known[key],)
+                if field.fmt == 'xml-unlock'
+            }
+            if unlock_changes:
+                changed_ids = set(unlock_changes)
+                text = re.sub(
+                    r'<unlock>\s*([^<]+?)\s*</unlock>',
+                    lambda match: '' if match.group(1).strip() in changed_ids else match.group(0),
+                    text,
+                )
+                closing = text.find('</stats>')
+                if closing < 0:
+                    raise FormatError('No se encontró el cierre de la sección de desbloqueos.')
+                additions = ''.join(
+                    '<unlock>'+identifier+'</unlock>'
+                    for identifier,value in unlock_changes.items() if value
+                )
+                text = text[:closing]+additions+text[closing:]
             result = bytearray(text.encode('utf-8'))
         for start,end in self.crc_regions:
             struct.pack_into('>I',result,end,zlib.crc32(result[start-4:end]))

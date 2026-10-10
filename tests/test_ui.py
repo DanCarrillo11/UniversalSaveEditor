@@ -5,10 +5,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel
+from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel, QCheckBox
 from app import Window
 from core import Save
-from test_core import fishing, kingdom
+from test_core import fishing, kingdom, ror2
 
 class InterfaceTests(unittest.TestCase):
     @classmethod
@@ -21,7 +21,8 @@ class InterfaceTests(unittest.TestCase):
         self.source=self.root/'webfishing_save_slot_0.sav'
         self.source.write_bytes(fishing())
         self.kh=self.root/'KHFM_WW.png';self.kh.write_bytes(kingdom())
-        self.discovery=patch('app.discover',return_value=[('webfishing',self.source),('kh1',self.kh)])
+        self.ror=self.root/'profile.xml';self.ror.write_bytes(ror2())
+        self.discovery=patch('app.discover',return_value=[('webfishing',self.source),('ror2',self.ror),('kh1',self.kh)])
         self.discovery.start()
         self.window=Window()
 
@@ -86,5 +87,20 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(next(self.root.glob('webfishing_save_slot_0.sav.original-*.bak')).read_bytes(),fishing())
         self.assertFalse(list(self.root.glob('*.edited.sav')))
         self.assertTrue(w.may_discard())
+
+    def test_ror2_unlocks_use_checkboxes_and_batch_actions(self):
+        w=self.window;w.load('ror2',self.ror)
+        huntress=w.inputs[(0,'unlock:Characters.Huntress')]
+        acolyte=w.inputs[(0,'unlock:Characters.Acolyte')]
+        self.assertIsInstance(huntress,QCheckBox)
+        self.assertTrue(huntress.isChecked());self.assertFalse(acolyte.isChecked())
+        acolyte.setChecked(True);huntress.setChecked(False)
+        self.assertEqual(w.validated_changes(),{
+            (0,'unlock:Characters.Acolyte'):1,
+            (0,'unlock:Characters.Huntress'):0,
+        })
+        characters=[field for field in w.save.slots[0].fields if field.group=='Personajes']
+        w.set_unlock_fields(characters,1)
+        self.assertTrue(all(w.inputs[(0,field.key)].isChecked() for field in characters))
 
 if __name__=='__main__':unittest.main()

@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
 from core import Save, discover, read_limited, export_copy, replace_current
 from catalog import GAMES, BY_ID
 from artwork import Artwork
+from ror2_unlocks import UNLOCK_IDS
 
 ROOT=Path(__file__).resolve().parent
 
@@ -45,6 +46,12 @@ def clear(box):
 def number_text(value):
     return str(int(value)) if float(value).is_integer() else str(value)
 
+def value_text(field,value):
+    if field.fmt == 'xml-unlock':
+        return 'Desbloqueado' if int(value) else 'Bloqueado'
+    try:return number_text(value)
+    except (TypeError,ValueError):return str(value)
+
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -69,14 +76,14 @@ class Window(QMainWindow):
         nav.addWidget(self.library_nav);nav.addWidget(self.editor_nav)
         nav.addSpacing(24)
         nav.addWidget(label('COLECCIONES','eyebrow'))
-        for name in ('WEBFISHING','KINGDOM HEARTS','MAX PAYNE'):
+        for name in ('WEBFISHING','RISK OF RAIN','KINGDOM HEARTS','MAX PAYNE'):
             nav.addWidget(button(name.title(),lambda checked=False,n=name:self.collection(n),'nav'))
         nav.addStretch()
         nav.addWidget(label('TUS PARTIDAS, A SALVO','eyebrow'))
         nav.addWidget(label('Local. Sin cuentas.\nEl original siempre se conserva.','muted',True))
         nav.addSpacing(8)
         nav.addWidget(button('Guía de uso',self.open_guide))
-        nav.addWidget(label('v0.3  /  EN DESARROLLO','small'))
+        nav.addWidget(label('v0.5  /  EN DESARROLLO','small'))
         shell.addWidget(side)
         self.stack=QStackedWidget();shell.addWidget(self.stack,1)
         self.build_library();self.build_editor()
@@ -96,7 +103,7 @@ class Window(QMainWindow):
         box.addLayout(top)
         box.addWidget(label('Un lugar para ajustar tu progreso y volver a tus mundos favoritos.','muted'))
         strip=QFrame();strip.setObjectName('panel');stats=layout(strip,False,18,24)
-        self.available=label('02  EDITORES DISPONIBLES','success')
+        self.available=label(f'{sum(game.editable for game in GAMES):02d}  EDITORES DISPONIBLES','success')
         self.detected=label('00  ARCHIVOS DETECTADOS','muted')
         stats.addWidget(self.available);stats.addWidget(self.detected);stats.addStretch();stats.addWidget(label('COPIAS ANTES QUE CAMBIOS','small'))
         box.addWidget(strip)
@@ -271,23 +278,66 @@ class Window(QMainWindow):
             else:group={'0':'Sora','1':'Donald','2':'Goofy'}.get(field.key.split(':')[0],'Economía')
             group=field.group or group
             groups.setdefault(group,[]).append(field)
-        for name,fields in groups.items():
+        preferred=['Personajes','Habilidades','Skins y recolores','Artefactos','Objetos y equipo','Registros','Altares de Newt','Economía','Progreso','Combate']
+        ordered=sorted(groups,key=lambda name:(preferred.index(name) if name in preferred else len(preferred),name))
+        for name in ordered:
+            fields=groups[name]
             scroll=QScrollArea();scroll.setWidgetResizable(True)
             content=QWidget();box=layout(content,True,4,12)
             box.addWidget(label(name,'section'))
             box.addWidget(label('Solo se modificarán los campos que cambies.','muted',True))
+            unlock_fields=[field for field in fields if field.fmt == 'xml-unlock']
+            if unlock_fields:
+                actions=QHBoxLayout()
+                actions.addWidget(button('Desbloquear categoría',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,1),'primary'))
+                actions.addWidget(button('Restaurar categoría',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,None)))
+                actions.addStretch();box.addLayout(actions)
+                field_filter=QLineEdit();field_filter.setPlaceholderText('Buscar dentro de esta categoría…')
+                field_filter.setClearButtonEnabled(True);box.addWidget(field_filter)
+            rows=[]
             for field in fields:
                 row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
-                caption=QVBoxLayout();caption.addWidget(label(field.label));caption.addWidget(label(f'Original: {number_text(field.value)}  ·  Rango: {field.minimum:,}–{field.maximum:,}','small',True))
+                caption=QVBoxLayout();caption.addWidget(label(field.label))
+                if field.fmt == 'xml-unlock':
+                    caption.addWidget(label(f'Original: {value_text(field,field.value)}  ·  {field.key.removeprefix("unlock:")}','small',True))
+                else:
+                    caption.addWidget(label(f'Original: {number_text(field.value)}  ·  Rango: {field.minimum:,}–{field.maximum:,}','small',True))
                 line.addLayout(caption,1)
                 key=(self.slot_index,field.key)
-                entry=QLineEdit(self.edits.get(key,number_text(field.value)))
-                entry.setAccessibleName(field.label);entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
-                entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
+                if field.fmt == 'xml-unlock':
+                    entry=QCheckBox('Desbloqueado')
+                    entry.setChecked(bool(int(self.edits.get(key,field.value))))
+                    entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
+                    self.mark_unlock(entry,field,entry.isChecked())
+                else:
+                    entry=QLineEdit(self.edits.get(key,number_text(field.value)))
+                    entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
+                    entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
+                    self.mark_entry(entry,field,entry.text())
+                entry.setAccessibleName(field.label)
                 self.inputs[key]=entry;line.addWidget(entry)
-                box.addWidget(row);self.mark_entry(entry,field,entry.text())
+                box.addWidget(row);rows.append((field.label.casefold()+' '+field.key.casefold(),row))
+            if unlock_fields:
+                field_filter.textChanged.connect(lambda text,rs=rows:[row.setVisible(text.casefold().strip() in searchable) for searchable,row in rs])
             box.addStretch();scroll.setWidget(content);self.tabs.addTab(scroll,name)
         self.update_summary()
+
+    def set_unlock_fields(self,fields,value):
+        for field in fields:
+            key=(self.slot_index,field.key)
+            checkbox=self.inputs.get(key)
+            if isinstance(checkbox,QCheckBox):
+                checkbox.setChecked(bool(field.value if value is None else value))
+
+    def mark_unlock(self,entry,field,checked):
+        changed=int(checked) != field.value
+        entry.setProperty('changed',changed)
+        entry.style().unpolish(entry);entry.style().polish(entry)
+
+    def unlock_changed(self,key,field,entry,checked):
+        if int(checked) == field.value:self.edits.pop(key,None)
+        else:self.edits[key]=str(int(checked))
+        self.mark_unlock(entry,field,checked);self.update_summary()
 
     def mark_entry(self,entry,field,text):
         changed=text.strip()!=number_text(field.value)
@@ -316,11 +366,14 @@ class Window(QMainWindow):
         clear(self.summary_box)
         count=len(self.edits)
         self.change_count.setText(f'{count:02d} cambio'+('s' if count!=1 else '') if count else 'Sin cambios')
-        for (index,key),text in self.edits.items():
+        visible_edits=list(self.edits.items())
+        for (index,key),text in visible_edits[:80]:
             field=next(f for f in self.save.slots[index].fields if f.key==key)
-            item=label(f'{field.label}\n{number_text(field.value)}  →  {text or "…"}','',True)
+            item=label(f'{field.label}\n{value_text(field,field.value)}  →  {value_text(field,text) if text else "…"}','',True)
             self.summary_box.addWidget(item)
             if len(self.save.slots)>1:self.summary_box.addWidget(label(self.save.slots[index].name,'small',True))
+        if len(visible_edits)>80:
+            self.summary_box.addWidget(label(f'+ {len(visible_edits)-80} cambios más','muted',True))
         if not count:self.summary_box.addWidget(label('Los ajustes que hagas aparecerán aquí.','muted',True))
         if self.repair.isChecked():self.summary_box.addWidget(label('Se reparará el CRC en la copia.','success',True))
         valid=True
@@ -351,7 +404,7 @@ class Window(QMainWindow):
         lines=[]
         for (index,key),value in self.validated_changes().items():
             field=next(f for f in self.save.slots[index].fields if f.key==key)
-            lines.append(f'{self.save.slots[index].name}\n{field.label}: {number_text(field.value)} → {value}')
+            lines.append(f'{self.save.slots[index].name}\n{field.label}: {value_text(field,field.value)} → {value_text(field,value)}')
         if self.repair.isChecked():lines.append('Reparar el CRC del bloque de guardado en la copia.')
         text.setPlainText('\n\n'.join(lines));box.addWidget(text,1)
         box.addWidget(label('La carga dentro del juego aún necesita validación.','small',True))
@@ -364,7 +417,7 @@ class Window(QMainWindow):
                 self.exported_state=self.state_signature();dialog.accept()
                 QMessageBox.information(self,'Cambios aplicados',f'Partida activa reemplazada:\n{self.path}\n\nRespaldo original:\n{backup}')
                 self.load(self.save.game,self.path)
-                self.statusBar().showMessage('Cambios aplicados a WEBFISHING · Respaldo original conservado')
+                self.statusBar().showMessage(f'Cambios aplicados a {BY_ID[self.save.game].title} · Respaldo original conservado')
                 return
             filename,_=QFileDialog.getSaveFileName(dialog,'Exportar copia',str(self.path.parent/(self.path.stem+'.edited'+self.path.suffix)),f'Partida (*{self.path.suffix})')
             if not filename:return
@@ -407,6 +460,7 @@ def main():
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
+                    'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}
             destination.write_text(json.dumps(report,indent=2),encoding='utf-8')
             window.grab().save(str(destination.with_suffix('.png')))

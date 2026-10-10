@@ -23,6 +23,6 @@ El icono de memory card se obtuvo de la imagen aportada por el autor del reposit
 
 Las ediciones Final Mix usan las portadas japonesas de sus lanzamientos originales (KH II Final Mix+ incluye Re:CoM); no se presentan como cajas de una edición individual de Steam. WEBFISHING, Risk of Rain 2 y Max Payne usan el arte de biblioteca de Steam.
 
-La compatibilidad con Risk of Rain 2 se validó contra la estructura de un perfil local de Steam aportado por el autor. El perfil contiene datos personales y no se incluye en el repositorio.
+La compatibilidad con Risk of Rain 2 se validó contra la estructura de un perfil local de Steam aportado por el autor. Los identificadores de desbloqueo de `ror2_unlocks.py` se extrajeron de los nombres de recursos incluidos en `Risk of Rain 2_Data/StreamingAssets/aa/catalog.json` de esa instalación. El catálogo y el perfil contienen material o datos ajenos y no se incluyen en el repositorio.
 
 La tabla `kh_items.py` adapta `KHSave.Lib1/Types/EquipmentType.cs` de Xeeynamo/KingdomSaveEditor (GPL-3.0); conserva su atribución y excluye objetos de historia y entradas sin uso.

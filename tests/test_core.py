@@ -92,6 +92,28 @@ class CoreTests(unittest.TestCase):
         for raw in (b'<broken',b'<Other><coins>1</coins></Other>'):
             with self.assertRaises(ValueError):Save(raw,'ror2')
 
+    def test_ror2_adds_and_removes_unlocks_without_duplicates(self):
+        raw=ror2();save=Save(raw,'ror2')
+        unlock_fields=[field for field in save.slots[0].fields if field.fmt=='xml-unlock']
+        self.assertEqual(len(unlock_fields),454)
+        self.assertEqual({field.group for field in unlock_fields},{
+            'Personajes','Habilidades','Skins y recolores','Artefactos',
+            'Objetos y equipo','Registros','Altares de Newt',
+        })
+        output=save.patched({
+            (0,'unlock:Characters.Huntress'):0,
+            (0,'unlock:Characters.Acolyte'):1,
+            (0,'unlock:Skins.Acolyte.Alt1'):1,
+            (0,'unlock:Skills.Acolyte.Backpack'):1,
+        })
+        parsed=Save(output,'ror2')
+        self.assertNotIn('Characters.Huntress',parsed.ror2_unlocked)
+        self.assertIn('Characters.Acolyte',parsed.ror2_unlocked)
+        self.assertIn('Skins.Acolyte.Alt1',parsed.ror2_unlocked)
+        self.assertIn('Skills.Acolyte.Backpack',parsed.ror2_unlocked)
+        self.assertEqual(parsed.ror2_unlocked.count('Characters.Acolyte'),1)
+        self.assertIn(b'<stat name="unknownValue">44</stat>',output)
+
     def test_kh_slots_and_crc(self):
         raw=kingdom(); save=Save(raw,'kh1')
         self.assertEqual(len(save.slots),2)
