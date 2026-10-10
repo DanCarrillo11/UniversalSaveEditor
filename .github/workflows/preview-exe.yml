@@ -1,0 +1,56 @@
+name: Universal Save Data preview EXE
+
+on:
+  push:
+    branches:
+      - ui/dark-library-redesign
+    paths:
+      - '.github/workflows/preview-exe.yml'
+      - '*.py'
+      - '*.qss'
+      - '*.spec'
+      - 'requirements*.txt'
+      - 'assets/**'
+      - 'tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install build dependencies
+        run: python -m pip install -r requirements-build.txt
+      - name: Run automated tests
+        run: python -m unittest discover -s tests -v
+      - name: Build Windows executable
+        run: python -m PyInstaller --clean --noconfirm UniversalSaveEditor.spec
+      - name: Smoke test packaged executable
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP 'portable-preview.json'
+          $process = Start-Process -FilePath '.\dist\UniversalSaveEditor.exe' -ArgumentList '--smoke-test', $report -PassThru -WindowStyle Hidden
+          if (-not $process.WaitForExit(90000)) { $process.Kill(); throw 'Preview startup timed out' }
+          if ($process.ExitCode -ne 0) { throw 'Preview executable startup failed' }
+          $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
+          if (-not $result.frozen -or -not $result.icon -or $result.games -ne 7 -or $result.ror2Unlocks -ne 454 -or $result.covers.PSObject.Properties.Value -contains $false) { throw 'Missing packaged resources' }
+          Copy-Item -LiteralPath $report -Destination '.\preview-smoke.json'
+          Copy-Item -LiteralPath ([System.IO.Path]::ChangeExtension($report, '.png')) -Destination '.\preview-screenshot.png'
+      - name: Upload Windows EXE and screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: UniversalSaveData-Windows-preview
+          path: |
+            dist/UniversalSaveEditor.exe
+            preview-smoke.json
+            preview-screenshot.png
+          if-no-files-found: error
+          retention-days: 14
