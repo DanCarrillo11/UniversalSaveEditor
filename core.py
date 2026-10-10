@@ -194,8 +194,6 @@ class Save:
                 if not isinstance(limit,int) or limit < 0:
                     raise FormatError('Capacidad de cebo inválida.')
                 fields.append(Field('bait:'+bait,'Cebo · '+bait,amount,node[0],node[1],0,limit))
-                owned = int(bait in unlocked)
-                fields.append(Field('bait_unlock:'+bait,'Cebo · '+bait+' · comprado/desbloqueado',owned,-1,'',owned,1,'Cebos'))
         def add(path, key, label, low, high, group, decimal=False):
             node=reader.nodes.get(path)
             if node and node[1] in ('<i','<q','<f','<d'):
@@ -292,15 +290,12 @@ class Save:
                 if field.key.startswith('bait:') and changes.get((0,field.key),field.value)>capacity:
                     raise ValueError('La cantidad de cebo supera la capacidad seleccionada.')
             unlocked = list(self.info.get('bait_unlocked', []))
-            for bait in self.info['bait_inv']:
+            for bait, original_amount in self.info['bait_inv'].items():
                 if not bait:
                     continue
                 amount_key = (0, 'bait:'+bait)
-                unlock_key = (0, 'bait_unlock:'+bait)
-                should_unlock = changes.get(unlock_key, int(bait in unlocked)) == 1
-                if amount_key in changes and changes[amount_key] > 0:
-                    should_unlock = True
-                if should_unlock and bait not in unlocked:
+                final_amount = changes.get(amount_key, original_amount)
+                if final_amount > 0 and bait not in unlocked:
                     unlocked.append(bait)
             if unlocked != self.info.get('bait_unlocked', []):
                 if not self.bait_unlocked_span:

@@ -64,11 +64,6 @@ class CoreTests(unittest.TestCase):
         self.assertIn('cricket',parsed.info['bait_unlocked'])
         self.assertEqual(struct.unpack_from('<I',output)[0],len(output)-4)
 
-    def test_locked_bait_can_be_unlocked_without_changing_quantity(self):
-        save=Save(fishing(),'webfishing')
-        output=save.patched({(0,'bait_unlock:cricket'):1})
-        self.assertIn('cricket',Save(output,'webfishing').info['bait_unlocked'])
-
     def test_truncated_or_wrong_input(self):
         for raw in (b'',b'garbage',fishing()[:-1],struct.pack('<II',4,17)):
             with self.assertRaises(ValueError):Save(raw,'webfishing')
