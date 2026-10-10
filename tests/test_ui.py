@@ -5,11 +5,12 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel, QCheckBox, QLineEdit, QFrame
+from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel, QCheckBox, QLineEdit, QFrame, QComboBox
 from app import Window
 from core import Save
 from catalog import BY_ID
 from test_core import fishing, kingdom, kingdom2, alice, ror2
+from test_alice import configuration
 
 class InterfaceTests(unittest.TestCase):
     @classmethod
@@ -141,6 +142,46 @@ class InterfaceTests(unittest.TestCase):
         search.setText('no-such-item');self.assertTrue(entry.parentWidget().isHidden())
         search.clear();self.assertEqual(entry.text(),'20')
         w.focus_search();self.assertEqual(w.stack.currentIndex(),1)
+
+    def test_alice_categories_use_selectors_toggles_and_restore(self):
+        path=self.root/'PersistentData_PC.PSD';path.write_bytes(alice())
+        w=self.window;w.load('alice',path)
+        weapon=w.inputs[(0,'weapon:VorpalBlade')]
+        memory=w.inputs[(0,'memory:1_M_2_Lizzie')]
+        self.assertIsInstance(weapon,QComboBox);self.assertIsInstance(memory,QCheckBox)
+        weapon.setCurrentIndex(4);memory.setChecked(True)
+        self.assertEqual(w.validated_changes(),{(0,'weapon:VorpalBlade'):4,(0,'memory:1_M_2_Lizzie'):1})
+        self.assertFalse(w.repair.isVisible());self.assertTrue(w.review_button.isEnabled())
+        fields=[f for f in w.save.slots[0].fields if f.group=='Memories' and f.boolean]
+        w.set_unlock_fields(fields,1)
+        self.assertTrue(all(w.inputs[(0,f.key)].isChecked() for f in fields))
+        w.set_unlock_fields(fields,None)
+        self.assertEqual(w.validated_changes(),{(0,'weapon:VorpalBlade'):4})
+
+    def test_alice_configuration_selection_review_and_apply(self):
+        profile=self.root/'PersistentData_PC.PSD';profile.write_bytes(alice())
+        config=self.root/'GameConfig_PC.CFG';original=configuration();config.write_bytes(original)
+        w=self.window;w.files=[('alice',profile),('alice',config)]
+        w.load('alice',profile)
+        w.file_combo.setCurrentIndex(w.file_combo.findData(config))
+        w.file_combo.activated.emit(w.file_combo.currentIndex())
+        self.assertEqual(w.path,config)
+        self.assertEqual(w.tabs.tabText(0),'Difficulty')
+        w.inputs[(0,'current_difficulty')].setCurrentIndex(0)
+        def apply_dialog():
+            from PySide6.QtWidgets import QTextEdit
+            dialog=self.app.activeModalWidget()
+            review=dialog.findChild(QTextEdit).toPlainText()
+            self.assertIn('Automatic related changes',review)
+            self.assertIn('Lowest difficulty used: Normal → Easy',review)
+            for item in dialog.findChildren(QPushButton):
+                if item.text()=='Apply to active save':item.click();return
+            dialog.reject()
+        with patch('app.QMessageBox.information'):
+            QTimer.singleShot(0,apply_dialog);w.review()
+        self.assertEqual(profile.read_bytes(),alice())
+        self.assertEqual(config.read_bytes()[16:],original[16:])
+        self.assertEqual(next(self.root.glob('*.bak')).read_bytes(),original)
 
     def test_library_resizes_without_horizontal_scroll_or_clipped_cards(self):
         w=self.window;w.show()

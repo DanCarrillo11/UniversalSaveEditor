@@ -20,6 +20,6 @@ GAMES = (
     Game('kh2','KINGDOM HEARTS II','Final Mix · Steam','KINGDOM HEARTS','#91c7ea',True,'Munny · Experience · Character attributes · Drive Forms · Inventory',True),
     Game('bbs','BIRTH BY SLEEP','Final Mix · Steam','KINGDOM HEARTS','#c5a5df',False,'Editor in development · Characters, commands, and inventory pending'),
     Game('maxpayne','MAX PAYNE','PC · Local saves','MAX PAYNE','#dca7a0',False,'Editor in development · Progress, weapons, and player state pending'),
-    Game('alice','ALICE: MADNESS RETURNS','Steam · Persistent profile','ALICE','#8ab6d6',True,'Teeth currency · Persistent profile',True),
+    Game('alice','ALICE: MADNESS RETURNS','Steam · Profile and difficulty','ALICE','#8ab6d6',True,'Teeth · Weapons · Abilities · Dresses · Collectibles · Chapters · Difficulty',True),
 )
 BY_ID = {game.id:game for game in GAMES}

@@ -99,7 +99,7 @@ jobs:
           New-Item -ItemType Directory -Path $releaseDir -Force | Out-Null
           Copy-Item UniversalSaveEditor.exe,SHA256SUMS.txt,README.md,LICENSE -Destination $releaseDir
           Compress-Archive -Path "$releaseDir/*" -DestinationPath "UniversalSaveEditor-v$($config.version)-Windows.zip" -Force
-      - name: Publish private repository pre-release
+      - name: Publish pre-release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}

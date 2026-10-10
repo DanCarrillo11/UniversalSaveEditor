@@ -65,11 +65,20 @@ def kingdom2():
     return b'\x89PNG\r\n\x1a\n'+pre+chunk(b'sqEX',payload)+chunk(b'IEND',b'')
 
 def alice():
-    raw=bytearray(0x300)
-    struct.pack_into('<II',raw,0,1,0xf223)
-    struct.pack_into('<I',raw,len(raw)-0x149,16)
-    struct.pack_into('<I',raw,len(raw)-0x145,473)
-    return bytes(raw)
+    from alice_profile import fstring
+    def ints(values):return struct.pack('<'+str(len(values))+'i',*values)
+    def strings(values):return ints([len(values)])+b''.join(fstring(v) for v in values)
+    raw=ints([49,0xf223,1])+fstring('Chapter1_W1_VoT_01_S')+ints([2])
+    raw+=fstring('MemoryFragment_Family_0')+ints([0,1,0,0,0,-1])
+    raw+=fstring('UnrelatedActor_0')+ints([17,23,42,12,64,-1])
+    raw+=ints([1])+fstring('Chapter1_W1_P')
+    raw+=ints([0]*25)+strings(['','unrelated'])+ints([0]*25)
+    raw+=ints([473,64,1,0,0,0,0])+ints([0]*60)
+    raw+=strings(['UnknownMovie'])+strings(['VorpalBlade','UnknownAbility'])
+    raw+=strings([])+strings([])+strings(['UnknownSecret'])
+    raw+=ints([18,16,725,72,0,0,0])+struct.pack('<2f',0.15,3600)
+    raw+=bytes([0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0])+ints([0]*70)
+    return raw
 
 class CoreTests(unittest.TestCase):
     def test_fishing_no_changes_is_byte_identical(self):
@@ -206,7 +215,7 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(Save(raw,'kh2').patched({}),raw)
 
     def test_alice_unknown_layout_is_rejected(self):
-        raw=bytearray(alice());struct.pack_into('<I',raw,len(raw)-0x149,17)
+        raw=bytearray(alice());struct.pack_into('<I',raw,0,50)
         with self.assertRaises(FormatError):Save(bytes(raw),'alice')
 
     def test_identification_supports_manual_and_renamed_saves(self):

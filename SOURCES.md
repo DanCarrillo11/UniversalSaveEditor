@@ -24,7 +24,10 @@ Birth by Sleep uses original Japanese Final Mix artwork with its narrow PSP head
 
 Risk of Rain 2 compatibility was validated against a local Steam profile supplied by the repository author. Unlock identifiers in `ror2_unlocks.py` were extracted from resource names in `Risk of Rain 2_Data/StreamingAssets/aa/catalog.json` from that installation. The content catalog and profile contain third-party or personal data and are not included.
 
-Alice: Madness Returns support was validated against a local `PersistentData_PC.PSD` profile supplied by the repository author. The profile itself is not included.
+Alice: Madness Returns research used a local Steam installation and a profile supplied by the repository author. The native persistent-archive serialization order and factual IDs were independently mapped locally. Personal profiles and extracted game files are not included. In-game validation remains pending; see [Alice format and scope](docs/ALICE_FORMAT.md).
+
+- [Wemino/MadnessPatch generated SDK](https://github.com/Wemino/MadnessPatch/tree/main/include/SDK): factual property names and enums. GPL-2.0 implementation code is not incorporated; the reader and patcher were written independently.
+- [Official Alice PC manual](https://eaassets-a.akamaihd.net/eahelp/manuals/ALICEMRpcMANOLen.pdf): weapon-upgrade and collectible context.
 
 The `kh_items.py` table adapts `KHSave.Lib1/Types/EquipmentType.cs` from Xeeynamo/KingdomSaveEditor under GPL-3.0. It preserves attribution and excludes story items and unused entries.
 

@@ -53,6 +53,10 @@ def number_text(value):
 def value_text(field,value):
     if field.fmt == 'xml-unlock':
         return 'Unlocked' if int(value) else 'Locked'
+    if field.boolean:return 'Enabled' if int(value) else 'Disabled'
+    if field.choices:
+        try:return field.choices[int(value)]
+        except (ValueError,IndexError):return str(value)
     try:return number_text(value)
     except (TypeError,ValueError):return str(value)
 
@@ -329,7 +333,7 @@ class Window(QMainWindow):
 
     def open_file(self,game=None):
         if not isinstance(game,str):game=None
-        filename,_=QFileDialog.getOpenFileName(self,'Open a save','', 'Save files (*.sav *.png *.xml *.psd *.PSD);;All files (*)')
+        filename,_=QFileDialog.getOpenFileName(self,'Open a save','', 'Save files (*.sav *.png *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
         if filename:self.open_path(Path(filename),game)
 
     def open_path(self,path,game=None):
@@ -372,7 +376,8 @@ class Window(QMainWindow):
         self.file_combo.setCurrentIndex(paths.index(self.path));self.file_combo.setToolTip(str(self.path));self.file_combo.blockSignals(False)
         self.slot_combo.blockSignals(True);self.slot_combo.clear()
         self.slot_combo.addItems([s.name for s in save.slots]);self.slot_combo.blockSignals(False)
-        self.warning.setText('\n'.join(save.warnings));self.warning.setVisible(bool(save.warnings))
+        notices=save.warnings+getattr(save,'notes',[])
+        self.warning.setText('\n'.join(notices));self.warning.setVisible(bool(notices))
         self.repair.blockSignals(True);self.repair.setChecked(False);self.repair.setVisible(bool(save.warnings));self.repair.blockSignals(False)
         self.editor_nav.setEnabled(True)
         self.save_steps.setText('01  Review values\n02  Apply to active save\n03  Keep your backup' if game in ('webfishing','ror2','alice') else '01  Review values\n02  Export a separate copy\n03  Keep your backup')
@@ -400,7 +405,7 @@ class Window(QMainWindow):
             else:group={'0':'Sora','1':'Donald','2':'Goofy'}.get(field.key.split(':')[0],'Economy')
             group=field.group or group
             groups.setdefault(group,[]).append(field)
-        preferred=['Characters','Skills','Skins and recolors','Artifacts','Items and equipment','Logs','Newt Altars','Economy','Progress','Combat']
+        preferred=['Economy','Weapons','Skills','Health','Dresses','Memories','Bottles','Snouts','Radula rooms','Story and chapters','Chapter select','Characters','Skins and recolors','Artifacts','Items and equipment','Logs','Newt Altars','Progress','Combat']
         ordered=sorted(groups,key=lambda name:(preferred.index(name) if name in preferred else len(preferred),name))
         for name in ordered:
             fields=groups[name]
@@ -408,10 +413,11 @@ class Window(QMainWindow):
             content=QWidget();box=layout(content,True,4,12)
             box.addWidget(label(name,'section'))
             box.addWidget(label('Only fields you change will be modified.','muted',True))
-            unlock_fields=[field for field in fields if field.fmt == 'xml-unlock']
+            unlock_fields=[field for field in fields if field.fmt == 'xml-unlock' or field.boolean]
             if unlock_fields:
                 actions=QHBoxLayout()
-                actions.addWidget(button('Unlock category',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,1),'primary'))
+                actions.addWidget(button('Unlock category' if self.save.game=='ror2' else 'Enable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,1),'primary'))
+                if self.save.game=='alice':actions.addWidget(button('Disable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,0)))
                 actions.addWidget(button('Restore category',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,None)))
                 actions.addStretch();box.addLayout(actions)
             field_filter=QLineEdit();field_filter.setObjectName('fieldSearch');field_filter.setPlaceholderText('Search fields or item IDs…')
@@ -421,17 +427,23 @@ class Window(QMainWindow):
             for field in fields:
                 row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
                 caption=QVBoxLayout();caption.addWidget(label(field.label))
-                if field.fmt == 'xml-unlock':
+                if field.fmt == 'xml-unlock' or field.boolean or field.choices:
                     caption.addWidget(label(f'Original: {value_text(field,field.value)}  ·  {field.key.removeprefix("unlock:")}','small',True))
                 else:
                     caption.addWidget(label(f'Original: {number_text(field.value)}  ·  Range: {field.minimum:,}–{field.maximum:,}','small',True))
+                if field.note:caption.addWidget(label(field.note,'small',True))
                 line.addLayout(caption,1)
                 key=(self.slot_index,field.key)
-                if field.fmt == 'xml-unlock':
-                    entry=QCheckBox('Unlocked')
+                if field.fmt == 'xml-unlock' or field.boolean:
+                    entry=QCheckBox('Unlocked' if self.save.game=='ror2' else 'Enabled')
                     entry.setChecked(bool(int(self.edits.get(key,field.value))))
                     entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
                     self.mark_unlock(entry,field,entry.isChecked())
+                elif field.choices:
+                    entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(150)
+                    entry.setCurrentIndex(int(self.edits.get(key,field.value)))
+                    entry.currentIndexChanged.connect(lambda value,k=key,f=field,e=entry:self.choice_changed(k,f,e,value))
+                    self.mark_unlock(entry,field,entry.currentIndex())
                 else:
                     entry=QLineEdit(self.edits.get(key,number_text(field.value)))
                     entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -466,6 +478,11 @@ class Window(QMainWindow):
         if int(checked) == field.value:self.edits.pop(key,None)
         else:self.edits[key]=str(int(checked))
         self.mark_unlock(entry,field,checked);self.update_summary()
+
+    def choice_changed(self,key,field,entry,value):
+        if value == field.value:self.edits.pop(key,None)
+        else:self.edits[key]=str(value)
+        self.mark_unlock(entry,field,value);self.update_summary()
 
     def mark_entry(self,entry,field,text):
         changed=text.strip()!=number_text(field.value)
@@ -535,6 +552,18 @@ class Window(QMainWindow):
             lines.append(f'{self.save.slots[index].name}\n{field.label}: {value_text(field,field.value)} → {value_text(field,value)}')
         if self.repair.isChecked():lines.append('Repair the save block CRC in the copy.')
         text.setPlainText('\n\n'.join(lines));box.addWidget(text,1)
+        if self.save.game=='alice':
+            updated=Save(output,'alice')
+            final_fields={field.key:field for field in updated.slots[0].fields}
+            requested={key for index,key in self.validated_changes()}
+            automatic=[]
+            for field in self.save.slots[0].fields:
+                final=final_fields.get(field.key)
+                if final and field.key not in requested and final.value != field.value:
+                    automatic.append(f'{field.label}: {value_text(field,field.value)} → {value_text(final,final.value)}')
+            if automatic:
+                text.setPlainText(text.toPlainText()+'\n\nAutomatic related changes\n'+'\n'.join(automatic))
+            box.addWidget(label('Related state is synchronized automatically when affected; automatic field changes are listed above.','small',True))
         box.addWidget(label('Loading edited copies in each game still requires validation.','small',True))
         actions=QHBoxLayout();actions.addWidget(button('Back',dialog.reject));actions.addStretch()
         def write():

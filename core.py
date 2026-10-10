@@ -17,6 +17,8 @@ import zlib
 from kh_items import ITEMS
 from kh2_items import ITEM_NAMES as KH2_ITEM_NAMES
 from ror2_unlocks import UNLOCK_IDS, unlock_group, unlock_label
+from alice_profile import AliceProfile
+from alice_config import AliceConfig
 
 MAX_SIZE = 64 * 1024 * 1024
 
@@ -34,6 +36,9 @@ class Field:
     maximum: int = 999999
     group: str = ''
     decimal: bool = False
+    boolean: bool = False
+    choices: tuple = ()
+    note: str = ''
 
     def parse(self, text):
         try:
@@ -433,20 +438,16 @@ class Save:
             raise FormatError('No saved Kingdom Hearts II slots were found in this container.')
 
     def _alice(self):
-        # PersistentData_PC.PSD stores a fixed-size scalar trailer after variable
-        # collectible lists. Teeth is 0x145 bytes from the end of that trailer.
-        if len(self.raw) < 0x160 or struct.unpack_from('<I',self.raw,4)[0] != 0xf223:
-            raise FormatError('This is not an Alice: Madness Returns persistent profile.')
-        offset = len(self.raw) - 0x145
-        if offset < 8:
-            raise FormatError('The Alice profile is truncated.')
-        trailer_marker = struct.unpack_from('<I',self.raw,offset-4)[0]
-        if trailer_marker != 16:
-            raise FormatError('Unrecognized Alice persistent profile layout.')
-        teeth = struct.unpack_from('<I',self.raw,offset)[0]
-        if teeth > 999999999:
-            raise FormatError('The Alice teeth value is invalid.')
-        self.slots = [Slot('Persistent profile',[Field('teeth','Teeth',teeth,offset,'<I',0,999999999,'Economy')])]
+        config = self.raw[:8] == struct.pack('<2i',16,0xf223)
+        try:self.alice = (AliceConfig if config else AliceProfile)(self.raw, Field)
+        except (ValueError,struct.error,UnicodeError) as error:
+            raise FormatError('Unsupported Alice profile or configuration: '+str(error)) from error
+        self.slots = [Slot('Game configuration' if config else 'Persistent profile',self.alice.fields)]
+        self.notes = [
+            'GameConfig_PC.CFG: difficulty only. Graphics, controls and extras-menu records are preserved. Close Alice before applying edits.'
+            if config else
+            'Persistent profile. Select GameConfig_PC.CFG in the file selector to edit current difficulty. Checkpoint position and active outfit are stored separately. Close Alice before applying edits.'
+        ]
 
     def patched(self, changes, repair_crc=False):
         if self.warnings and not repair_crc:
@@ -462,7 +463,10 @@ class Save:
             field.validate(value)
             if field.fmt and not field.fmt.startswith('xml-'):
                 struct.pack_into(field.fmt,result,field.offset,value)
-        if self.game == 'webfishing':
+        if self.game == 'alice':
+            try:result = self.alice.patch(result,{key:value for (index,key),value in changes.items()})
+            except ValueError as error:raise FormatError(str(error)) from error
+        elif self.game == 'webfishing':
             capacity=changes.get((0,'max_bait'),self.info.get('max_bait',100))
             for field in self.slots[0].fields:
                 if field.key.startswith('bait:') and changes.get((0,field.key),field.value)>capacity:
@@ -534,7 +538,12 @@ class Save:
                 expected=value
             else:
                 expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
-            if next(f.value for f in check.slots[index].fields if f.key == key) != expected:
+            actual=next((f.value for f in check.slots[index].fields if f.key == key),None)
+            if actual is None and self.game=='alice' and not field.fmt:
+                kind,_,identifier=key.partition(':')
+                if kind in getattr(check.alice,'lists',{}):
+                    actual=int(identifier in check.alice.lists[kind][2])
+            if actual != expected:
                 raise FormatError('Export verification failed.')
         return output
 
@@ -564,6 +573,8 @@ def discover():
             found.append((game,p))
     for p in (docs/'My Games/Alice Madness Returns/AliceGame/CheckPoint').glob('*/PersistentData_PC.PSD'):
         found.append(('alice',p))
+        config = p.with_name('GameConfig_PC.CFG')
+        if config.is_file():found.append(('alice',config))
     for p in (docs/'Max Payne Savegames').glob('*.mps'):
         found.append(('maxpayne',p))
     return found
@@ -574,7 +585,7 @@ def identify_game(path):
     name = path.name.casefold()
     known = {'khfm_ww.png':'kh1', 'khiifm_ww.png':'kh2',
              'kh2fm_ww.png':'kh2', 'khrecom_ww.png':'recom',
-             'khbbs_ww.png':'bbs', 'persistentdata_pc.psd':'alice'}
+             'khbbs_ww.png':'bbs', 'persistentdata_pc.psd':'alice', 'gameconfig_pc.cfg':'alice'}
     if name in known:
         return known[name]
     extensions = {'.sav':'webfishing', '.xml':'ror2', '.psd':'alice', '.mps':'maxpayne'}
@@ -587,7 +598,7 @@ def identify_game(path):
         return 'kh1'
     if path.suffix.casefold() in extensions:
         return extensions[path.suffix.casefold()]
-    raise FormatError('Choose a supported .sav, .png, .xml, or .PSD save file.')
+    raise FormatError('Choose a supported .sav, .png, .xml, .PSD, or GameConfig_PC.CFG file.')
 
 def backup_files(source):
     """Only list backups associated with this active file or its default export."""
