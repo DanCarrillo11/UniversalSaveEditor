@@ -12,6 +12,7 @@ from core import Save, discover, read_limited, export_copy, replace_current
 from catalog import GAMES, BY_ID
 from artwork import Artwork
 from ror2_unlocks import UNLOCK_IDS
+import library_view
 
 ROOT=Path(__file__).resolve().parent
 
@@ -55,35 +56,37 @@ def value_text(field,value):
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('UniversalSaveEditor — your save library')
-        self.resize(1320,900)
-        self.setMinimumSize(1060,740)
+        self.setWindowTitle('Universal Save Data — UniversalSaveEditor')
+        self.resize(1480,900)
+        self.setMinimumSize(1080,740)
         self.setAcceptDrops(True)
         self.setStyleSheet((ROOT/'theme.qss').read_text(encoding='utf-8'))
         self.files=[];self.save=None;self.path=None;self.inputs={};self.edits={}
         self.exported_state=None;self.slot_index=0;self.filter='all';self.selected_game=None
         root=QWidget();self.setCentralWidget(root)
         shell=layout(root,False,0,0)
-        side=QFrame();side.setObjectName('sidebar');side.setFixedWidth(218)
+        side=QFrame();side.setObjectName('sidebar');side.setFixedWidth(216)
         nav=layout(side,True,20,12)
         nav.addSpacing(12)
-        nav.addWidget(label('Universal\nSaveEditor','brand'))
-        nav.addWidget(label('YOUR NEXT SAVE POINT','small',True))
+        nav.addWidget(label('🎮  Universal\n      Save Data','brand'))
+        nav.addWidget(label('GESTIONA TUS PARTIDAS','small',True))
         nav.addSpacing(30)
-        nav.addWidget(label('PERSONAL SPACE','eyebrow'))
-        self.library_nav=button('Save library',self.show_library,'nav');self.library_nav.setCheckable(True)
-        self.editor_nav=button('Save editor',self.show_editor,'nav');self.editor_nav.setCheckable(True);self.editor_nav.setEnabled(False)
+        nav.addWidget(label('NAVEGACIÓN','eyebrow'))
+        self.library_nav=button('▦  Biblioteca',self.show_library,'nav');self.library_nav.setCheckable(True)
+        self.editor_nav=button('✎  Editor de partidas',self.show_editor,'nav');self.editor_nav.setCheckable(True);self.editor_nav.setEnabled(False)
         nav.addWidget(self.library_nav);nav.addWidget(self.editor_nav)
+        nav.addWidget(button('▤  Respaldos',lambda:self.show_library('backups'),'nav'))
+        nav.addWidget(button('↺  Restaurar',lambda:self.show_library('restore'),'nav'))
         nav.addSpacing(24)
-        nav.addWidget(label('COLLECTIONS','eyebrow'))
+        nav.addWidget(label('COLECCIONES','eyebrow'))
         for name in ('WEBFISHING','RISK OF RAIN','KINGDOM HEARTS','MAX PAYNE'):
             nav.addWidget(button(name.title(),lambda checked=False,n=name:self.collection(n),'nav'))
         nav.addStretch()
-        nav.addWidget(label('YOUR SAVES, PROTECTED','eyebrow'))
-        nav.addWidget(label('Local. No accounts.\nYour original is always preserved.','muted',True))
+        nav.addWidget(label('TUS PARTIDAS PROTEGIDAS','eyebrow'))
+        nav.addWidget(label('Sin cuentas ni servidores.\nSiempre con respaldo local.','muted',True))
         nav.addSpacing(8)
-        nav.addWidget(button('User guide',self.open_guide))
-        nav.addWidget(label('v0.5  /  IN DEVELOPMENT','small'))
+        nav.addWidget(button('Guía de usuario',self.open_guide))
+        nav.addWidget(label('v0.6  /  VISTA RENOVADA','small'))
         shell.addWidget(side)
         self.stack=QStackedWidget();shell.addWidget(self.stack,1)
         self.build_library();self.build_editor()
@@ -94,33 +97,7 @@ class Window(QMainWindow):
         self.scan();self.show_library()
 
     def build_library(self):
-        page=QWidget();box=layout(page,True,30,18)
-        top=QHBoxLayout()
-        titlebox=QVBoxLayout();titlebox.addWidget(label('YOUR SAVE SPACE','eyebrow'));titlebox.addWidget(label('Save library','title'))
-        top.addLayout(titlebox);top.addStretch()
-        top.addWidget(button('Refresh',self.scan))
-        top.addWidget(button('+  Open save',self.open_file,'primary'))
-        box.addLayout(top)
-        box.addWidget(label('Adjust your progress and return to your favorite worlds.','muted'))
-        strip=QFrame();strip.setObjectName('panel');stats=layout(strip,False,18,24)
-        self.available=label(f'{sum(game.editable for game in GAMES):02d}  EDITORS AVAILABLE','success')
-        self.detected=label('00  FILES DETECTED','muted')
-        stats.addWidget(self.available);stats.addWidget(self.detected);stats.addStretch();stats.addWidget(label('BACKUPS BEFORE CHANGES','small'))
-        box.addWidget(strip)
-        tools=QHBoxLayout()
-        self.search=QLineEdit();self.search.setPlaceholderText('Search games…');self.search.setAccessibleName('Search games');self.search.setClearButtonEnabled(True)
-        self.search.textChanged.connect(self.render_cards)
-        tools.addWidget(self.search,1)
-        self.filter_buttons=[]
-        for key,text in [('all','All'),('ready','Available'),('pending','Coming soon')]:
-            b=button(text,lambda checked=False,k=key:self.set_filter(k),'filter');b.setCheckable(True);b.setChecked(key=='all')
-            self.filter_buttons.append((key,b));tools.addWidget(b)
-        box.addLayout(tools)
-        scroll=QScrollArea();scroll.setWidgetResizable(True)
-        content=QWidget();self.grid=QGridLayout(content);self.grid.setContentsMargins(0,0,8,0);self.grid.setSpacing(18)
-        scroll.setWidget(content);box.addWidget(scroll,1)
-        box.addWidget(label('Available means editing is implemented. In-game validation is still in progress.','small',True))
-        self.stack.addWidget(page)
+        library_view.build_library(self)
 
     def build_editor(self):
         page=QWidget();outer=layout(page,True,28,14)
@@ -156,7 +133,7 @@ class Window(QMainWindow):
         try:self.files=discover()
         except OSError as error:
             QMessageBox.warning(self,'Search failed',str(error));return
-        self.detected.setText(f'{len(self.files):02d}  FILES DETECTED')
+        self.detected.setText(f'{len(self.files):02d} ARCHIVOS ENCONTRADOS')
         self.render_cards()
         self.statusBar().showMessage(f'{len(self.files)} files found in the usual folders · Drag a file here to open it')
 
@@ -169,33 +146,14 @@ class Window(QMainWindow):
         self.set_filter('all');self.search.setText(name);self.show_library()
 
     def render_cards(self):
-        if not hasattr(self,'grid'):return
-        clear(self.grid)
-        for row in range(self.grid.rowCount()):self.grid.setRowStretch(row,0)
-        search=self.search.text().casefold().strip()
-        games=[g for g in GAMES if search in (g.title+' '+g.subtitle+' '+g.family+' '+g.description).casefold() and (self.filter=='all' or g.editable==(self.filter=='ready'))]
-        self.visible_games=[g.id for g in games]
-        for index,game in enumerate(games):
-            card=QFrame();card.setObjectName('card');card.setMinimumWidth(240)
-            box=layout(card,True,14,9)
-            box.addWidget(Artwork(game))
-            row=QHBoxLayout();row.addWidget(label('EDITOR AVAILABLE' if game.editable else 'IN DEVELOPMENT','badge' if game.editable else 'pending'));row.addStretch();box.addLayout(row)
-            box.addWidget(label(game.title,'section',True));box.addWidget(label(game.subtitle,'muted',True))
-            features=label(game.description,'cardDescription',True)
-            features.setAccessibleName('Editor features for '+game.title)
-            box.addWidget(features)
-            count=sum(g==game.id for g,p in self.files)
-            box.addWidget(label(f'{count} file'+('s' if count!=1 else '')+' detected' if count else 'No saves detected','small'))
-            box.addWidget(button('Open editor  →' if game.editable else 'View compatibility',lambda checked=False,g=game:self.select_game(g)))
-            self.grid.addWidget(card,index//3,index%3)
-        if not games:
-            empty=label('No games matched your search.\nTry another name or change the filter.','muted',True)
-            self.grid.addWidget(empty,0,0,1,3)
-        for col in range(3):self.grid.setColumnStretch(col,1)
-        self.grid.setRowStretch((len(games)+2)//3,1)
+        library_view.render_cards(self)
 
-    def show_library(self):
-        self.stack.setCurrentIndex(0);self.library_nav.setChecked(True);self.editor_nav.setChecked(False)
+    def show_library(self, mode='library'):
+        self.library_mode = mode
+        self.stack.setCurrentIndex(0)
+        self.library_nav.setChecked(True)
+        self.editor_nav.setChecked(False)
+        library_view.render_preview(self)
 
     def show_editor(self):
         if self.save:
