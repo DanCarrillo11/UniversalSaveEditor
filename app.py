@@ -149,7 +149,7 @@ class Window(QMainWindow):
         library_view.render_cards(self)
 
     def show_library(self, mode='library'):
-        self.library_mode = mode
+        self.library_mode = mode if isinstance(mode, str) else 'library'
         self.stack.setCurrentIndex(0)
         self.library_nav.setChecked(True)
         self.editor_nav.setChecked(False)
