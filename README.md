@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and keep recoverable backups in one application.
 
-**v0.8.0-alpha** is a pre-release. This update adds difficulty editing for KH Final Mix and KH II Final Mix.
+**v0.8.1-alpha** is a pre-release. This update adds difficulty editing for KH Final Mix and KH II Final Mix.
 
 ## Download and run
 

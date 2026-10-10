@@ -440,7 +440,7 @@ class Window(QMainWindow):
                     entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
                     self.mark_unlock(entry,field,entry.isChecked())
                 elif field.choices:
-                    entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(150)
+                    entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(190)
                     entry.setCurrentIndex(int(self.edits.get(key,field.value)))
                     entry.currentIndexChanged.connect(lambda value,k=key,f=field,e=entry:self.choice_changed(k,f,e,value))
                     self.mark_unlock(entry,field,entry.currentIndex())

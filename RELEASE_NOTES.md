@@ -1,4 +1,4 @@
-# UniversalSaveEditor v0.8.0-alpha
+# UniversalSaveEditor v0.8.1-alpha
 
 Change the saved difficulty of an existing Kingdom Hearts Final Mix or
 Kingdom Hearts II Final Mix Steam slot from the new **Difficulty** category.
@@ -6,6 +6,7 @@ Kingdom Hearts II Final Mix Steam slot from the new **Difficulty** category.
 - KH Final Mix: Beginner, Final Mix (Standard), and Proud.
 - KH II Final Mix: Beginner, Standard, Proud, and Critical.
 - Named mode selectors and review of the chosen mode before export.
+- Wider selectors so Final Mix (Standard) is displayed in full.
 - Other slots, character attributes, inventory, and progress are preserved.
 - The affected KH II record checksum and the outer Steam-container CRC are
   updated on export. Existing integrity failures require explicit repair.

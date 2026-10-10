@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.8.1-alpha
+
+- Widen mode selectors so Final Mix (Standard) is displayed in full.
+- Include all difficulty-editing features from v0.8.0-alpha.
+
 ## v0.8.0-alpha
 
 - Add a difficulty selector per saved slot for Kingdom Hearts Final Mix and
