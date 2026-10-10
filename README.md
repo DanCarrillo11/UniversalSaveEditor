@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and keep recoverable backups in one application.
 
-**v0.7.0-alpha** is a pre-release. This update expands the Alice persistent-profile editor.
+**v0.8.0-alpha** is a pre-release. This update adds difficulty editing for KH Final Mix and KH II Final Mix.
 
 ## Download and run
 
@@ -30,8 +30,8 @@ executable included at its root. Startup can take a few seconds.
 |---|---|---|
 | WEBFISHING | Money, debt, earnings, level, XP, bait with automatic unlocks, capacity, upgrades, existing inventory size/quality, and fishing journal | Available; apply with backup |
 | Risk of Rain 2, Steam | Lunar Coins, statistics, and 454 unlock identifiers for characters, skills, skins, artifacts, items, logs, and Newt Altars | Available; apply with backup |
-| Kingdom Hearts Final Mix, Steam | Munny, Sora/Donald/Goofy attributes, and 154 named inventory entries | Available; export a separate copy |
-| Kingdom Hearts II Final Mix, Steam | Munny, experience, character attributes/levels, bonus and summon levels, Drive Gauge, Drive Forms, and 320 inventory quantities | Experimental; export a separate copy |
+| Kingdom Hearts Final Mix, Steam | Munny, difficulty, Sora/Donald/Goofy attributes, and 154 named inventory entries | Available; export a separate copy |
+| Kingdom Hearts II Final Mix, Steam | Munny, difficulty, experience, character attributes/levels, bonus and summon levels, Drive Gauge, Drive Forms, and 320 inventory quantities | Experimental; export a separate copy |
 | Alice: Madness Returns, Steam | Teeth, four weapon levels, abilities, health upgrades and paint pots, dress abilities, 89 memories, 83 bottles, 59 snouts, Radula rooms, chapters, difficulty, enemy journal, cinematics, and statistics | Experimental; apply with backup |
 | Re:Chain of Memories / Birth by Sleep, Steam | File discovery | Coming soon |
 | Max Payne 1 | Listed in the library | Coming soon |
@@ -40,6 +40,12 @@ Kingdom Hearts support targets **HD 1.5 + 2.5 ReMIX on Steam**. KH II requires a
 populated slot created at an in-game save point. Containers without saved slots
 cannot be edited. Its record checksums and the outer Steam-container CRC are
 maintained on export. Invalid integrity checks require explicit repair.
+
+Open **Difficulty** after selecting a saved slot to change its mode. KH Final Mix
+supports Beginner, Final Mix (Standard), and Proud. KH II Final Mix also supports
+Critical. Existing attributes, items, and starting bonuses are not recalculated;
+changing the saved mode does not recreate a new-game setup. In-game validation
+of mode changes is pending. See [difficulty format](docs/KH_DIFFICULTY.md).
 
 Automated checks validate file preservation and editing behavior. Loading all
 edited copies inside the games still requires validation; KH II and Alice are

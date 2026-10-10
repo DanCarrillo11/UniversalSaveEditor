@@ -405,7 +405,7 @@ class Window(QMainWindow):
             else:group={'0':'Sora','1':'Donald','2':'Goofy'}.get(field.key.split(':')[0],'Economy')
             group=field.group or group
             groups.setdefault(group,[]).append(field)
-        preferred=['Economy','Weapons','Skills','Health','Dresses','Memories','Bottles','Snouts','Radula rooms','Story and chapters','Chapter select','Characters','Skins and recolors','Artifacts','Items and equipment','Logs','Newt Altars','Progress','Combat']
+        preferred=['Economy','Difficulty','Weapons','Skills','Health','Dresses','Memories','Bottles','Snouts','Radula rooms','Story and chapters','Chapter select','Characters','Skins and recolors','Artifacts','Items and equipment','Logs','Newt Altars','Progress','Combat']
         ordered=sorted(groups,key=lambda name:(preferred.index(name) if name in preferred else len(preferred),name))
         for name in ordered:
             fields=groups[name]

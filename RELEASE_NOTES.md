@@ -1,44 +1,43 @@
-# UniversalSaveEditor v0.7.0-alpha
+# UniversalSaveEditor v0.8.0-alpha
 
-The first feature update expands the Alice: Madness Returns persistent-profile
-editor and fixes the previous Teeth offset.
+Change the saved difficulty of an existing Kingdom Hearts Final Mix or
+Kingdom Hearts II Final Mix Steam slot from the new **Difficulty** category.
 
-## Alice editor
-
-- Teeth, four weapon levels, and acquired abilities with related state updates.
-- Current health, story health upgrades, and sixteen paint-pot pickups.
-- Twelve dress ability flags and installed-content DLC weapon flags.
-- 89 small memories, five major memories, 83 bottles, and 59 snouts.
-- Sixteen Radula rooms, completed chapters/difficulties, and chapter-select entries.
-- Twenty enemy-journal entries, story cinematics, play time, and statistics.
-- Current and lowest-used difficulty in the separate `GameConfig_PC.CFG` file.
-- Automatic updates to pickup records, paint-pot totals, chapter flags, snout
-  counters, and affected completion statistics.
-- Level selectors, toggles, search, and batch category actions.
-
-The new reader walks the full revision-49 archive. The old Teeth field pointed
-to a combat statistic, which is preserved by the corrected editor.
+- KH Final Mix: Beginner, Final Mix (Standard), and Proud.
+- KH II Final Mix: Beginner, Standard, Proud, and Critical.
+- Named mode selectors and review of the chosen mode before export.
+- Other slots, character attributes, inventory, and progress are preserved.
+- The affected KH II record checksum and the outer Steam-container CRC are
+  updated on export. Existing integrity failures require explicit repair.
 
 ## Download and run
 
-Download `UniversalSaveEditor.exe` and open it directly. No installer, Python, or
-command-line setup is required. **Code → Download ZIP** includes the executable.
-Exact backups are created before an active profile is replaced.
+Download UniversalSaveEditor.exe and open it directly. No installer, Python,
+or command-line setup is required. **Code → Download ZIP** also includes the
+executable. Select your saved slot, open **Difficulty**, choose a mode, then use
+**Review and export** to create a copy and preserve the original backup.
 
 ## Validation and limits
 
-50 automated tests cover the editors, interface, backups, archive preservation,
-and coupled Alice edits. The release build checks startup and packaged resources.
+54 automated tests cover the save editors, interface, backups, every supported
+KH difficulty, multiple-slot isolation, exact byte preservation, and checksums.
+The release build verifies executable startup and packaged resources.
 
-**Alice remains experimental.** In-game validation of all categories is pending.
-This update edits `PersistentData_PC.PSD` and difficulty in `GameConfig_PC.CFG`.
-Select the configuration file in the editor's file selector to change difficulty.
-It does not edit the separate checkpoint: position and selected outfit are
-outside its scope. Dress controls change ability flags; DLC content must already
-be available. A checkpoint can override current health. Statistics do not directly
-grant Steam achievements.
+A local KH I profile was exported in memory for each mode without replacing the
+original. The local KH II container has no saved slots; KH II mode changes were
+tested using synthetic records. Create a slot at an in-game save point before
+opening that container. Actual in-game behavior after changing modes remains
+unverified for both games.
 
-Close Alice before applying changes. Keep backups until the edited profile has
-been checked in-game. See `docs/ALICE_FORMAT.md` for format details.
+Changing the saved mode does not recreate a new-game setup. Existing character
+stats, starting bonuses, and awarded abilities are not recalculated. Selecting
+Critical does not add its starting bonuses or rebuild existing stats. The editor
+does not directly award Steam achievements.
 
-`SHA256SUMS.txt` contains the hash of the downloadable executable.
+KH II and Alice remain experimental. Alice's profile and difficulty features from
+v0.7.0-alpha are included; checkpoint editing and outfit selection remain outside
+its scope. Close the game before installing an edited save and keep your backup
+until you have checked it in-game.
+
+See docs/KH_DIFFICULTY.md and docs/ALICE_FORMAT.md for mapped formats and limits.
+SHA256SUMS.txt contains the hash of the downloadable executable.

@@ -9,6 +9,13 @@ The project is distributed under GPL-3.0-or-later. Its implementation uses Pytho
 
 Game names belong to their respective owners. UniversalSaveEditor is an independent project.
 
+KH difficulty values and byte offsets are cross-referenced with the
+[KH I Final Mix record](https://github.com/Xeeynamo/KingdomSaveEditor/blob/master/KHSave.Lib1/SaveKh1.FinalMix.cs),
+[KH I mode enum](https://github.com/Xeeynamo/KingdomSaveEditor/blob/master/KHSave.Lib1/Types/DifficultyType.cs),
+[KH II Final Mix record](https://github.com/Xeeynamo/KingdomSaveEditor/blob/master/KHSave.Lib2/SaveKh2.FinalMix.cs),
+and [KH II mode enum](https://github.com/Xeeynamo/KingdomSaveEditor/blob/master/KHSave.Lib2/Types/DifficultyType.cs).
+See [difficulty format and validation](docs/KH_DIFFICULTY.md).
+
 The memory-card icon was prepared as a transparent PNG crop from an image supplied by the repository author. Visible marks and logos belong to their respective owners and are not covered by the source-code license.
 
 ## Cover art

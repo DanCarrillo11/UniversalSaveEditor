@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.8.0-alpha
+
+- Add a difficulty selector per saved slot for Kingdom Hearts Final Mix and
+  Kingdom Hearts II Final Mix on Steam.
+- Support Beginner / Final Mix (Standard) / Proud in KH I, and
+  Beginner / Standard / Proud / Critical in KH II.
+- Preserve other slots, existing attributes and inventory; refresh the affected
+  KH II record checksum and outer container CRC on export.
+- Reject unsupported mode values; document that existing stats and starting
+  bonuses are not recalculated and in-game validation remains pending.
+- Test all modes, slot isolation, exact byte preservation, checksums and selectors.
+
 ## v0.7.0-alpha
 
 First feature update after the consolidated alpha release.

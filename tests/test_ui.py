@@ -183,6 +183,26 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(config.read_bytes()[16:],original[16:])
         self.assertEqual(next(self.root.glob('*.bak')).read_bytes(),original)
 
+    def test_kingdom_hearts_difficulty_uses_named_modes_per_slot(self):
+        w=self.window
+        for game,path,raw,choices in (
+            ('kh1',self.kh,kingdom(),['Beginner','Final Mix (Standard)','Proud']),
+            ('kh2',self.root/'KHIIFM_WW.png',kingdom2(),['Beginner','Standard','Proud','Critical']),
+        ):
+            w.edits={};path.write_bytes(raw);w.load(game,path)
+            selector=w.inputs[(0,'difficulty')]
+            self.assertIsInstance(selector,QComboBox)
+            self.assertEqual([selector.itemText(i) for i in range(selector.count())],choices)
+            selector.setCurrentIndex(len(choices)-1)
+            self.assertEqual(w.validated_changes(),{(0,'difficulty'):len(choices)-1})
+            if game=='kh1':
+                w.slot_combo.setCurrentIndex(1)
+                w.slot_combo.activated.emit(1)
+                self.assertEqual(w.inputs[(1,'difficulty')].currentIndex(),0)
+                w.slot_combo.setCurrentIndex(0)
+                w.slot_combo.activated.emit(0)
+                self.assertEqual(w.inputs[(0,'difficulty')].currentIndex(),2)
+
     def test_library_resizes_without_horizontal_scroll_or_clipped_cards(self):
         w=self.window;w.show()
         for width in (1100,1280,1536,1920,1100):

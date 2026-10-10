@@ -337,6 +337,12 @@ class Save:
                 continue
             name = bytes(table[desc:desc+0x40]).split(b'\0')[0].decode('ascii',errors='replace')
             fields = [Field('munny','Munny',struct.unpack_from('<I',self.raw,record+0x1641c)[0],record+0x1641c,'<I',0,999999)]
+            difficulty=self.raw[record+0x1642c]
+            if difficulty not in (0,1,2):
+                raise FormatError(f'Slot {index+1}: unsupported KH Final Mix difficulty value.')
+            fields.append(Field('difficulty','Difficulty',difficulty,record+0x1642c,'<B',0,2,'Difficulty',
+                                choices=('Beginner','Final Mix (Standard)','Proud'),
+                                note='Changes this slot\'s saved difficulty. Existing attributes, equipment and starting bonuses are not recalculated.'))
             for char,namechar in enumerate(('Sora','Donald','Goofy')):
                 stat = record+4+char*0x74
                 for delta,keyname,label,low,high in [(1,'hp_current','Current HP',0,255),(2,'hp','Base HP',1,255),(3,'mp_current','Current MP',0,255),(4,'mp','Base MP',1,255),(5,'ap','Base AP',0,255),(6,'strength','Strength',0,255),(7,'defense','Defense',0,255)]:
@@ -403,8 +409,14 @@ class Save:
             expected_checksum=struct.unpack_from('<I',self.raw,record+8)[0]
             if expected_checksum!=self._kh2_checksum(self.raw[record:record+stride]):
                 self.warnings.append(f'Slot {index+1}: internal checksum does not match. Enable integrity repair to export a copy.')
+            difficulty=self.raw[record+0x2498]
+            if difficulty not in (0,1,2,3):
+                raise FormatError(f'Slot {index+1}: unsupported KH II Final Mix difficulty value.')
             fields = [
                 Field('munny','Munny',struct.unpack_from('<I',self.raw,record+0x2440)[0],record+0x2440,'<I',0,9999999,'Economy'),
+                Field('difficulty','Difficulty',difficulty,record+0x2498,'<B',0,3,'Difficulty',
+                      choices=('Beginner','Standard','Proud','Critical'),
+                      note='Changes this slot\'s saved difficulty. Existing attributes, equipment and starting bonuses are not recalculated.'),
                 Field('experience','Experience',struct.unpack_from('<I',self.raw,record+0x36e0)[0],record+0x36e0,'<I',0,99999999,'Progress'),
                 Field('bonus_level','Bonus level',struct.unpack_from('<I',self.raw,record+0x3700)[0],record+0x3700,'<I',0,99,'Progress'),
                 Field('summon_level','Summon level',self.raw[record+0x3526],record+0x3526,'<B',0,7,'Progress'),

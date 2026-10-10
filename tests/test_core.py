@@ -163,6 +163,53 @@ class CoreTests(unittest.TestCase):
         self.assertTrue(all(a==b or i in allowed for i,(a,b) in enumerate(zip(raw,output))))
         png_chunks(output)
 
+    def test_kh1_difficulty_modes_preserve_other_slots_and_data(self):
+        raw=kingdom();save=Save(raw,'kh1')
+        field=next(f for f in save.slots[1].fields if f.key=='difficulty')
+        self.assertEqual(field.choices,('Beginner','Final Mix (Standard)','Proud'))
+        start,end=save.crc_regions[0]
+        for mode in range(3):
+            output=save.patched({(1,'difficulty'):mode})
+            expected=bytearray(raw);expected[field.offset]=mode
+            struct.pack_into('>I',expected,end,zlib.crc32(expected[start-4:end]))
+            self.assertEqual(output,bytes(expected))
+            parsed=Save(output,'kh1')
+            self.assertEqual(next(f.value for f in parsed.slots[1].fields if f.key=='difficulty'),mode)
+            self.assertEqual(next(f.value for f in parsed.slots[0].fields if f.key=='difficulty'),0)
+            self.assertFalse(parsed.warnings)
+        for value in (-1,3,1.5):
+            with self.assertRaises(ValueError):save.patched({(1,'difficulty'):value})
+
+    def test_kh2_difficulty_modes_repair_checksums_only_in_changed_slot(self):
+        raw=bytearray(kingdom2());first=Save(raw,'kh2')
+        start,end=first.crc_regions[0];archive=start+16;stride=0x10fc0
+        record=archive+100*0x158
+        raw[record+stride:record+2*stride]=raw[record:record+stride]
+        struct.pack_into('<I',raw,archive+0x158+0x50,stride)
+        struct.pack_into('>I',raw,end,zlib.crc32(raw[start-4:end]))
+        raw=bytes(raw);save=Save(raw,'kh2')
+        self.assertEqual(len(save.slots),2)
+        field=next(f for f in save.slots[1].fields if f.key=='difficulty')
+        self.assertEqual(field.choices,('Beginner','Standard','Proud','Critical'))
+        for mode in range(4):
+            output=save.patched({(1,'difficulty'):mode})
+            expected=bytearray(raw);expected[field.offset]=mode
+            second=record+stride
+            struct.pack_into('<I',expected,second+8,Save._kh2_checksum(expected[second:second+stride]))
+            struct.pack_into('>I',expected,end,zlib.crc32(expected[start-4:end]))
+            self.assertEqual(output,bytes(expected))
+            parsed=Save(output,'kh2')
+            self.assertEqual(next(f.value for f in parsed.slots[1].fields if f.key=='difficulty'),mode)
+            self.assertFalse(parsed.warnings)
+        for value in (-1,4,1.5):
+            with self.assertRaises(ValueError):save.patched({(1,'difficulty'):value})
+
+    def test_unknown_kh_difficulty_is_rejected(self):
+        for game,raw in (('kh1',kingdom()),('kh2',kingdom2())):
+            save=Save(raw,game);field=next(f for f in save.slots[0].fields if f.key=='difficulty')
+            invalid=bytearray(raw);invalid[field.offset]=255
+            with self.subTest(game=game),self.assertRaises(FormatError):Save(invalid,game)
+
     def test_crc_repair_is_explicit(self):
         raw=bytearray(kingdom());save=Save(raw,'kh1')
         raw[save.crc_regions[0][1]]^=1
