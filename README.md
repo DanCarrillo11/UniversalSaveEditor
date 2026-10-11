@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.10.0-alpha** is a pre-release. Editors now use a few game-specific categories
+**v0.10.1-alpha** is a pre-release. Editors now use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -18,6 +18,8 @@ executable included at its root. Startup can take a few seconds.
 ## Features
 
 - Responsive game library with full cover art, search, filters, and sorting.
+- Platform logos and names below each cover; currently Steam. Editor status and
+  detected saves remain in the details panel. Coming-soon games are not editable.
 - Click a compatible cover to open its detected save directly.
 - Automatic discovery, manual file selection, and drag and drop.
 - Up to three main categories per editor, with section and character selectors.
@@ -46,7 +48,7 @@ populated slot created at an in-game save point. Containers without saved slots
 cannot be edited. Its record checksums and the outer Steam-container CRC are
 maintained when applying changes. Invalid integrity checks require explicit repair.
 
-Open **Difficulty** after selecting a saved slot to change its mode. KH Final Mix
+Open **Progress → Difficulty** after selecting a saved slot to change its mode. KH Final Mix
 supports Beginner, Final Mix (Standard), and Proud. KH II Final Mix also supports
 Critical. Existing attributes, items, and starting bonuses are not recalculated;
 changing the saved mode does not recreate a new-game setup. In-game validation

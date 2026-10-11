@@ -4,7 +4,8 @@ import os
 from pathlib import Path
 from datetime import datetime
 from PySide6.QtCore import Qt, QUrl, QTimer, Signal
-from PySide6.QtGui import QDesktopServices, QIcon, QKeySequence, QShortcut, QPixmap, QFontDatabase
+from PySide6.QtGui import QDesktopServices, QIcon, QKeySequence, QShortcut, QPixmap, QFontDatabase, QPainter
+from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QFrame, QLabel, QPushButton, QLineEdit,
     QVBoxLayout, QHBoxLayout, QGridLayout, QScrollArea, QStackedWidget, QComboBox,
@@ -12,13 +13,36 @@ from PySide6.QtWidgets import (
     QLayout,
 )
 from core import Save, discover, read_limited, replace_current, identify_game, backup_files, restore_backup
-from catalog import GAMES, BY_ID
+from catalog import GAMES, BY_ID, PLATFORMS
 from artwork import Artwork
 from editor_layout import organize_fields
 from ror2_unlocks import UNLOCK_IDS
 from version import VERSION
 
 ROOT=Path(__file__).resolve().parent
+
+def platform_pixmap(key,size=18,scale=1):
+    renderer=QSvgRenderer(str(ROOT/'assets/platforms'/PLATFORMS[key].icon))
+    if not renderer.isValid():return QPixmap()
+    pixmap=QPixmap(round(size*scale),round(size*scale))
+    pixmap.setDevicePixelRatio(scale);pixmap.fill(Qt.GlobalColor.transparent)
+    painter=QPainter(pixmap);renderer.render(painter);painter.end()
+    return pixmap
+
+def platform_row(game):
+    row=QWidget();row.setObjectName('cardPlatforms')
+    row.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+    box=layout(row,False,0,6)
+    for key in game.platforms:
+        platform=PLATFORMS[key]
+        icon=QLabel();icon.setObjectName('platformIcon');icon.setFixedSize(18,18)
+        icon.setPixmap(platform_pixmap(key,scale=row.devicePixelRatioF()))
+        icon.setAccessibleName(platform.name+' logo')
+        text=label(platform.name,'cardPlatform');text.setAccessibleName('Platform: '+platform.name)
+        box.addWidget(icon);box.addWidget(text)
+    box.addStretch()
+    row.setAccessibleName('Platforms for '+game.title+': '+', '.join(PLATFORMS[p].name for p in game.platforms))
+    return row
 
 def label(text,name='',wrap=False):
     item=QLabel(text)
@@ -127,7 +151,9 @@ class Window(QMainWindow):
         top=QHBoxLayout()
         self.search=QLineEdit();self.search.setPlaceholderText('Search games…');self.search.setAccessibleName('Search games');self.search.setClearButtonEnabled(True)
         self.search.textChanged.connect(self.render_cards);top.addWidget(self.search,1)
-        self.platform_filter=QComboBox();self.platform_filter.addItem('Platform: All','all');self.platform_filter.addItem('Platform: Steam','steam');self.platform_filter.addItem('Platform: PC','pc')
+        self.platform_filter=QComboBox();self.platform_filter.addItem('Platform: All','all')
+        for key in dict.fromkeys(p for game in GAMES for p in game.platforms):
+            self.platform_filter.addItem('Platform: '+PLATFORMS[key].name,key)
         self.platform_filter.currentIndexChanged.connect(self.render_cards);top.addWidget(self.platform_filter)
         self.status_filter=QComboBox();self.status_filter.addItem('All games','all');self.status_filter.addItem('Editors available','ready');self.status_filter.addItem('Coming soon','pending')
         self.status_filter.currentIndexChanged.connect(lambda:self.set_filter(self.status_filter.currentData()));top.addWidget(self.status_filter)
@@ -208,7 +234,7 @@ class Window(QMainWindow):
         platform=self.platform_filter.currentData() if hasattr(self,'platform_filter') else 'all'
         games=[g for g in GAMES if search in (g.title+' '+g.subtitle+' '+g.family+' '+g.description).casefold()
                and (self.filter=='all' or g.editable==(self.filter=='ready'))
-               and (platform=='all' or platform in g.subtitle.casefold())]
+               and (platform=='all' or platform in g.platforms)]
         order=self.sort_filter.currentData() if hasattr(self,'sort_filter') else 'az'
         games.sort(key=lambda g:(not g.editable,g.title) if order=='ready' else g.title,reverse=order=='za')
         self.visible_games=[g.id for g in games]
@@ -231,8 +257,9 @@ class Window(QMainWindow):
             title=label(game.title,'cardTitle',True);card_box.addWidget(title)
             features=label(game.description,'cardDescription',True);features.setAccessibleName('Editor features for '+game.title);features.hide();card_box.addWidget(features)
             count=sum(g==game.id for g,p in self.files)
-            state=('◇  Experimental' if game.experimental else '●  Editor ready' if game.editable else '○  Coming soon')+(f'  ·  {count} save'+('s' if count!=1 else '') if count else '')
-            card_box.addWidget(label(state,'cardMeta',True))
+            state=('Experimental' if game.experimental else 'Editor ready' if game.editable else 'Coming soon')+(f' · {count} save'+('s' if count!=1 else '') if count else '')
+            card.setToolTip(game.title+'\n'+', '.join(PLATFORMS[p].name for p in game.platforms)+' · '+state)
+            card_box.addWidget(platform_row(game))
             self.grid.addWidget(card,index//columns,index%columns)
         if not games:
             empty=label('No games matched your search.\nTry another name or change the filter.','muted',True)
@@ -698,13 +725,14 @@ def main():
         def check_startup():
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
+                    'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
                     'version':VERSION,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}
             destination.write_text(json.dumps(report,indent=2),encoding='utf-8')
             window.grab().save(str(destination.with_suffix('.png')))
-            app.exit(0 if all(covers.values()) else 1)
+            app.exit(0 if all(covers.values()) and all(report['platformIcons'].values()) else 1)
         QTimer.singleShot(1000,check_startup)
     sys.exit(app.exec())
 

@@ -41,6 +41,13 @@ class InterfaceTests(unittest.TestCase):
         self.assertIn('Level and XP',descriptions['Editor features for WEBFISHING'])
         self.assertIn('Items',descriptions['Editor features for KINGDOM HEARTS'])
         self.assertIn('Editor in development',descriptions['Editor features for MAX PAYNE'])
+        w.platform_filter.setCurrentIndex(w.platform_filter.findData('steam'))
+        self.assertEqual(set(w.visible_games),set(BY_ID))
+        for card in w.game_cards.values():
+            self.assertEqual(card.findChild(QLabel,'cardPlatform').text(),'Steam')
+            self.assertFalse(card.findChild(QLabel,'platformIcon').pixmap().isNull())
+        self.assertIn('Coming soon',w.game_cards['maxpayne'].toolTip())
+        w.platform_filter.setCurrentIndex(0)
         w.set_filter('ready');self.assertEqual(w.visible_games,['alice','kh1','kh2','ror2','webfishing'])
         w.search.setText('XP');self.assertEqual(w.visible_games,['kh2','webfishing'])
         w.search.clear()

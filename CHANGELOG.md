@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.10.1-alpha
+
+- Replace the status/save-count line below library covers with the Steam logo
+  and platform name. Keep editor availability and save files in the details panel
+  and card tooltip.
+- Define platforms explicitly per game and use that metadata for the platform
+  filter, ready for future verified platform support. Switch and PCSX2 support
+  are not claimed by this release.
+- Package the Steam SVG and validate its rendering in source and executable checks.
+
 ## v0.10.0-alpha
 
 - Replace the long row of field-group tabs with up to three categories per game.

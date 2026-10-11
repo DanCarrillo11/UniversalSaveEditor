@@ -2,6 +2,13 @@
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
+class Platform:
+    name: str
+    icon: str
+
+PLATFORMS = {'steam': Platform('Steam', 'steam.svg')}
+
+@dataclass(frozen=True)
 class Game:
     id: str
     title: str
@@ -11,6 +18,7 @@ class Game:
     editable: bool
     description: str
     experimental: bool = False
+    platforms: tuple[str, ...] = ('steam',)
 
 GAMES = (
     Game('webfishing','WEBFISHING','Steam · Local save','WEBFISHING','#b6e7aa',True,'Economy · Level and XP · Bait · Upgrades · Inventory · Fishing journal'),
@@ -19,7 +27,7 @@ GAMES = (
     Game('recom','RE:CHAIN OF MEMORIES','HD 1.5 + 2.5 ReMIX · Steam','KINGDOM HEARTS','#e2bc9d',False,'Editor in development · Decks, cards, and progress pending'),
     Game('kh2','KINGDOM HEARTS II','Final Mix · Steam','KINGDOM HEARTS','#91c7ea',True,'Munny · Difficulty · Experience · Character attributes · Drive Forms · Inventory',True),
     Game('bbs','BIRTH BY SLEEP','Final Mix · Steam','KINGDOM HEARTS','#c5a5df',False,'Editor in development · Characters, commands, and inventory pending'),
-    Game('maxpayne','MAX PAYNE','PC · Local saves','MAX PAYNE','#dca7a0',False,'Editor in development · Progress, weapons, and player state pending'),
+    Game('maxpayne','MAX PAYNE','Steam · Local saves','MAX PAYNE','#dca7a0',False,'Editor in development · Progress, weapons, and player state pending'),
     Game('alice','ALICE: MADNESS RETURNS','Steam · Profile and difficulty','ALICE','#8ab6d6',True,'Teeth · Weapons · Abilities · Dresses · Collectibles · Chapters · Difficulty',True),
 )
 BY_ID = {game.id:game for game in GAMES}

@@ -11,7 +11,7 @@ QLabel#title { font-size: 30px; font-weight: 700; }
 QLabel#section { font-size: 18px; font-weight: 650; }
 QLabel#detailTitle { font-size: 21px; font-weight: 750; }
 QLabel#cardTitle { color: #f0f5fd; font-size: 13px; font-weight: 650; }
-QLabel#cardMeta { color: #8194a9; font-size: 10px; }
+QLabel#cardPlatform { color: #9bacc0; font-size: 11px; }
 QLabel#muted { color: #9bacc0; }
 QLabel#small { color: #8fa1b5; font-size: 11px; }
 QLabel#headerStatus { color: #71aef8; font-size: 10px; font-weight: 700; letter-spacing: 1px; }

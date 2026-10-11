@@ -9,6 +9,12 @@ The project is distributed under GPL-3.0-or-later. Its implementation uses Pytho
 
 Game names belong to their respective owners. UniversalSaveEditor is an independent project.
 
+The Steam icon in `assets/platforms/steam.svg` comes from
+[Simple Icons](https://github.com/simple-icons/simple-icons/blob/develop/icons/steam.svg),
+distributed under [CC0 1.0](https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md).
+Its fill color is adapted for the dark interface. The Steam trademark belongs
+to Valve; it identifies the save platform and does not imply endorsement.
+
 KH difficulty values and byte offsets are cross-referenced with the
 [KH I Final Mix record](https://github.com/Xeeynamo/KingdomSaveEditor/blob/master/KHSave.Lib1/SaveKh1.FinalMix.cs),
 [KH I mode enum](https://github.com/Xeeynamo/KingdomSaveEditor/blob/master/KHSave.Lib1/Types/DifficultyType.cs),
