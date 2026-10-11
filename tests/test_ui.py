@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, QSettings
 from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel, QCheckBox, QLineEdit, QFrame, QComboBox
 from app import Window, platform_pixmap
 from core import Save
@@ -54,6 +54,121 @@ class InterfaceTests(unittest.TestCase):
         w.set_filter('pending');self.assertEqual(len(w.visible_games),0)
         w.collection('KINGDOM HEARTS');self.assertEqual(len(w.visible_games),6)
         w.search.setText('not a game');self.assertEqual(w.visible_games,[])
+
+    def test_changed_filter_updates_after_edit_and_individual_reset(self):
+        w=self.window;w.load('webfishing',self.source)
+        tab=w.tabs.widget(0);only=tab.findChild(QCheckBox,'changedOnly')
+        money=w.inputs[(0,'money')];debt=w.inputs[(0,'loan_left')]
+        only.setChecked(True)
+        self.assertTrue(money.parentWidget().isHidden())
+        money.setText('2000')
+        self.assertFalse(money.parentWidget().isHidden())
+        self.assertTrue(debt.parentWidget().isHidden())
+        self.assertEqual(tab.findChild(QLabel,'fieldCount').text(),'1 field shown')
+        money._reset_button.click()
+        self.assertEqual(money.text(),'150');self.assertFalse(w.edits)
+        self.assertTrue(money.parentWidget().isHidden())
+        self.assertFalse(w.review_button.isEnabled())
+
+    def test_invalid_value_has_inline_error_and_reset_clears_it(self):
+        w=self.window;w.load('webfishing',self.source)
+        entry=w.inputs[(0,'money')];entry.setText('abc')
+        self.assertFalse(entry._error_label.isHidden())
+        self.assertIn('whole number',entry._error_label.text())
+        self.assertIn('Fix invalid values',w.statusBar().currentMessage())
+        self.assertTrue(w.windowTitle().endswith('*'))
+        entry._reset_button.click()
+        self.assertTrue(entry._error_label.isHidden());self.assertFalse(entry._reset_button.isEnabled())
+        self.assertIn('No pending changes',w.statusBar().currentMessage())
+        self.assertFalse(w.windowTitle().endswith('*'))
+        entry.setText('00150');self.assertFalse(w.edits)
+
+    def test_summary_can_undo_a_change_in_another_slot(self):
+        w=self.window;w.load('kh1',self.kh)
+        w.inputs[(0,'munny')].setText('111');w.change_slot(1)
+        w.inputs[(1,'munny')].setText('222')
+        key=(0,'munny');w.restore_field(key)
+        self.assertEqual(w.validated_changes(),{(1,'munny'):222})
+        w.change_slot(0);self.assertNotEqual(w.inputs[key].text(),'111')
+
+    def test_individual_reset_handles_choices_and_unlocks(self):
+        w=self.window;w.load('kh1',self.kh)
+        entry=w.inputs[(0,'difficulty')];original=entry.currentIndex()
+        entry.setCurrentIndex((original+1)%entry.count());entry._reset_button.click()
+        self.assertEqual(entry.currentIndex(),original);self.assertFalse(w.edits)
+        w.load('ror2',self.ror)
+        entry=next(e for e in w.inputs.values() if isinstance(e,QCheckBox))
+        original=entry.isChecked();entry.setChecked(not original);entry._reset_button.click()
+        self.assertEqual(entry.isChecked(),original);self.assertFalse(w.edits)
+
+    def test_library_toolbar_and_details_fit_small_windows(self):
+        w=self.window;w.show();w.resize(1100,720);self.app.processEvents();w.reflow_library();self.app.processEvents()
+        self.assertGreater(w.search.width(),250)
+        self.assertEqual(w.library_toolbar.getItemPosition(w.library_toolbar.indexOf(w.library_filter_controls))[0],1)
+        self.assertEqual(w.detail_scroll.horizontalScrollBar().maximum(),0)
+        w.search.setText('missing game')
+        next(b for b in w.findChildren(QPushButton) if b.text()=='Reset filters').click()
+        self.assertEqual(set(w.visible_games),set(BY_ID))
+        w.resize(1536,960);self.app.processEvents();w.reflow_library()
+        self.assertEqual(w.library_toolbar.getItemPosition(w.library_toolbar.indexOf(w.library_filter_controls))[0],0)
+
+    def test_settings_only_store_window_and_last_folder(self):
+        settings=QSettings(str(self.root/'preferences.ini'),QSettings.Format.IniFormat)
+        w=Window(settings=settings);w.load('webfishing',self.source);w.resize(1280,800)
+        w.close();w.deleteLater();self.app.processEvents()
+        self.assertEqual(set(settings.allKeys()),{'window/geometry','files/lastDirectory','appearance/theme'})
+        self.assertEqual(settings.value('files/lastDirectory'),str(self.root))
+        restored=Window(settings=settings)
+        self.assertEqual(restored.last_directory,str(self.root));self.assertIsNone(restored.save)
+        with patch('app.QFileDialog.getOpenFileName',return_value=('','')) as choose:
+            restored.open_file()
+        self.assertEqual(choose.call_args.args[2],str(self.root))
+        restored.close();restored.deleteLater();self.app.processEvents()
+
+    def test_information_notes_do_not_request_integrity_repair(self):
+        w=self.window;path=self.root/'alice-profile.save';path.write_bytes(alice())
+        w.load('alice',path)
+        self.assertTrue(w.warning.isHidden());self.assertFalse(w.editor_notes.isHidden())
+        self.assertTrue(w.repair.isHidden());self.assertTrue(w.slot_combo.isHidden())
+        w.show();w.resize(1100,720);self.app.processEvents()
+        self.assertTrue(w.save_steps.isHidden());self.assertTrue(w.summary_description.isHidden())
+        self.assertGreaterEqual(w.review_button.height(),35)
+        self.assertGreaterEqual(w.reset_button.height(),35)
+
+    def test_save_row_opens_its_file_directly(self):
+        w=self.window;w.preview_game(BY_ID['webfishing'])
+        link=next(b for b in w.detail.findChildren(QPushButton,'saveLink') if b.text()==self.source.name)
+        link.click();self.assertEqual(w.path,self.source);self.assertEqual(w.stack.currentIndex(),1)
+
+    def test_switching_appearance_preserves_pending_edits_and_navigation(self):
+        from appearance import stylesheet, PALETTES
+        w=self.window;w.load('webfishing',self.source)
+        w.show();self.app.processEvents()
+        entry=w.inputs[(0,'money')];entry.setText('2000')
+        original=self.source.read_bytes()
+        for theme in ('dark','light'):
+            w.appearance_button.click()
+            self.assertEqual(w.theme,theme)
+            self.assertIs(w.inputs[(0,'money')],entry)
+            self.assertEqual(w.validated_changes(),{(0,'money'):2000})
+            self.assertEqual(w.stack.currentIndex(),1)
+            self.assertNotRegex(stylesheet(theme),r'@[A-Za-z]+@')
+            self.app.processEvents()
+            image=w.review_button.grab().toImage()
+            self.assertIn(image.pixelColor(image.width()//2,4).name().upper(),(PALETTES[theme]['accent'],PALETTES[theme]['accentHover']))
+            self.assertEqual(self.source.read_bytes(),original)
+
+    def test_appearance_is_restored_and_unknown_preferences_fall_back(self):
+        settings=QSettings(str(self.root/'appearance.ini'),QSettings.Format.IniFormat)
+        settings.setValue('appearance/theme','dark')
+        window=Window(settings=settings)
+        self.assertEqual(window.theme,'dark');self.assertEqual(window.appearance_button.text(),'Light mode')
+        window.toggle_theme();window.close();window.deleteLater();self.app.processEvents()
+        self.assertEqual(settings.value('appearance/theme'),'light')
+        settings.setValue('appearance/theme','unknown')
+        window=Window(settings=settings)
+        self.assertEqual(window.theme,'light')
+        window.close();window.deleteLater();self.app.processEvents()
 
     def test_platform_logo_is_complete_at_fractional_screen_scales(self):
         for scale in (1,1.25,1.5,1.75,2):

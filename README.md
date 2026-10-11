@@ -3,20 +3,21 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.11.1-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.12.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
 ## Download and run
 
-Download `UniversalSaveEditor.exe` from **Releases → Assets** and double-click it.
+Download `UniversalSaveEditor.exe` from **Releases ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Assets** and double-click it.
 The application is portable; no installer, Python, or command-line setup is needed.
 
-You can also select **Code → Download ZIP**, extract the folder, and open the
+You can also select **Code ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
 
+- Clean light and dark appearances with a header toggle and a remembered preference.
 - Responsive game library with full cover art, search, filters, and sorting.
 - Platform logos and names below each cover; currently Steam. Editor status and
   detected saves remain in the details panel. Coming-soon games are not editable.
@@ -24,6 +25,10 @@ executable included at its root. Startup can take a few seconds.
 - Automatic discovery, manual file selection, and drag and drop.
 - Up to three main categories per editor, with section and character selectors.
 - Foldable sections and field search, including inventory IDs and unlocks.
+- Changed-only filtering, field counts, individual undo, and inline validation.
+- Compact editor controls and scrollable save details for smaller windows.
+- Open a detected save from its file row; view size and modification time.
+- Remember window geometry and the last opened folder locally.
 - Navigation and search stay visible while scrolling; pending edits survive
   character, category, and slot changes.
 - Change review, input validation, and preservation of unrelated save data.
@@ -51,7 +56,7 @@ populated slot created at an in-game save point. Containers without saved slots
 cannot be edited. Its record checksums and the outer Steam-container CRC are
 maintained when applying changes. Invalid integrity checks require explicit repair.
 
-Open **Progress → Difficulty** after selecting a saved slot to change its mode. KH Final Mix
+Open **Progress ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Difficulty** after selecting a saved slot to change its mode. KH Final Mix
 supports Beginner, Final Mix (Standard), and Proud. KH II Final Mix also supports
 Critical. Existing attributes, items, and starting bonuses are not recalculated;
 changing the saved mode does not recreate a new-game setup. In-game validation
@@ -117,7 +122,16 @@ must be reopened. Applying changes overwrites the opened file; the application
 does not automatically keep its previous version.
 
 Shortcuts: **Ctrl+O** opens a save, **Ctrl+F** focuses the current search,
-and **Ctrl+Enter** opens change review.
+and **Ctrl+S** or **Ctrl+Enter** opens change review.
+
+Use **Changed only** within a category to inspect pending edits in the selected
+section. The undo arrow beside a field or in the summary restores its original
+value. Invalid values show an explanation and block applying changes, even if
+they are in a different category or slot. Normal format notes appear separately
+from integrity warnings. Window size and the last folder are saved locally.
+Use **Dark mode** or **Light mode** in the header to switch appearance without
+losing edits. Your appearance choice is remembered locally; save contents and
+KH III account IDs are not stored in preferences.
 
 ## Contributing
 

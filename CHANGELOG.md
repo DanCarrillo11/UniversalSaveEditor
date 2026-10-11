@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.12.0-alpha
+
+- Introduce a clean light/dark design with soft grouped surfaces, rounded controls and cover corners, blue actions and a persistent appearance toggle.
+
+- Improve small-window layouts with a wrapping library toolbar, scrollable game details, and compact editor search/section controls.
+- Add changed-only filtering, matching field counts, individual undo beside each field and in the change summary, including edits in other slots.
+- Explain invalid values inline, normalize equivalent numeric input, and show accurate pending-change status and a modified window title.
+- Separate format notes from integrity warnings and hide the slot selector for single-slot saves.
+- Open detected saves directly from compact file rows showing size and modification time.
+- Remember window geometry and the last folder locally; add Ctrl+S for review and improve keyboard focus and control labels.
+- Batch unlock updates without rebuilding the summary for each individual field.
+- Preserve direct saving and the existing game compatibility scope; add ten interface regression tests.
+
 ## v0.11.1-alpha
 
 - Fix KH II Steam archives containing a 1 KB `KH2S` system record being rejected as an unexpected player record size.

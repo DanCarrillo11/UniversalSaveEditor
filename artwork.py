@@ -1,7 +1,7 @@
 """Original box art; attribution in assets/covers/sources.json."""
 from pathlib import Path
 from PySide6.QtCore import Qt, QRectF
-from PySide6.QtGui import QColor, QPainter, QPixmap
+from PySide6.QtGui import QColor, QPainter, QPixmap, QPainterPath
 from PySide6.QtWidgets import QWidget
 
 class Artwork(QWidget):
@@ -22,7 +22,9 @@ class Artwork(QWidget):
         self.pixmap=self._cache[game.id]
     def paintEvent(self,event):
         painter=QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        outline=QPainterPath();outline.addRoundedRect(QRectF(self.rect()),8,8);painter.setClipPath(outline)
         painter.fillRect(self.rect(),QColor('#10151e'))
         if not self.pixmap.isNull():
             crop_y=self.pixmap.height()*self.top_crop_ratio

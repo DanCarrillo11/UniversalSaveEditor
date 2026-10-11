@@ -3,7 +3,7 @@ import sys
 import os
 from pathlib import Path
 from datetime import datetime
-from PySide6.QtCore import Qt, QUrl, QTimer, Signal, QRectF, QPointF
+from PySide6.QtCore import Qt, QUrl, QTimer, Signal, QRectF, QPointF, QSettings
 from PySide6.QtGui import QDesktopServices, QIcon, QKeySequence, QShortcut, QPixmap, QFontDatabase, QPainter
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import (
@@ -18,6 +18,7 @@ from artwork import Artwork
 from editor_layout import organize_fields
 from ror2_unlocks import UNLOCK_IDS
 from version import VERSION
+from appearance import PALETTES, stylesheet
 
 ROOT=Path(__file__).resolve().parent
 
@@ -104,16 +105,22 @@ class GameCard(QFrame):
         super().keyPressEvent(event)
 
 class Window(QMainWindow):
-    def __init__(self):
+    def __init__(self,settings=None):
         super().__init__()
         self.setWindowTitle('UniversalSaveEditor — your save library')
         self.resize(1536,960)
         self.setMinimumSize(1100,720)
         self.setAcceptDrops(True)
-        self.setStyleSheet((ROOT/'theme.qss').read_text(encoding='utf-8'))
+        self.settings=settings
+        preferred=settings.value('appearance/theme','light',type=str) if settings is not None else 'light'
+        self.theme=preferred if preferred in PALETTES else 'light'
+        self.setStyleSheet(stylesheet(self.theme))
         self.files=[];self.save=None;self.path=None;self.inputs={};self.edits={}
         self.exported_state=None;self.slot_index=0;self.filter='all';self.selected_game='kh1'
         self.editor_view_state={};self.editor_page_game=None
+        self.last_directory='';self.category_filters=[];self._batch_edit=False
+        if settings is not None:
+            self.last_directory=settings.value('files/lastDirectory','',type=str)
         self.grid_columns=0;self.grid_available_width=0;self._reflow_pending=False
         root=QWidget();self.setCentralWidget(root)
         window=layout(root,True,0,0)
@@ -122,93 +129,121 @@ class Window(QMainWindow):
         icon=QLabel();icon.setPixmap(QPixmap(str(ROOT/'assets/memory-card-icon.png')).scaled(42,42,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation));icon.setFixedSize(48,48)
         head.addWidget(icon)
         brand=QVBoxLayout();brand.setSpacing(1);brand.addWidget(label('UniversalSaveEditor','brand'));brand.addWidget(label('Your games. Your progress. One editor.','muted'))
-        head.addLayout(brand);head.addStretch();head.addWidget(label('LOCAL  •  PRIVATE  •  DIRECT SAVING','headerStatus'))
+        head.addLayout(brand);head.addStretch();head.addWidget(label('Offline · On your device','headerStatus'))
+        self.appearance_button=button('',self.toggle_theme,'appearanceToggle');self.appearance_button.setFixedWidth(116)
+        head.addWidget(self.appearance_button);self.update_appearance_button()
         window.addWidget(header)
         shell=QHBoxLayout();shell.setContentsMargins(0,0,0,0);shell.setSpacing(0);window.addLayout(shell,1)
         side=QFrame();side.setObjectName('sidebar');side.setFixedWidth(208)
         nav=layout(side,True,14,8)
         nav.addSpacing(8)
-        nav.addWidget(label('WORKSPACE','eyebrow'))
+        nav.addWidget(label('Workspace','eyebrow'))
         self.library_nav=button('▦   Library',self.show_library,'nav');self.library_nav.setCheckable(True)
         self.editor_nav=button('✎   Save editor',self.show_editor,'nav');self.editor_nav.setCheckable(True);self.editor_nav.setEnabled(False)
         nav.addWidget(self.library_nav);nav.addWidget(self.editor_nav)
         nav.addSpacing(18)
-        nav.addWidget(label('COLLECTIONS','eyebrow'))
+        nav.addWidget(label('Collections','eyebrow'))
         for name in dict.fromkeys(game.family for game in GAMES):
             nav.addWidget(button(name.title(),lambda checked=False,n=name:self.collection(n),'nav'))
         nav.addStretch()
-        nav.addWidget(label('LOCAL EDITING','eyebrow'))
+        nav.addWidget(label('Saving','eyebrow'))
         nav.addWidget(label('Apply updates the opened save directly. No automatic backups.','muted',True))
         nav.addSpacing(8)
         nav.addWidget(button('?   Guide and about',self.open_guide,'nav'))
-        nav.addWidget(label('v'+VERSION+'  /  PRE-RELEASE','small'))
+        nav.addWidget(label('v'+VERSION,'small'))
         shell.addWidget(side)
         self.stack=QStackedWidget();shell.addWidget(self.stack,1)
         self.build_library();self.build_editor()
         self.statusBar().showMessage('Ready · Local processing')
         QShortcut(QKeySequence('Ctrl+O'),self,activated=self.open_file)
         QShortcut(QKeySequence('Ctrl+Return'),self,activated=self.review)
+        QShortcut(QKeySequence('Ctrl+S'),self,activated=self.review)
         QShortcut(QKeySequence('Ctrl+F'),self,activated=self.focus_search)
         self.scan();self.show_library()
+        if settings is not None and settings.contains('window/geometry'):
+            self.restoreGeometry(settings.value('window/geometry'))
+
+    def update_appearance_button(self):
+        target='dark' if self.theme=='light' else 'light'
+        self.appearance_button.setText('Dark mode' if target=='dark' else 'Light mode')
+        self.appearance_button.setAccessibleName('Switch to '+target+' appearance')
+        self.appearance_button.setToolTip('Use '+target+' appearance')
+
+    def toggle_theme(self):
+        self.theme='dark' if self.theme=='light' else 'light'
+        self.setStyleSheet(stylesheet(self.theme));self.update_appearance_button()
 
     def build_library(self):
         page=QWidget();box=layout(page,True,14,10)
-        top=QHBoxLayout()
+        top=QGridLayout();self.library_toolbar=top
         self.search=QLineEdit();self.search.setPlaceholderText('Search games…');self.search.setAccessibleName('Search games');self.search.setClearButtonEnabled(True)
-        self.search.textChanged.connect(self.render_cards);top.addWidget(self.search,1)
+        self.search.textChanged.connect(self.render_cards);top.addWidget(self.search,0,0);top.setColumnStretch(0,1)
+        self.library_filter_controls=QWidget();filters=layout(self.library_filter_controls,False,0,10)
         self.platform_filter=QComboBox();self.platform_filter.addItem('Platform: All','all')
+        self.platform_filter.setAccessibleName('Platform filter')
         for key in dict.fromkeys(p for game in GAMES for p in game.platforms):
             self.platform_filter.addItem('Platform: '+PLATFORMS[key].name,key)
-        self.platform_filter.currentIndexChanged.connect(self.render_cards);top.addWidget(self.platform_filter)
+        self.platform_filter.currentIndexChanged.connect(self.render_cards);filters.addWidget(self.platform_filter)
         self.status_filter=QComboBox();self.status_filter.addItem('All games','all');self.status_filter.addItem('Editors available','ready');self.status_filter.addItem('Coming soon','pending')
-        self.status_filter.currentIndexChanged.connect(lambda:self.set_filter(self.status_filter.currentData()));top.addWidget(self.status_filter)
+        self.status_filter.setAccessibleName('Editor availability filter')
+        self.status_filter.currentIndexChanged.connect(lambda:self.set_filter(self.status_filter.currentData()));filters.addWidget(self.status_filter)
         self.sort_filter=QComboBox();self.sort_filter.addItem('Sort: A–Z','az');self.sort_filter.addItem('Sort: Z–A','za');self.sort_filter.addItem('Sort: Ready first','ready')
-        self.sort_filter.currentIndexChanged.connect(self.render_cards);top.addWidget(self.sort_filter)
-        top.addWidget(button('↻',self.scan,'iconButton'))
-        top.addWidget(button('+  Open save',self.open_file,'primary'));box.addLayout(top)
+        self.sort_filter.setAccessibleName('Sort games')
+        self.sort_filter.currentIndexChanged.connect(self.render_cards);filters.addWidget(self.sort_filter)
+        refresh=button('↻',self.scan,'iconButton');refresh.setFixedWidth(44);refresh.setAccessibleName('Refresh save discovery');refresh.setToolTip('Find saves in the usual folders again');filters.addWidget(refresh)
+        top.addWidget(self.library_filter_controls,0,1)
+        top.addWidget(button('+  Open save',self.open_file,'primary'),0,2);box.addLayout(top)
         content_row=QHBoxLayout();content_row.setSpacing(12)
         library=QFrame();library.setObjectName('libraryPanel');library_box=layout(library,True,12,10)
-        heading=QHBoxLayout();heading.addWidget(label('GAME LIBRARY','eyebrow'));heading.addStretch();self.library_count=label('','small');heading.addWidget(self.library_count);library_box.addLayout(heading)
+        heading=QHBoxLayout();heading.addWidget(label('Game library','libraryTitle'));heading.addStretch();self.library_count=label('','small');heading.addWidget(self.library_count);library_box.addLayout(heading)
         scroll=QScrollArea();scroll.setWidgetResizable(True);self.library_scroll=scroll
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         content=QWidget();self.grid=QGridLayout(content);self.grid.setContentsMargins(0,0,4,0);self.grid.setHorizontalSpacing(8);self.grid.setVerticalSpacing(14)
         self.grid.setSizeConstraint(QLayout.SizeConstraint.SetNoConstraint)
         scroll.setWidget(content);library_box.addWidget(scroll,1);content_row.addWidget(library,1)
         self.detail=QFrame();self.detail.setObjectName('detailPanel');self.detail.setFixedWidth(350)
-        self.detail_box=layout(self.detail,True,16,10);content_row.addWidget(self.detail)
+        detail_outer=layout(self.detail,True,4,0)
+        self.detail_scroll=QScrollArea();self.detail_scroll.setWidgetResizable(True)
+        self.detail_scroll.viewport().setObjectName('clearSurface')
+        self.detail_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        detail_content=QWidget();detail_content.setObjectName('clearSurface');self.detail_box=layout(detail_content,True,12,10)
+        self.detail_scroll.setWidget(detail_content);detail_outer.addWidget(self.detail_scroll);content_row.addWidget(self.detail)
         box.addLayout(content_row,1)
         footer=QHBoxLayout();self.available=label(f'{sum(game.editable for game in GAMES):02d} editors available','muted');self.detected=label('00 save files detected','muted')
         footer.addWidget(self.available);footer.addSpacing(18);footer.addWidget(self.detected);footer.addStretch();footer.addWidget(label('●  Ready','readyStatus'));footer.addWidget(label('v'+VERSION,'small'));box.addLayout(footer)
         self.stack.addWidget(page)
 
     def build_editor(self):
-        page=QWidget();outer=layout(page,True,28,14)
+        page=QWidget();outer=layout(page,True,20,10)
         top=QHBoxLayout();titles=QVBoxLayout()
-        self.editor_eyebrow=label('SAVE EDITOR','eyebrow');self.editor_title=label('Your save','title')
-        titles.addWidget(self.editor_eyebrow);titles.addWidget(self.editor_title);top.addLayout(titles);top.addStretch()
+        self.editor_eyebrow=label('SAVE EDITOR','eyebrow');self.editor_title=label('Your save','title',True)
+        titles.addWidget(self.editor_eyebrow);titles.addWidget(self.editor_title);top.addLayout(titles,1)
         top.addWidget(button('Open another…',self.open_file));outer.addLayout(top)
         self.backup_button=button('Restore existing backup',self.open_backups)
         top.addWidget(self.backup_button)
         self.editor_subtitle=label('','muted',True);outer.addWidget(self.editor_subtitle)
         self.file_combo=QComboBox();self.file_combo.setAccessibleName('Save file');self.file_combo.activated.connect(self.select_file)
-        outer.addWidget(self.file_combo)
+        selectors=QHBoxLayout();selectors.addWidget(self.file_combo,1)
         self.slot_combo=QComboBox();self.slot_combo.setAccessibleName('Save slot');self.slot_combo.activated.connect(self.change_slot)
-        outer.addWidget(self.slot_combo)
+        selectors.addWidget(self.slot_combo,1);outer.addLayout(selectors)
         self.warning=label('','warning',True);outer.addWidget(self.warning)
+        self.editor_notes=label('','info',True);outer.addWidget(self.editor_notes)
         self.repair=QCheckBox('Repair the integrity check when applying changes')
         self.repair.toggled.connect(self.update_summary);outer.addWidget(self.repair)
-        body=QHBoxLayout();body.setSpacing(22)
+        body=QHBoxLayout();body.setSpacing(14)
         self.tabs=QTabWidget();self.tabs.setUsesScrollButtons(True);body.addWidget(self.tabs,1)
         side=QFrame();side.setObjectName('panel');side.setFixedWidth(275);summary=layout(side,True,18,12)
-        summary.addWidget(label('BEFORE SAVING','eyebrow'))
+        summary.addWidget(label('Your changes','eyebrow'))
         self.change_count=label('No changes','section');summary.addWidget(self.change_count)
-        summary.addWidget(label('Compare your edits with the file you opened.','muted',True))
+        self.summary_description=label('Compare your edits with the file you opened.','muted',True);summary.addWidget(self.summary_description)
         scroll=QScrollArea();scroll.setWidgetResizable(True)
+        scroll.viewport().setObjectName('clearSurface')
         self.summary_content=QWidget();self.summary_box=layout(self.summary_content,True,0,10)
+        self.summary_content.setObjectName('clearSurface')
         scroll.setWidget(self.summary_content);summary.addWidget(scroll,1)
         self.save_steps=label('01  Review values\n02  Apply to the opened save\n03  Return to the game','small',True)
         summary.addWidget(self.save_steps)
-        self.review_button=button('Review and apply  →',self.review,'primary');summary.addWidget(self.review_button)
+        self.review_button=button('Review and apply  →',self.review,'primary');self.review_button.setToolTip('Review pending changes (Ctrl+S or Ctrl+Enter)');summary.addWidget(self.review_button)
         self.reset_button=button('Reset changes',self.reset);summary.addWidget(self.reset_button)
         body.addWidget(side);outer.addLayout(body,1)
         self.install_note=label('','small',True);outer.addWidget(self.install_note)
@@ -218,7 +253,7 @@ class Window(QMainWindow):
         try:self.files=discover()
         except OSError as error:
             QMessageBox.warning(self,'Search failed',str(error));return
-        self.detected.setText(f'{len(self.files):02d}  FILES DETECTED')
+        self.detected.setText(f'{len(self.files)} saves found')
         self.render_cards()
         self.statusBar().showMessage(f'{len(self.files)} files found in the usual folders · Drag a file here to open it')
 
@@ -267,14 +302,18 @@ class Window(QMainWindow):
             card_box.addWidget(platform_row(game))
             self.grid.addWidget(card,index//columns,index%columns)
         if not games:
-            empty=label('No games matched your search.\nTry another name or change the filter.','muted',True)
-            self.grid.addWidget(empty,0,0,1,columns)
+            empty=QWidget();empty_box=layout(empty,True,18,12)
+            empty_box.addWidget(label('No games found','section'));empty_box.addWidget(label('Try another name or reset the library filters.','muted',True))
+            empty_box.addWidget(button('Reset filters',self.reset_library_filters));self.grid.addWidget(empty,0,0,1,columns)
         self.grid.setAlignment(Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignLeft)
         self.grid.activate()
         content=self.library_scroll.widget()
         content.setMinimumSize(0,self.grid.minimumSize().height())
         content.resize(self.library_scroll.viewport().width(),max(content.minimumHeight(),self.library_scroll.viewport().height()))
         self.render_game_detail()
+
+    def reset_library_filters(self):
+        self.search.clear();self.platform_filter.setCurrentIndex(0);self.status_filter.setCurrentIndex(0)
 
     def preview_game(self,game):
         self.selected_game=game.id
@@ -295,29 +334,34 @@ class Window(QMainWindow):
         hero=QHBoxLayout();hero.setSpacing(14)
         art=Artwork(game,height=180);art.setFixedWidth(120);hero.addWidget(art)
         info=QVBoxLayout();info.setSpacing(6)
-        row=QHBoxLayout();row.addWidget(label('EXPERIMENTAL' if game.experimental else 'AVAILABLE' if game.editable else 'COMING SOON','badge' if game.editable else 'pending'));row.addStretch();info.addLayout(row)
+        row=QHBoxLayout();row.addWidget(label('EXPERIMENTAL' if game.experimental else 'AVAILABLE' if game.editable else 'COMING SOON','experimental' if game.experimental else 'badge' if game.editable else 'pending'));row.addStretch();info.addLayout(row)
         info.addWidget(label(game.title,'detailTitle',True));info.addWidget(label(game.subtitle,'muted',True))
         info.addSpacing(4);info.addWidget(label(f'{len(files)} save file'+('s' if len(files)!=1 else '')+' detected','small',True))
         info.addStretch()
         open_button=button('Open editor',lambda:self.open_selected_game(),'primary');open_button.setEnabled(game.editable);info.addWidget(open_button)
         hero.addLayout(info,1);self.detail_box.addLayout(hero)
         line=QFrame();line.setObjectName('divider');line.setFixedHeight(1);self.detail_box.addWidget(line)
-        self.detail_box.addWidget(label('EDITOR FEATURES','eyebrow'))
+        self.detail_box.addWidget(label('Editor features','eyebrow'))
         features=label(game.description,'detailDescription',True);features.setAccessibleName('Editor features for '+game.title);self.detail_box.addWidget(features)
         line=QFrame();line.setObjectName('divider');line.setFixedHeight(1);self.detail_box.addWidget(line)
-        self.detail_box.addWidget(label('SAVE FILES','eyebrow'))
+        self.detail_box.addWidget(label('Save files','eyebrow'))
         if files:
             for path in files[:3]:
                 row=QFrame();row.setObjectName('saveRow');row_box=layout(row,False,10,8)
-                details=QVBoxLayout();details.setSpacing(2);details.addWidget(label(path.name,'saveName',True))
-                try:size=f'{path.stat().st_size/1024:.1f} KB'
+                details=QVBoxLayout();details.setSpacing(2)
+                open_save=button(path.name,lambda checked=False,p=path,g=game.id:self.load(g,p),'saveLink')
+                open_save.setAccessibleName('Open '+path.name);open_save.setToolTip(str(path));details.addWidget(open_save)
+                try:
+                    metadata=path.stat();size=metadata.st_size
+                    size=f'{size/1048576:.1f} MB' if size>=1048576 else f'{size/1024:.1f} KB'
+                    size+='  ·  '+datetime.fromtimestamp(metadata.st_mtime).strftime('%Y-%m-%d %H:%M')
                 except OSError:size='Local save'
-                details.addWidget(label(size+'  ·  '+str(path.parent),'small',True));row_box.addLayout(details,1)
-                row_box.addWidget(button('•••',lambda checked=False,p=path:self.open_save_folder(p),'rowMenu'));row.setToolTip(str(path));self.detail_box.addWidget(row)
+                details.addWidget(label(size,'small',True));row_box.addLayout(details,1)
+                folder=button('↗',lambda checked=False,p=path:self.open_save_folder(p),'rowMenu');folder.setAccessibleName('Open folder for '+path.name);folder.setToolTip('Open save folder');row_box.addWidget(folder);row.setToolTip(str(path));self.detail_box.addWidget(row)
             if len(files)>3:self.detail_box.addWidget(label(f'+ {len(files)-3} more','small'))
         else:self.detail_box.addWidget(label('No save detected in the usual folders.','muted',True))
         self.detail_box.addStretch()
-        self.detail_box.addWidget(label('ACTIONS','eyebrow'))
+        self.detail_box.addWidget(label('Actions','eyebrow'))
         choose=button('Choose save file…',lambda:self.open_file(game.id));choose.setEnabled(game.editable);self.detail_box.addWidget(choose)
         if files:self.detail_box.addWidget(button('Open save folder',lambda:self.open_save_folder(files[0])))
         if not game.editable:self.detail_box.addWidget(label('Support for this game will be added in a future update.','small',True))
@@ -330,6 +374,9 @@ class Window(QMainWindow):
 
     def resizeEvent(self,event):
         super().resizeEvent(event)
+        if hasattr(self,'save_steps'):
+            compact=self.height()<850
+            self.save_steps.setVisible(not compact);self.summary_description.setVisible(not compact)
         if not hasattr(self,'library_scroll') or self._reflow_pending:return
         self._reflow_pending=True
         QTimer.singleShot(80,self.reflow_library)
@@ -337,6 +384,11 @@ class Window(QMainWindow):
     def reflow_library(self):
         self._reflow_pending=False
         if not hasattr(self,'library_scroll'):return
+        compact=self.width()<1400
+        row,column,row_span,column_span=self.library_toolbar.getItemPosition(self.library_toolbar.indexOf(self.library_filter_controls))
+        if row != int(compact):
+            self.library_toolbar.addWidget(self.library_filter_controls,1 if compact else 0,0 if compact else 1,1,3 if compact else 1)
+            self.library_toolbar.activate()
         available=max(180,self.library_scroll.viewport().width())
         columns=max(1,(available+8)//188)
         if columns!=self.grid_columns or abs(available-self.grid_available_width)>8:
@@ -367,7 +419,8 @@ class Window(QMainWindow):
 
     def open_file(self,game=None):
         if not isinstance(game,str):game=None
-        filename,_=QFileDialog.getOpenFileName(self,'Open a save','', 'Save files (*.sav *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
+        folder=str(self.path.parent) if self.path else self.last_directory
+        filename,_=QFileDialog.getOpenFileName(self,'Open a save',folder, 'Save files (*.sav *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
         if filename:self.open_path(Path(filename),game)
 
     def open_path(self,path,game=None):
@@ -405,6 +458,7 @@ class Window(QMainWindow):
         except (ValueError,OSError) as error:
             QMessageBox.warning(self,'Could not open the save',str(error));return False
         self.save=save;self.path=Path(path);self.edits={};self.inputs={};self.exported_state=None;self.slot_index=0
+        self.last_directory=str(self.path.parent)
         gameinfo=BY_ID[game];self.selected_game=game
         self.editor_title.setText(gameinfo.title)
         self.editor_eyebrow.setText('EDITOR / '+gameinfo.subtitle.upper())
@@ -418,14 +472,14 @@ class Window(QMainWindow):
         self.file_combo.setCurrentIndex(paths.index(self.path));self.file_combo.setToolTip(str(self.path));self.file_combo.blockSignals(False)
         self.slot_combo.blockSignals(True);self.slot_combo.clear()
         self.slot_combo.addItems([s.name for s in save.slots]);self.slot_combo.blockSignals(False)
-        notices=save.warnings+getattr(save,'notes',[])
-        self.warning.setText('\n'.join(notices));self.warning.setVisible(bool(notices))
+        self.slot_combo.setVisible(len(save.slots)>1)
+        self.warning.setText('\n'.join(save.warnings));self.warning.setVisible(bool(save.warnings))
+        notes=getattr(save,'notes',[]);self.editor_notes.setText('\n'.join(notes));self.editor_notes.setVisible(bool(notes))
         self.repair.blockSignals(True);self.repair.setChecked(False);self.repair.setVisible(bool(save.warnings));self.repair.blockSignals(False)
         self.editor_nav.setEnabled(True)
         if gameinfo.experimental:
             self.install_note.setText(self.install_note.text()+' Experimental support: in-game validation is still pending.')
         self.render_fields();self.show_editor()
-        self.statusBar().showMessage(f'{self.path.name} · Changes pending until applied')
         return True
 
     def select_file(self,index):
@@ -439,7 +493,7 @@ class Window(QMainWindow):
     def render_fields(self):
         previous=self.tabs.tabText(self.tabs.currentIndex()) if self.editor_page_game==self.save.game else ''
         self.editor_page_game=self.save.game
-        self.inputs={}
+        self.inputs={};self.category_filters=[]
         while self.tabs.count():
             widget=self.tabs.widget(0);self.tabs.removeTab(0);widget.deleteLater()
         for category in organize_fields(self.save.game,self.save.slots[self.slot_index].fields):
@@ -452,7 +506,6 @@ class Window(QMainWindow):
         page=QWidget();box=layout(page,True,4,10)
         scroll=QScrollArea();scroll.setWidgetResizable(True)
         content=QWidget();sections_box=layout(content,True,0,12)
-        box.addWidget(label(category.name,'section'))
         box.addWidget(label(category.description,'muted',True))
         state=self.editor_view_state.setdefault((self.save.game,str(self.path),category.name),{})
         selections=list(dict.fromkeys(section.selection for section in category.sections))
@@ -463,14 +516,18 @@ class Window(QMainWindow):
         default='' if category.name in ('Progress','Records') else selections[0]
         selected=state.get('selection',default)
         selector.setCurrentIndex(max(0,selector.findData(selected)))
-        if len(selections)>1:
-            controls=QHBoxLayout();controls.addWidget(label(category.selector_label,'muted'))
-            controls.addWidget(selector,1);box.addLayout(controls)
-        else:selector.hide()
+        controls=QHBoxLayout()
         field_filter=QLineEdit();field_filter.setObjectName('fieldSearch')
-        field_filter.setPlaceholderText('Search the selected section by name or item ID…')
+        field_filter.setPlaceholderText('Search fields by name or item ID…')
         field_filter.setAccessibleName('Search '+category.name);field_filter.setClearButtonEnabled(True)
-        field_filter.setText(state.get('query',''));box.addWidget(field_filter)
+        field_filter.setText(state.get('query',''));controls.addWidget(field_filter,1)
+        if len(selections)>1:
+            selector.setFixedWidth(190);selector.setToolTip('Choose a '+category.selector_label.lower());controls.addWidget(selector)
+        else:selector.hide()
+        box.addLayout(controls)
+        tools=QHBoxLayout();changed_only=QCheckBox('Changed only');changed_only.setObjectName('changedOnly')
+        changed_only.setAccessibleName('Show changed fields in '+category.name);changed_only.setChecked(state.get('changed_only',False))
+        matches=label('','small');matches.setObjectName('fieldCount');tools.addWidget(changed_only);tools.addStretch();tools.addWidget(matches);box.addLayout(tools)
         empty=label('No fields match this section and search.','muted');empty.hide();sections_box.addWidget(empty)
         blocks=[]
         for section in category.sections:
@@ -479,7 +536,7 @@ class Window(QMainWindow):
             header.setAccessibleName(section.selection+' · '+section.name)
             collapsed=state.setdefault('collapsed',{}).get((section.selection,section.name),section.name.endswith(' form'))
             header.setChecked(not collapsed);section_box.addWidget(header)
-            body=QWidget();body_box=layout(body,True,0,8)
+            body=QWidget();body.setObjectName('clearSurface');body_box=layout(body,True,0,8)
             unlock_fields=[field for field in section.fields if field.fmt=='xml-unlock' or field.boolean]
             if unlock_fields:
                 actions=QHBoxLayout()
@@ -492,24 +549,28 @@ class Window(QMainWindow):
                 row=self.build_field_row(field)
                 body_box.addWidget(row)
                 searchable=' '.join((field.label,field.key,section.name,section.selection)).casefold()
-                rows.append((searchable,row))
+                rows.append((searchable,row,field.key))
             section_box.addWidget(body);sections_box.addWidget(block)
             blocks.append((section,block,header,body,rows))
 
         def filter_sections():
             query=field_filter.text().casefold().strip();selection=selector.currentData()
             state['query']=field_filter.text();state['selection']=selection
+            state['changed_only']=changed_only.isChecked()
             total=0
             for section,block,header,body,rows in blocks:
                 eligible=not selection or selection==section.selection
                 count=0
-                for searchable,row in rows:
-                    visible=eligible and query in searchable
+                for searchable,row,key in rows:
+                    visible=eligible and query in searchable and (not changed_only.isChecked() or (self.slot_index,key) in self.edits)
                     row.setVisible(visible);count+=visible
                 block.setVisible(bool(count));total+=count
-                header.setText(('▾  ' if header.isChecked() or query else '▸  ')+section.name+f'  ·  {count}')
-                body.setVisible(header.isChecked() or bool(query))
+                expanded=header.isChecked() or bool(query) or changed_only.isChecked()
+                header.setText(('▾  ' if expanded else '▸  ')+section.name+f'  ·  {count}')
+                body.setVisible(expanded)
             empty.setVisible(not total)
+            empty.setText('No pending changes match this section and search.' if changed_only.isChecked() else 'No fields match this section and search.')
+            matches.setText(f'{total} field'+('s' if total!=1 else '')+' shown')
         def toggle_section(checked,section):
             state['collapsed'][(section.selection,section.name)]=not checked
             filter_sections()
@@ -517,6 +578,7 @@ class Window(QMainWindow):
             header.toggled.connect(lambda checked,s=section:toggle_section(checked,s))
         selector.currentIndexChanged.connect(lambda:filter_sections())
         field_filter.textChanged.connect(lambda:filter_sections())
+        changed_only.toggled.connect(lambda:filter_sections());self.category_filters.append(filter_sections)
         filter_sections()
         sections_box.addStretch();scroll.setWidget(content);box.addWidget(scroll,1)
         return page
@@ -529,37 +591,56 @@ class Window(QMainWindow):
         else:
             caption.addWidget(label(f'Original: {number_text(field.value)}  ·  Range: {field.minimum:,}–{field.maximum:,}','small',True))
         if field.note:caption.addWidget(label(field.note,'small',True))
+        error_label=label('','fieldError',True);error_label.hide();caption.addWidget(error_label)
         line.addLayout(caption,1)
         key=(self.slot_index,field.key)
         if field.fmt == 'xml-unlock' or field.boolean:
             entry=QCheckBox('Unlocked' if self.save.game=='ror2' else 'Owned' if self.save.game=='maxpayne' else 'Enabled')
             entry.setChecked(bool(int(self.edits.get(key,field.value))))
             entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
-            self.mark_unlock(entry,field,entry.isChecked())
         elif field.choices:
             entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(190)
             entry.setCurrentIndex(int(self.edits.get(key,field.value)))
             entry.currentIndexChanged.connect(lambda value,k=key,f=field,e=entry:self.choice_changed(k,f,e,value))
-            self.mark_unlock(entry,field,entry.currentIndex())
         else:
             entry=QLineEdit(self.edits.get(key,number_text(field.value)))
             entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
             entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
-            self.mark_entry(entry,field,entry.text())
         entry.setAccessibleName(field.label)
         self.inputs[key]=entry;line.addWidget(entry)
+        revert=button('↶',lambda checked=False,k=key:self.restore_field(k),'fieldReset')
+        revert.setAccessibleName('Reset '+field.label);revert.setToolTip('Restore the value from the opened file')
+        line.addWidget(revert)
+        entry._reset_button=revert;entry._error_label=error_label;entry._field_row=row
+        if isinstance(entry,QLineEdit):self.mark_entry(entry,field,entry.text())
+        else:self.mark_unlock(entry,field,entry.isChecked() if isinstance(entry,QCheckBox) else entry.currentIndex())
         return row
 
+    def restore_field(self,key):
+        field=next(f for f in self.save.slots[key[0]].fields if f.key==key[1])
+        entry=self.inputs.get(key)
+        if isinstance(entry,QLineEdit):entry.setText(number_text(field.value))
+        elif isinstance(entry,QCheckBox):entry.setChecked(bool(field.value))
+        elif isinstance(entry,QComboBox):entry.setCurrentIndex(int(field.value))
+        self.edits.pop(key,None);self.update_summary()
+
     def set_unlock_fields(self,fields,value):
-        for field in fields:
-            key=(self.slot_index,field.key)
-            checkbox=self.inputs.get(key)
-            if isinstance(checkbox,QCheckBox):
-                checkbox.setChecked(bool(field.value if value is None else value))
+        self._batch_edit=True
+        try:
+            for field in fields:
+                key=(self.slot_index,field.key)
+                checkbox=self.inputs.get(key)
+                if isinstance(checkbox,QCheckBox):
+                    checkbox.setChecked(bool(field.value if value is None else value))
+        finally:self._batch_edit=False;self.update_summary()
 
     def mark_unlock(self,entry,field,checked):
         changed=int(checked) != field.value
+        if isinstance(entry,QCheckBox):
+            states=('Locked','Unlocked') if self.save.game=='ror2' else ('Not owned','Owned') if self.save.game=='maxpayne' else ('Disabled','Enabled')
+            entry.setText(states[bool(checked)])
         entry.setProperty('changed',changed)
+        entry._reset_button.setEnabled(changed)
         entry.style().unpolish(entry);entry.style().polish(entry)
 
     def unlock_changed(self,key,field,entry,checked):
@@ -573,14 +654,20 @@ class Window(QMainWindow):
         self.mark_unlock(entry,field,value);self.update_summary()
 
     def mark_entry(self,entry,field,text):
-        changed=text.strip()!=number_text(field.value)
-        try:value=field.parse(text);valid=True
-        except ValueError:valid=False
+        try:
+            value=field.parse(text);valid=True;changed=value!=field.value;error=''
+        except ValueError as failure:
+            valid=False;changed=True;error=str(failure)
         entry.setProperty('invalid',changed and not valid);entry.setProperty('changed',changed)
+        entry._reset_button.setEnabled(changed)
+        entry._error_label.setText(error);entry._error_label.setVisible(not valid)
+        entry.setToolTip(error if not valid else f'Allowed range: {field.minimum:,}–{field.maximum:,}')
         entry.style().unpolish(entry);entry.style().polish(entry)
 
     def edit_changed(self,key,field,entry,text):
-        if text.strip()==number_text(field.value):self.edits.pop(key,None)
+        try:unchanged=field.parse(text)==field.value
+        except ValueError:unchanged=False
+        if unchanged:self.edits.pop(key,None)
         else:self.edits[key]=text
         self.mark_entry(entry,field,text);self.update_summary()
 
@@ -589,22 +676,26 @@ class Window(QMainWindow):
         for (index,key),text in self.edits.items():
             field=next(f for f in self.save.slots[index].fields if f.key==key)
             try:value=field.parse(text)
-            except ValueError as error:raise ValueError(f'{field.label}: {error}')
+            except ValueError as error:
+                message=str(error);raise ValueError(message if message.startswith(field.label+':') else f'{field.label}: {message}')
             if not field.minimum<=value<=field.maximum:raise ValueError(f'{field.label}: use a value between {field.minimum} and {field.maximum}.')
             changes[(index,key)]=value
         return changes
 
     def update_summary(self):
-        if not hasattr(self,'summary_box'):return
+        if not hasattr(self,'summary_box') or self._batch_edit:return
         clear(self.summary_box)
         count=len(self.edits)
         self.change_count.setText(f'{count:02d} change'+('s' if count!=1 else '') if count else 'No changes')
         visible_edits=list(self.edits.items())
         for (index,key),text in visible_edits[:80]:
             field=next(f for f in self.save.slots[index].fields if f.key==key)
-            item=label(f'{field.label}\n{value_text(field,field.value)}  →  {value_text(field,text) if text else "…"}','',True)
+            item=QWidget();item.setObjectName('clearSurface');item_box=layout(item,True,0,3)
+            heading=QHBoxLayout();heading.addWidget(label(field.label,'summaryName',True),1)
+            undo=button('↶',lambda checked=False,k=(index,key):self.restore_field(k),'fieldReset');undo.setToolTip('Undo this change');undo.setAccessibleName('Undo '+field.label+' in '+self.save.slots[index].name);heading.addWidget(undo);item_box.addLayout(heading)
+            item_box.addWidget(label(f'{value_text(field,field.value)}  →  {value_text(field,text) if text else "…"}','muted',True))
+            if len(self.save.slots)>1:item_box.addWidget(label(self.save.slots[index].name,'small',True))
             self.summary_box.addWidget(item)
-            if len(self.save.slots)>1:self.summary_box.addWidget(label(self.save.slots[index].name,'small',True))
         if len(visible_edits)>80:
             self.summary_box.addWidget(label(f'+ {len(visible_edits)-80} more changes','muted',True))
         if not count:self.summary_box.addWidget(label('Your edits will appear here.','muted',True))
@@ -618,6 +709,15 @@ class Window(QMainWindow):
         can_repair=not self.save or not self.save.warnings or self.repair.isChecked()
         self.review_button.setEnabled(bool(self.save and has_work and valid and can_repair))
         self.reset_button.setEnabled(has_work)
+        if self.save:
+            marker=' *' if has_work else ''
+            self.setWindowTitle(f'UniversalSaveEditor — {BY_ID[self.save.game].title}{marker}')
+            state=f'{count} pending change'+('s' if count!=1 else '') if count else 'No pending changes'
+            if not valid:state+=' · Fix invalid values before applying'
+            elif self.repair.isChecked():state+=' · Integrity repair selected'
+            elif self.save.warnings:state+=' · Integrity repair required'
+            self.statusBar().showMessage(f'{self.path.name} · {state}')
+        for refresh in self.category_filters:refresh()
 
     def reset(self):
         if self.save and self.may_discard():
@@ -678,9 +778,10 @@ class Window(QMainWindow):
         except OSError as error:
             QMessageBox.warning(self,'Could not list backups',str(error));return
         for path in backups:
-            date=datetime.fromtimestamp(path.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
+            try:date=datetime.fromtimestamp(path.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
+            except OSError:continue
             choice.addItem(date+'  ·  '+path.name,path)
-        if not backups:details.setText('No backups found beside this save. You can choose an original .bak file manually.')
+        if not choice.count():details.setText('No backups found beside this save. You can choose an original .bak file manually.')
         def describe():
             path=choice.currentData()
             if path:details.setText(str(path))
@@ -706,7 +807,7 @@ class Window(QMainWindow):
             self.edits={};self.repair.setChecked(False);dialog.accept()
             self.load(self.save.game,self.path)
             QMessageBox.information(self,'Backup restored','Save restored:\n'+str(self.path))
-        restore=button('Restore selected backup',apply_backup,'primary');restore.setEnabled(bool(backups));actions.addWidget(restore);box.addLayout(actions)
+        restore=button('Restore selected backup',apply_backup,'primary');restore.setEnabled(bool(choice.count()));actions.addWidget(restore);box.addLayout(actions)
         dialog.exec()
 
     def open_guide(self):
@@ -719,10 +820,18 @@ class Window(QMainWindow):
         if event.mimeData().hasUrls() and len(event.mimeData().urls())==1 and event.mimeData().urls()[0].isLocalFile():event.acceptProposedAction()
 
     def dropEvent(self,event):
-        self.open_path(Path(event.mimeData().urls()[0].toLocalFile()));event.acceptProposedAction()
+        urls=event.mimeData().urls()
+        if len(urls)!=1 or not urls[0].isLocalFile():event.ignore();return
+        self.open_path(Path(urls[0].toLocalFile()));event.acceptProposedAction()
 
     def closeEvent(self,event):
-        if self.may_discard():event.accept()
+        if self.may_discard():
+            if self.settings is not None:
+                self.settings.setValue('window/geometry',self.saveGeometry())
+                self.settings.setValue('files/lastDirectory',self.last_directory)
+                self.settings.setValue('appearance/theme',self.theme)
+                self.settings.sync()
+            event.accept()
         else:event.ignore()
 
 def main():
@@ -734,26 +843,29 @@ def main():
     app.setApplicationName('UniversalSaveEditor');app.setOrganizationName('UniversalSaveEditor')
     app.setWindowIcon(QIcon(str(ROOT/'assets/memory-card-icon.png')))
     app.setStyle('Fusion')
-    window=Window();window.show()
+    window=Window(settings=None if '--smoke-test' in sys.argv else QSettings('UniversalSaveEditor','UniversalSaveEditor'));window.show()
     if '--smoke-test' in sys.argv:
         # Used by release validation; exercises the packaged resources and Qt.
         import json
         destination=Path(sys.argv[sys.argv.index('--smoke-test')+1])
         def check_startup():
             from kh3_pc import transform, derive_key
+            import re
             cipher = transform(bytes(16),'smoke-test',True)
             crypto_ready = len(derive_key('smoke-test')) == 32 and transform(cipher,'smoke-test') == bytes(16)
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
                     'version':VERSION,
+                    'appearance':window.theme,
+                    'appearanceReady':all(not re.search(r'@[A-Za-z]+@',stylesheet(theme)) for theme in PALETTES) and QSvgRenderer(str(ROOT/'assets/ui/check.svg')).isValid(),
                     'cryptoReady':crypto_ready,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}
             destination.write_text(json.dumps(report,indent=2),encoding='utf-8')
             window.grab().save(str(destination.with_suffix('.png')))
-            app.exit(0 if crypto_ready and all(covers.values()) and all(report['platformIcons'].values()) else 1)
+            app.exit(0 if crypto_ready and report['appearanceReady'] and all(covers.values()) and all(report['platformIcons'].values()) else 1)
         QTimer.singleShot(1000,check_startup)
     sys.exit(app.exec())
 
