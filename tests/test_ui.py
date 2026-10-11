@@ -4,7 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from PySide6.QtCore import QTimer, QSettings
+from PySide6.QtCore import QTimer, QSettings, Qt
+from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel, QCheckBox, QLineEdit, QFrame, QComboBox
 from app import Window, platform_pixmap
 from core import Save
@@ -112,11 +113,11 @@ class InterfaceTests(unittest.TestCase):
         w.resize(1536,960);self.app.processEvents();w.reflow_library()
         self.assertEqual(w.library_toolbar.getItemPosition(w.library_toolbar.indexOf(w.library_filter_controls))[0],0)
 
-    def test_settings_only_store_window_and_last_folder(self):
+    def test_settings_only_store_local_interface_preferences(self):
         settings=QSettings(str(self.root/'preferences.ini'),QSettings.Format.IniFormat)
         w=Window(settings=settings);w.load('webfishing',self.source);w.resize(1280,800)
         w.close();w.deleteLater();self.app.processEvents()
-        self.assertEqual(set(settings.allKeys()),{'window/geometry','files/lastDirectory','appearance/theme'})
+        self.assertEqual(set(settings.allKeys()),{'window/geometry','files/lastDirectory','appearance/theme','appearance/reduceMotion','library/favorites'})
         self.assertEqual(settings.value('files/lastDirectory'),str(self.root))
         restored=Window(settings=settings)
         self.assertEqual(restored.last_directory,str(self.root));self.assertIsNone(restored.save)
@@ -124,6 +125,96 @@ class InterfaceTests(unittest.TestCase):
             restored.open_file()
         self.assertEqual(choose.call_args.args[2],str(self.root))
         restored.close();restored.deleteLater();self.app.processEvents()
+
+    def test_favorite_star_click_does_not_open_or_modify_save(self):
+        w=self.window;w.show();self.app.processEvents()
+        original=self.source.read_bytes()
+        star=w.game_cards['webfishing'].favorite_button
+        QTest.mouseClick(star,Qt.MouseButton.LeftButton)
+        self.assertEqual(w.favorites,{'webfishing'})
+        self.assertIsNone(w.save);self.assertEqual(w.stack.currentIndex(),0)
+        self.assertEqual(w.visible_games[0],'webfishing')
+        self.assertIn('Remove from favorites',w.game_cards['webfishing'].favorite_button.accessibleName())
+        # Clicking the cover still opens the file; only the star is independent.
+        card=w.game_cards['webfishing'];self.app.processEvents()
+        QTest.mouseClick(card.artwork,Qt.MouseButton.LeftButton,pos=card.artwork.rect().center())
+        self.assertEqual(w.path,self.source);self.assertEqual(w.stack.currentIndex(),1)
+        self.assertEqual(self.source.read_bytes(),original)
+
+    def test_favorites_are_first_under_sort_and_search_and_have_empty_state(self):
+        w=self.window;w.toggle_favorite('webfishing');w.toggle_favorite('kh1')
+        w.sort_filter.setCurrentIndex(w.sort_filter.findData('za'))
+        self.assertEqual(w.visible_games[:2],['webfishing','kh1'])
+        w.search.setText('KINGDOM HEARTS')
+        self.assertEqual(w.visible_games[0],'kh1')
+        w.favorites_nav.click()
+        self.assertEqual(set(w.visible_games),{'kh1','webfishing'})
+        self.assertEqual(w.search.text(),'');self.assertTrue(w.favorites_nav.isChecked())
+        w.game_cards['kh1'].favorite_button.click();w.game_cards['webfishing'].favorite_button.click()
+        self.assertEqual(w.visible_games,[])
+        self.assertTrue(any(l.text()=='No favorites yet' for l in w.findChildren(QLabel)))
+        next(b for b in w.findChildren(QPushButton) if b.text()=='Browse games').click()
+        self.assertEqual(set(w.visible_games),set(BY_ID));self.assertFalse(w.favorites_only)
+
+    def test_favorites_and_motion_preferences_survive_restart(self):
+        settings=QSettings(str(self.root/'favorites.ini'),QSettings.Format.IniFormat)
+        settings.setValue('library/favorites',['kh2','not-a-game','kh2'])
+        w=Window(settings=settings)
+        self.assertEqual(w.favorites,{'kh2'})
+        w.toggle_favorite('webfishing');w.reduce_motion.setChecked(True)
+        w.close();w.deleteLater();self.app.processEvents()
+        restored=Window(settings=settings)
+        self.assertEqual(restored.favorites,{'kh2','webfishing'})
+        self.assertTrue(restored.reduce_motion.isChecked());self.assertFalse(restored.transition.enabled)
+        self.assertIsNone(restored.save)
+        restored.close();restored.deleteLater();self.app.processEvents()
+
+    def test_keyboard_favorite_toggle_preserves_focus_and_scroll(self):
+        w=self.window;w.show();w.resize(1100,720);self.app.processEvents();w.reflow_library();self.app.processEvents()
+        w.toggle_favorite('webfishing')
+        star=w.game_cards['webfishing'].favorite_button;star.setFocus()
+        position=w.library_scroll.verticalScrollBar().value()
+        QTest.keyClick(star,Qt.Key.Key_Space);self.app.processEvents()
+        self.assertFalse(w.favorites)
+        self.assertTrue(w.game_cards['webfishing'].favorite_button.hasFocus())
+        self.assertEqual(w.library_scroll.verticalScrollBar().value(),position)
+        self.assertIsNone(w.save)
+
+    def test_transitions_are_interruptible_and_keep_inputs_and_edits(self):
+        w=self.window;w.show();self.app.processEvents();original=self.source.read_bytes()
+        w.load('webfishing',self.source)
+        self.assertIsNotNone(w.stack.currentWidget().graphicsEffect())
+        entry=w.inputs[(0,'money')];entry.setText('2000')
+        for _ in range(3):w.show_library();w.show_editor()
+        for _ in range(40):
+            if w.transition.animation is None:break
+            QTest.qWait(50)
+        self.assertIsNone(w.transition.animation)
+        self.assertTrue(all(w.stack.widget(i).graphicsEffect() is None for i in range(w.stack.count())))
+        self.assertIs(w.inputs[(0,'money')],entry)
+        self.assertEqual(w.validated_changes(),{(0,'money'):2000})
+        w.show_library();w.reduce_motion.setChecked(True)
+        self.assertIsNone(w.transition.animation)
+        w.show_editor();self.assertIsNone(w.stack.currentWidget().graphicsEffect())
+        self.assertEqual(self.source.read_bytes(),original)
+
+    def test_cover_highlight_keeps_geometry_and_reduced_motion_stops_animation(self):
+        w=self.window;w.show();QTest.qWait(150);w.reflow_library();self.app.processEvents()
+        art=w.game_cards['kh1'].artwork
+        geometry=art.geometry();pixmap=art.pixmap.cacheKey()
+        art.set_hovered(True)
+        for _ in range(40):
+            if art.hover_animation.state()==art.hover_animation.State.Stopped:break
+            QTest.qWait(50)
+        self.assertAlmostEqual(art.get_highlight(),0.08)
+        art.set_hovered(False)
+        for _ in range(40):
+            if art.hover_animation.state()==art.hover_animation.State.Stopped:break
+            QTest.qWait(50)
+        self.assertEqual(art.get_highlight(),0)
+        self.assertEqual(art.geometry(),geometry);self.assertEqual(art.pixmap.cacheKey(),pixmap)
+        art.set_hovered(True);w.reduce_motion.setChecked(True)
+        self.assertEqual(art.hover_animation.state(),art.hover_animation.State.Stopped)
 
     def test_information_notes_do_not_request_integrity_repair(self):
         w=self.window;path=self.root/'alice-profile.save';path.write_bytes(alice())

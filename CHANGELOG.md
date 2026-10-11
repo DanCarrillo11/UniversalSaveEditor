@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.13.0-alpha
+
+- Add accessible cover stars, a dedicated Favorites view, and favorites-first sorting within the chosen order and search filters.
+- Remember favorite game IDs locally; starring a game does not open or change its save.
+- Add interruptible 160 ms view fades and 140 ms cover highlights without zooming, cropping, or moving the cover art.
+- Add a persistent Reduce motion option that immediately stops animations.
+- Preserve keyboard focus, library scroll position, and pending edits while managing favorites and navigating views.
+- Keep sidebar controls visible in compact windows and add six interface regression tests.
+
 ## v0.12.0-alpha
 
 - Introduce a clean light/dark design with soft grouped surfaces, rounded controls and cover corners, blue actions and a persistent appearance toggle.

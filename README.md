@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.12.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.13.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -19,6 +19,9 @@ executable included at its root. Startup can take a few seconds.
 
 - Clean light and dark appearances with a header toggle and a remembered preference.
 - Responsive game library with full cover art, search, filters, and sorting.
+- Mark games with the star on each cover. Favorites appear first in the library;
+  open **Favorites** in the sidebar to show only your starred games.
+- Short view fades and animated cover highlights, with a remembered **Reduce motion** option.
 - Platform logos and names below each cover; currently Steam. Editor status and
   detected saves remain in the details panel. Coming-soon games are not editable.
 - Click a compatible cover to open its detected save directly.
@@ -28,7 +31,7 @@ executable included at its root. Startup can take a few seconds.
 - Changed-only filtering, field counts, individual undo, and inline validation.
 - Compact editor controls and scrollable save details for smaller windows.
 - Open a detected save from its file row; view size and modification time.
-- Remember window geometry and the last opened folder locally.
+- Remember favorites, appearance, motion preference, window geometry, and the last opened folder locally.
 - Navigation and search stay visible while scrolling; pending edits survive
   character, category, and slot changes.
 - Change review, input validation, and preservation of unrelated save data.

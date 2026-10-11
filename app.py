@@ -19,6 +19,8 @@ from editor_layout import organize_fields
 from ror2_unlocks import UNLOCK_IDS
 from version import VERSION
 from appearance import PALETTES, stylesheet
+from favorites import FavoriteButton
+from motion import ViewTransition
 
 ROOT=Path(__file__).resolve().parent
 
@@ -97,6 +99,13 @@ class GameCard(QFrame):
         super().__init__(parent)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.artwork=None;self.motion_enabled=True
+    def enterEvent(self,event):
+        if self.artwork:self.artwork.set_hovered(True,self.motion_enabled)
+        super().enterEvent(event)
+    def leaveEvent(self,event):
+        if self.artwork:self.artwork.set_hovered(False,self.motion_enabled)
+        super().leaveEvent(event)
     def mouseReleaseEvent(self,event):
         if event.button()==Qt.MouseButton.LeftButton and self.rect().contains(event.position().toPoint()):self.clicked.emit()
         super().mouseReleaseEvent(event)
@@ -112,6 +121,10 @@ class Window(QMainWindow):
         self.setMinimumSize(1100,720)
         self.setAcceptDrops(True)
         self.settings=settings
+        stored=settings.value('library/favorites',[],type=list) if settings is not None else []
+        self.favorites={game_id for game_id in stored if isinstance(game_id,str) and game_id in BY_ID}
+        self.favorites_only=False
+        self.transition=ViewTransition(self)
         preferred=settings.value('appearance/theme','light',type=str) if settings is not None else 'light'
         self.theme=preferred if preferred in PALETTES else 'light'
         self.setStyleSheet(stylesheet(self.theme))
@@ -141,14 +154,21 @@ class Window(QMainWindow):
         self.library_nav=button('▦   Library',self.show_library,'nav');self.library_nav.setCheckable(True)
         self.editor_nav=button('✎   Save editor',self.show_editor,'nav');self.editor_nav.setCheckable(True);self.editor_nav.setEnabled(False)
         nav.addWidget(self.library_nav);nav.addWidget(self.editor_nav)
+        self.favorites_nav=button('☆   Favorites',self.show_favorites,'nav');self.favorites_nav.setCheckable(True)
+        self.favorites_nav.setAccessibleName('Show favorite games');nav.addWidget(self.favorites_nav)
         nav.addSpacing(18)
         nav.addWidget(label('Collections','eyebrow'))
         for name in dict.fromkeys(game.family for game in GAMES):
             nav.addWidget(button(name.title(),lambda checked=False,n=name:self.collection(n),'nav'))
         nav.addStretch()
-        nav.addWidget(label('Saving','eyebrow'))
-        nav.addWidget(label('Apply updates the opened save directly. No automatic backups.','muted',True))
+        self.saving_heading=label('Saving','eyebrow');nav.addWidget(self.saving_heading)
+        self.saving_note=label('Apply updates the opened save directly. No automatic backups.','muted',True);nav.addWidget(self.saving_note)
         nav.addSpacing(8)
+        self.reduce_motion=QCheckBox('Reduce motion')
+        self.reduce_motion.setToolTip('Turn off view fades and animated cover highlights')
+        self.reduce_motion.setChecked(settings.value('appearance/reduceMotion',False,type=bool) if settings is not None else False)
+        self.reduce_motion.toggled.connect(self.update_motion)
+        nav.addWidget(self.reduce_motion);self.update_motion()
         nav.addWidget(button('?   Guide and about',self.open_guide,'nav'))
         nav.addWidget(label('v'+VERSION,'small'))
         shell.addWidget(side)
@@ -173,6 +193,43 @@ class Window(QMainWindow):
         self.theme='dark' if self.theme=='light' else 'light'
         self.setStyleSheet(stylesheet(self.theme));self.update_appearance_button()
 
+    def update_motion(self):
+        enabled=not self.reduce_motion.isChecked()
+        self.transition.enabled=enabled
+        if not enabled:self.transition.stop()
+        for card in getattr(self,'game_cards',{}).values():
+            card.motion_enabled=enabled
+            if card.artwork:card.artwork.set_hovered(card.underMouse(),False)
+
+    def toggle_favorite(self,game_id):
+        if game_id not in BY_ID:return
+        if game_id in self.favorites:self.favorites.remove(game_id)
+        else:self.favorites.add(game_id)
+        position=self.library_scroll.verticalScrollBar().value()
+        focused=QApplication.focusWidget()
+        restore_focus=focused is not None and focused.objectName()=='favoriteButton'
+        self.render_cards()
+        if restore_focus:
+            card=self.game_cards.get(game_id)
+            if card:card.favorite_button.setFocus(Qt.FocusReason.OtherFocusReason)
+            else:self.favorites_nav.setFocus(Qt.FocusReason.OtherFocusReason)
+        self.library_scroll.verticalScrollBar().setValue(position)
+
+    def show_favorites(self):
+        self.favorites_only=True
+        self.search.blockSignals(True);self.search.clear();self.search.blockSignals(False)
+        self.platform_filter.blockSignals(True);self.platform_filter.setCurrentIndex(0);self.platform_filter.blockSignals(False)
+        self.filter='all'
+        self.status_filter.blockSignals(True);self.status_filter.setCurrentIndex(0);self.status_filter.blockSignals(False)
+        self.render_cards();self.switch_view(0)
+        self.library_nav.setChecked(False);self.favorites_nav.setChecked(True);self.editor_nav.setChecked(False)
+
+    def switch_view(self,index):
+        if self.stack.currentIndex()==index:return
+        self.transition.stop()
+        self.stack.setCurrentIndex(index)
+        self.transition.fade(self.stack.currentWidget())
+
     def build_library(self):
         page=QWidget();box=layout(page,True,14,10)
         top=QGridLayout();self.library_toolbar=top
@@ -195,7 +252,7 @@ class Window(QMainWindow):
         top.addWidget(button('+  Open save',self.open_file,'primary'),0,2);box.addLayout(top)
         content_row=QHBoxLayout();content_row.setSpacing(12)
         library=QFrame();library.setObjectName('libraryPanel');library_box=layout(library,True,12,10)
-        heading=QHBoxLayout();heading.addWidget(label('Game library','libraryTitle'));heading.addStretch();self.library_count=label('','small');heading.addWidget(self.library_count);library_box.addLayout(heading)
+        heading=QHBoxLayout();self.library_title=label('Game library','libraryTitle');heading.addWidget(self.library_title);heading.addStretch();self.library_count=label('','small');heading.addWidget(self.library_count);library_box.addLayout(heading)
         scroll=QScrollArea();scroll.setWidgetResizable(True);self.library_scroll=scroll
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         content=QWidget();self.grid=QGridLayout(content);self.grid.setContentsMargins(0,0,4,0);self.grid.setHorizontalSpacing(8);self.grid.setVerticalSpacing(14)
@@ -264,6 +321,7 @@ class Window(QMainWindow):
         self.render_cards()
 
     def collection(self,name):
+        self.show_library()
         self.set_filter('all');self.search.setText(name);self.show_library()
 
     def render_cards(self):
@@ -275,8 +333,11 @@ class Window(QMainWindow):
         games=[g for g in GAMES if search in (g.title+' '+g.subtitle+' '+g.family+' '+g.description).casefold()
                and (self.filter=='all' or g.editable==(self.filter=='ready'))
                and (platform=='all' or platform in g.platforms)]
+        if self.favorites_only:games=[g for g in games if g.id in self.favorites]
         order=self.sort_filter.currentData() if hasattr(self,'sort_filter') else 'az'
         games.sort(key=lambda g:(not g.editable,g.title) if order=='ready' else g.title,reverse=order=='za')
+        games.sort(key=lambda g:g.id not in self.favorites)
+        self.library_title.setText('Favorites' if self.favorites_only else 'Game library')
         self.visible_games=[g.id for g in games]
         self.game_cards={}
         available=max(180,self.library_scroll.viewport().width())
@@ -292,8 +353,14 @@ class Window(QMainWindow):
             card.clicked.connect(lambda g=game:self.activate_game(g));self.game_cards[game.id]=card
             card_box=layout(card,True,6,4)
             cover=QFrame();cover.setObjectName('coverFrame');cover.setProperty('selected',game.id==self.selected_game)
-            cover.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-            cover_box=layout(cover,True,0,0);cover_box.addWidget(Artwork(game,height=int((card_width-18)*1.5)));card_box.addWidget(cover)
+            cover_box=QGridLayout(cover);cover_box.setContentsMargins(0,0,0,0)
+            card.artwork=Artwork(game,height=int((card_width-18)*1.5));card.motion_enabled=not self.reduce_motion.isChecked()
+            cover_box.addWidget(card.artwork,0,0)
+            favorite=FavoriteButton(game.title,game.id in self.favorites)
+            favorite.clicked.connect(lambda checked=False,g=game.id:self.toggle_favorite(g))
+            card.favorite_button=favorite
+            cover_box.addWidget(favorite,0,0,Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignRight)
+            card_box.addWidget(cover)
             title=label(game.title,'cardTitle',True);card_box.addWidget(title)
             features=label(game.description,'cardDescription',True);features.setAccessibleName('Editor features for '+game.title);features.hide();card_box.addWidget(features)
             count=sum(g==game.id for g,p in self.files)
@@ -303,8 +370,10 @@ class Window(QMainWindow):
             self.grid.addWidget(card,index//columns,index%columns)
         if not games:
             empty=QWidget();empty_box=layout(empty,True,18,12)
-            empty_box.addWidget(label('No games found','section'));empty_box.addWidget(label('Try another name or reset the library filters.','muted',True))
-            empty_box.addWidget(button('Reset filters',self.reset_library_filters));self.grid.addWidget(empty,0,0,1,columns)
+            no_favorites=self.favorites_only and not self.favorites
+            empty_box.addWidget(label('No favorites yet' if no_favorites else 'No games found','section'))
+            empty_box.addWidget(label('Use the star on a cover to keep your favorite games here.' if no_favorites else 'Try another name or reset the library filters.','muted',True))
+            empty_box.addWidget(button('Browse games' if no_favorites else 'Reset filters',self.show_library if no_favorites else self.reset_library_filters));self.grid.addWidget(empty,0,0,1,columns)
         self.grid.setAlignment(Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignLeft)
         self.grid.activate()
         content=self.library_scroll.widget()
@@ -377,6 +446,7 @@ class Window(QMainWindow):
         if hasattr(self,'save_steps'):
             compact=self.height()<850
             self.save_steps.setVisible(not compact);self.summary_description.setVisible(not compact)
+            self.saving_heading.setVisible(not compact);self.saving_note.setVisible(not compact)
         if not hasattr(self,'library_scroll') or self._reflow_pending:return
         self._reflow_pending=True
         QTimer.singleShot(80,self.reflow_library)
@@ -397,11 +467,13 @@ class Window(QMainWindow):
             self.library_scroll.verticalScrollBar().setValue(position)
 
     def show_library(self):
-        self.stack.setCurrentIndex(0);self.library_nav.setChecked(True);self.editor_nav.setChecked(False)
+        if self.favorites_only:
+            self.favorites_only=False;self.render_cards()
+        self.switch_view(0);self.library_nav.setChecked(True);self.editor_nav.setChecked(False);self.favorites_nav.setChecked(False)
 
     def show_editor(self):
         if self.save:
-            self.stack.setCurrentIndex(1);self.library_nav.setChecked(False);self.editor_nav.setChecked(True)
+            self.switch_view(1);self.library_nav.setChecked(False);self.editor_nav.setChecked(True);self.favorites_nav.setChecked(False)
 
     def focus_search(self):
         if self.stack.currentIndex()==1 and self.tabs.currentWidget():
@@ -830,7 +902,10 @@ class Window(QMainWindow):
                 self.settings.setValue('window/geometry',self.saveGeometry())
                 self.settings.setValue('files/lastDirectory',self.last_directory)
                 self.settings.setValue('appearance/theme',self.theme)
+                self.settings.setValue('appearance/reduceMotion',self.reduce_motion.isChecked())
+                self.settings.setValue('library/favorites',sorted(self.favorites))
                 self.settings.sync()
+            self.transition.stop()
             event.accept()
         else:event.ignore()
 

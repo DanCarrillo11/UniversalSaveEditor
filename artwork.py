@@ -1,6 +1,6 @@
 """Original box art; attribution in assets/covers/sources.json."""
 from pathlib import Path
-from PySide6.QtCore import Qt, QRectF
+from PySide6.QtCore import Qt, QRectF, Property, QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QColor, QPainter, QPixmap, QPainterPath
 from PySide6.QtWidgets import QWidget
 
@@ -11,6 +11,10 @@ class Artwork(QWidget):
         super().__init__(parent)
         self.setFixedHeight(height)
         self.crop=crop;self.game_id=game.id
+        self._highlight=0.0
+        self.hover_animation=QPropertyAnimation(self,b'hoverHighlight',self)
+        self.hover_animation.setDuration(140)
+        self.hover_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
         self.top_crop_ratio=self._platform_crop.get(game.id,0)
         self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.setAccessibleName('Cover art for '+game.title)
@@ -20,6 +24,17 @@ class Artwork(QWidget):
             path=folder/(game.id+extension)
             self._cache[game.id]=QPixmap(str(path))
         self.pixmap=self._cache[game.id]
+    def get_highlight(self):return self._highlight
+    def set_highlight(self,value):
+        self._highlight=value;self.update()
+    hoverHighlight=Property(float,get_highlight,set_highlight)
+    def set_hovered(self,hovered,animated=True):
+        self.hover_animation.stop()
+        target=0.08 if hovered else 0.0
+        if not animated:self.set_highlight(target);return
+        self.hover_animation.setStartValue(self._highlight)
+        self.hover_animation.setEndValue(target)
+        self.hover_animation.start()
     def paintEvent(self,event):
         painter=QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -33,4 +48,5 @@ class Artwork(QWidget):
             size=source.size().toSize().scaled(self.size(),mode)
             target=QRectF((self.width()-size.width())/2,(self.height()-size.height())/2,size.width(),size.height())
             painter.drawPixmap(target,self.pixmap,source)
+        if self._highlight:painter.fillRect(self.rect(),QColor(255,255,255,round(255*self._highlight)))
         painter.end()
