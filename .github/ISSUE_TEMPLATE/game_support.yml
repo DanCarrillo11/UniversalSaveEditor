@@ -1,0 +1,42 @@
+name: Game or feature request
+description: Suggest a game, platform, or specific editing feature.
+title: "[Request]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the README compatibility table and existing issues first.
+        Describe the actual feature you would use. A request is not a promise of compatibility.
+        Do not attach personal saves, account IDs, or copyrighted game files.
+  - type: input
+    id: game
+    attributes:
+      label: Game and edition
+      placeholder: Kingdom Hearts Birth by Sleep Final Mix
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform or store
+      placeholder: Steam
+    validations:
+      required: true
+  - type: textarea
+    id: feature
+    attributes:
+      label: What would you like to edit?
+      placeholder: Command levels and experience
+    validations:
+      required: true
+  - type: textarea
+    id: use
+    attributes:
+      label: How would you use this feature?
+    validations:
+      required: true
+  - type: textarea
+    id: format
+    attributes:
+      label: Save format and references
+      description: Optional file extensions, public format documentation, or existing open-source tools.

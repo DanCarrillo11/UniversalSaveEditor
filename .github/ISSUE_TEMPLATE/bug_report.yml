@@ -1,0 +1,64 @@
+name: Bug report
+description: Report an editor, save-loading, or interface problem.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check existing issues first. Do not attach personal save files or account IDs.
+        Remove personal details from screenshots. If the issue is already fixed, include the version that fixed it.
+  - type: input
+    id: version
+    attributes:
+      label: Application version
+      placeholder: v0.10.2-alpha
+    validations:
+      required: true
+  - type: input
+    id: game
+    attributes:
+      label: Game and edition
+      placeholder: Kingdom Hearts Final Mix, HD 1.5 + 2.5 ReMIX
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform or store
+      placeholder: Steam
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Windows version and display scale
+      placeholder: Windows 11, 125% scale
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the file type and whether it was created by the game or downloaded.
+      placeholder: |
+        1. Open the application
+        2. Select ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and exact error
+      description: You may add a screenshot with personal details removed.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Did the same save work in-game before any edit? Did Steam Cloud or another editor change it?
