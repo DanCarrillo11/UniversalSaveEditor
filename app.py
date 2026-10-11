@@ -3,7 +3,7 @@ import sys
 import os
 from pathlib import Path
 from datetime import datetime
-from PySide6.QtCore import Qt, QUrl, QTimer, Signal
+from PySide6.QtCore import Qt, QUrl, QTimer, Signal, QRectF, QPointF
 from PySide6.QtGui import QDesktopServices, QIcon, QKeySequence, QShortcut, QPixmap, QFontDatabase, QPainter
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import (
@@ -26,7 +26,11 @@ def platform_pixmap(key,size=18,scale=1):
     if not renderer.isValid():return QPixmap()
     pixmap=QPixmap(round(size*scale),round(size*scale))
     pixmap.setDevicePixelRatio(scale);pixmap.fill(Qt.GlobalColor.transparent)
-    painter=QPainter(pixmap);renderer.render(painter);painter.end()
+    # SVG bounds are logical pixels; default rendering uses the physical
+    # pixmap dimensions and applies the display scale twice on HiDPI screens.
+    painter=QPainter(pixmap)
+    renderer.render(painter,QRectF(QPointF(0,0),pixmap.deviceIndependentSize()))
+    painter.end()
     return pixmap
 
 def platform_row(game):
@@ -36,6 +40,7 @@ def platform_row(game):
     for key in game.platforms:
         platform=PLATFORMS[key]
         icon=QLabel();icon.setObjectName('platformIcon');icon.setFixedSize(18,18)
+        icon.setAlignment(Qt.AlignmentFlag.AlignCenter);icon.setScaledContents(True)
         icon.setPixmap(platform_pixmap(key,scale=row.devicePixelRatioF()))
         icon.setAccessibleName(platform.name+' logo')
         text=label(platform.name,'cardPlatform');text.setAccessibleName('Platform: '+platform.name)

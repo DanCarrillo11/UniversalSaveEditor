@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel, QCheckBox, QLineEdit, QFrame, QComboBox
-from app import Window
+from app import Window, platform_pixmap
 from core import Save
 from catalog import BY_ID
 from test_core import fishing, kingdom, kingdom2, alice, ror2
@@ -54,6 +54,17 @@ class InterfaceTests(unittest.TestCase):
         w.set_filter('pending');self.assertEqual(len(w.visible_games),3)
         w.collection('KINGDOM HEARTS');self.assertEqual(len(w.visible_games),4)
         w.search.setText('not a game');self.assertEqual(w.visible_games,[])
+
+    def test_platform_logo_is_complete_at_fractional_screen_scales(self):
+        for scale in (1,1.25,1.5,1.75,2):
+            with self.subTest(scale=scale):
+                pixmap=platform_pixmap('steam',scale=scale)
+                image=pixmap.toImage();edge=image.width()-1;middle=image.width()//2
+                # The full round logo has transparent corners and reaches the
+                # top, right, and bottom of its own bounds at every screen scale.
+                self.assertLess(image.pixelColor(edge,edge).alpha(),10)
+                for x,y in ((middle,0),(edge,middle),(middle,edge)):
+                    self.assertGreater(image.pixelColor(x,y).alpha(),150)
 
     def test_invalid_values_block_export_and_navigation_preserves_edits(self):
         w=self.window;w.load('webfishing',self.source)

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.10.2-alpha
+
+- Fix Steam logos being cropped on screens with display scaling above 100%.
+  Render SVG bounds in logical pixels and fit the image to its label.
+- Add a rendering regression check for 100%, 125%, 150%, 175%, and 200% scale.
+
 ## v0.10.1-alpha
 
 - Replace the status/save-count line below library covers with the Steam logo
