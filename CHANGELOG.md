@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.1-alpha
+
+- Fix KH II Steam archives containing a 1 KB `KH2S` system record being rejected as an unexpected player record size.
+- Preserve system metadata and its full reserved region while opening, editing and repairing player slots. Unknown or oversized records remain rejected.
+- Verify against a local Steam save in memory and add regression checks for record ordering, byte preservation and system-only containers.
+
 ## v0.11.0-alpha
 
 - Add experimental ReCoM editing: Moogle Points, XP, difficulty and named card quantities; maintain currency mirrors and both checksums.

@@ -432,10 +432,17 @@ class Save:
             length = struct.unpack_from('<I',table,descriptor+0x50)[0]
             if not length:
                 continue
+            if length > stride:
+                raise FormatError('The KH2 record exceeds its allocated space.')
+            record = base + index * stride
+            magic = self.raw[record:record+4]
+            # PC archives also contain a 1 KB KH2S system record. Its metadata
+            # is not a player slot; preserve the entire allocated region.
+            if magic == b'KH2S' and length == 0x400:
+                continue
             if length != stride:
                 raise FormatError('The KH2 record has an unexpected size.')
-            record = base + index * stride
-            if self.raw[record:record+4] not in (b'KH2J',b'KH2U',b'KH2E'):
+            if magic not in (b'KH2J',b'KH2U',b'KH2E'):
                 raise FormatError('The KH2 record header is invalid.')
             expected_checksum=struct.unpack_from('<I',self.raw,record+8)[0]
             if expected_checksum!=self._kh2_checksum(self.raw[record:record+stride]):
