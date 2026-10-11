@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.10.2-alpha** is a pre-release. Editors now use a few game-specific categories
+**v0.11.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -40,10 +40,13 @@ executable included at its root. Startup can take a few seconds.
 | Kingdom Hearts Final Mix, Steam | Munny, difficulty, Sora/Donald/Goofy attributes, and 154 named inventory entries | Available; direct apply |
 | Kingdom Hearts II Final Mix, Steam | Munny, difficulty, experience, character attributes/levels, bonus and summon levels, Drive Gauge, Drive Forms, and 320 inventory quantities | Experimental; direct apply |
 | Alice: Madness Returns, Steam | Teeth, four weapon levels, abilities, health upgrades and paint pots, dress abilities, 89 memories, 83 bottles, 59 snouts, Radula rooms, chapters, difficulty, enemy journal, cinematics, and statistics | Experimental; direct apply |
-| Re:Chain of Memories / Birth by Sleep, Steam | File discovery | Coming soon |
-| Max Payne 1 | Listed in the library | Coming soon |
+| Re:Chain of Memories, Steam | Moogle Points, XP, difficulty and 1,139 named card quantities, including numbered and premium variants | Experimental; direct apply |
+| Birth by Sleep Final Mix, Steam | Per-slot character XP, level, Munny, medals, attributes, Arena level, existing command levels/XP and acquired/active ability stacks | Experimental; direct apply |
+| Dream Drop Distance HD, Steam | Munny, difficulty, Sora/Riku XP, levels and Drop Points, existing command/item quantities | Experimental; direct apply |
+| Kingdom Hearts III + Re Mind, Steam | Munny, XP, difficulty, level, party HP/MP/Focus and boosts, named inventory quantities with acquisition flags, material counters | Experimental; direct apply |
+| Max Payne 1, Steam | Original revision 48 weapon ownership, reserve ammunition and painkillers | Experimental; direct apply |
 
-Kingdom Hearts support targets **HD 1.5 + 2.5 ReMIX on Steam**. KH II requires a
+Kingdom Hearts support targets **HD 1.5 + 2.5 ReMIX, Dream Drop Distance HD and KH III on Steam**. KH II requires a
 populated slot created at an in-game save point. Containers without saved slots
 cannot be edited. Its record checksums and the outer Steam-container CRC are
 maintained when applying changes. Invalid integrity checks require explicit repair.
@@ -54,8 +57,10 @@ Critical. Existing attributes, items, and starting bonuses are not recalculated;
 changing the saved mode does not recreate a new-game setup. In-game validation
 of mode changes is pending. See [difficulty format](docs/KH_DIFFICULTY.md).
 
-Automated checks validate file preservation and editing behavior. Loading all
-edited saves inside the games still requires validation; KH II and Alice are
+Automated checks validate file preservation and editing behavior. Public PC
+fixtures were used for ReCoM, BBS, DDD and KH III, and three local Max Payne saves
+were inspected without modifying the active files. Loading edited saves inside
+those games still requires validation. These new adapters, KH II and Alice are
 marked experimental. Field limits do not guarantee that every combination works
 in-game. Alice's checkpoint position and selected outfit are stored separately
 and are not edited. Current difficulty is editable by selecting `GameConfig_PC.CFG`
@@ -64,11 +69,27 @@ DLC content must be installed. See [Alice format and scope](docs/ALICE_FORMAT.md
 Risk of Rain 2 DLC content still requires ownership of the corresponding DLC.
 WEBFISHING level and XP are independent and do not automatically grant rewards.
 
+KH III automatically derives its encryption key from the account folder before
+`SaveGames`. For files copied elsewhere, enter the original creator's SteamID64
+when prompted. This ID is used locally and kept only in memory; it is not a login.
+An unknown account ID cannot be recovered from the encrypted file. The editor
+preserves encryption, validates the digest and maintains the internal CRC.
+
+These are scoped editors, not complete exposure of every game system. ReCoM
+decks and story flags, BBS decks/command identities/finishers, DDD Dream Eaters,
+KH III story and equipment pointers, and Max Payne health, Bullet Time, loaded
+rounds and checkpoint state are preserved. KH 0.2 and Melody of Memory PC
+encryption remain unresolved and those games are not advertised as supported.
+
 ## Editing a save
 
 | Editor | Main categories |
 |---|---|
 | KH Final Mix / KH II Final Mix | Progress, Characters, Collection |
+| Re:Chain of Memories | Progress, Collection |
+| Birth by Sleep | Progress, Character, Collection |
+| Dream Drop Distance HD / KH III | Progress, Characters, Collection |
+| Max Payne | Equipment |
 | WEBFISHING | Progress, Equipment, Collection |
 | Risk of Rain 2 | Progress, Unlocks, Records |
 | Alice persistent profile | Progress, Character, Collection |
@@ -78,8 +99,8 @@ Characters uses one selector for Sora, Donald, and Goofy. KH II's Drive Gauge an
 Drive Forms are sections within Sora, rather than additional tabs. Collection,
 Equipment, Unlocks, and Alice's Character category use section selectors to
 browse related controls. Fold or expand a section by clicking its heading.
-Section-wide actions only affect that section. This reorganizes existing fields
-and does not add new characters or change game compatibility.
+Section-wide actions only affect that section. BBS uses its saved-slot selector
+for each protagonist; DDD and KH III use character selectors within Characters.
 
 1. Close the game, then click its cover or use **Open save**.
 2. Choose a slot if the game has several. Search a category to find a field.

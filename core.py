@@ -161,11 +161,12 @@ def png_chunks(raw, allow_sqex_crc=False):
     raise FormatError('The IEND chunk is missing.')
 
 class Save:
-    def __init__(self, raw, game):
+    def __init__(self, raw, game, path=None, account_id=None):
         if not raw or len(raw) > MAX_SIZE:
             raise FormatError('Unsupported file size (64 MB maximum).')
         self.raw, self.game, self.slots, self.crc_regions = raw, game, [], []
         self.warnings = []
+        self.path, self.account_id = path, account_id
         if game == 'webfishing':
             self._webfishing()
         elif game == 'ror2':
@@ -174,8 +175,38 @@ class Save:
             self._kh1()
         elif game == 'kh2':
             self._kh2()
+        elif game in ('recom', 'bbs', 'ddd'):
+            from kh_pc import ExtraKhArchive
+            try:
+                self.extra_kh = ExtraKhArchive(raw, game, Field, Slot, png_chunks)
+            except (ValueError, struct.error) as error:
+                raise FormatError(str(error)) from error
+            self.slots = self.extra_kh.slots
+            self.warnings = self.extra_kh.warnings
+            self.crc_regions = self.extra_kh.crc_regions
+            self.notes = ['Close the game before applying changes. Difficulty edits do not recalculate starting bonuses. Command and card deck references are preserved.']
         elif game == 'alice':
             self._alice()
+        elif game == 'maxpayne':
+            from maxpayne_save import MaxPayneEditor
+            try:
+                self.maxpayne = MaxPayneEditor(raw, Field)
+            except ValueError as error:
+                raise FormatError(str(error)) from error
+            self.slots = [Slot(self.maxpayne.description, self.maxpayne.fields)]
+            self.notes = ['Original PC revision 48 inventory. Weapons, reserve ammunition and painkillers can be edited. Loaded rounds, health, Bullet Time and checkpoint state are preserved. Close Max Payne before applying changes. Experimental: game-load verification is still pending.']
+        elif game == 'kh3':
+            from kh3_pc import Kh3PcSave, AccountIdRequired
+            try:
+                self.kh3 = Kh3PcSave(raw, Field, path, account_id)
+            except AccountIdRequired:
+                raise
+            except ValueError as error:
+                raise FormatError(str(error)) from error
+            self.account_id = self.kh3.account
+            self.slots = [Slot('PC save slot', self.kh3.fields)]
+            self.warnings = self.kh3.warnings
+            self.notes = ['Account encryption is preserved. Difficulty edits do not recalculate starting bonuses. Close Kingdom Hearts III before applying changes.']
         else:
             raise FormatError('Editing is not implemented for this game yet.')
 
@@ -473,9 +504,15 @@ class Save:
                 raise ValueError('Unauthorized field.')
             field = known[key]
             field.validate(value)
-            if field.fmt and not field.fmt.startswith('xml-'):
+            if self.game != 'kh3' and field.fmt and not field.fmt.startswith('xml-'):
                 struct.pack_into(field.fmt,result,field.offset,value)
-        if self.game == 'alice':
+        if self.game == 'kh3':
+            result = self.kh3.patch({key:value for (index,key),value in changes.items()})
+        elif self.game == 'maxpayne':
+            result = self.maxpayne.patch({key:value for (index,key),value in changes.items()})
+        elif self.game in ('recom', 'bbs', 'ddd'):
+            result = self.extra_kh.finish(result, changes, repair_crc)
+        elif self.game == 'alice':
             try:result = self.alice.patch(result,{key:value for (index,key),value in changes.items()})
             except ValueError as error:raise FormatError(str(error)) from error
         elif self.game == 'webfishing':
@@ -543,7 +580,7 @@ class Save:
             struct.pack_into('>I',result,end,zlib.crc32(result[start-4:end]))
         output = bytes(result)
         # Reparse and assert every requested field before returning data to the UI.
-        check = Save(output,self.game)
+        check = Save(output,self.game,self.path,self.account_id)
         for (index,key),value in changes.items():
             field=known[(index,key)]
             if field.fmt.startswith('xml-'):
@@ -589,6 +626,10 @@ def discover():
         if config.is_file():found.append(('alice',config))
     for p in (docs/'Max Payne Savegames').glob('*.mps'):
         found.append(('maxpayne',p))
+    for p in (docs/'My Games/KINGDOM HEARTS HD 2.8 Final Chapter Prologue/Steam').glob('*/KH3DHD*.png'):
+        found.append(('ddd',p))
+    for p in (docs/'My Games/KINGDOM HEARTS III/Steam').glob('*/SaveGames/kh3sv2/data/KHIII_slot*.bin'):
+        found.append(('kh3',p))
     return found
 
 def identify_game(path):
@@ -597,20 +638,29 @@ def identify_game(path):
     name = path.name.casefold()
     known = {'khfm_ww.png':'kh1', 'khiifm_ww.png':'kh2',
              'kh2fm_ww.png':'kh2', 'khrecom_ww.png':'recom',
-             'khbbs_ww.png':'bbs', 'persistentdata_pc.psd':'alice', 'gameconfig_pc.cfg':'alice'}
+             'khbbs_ww.png':'bbs', 'khbbsfm.png':'bbs', 'kh3dhd.png':'ddd',
+             'kh3dhd_ww.png':'ddd', 'persistentdata_pc.psd':'alice', 'gameconfig_pc.cfg':'alice'}
     if name in known:
         return known[name]
+    if re.fullmatch(r'khiii_slot\d+\.bin',name):
+        return 'kh3'
     extensions = {'.sav':'webfishing', '.xml':'ror2', '.psd':'alice', '.mps':'maxpayne'}
     if path.suffix.casefold() == '.png':
-        # KH I and KH II archive sizes differ. Renamed exports can still open.
+        # Recognize renamed archives by their bounded sqEX layout.
         raw=read_limited(path)
         for name,start,end in png_chunks(raw,allow_sqex_crc=True):
-            if name==b'sqEX' and 0 <= end-start-16-100*(0x158+0x10fc0) < 0x400:
-                return 'kh2'
-        return 'kh1'
+            if name==b'sqEX':
+                for game,count,stride in (('kh1',200,0x16c40),('kh2',100,0x10fc0),('recom',100,0x3a30),('bbs',100,0x13c00),('ddd',100,0x16600)):
+                    if start == 0x60 and 0 <= end-start-16-count*(0x158+stride) < 0x400:
+                        return game
+        raise FormatError('This PNG does not contain a supported Kingdom Hearts archive.')
     if path.suffix.casefold() in extensions:
         return extensions[path.suffix.casefold()]
-    raise FormatError('Choose a supported .sav, .png, .xml, .PSD, or GameConfig_PC.CFG file.')
+    if path.suffix.casefold() == '.bin':
+        raw = read_limited(path)
+        if raw.startswith(b'S@vE') or (len(raw) == 0x94f4f0+17 and raw[-17] == 8):
+            return 'kh3'
+    raise FormatError('Choose a supported .sav, .png, .mps, .bin, .xml, .PSD, or GameConfig_PC.CFG file.')
 
 def backup_files(source):
     """Only list backups associated with this active file or its default export."""
@@ -620,14 +670,14 @@ def backup_files(source):
     backups = {path for pattern in patterns for path in source.parent.glob(pattern) if path.is_file()}
     return sorted(backups, key=lambda path:path.stat().st_mtime_ns, reverse=True)
 
-def restore_backup(source, backup, game):
+def restore_backup(source, backup, game, account_id=None):
     """Validate an existing backup and restore it without creating another."""
     source, backup = Path(source).resolve(), Path(backup).resolve()
     if source == backup or os.path.samefile(source,backup):
         raise ValueError('Choose a backup other than the active save.')
     original = read_limited(source)
     restored = read_limited(backup)
-    Save(restored, game)
+    Save(restored, game, path=source, account_id=account_id)
     return replace_current(source, original, restored)
 
 def read_limited(path):

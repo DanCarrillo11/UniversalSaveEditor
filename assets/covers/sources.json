@@ -43,5 +43,19 @@
     "game": "recom",
     "source": "Replacement cover supplied by the repository author",
     "bytes": 1612759
+  },
+  {
+    "game": "ddd",
+    "page": "https://store.steampowered.com/app/2552440/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2552440/library_600x900_2x.jpg",
+    "bytes": 192554,
+    "note": "HD 2.8 collection artwork"
+  },
+  {
+    "game": "kh3",
+    "page": "https://store.steampowered.com/app/2552450/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2552450/library_600x900_2x.jpg",
+    "bytes": 225317,
+    "note": "PC edition artwork"
   }
 ]

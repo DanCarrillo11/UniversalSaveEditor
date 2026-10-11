@@ -40,19 +40,19 @@ class InterfaceTests(unittest.TestCase):
         descriptions={item.accessibleName():item.text() for item in w.findChildren(QLabel) if item.accessibleName().startswith('Editor features for ')}
         self.assertIn('Level and XP',descriptions['Editor features for WEBFISHING'])
         self.assertIn('Items',descriptions['Editor features for KINGDOM HEARTS'])
-        self.assertIn('Editor in development',descriptions['Editor features for MAX PAYNE'])
+        self.assertIn('Weapons',descriptions['Editor features for MAX PAYNE'])
         w.platform_filter.setCurrentIndex(w.platform_filter.findData('steam'))
         self.assertEqual(set(w.visible_games),set(BY_ID))
         for card in w.game_cards.values():
             self.assertEqual(card.findChild(QLabel,'cardPlatform').text(),'Steam')
             self.assertFalse(card.findChild(QLabel,'platformIcon').pixmap().isNull())
-        self.assertIn('Coming soon',w.game_cards['maxpayne'].toolTip())
+        self.assertIn('Experimental',w.game_cards['maxpayne'].toolTip())
         w.platform_filter.setCurrentIndex(0)
-        w.set_filter('ready');self.assertEqual(w.visible_games,['alice','kh1','kh2','ror2','webfishing'])
-        w.search.setText('XP');self.assertEqual(w.visible_games,['kh2','webfishing'])
+        w.set_filter('ready');self.assertEqual(set(w.visible_games),set(BY_ID))
+        w.search.setText('XP');self.assertEqual(set(w.visible_games),{'bbs','ddd','kh2','kh3','recom','webfishing'})
         w.search.clear()
-        w.set_filter('pending');self.assertEqual(len(w.visible_games),3)
-        w.collection('KINGDOM HEARTS');self.assertEqual(len(w.visible_games),4)
+        w.set_filter('pending');self.assertEqual(len(w.visible_games),0)
+        w.collection('KINGDOM HEARTS');self.assertEqual(len(w.visible_games),6)
         w.search.setText('not a game');self.assertEqual(w.visible_games,[])
 
     def test_platform_logo_is_complete_at_fractional_screen_scales(self):
@@ -343,5 +343,39 @@ class InterfaceTests(unittest.TestCase):
         self.assertFalse(w.review_button.isEnabled())
         selector.setCurrentIndex(selector.findData('Characters'))
         self.assertFalse(w.review_button.isEnabled())
+
+    def test_new_game_editors_render_every_field_in_categories(self):
+        from test_kh_extra import archive
+        from test_maxpayne import inventory_fixture
+        w=self.window
+        for game in ('recom','bbs','ddd','maxpayne'):
+            with self.subTest(game=game):
+                path=self.root/(game+'.mps' if game=='maxpayne' else game+'.png')
+                path.write_bytes(inventory_fixture() if game=='maxpayne' else archive(game))
+                self.assertTrue(w.load(game,path))
+                self.assertLessEqual(w.tabs.count(),3)
+                self.assertEqual(len(w.inputs),len(w.save.slots[0].fields))
+                key='ammo:3' if game=='maxpayne' else 'moogle_points' if game=='recom' else 'munny'
+                w.inputs[0,key].setText('150')
+                updated=w.save.patched(w.validated_changes())
+                self.assertEqual(next(f.value for f in Save(updated,game).slots[0].fields if f.key==key),150)
+                w.edits={}
+
+    def test_copied_kh3_account_prompt_and_reload(self):
+        from test_kh_extra import Kh3Tests
+        helper=Kh3Tests();path=self.root/'KHIII_slot0.bin';raw=helper.encrypted();path.write_bytes(raw)
+        w=self.window
+        with patch('app.QInputDialog.getText',return_value=(helper.ACCOUNT,True)) as prompt:
+            self.assertTrue(w.load('kh3',path))
+            self.assertEqual(prompt.call_count,1)
+            self.assertEqual(w.tabs.count(),3)
+            self.assertEqual(len(w.inputs),len(w.save.slots[0].fields))
+            self.assertTrue(w.load('kh3',path))
+            self.assertEqual(prompt.call_count,1)
+        w.inputs[0,'munny'].setText('200')
+        output=w.save.patched(w.validated_changes())
+        check=Save(output,'kh3',account_id=helper.ACCOUNT)
+        self.assertEqual(next(f.value for f in check.slots[0].fields if f.key=='munny'),200)
+        self.assertEqual(path.read_bytes(),raw)
 
 if __name__=='__main__':unittest.main()

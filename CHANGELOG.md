@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.11.0-alpha
+
+- Add experimental ReCoM editing: Moogle Points, XP, difficulty and named card quantities; maintain currency mirrors and both checksums.
+- Add experimental BBS Final Mix editing: character progression, money, medals, attributes, existing commands and ability stacks. Preserve PC padding and deck references.
+- Add experimental DDD HD editing: Sora/Riku progression, Drop Points, currency, difficulty and existing inventory quantities; maintain loading mirrors.
+- Add experimental KH III PC editing with account-derived encryption, digest/CRC checks, party attributes and inventory acquisition flags.
+- Add experimental Max Payne 1 inventory editing, bounded to original weapon IDs and ammunition capacities. Rebuild nested chunk lengths when values grow.
+- Organize every new editor into at most three categories, add cover art and extend packaged-resource verification to AES.
+- Expand automated checks to 91 tests. Game-load verification remains pending; KH 0.2 and Melody of Memory PC support remain unresolved.
+
 ## v0.10.2-alpha
 
 - Fix Steam logos being cropped on screens with display scaling above 100%.

@@ -16,7 +16,8 @@ class Artwork(QWidget):
         self.setAccessibleName('Cover art for '+game.title)
         if game.id not in self._cache:
             folder=Path(__file__).resolve().parent/'assets/covers'
-            path=folder/(game.id+('.jpg' if game.id in ('webfishing','maxpayne','ror2','alice') else '.png'))
+            extension = '.svg' if game.id in ('ddd','kh3') else '.jpg' if game.id in ('webfishing','maxpayne','ror2','alice') else '.png'
+            path=folder/(game.id+extension)
             self._cache[game.id]=QPixmap(str(path))
         self.pixmap=self._cache[game.id]
     def paintEvent(self,event):

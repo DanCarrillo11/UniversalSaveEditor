@@ -23,8 +23,8 @@ class Category:
 DESCRIPTIONS = {
     'Progress': 'Currency, progression, and save-wide settings.',
     'Characters': 'Choose a character to edit their attributes and progression.',
-    'Character': 'Alice\'s health, weapons, and abilities.',
-    'Equipment': 'Fishing equipment, upgrades, and bait.',
+    'Character': 'Character attributes, weapons, and abilities.',
+    'Equipment': 'Equipment, supplies, and upgrades.',
     'Collection': 'Browse your items and collected records by section.',
     'Unlocks': 'Choose a section to manage its unlocks.',
     'Records': 'Profile statistics, run records, and combat totals.',
@@ -52,6 +52,11 @@ def organize_fields(game, fields):
     order = {
         'kh1': ('Progress', 'Characters', 'Collection'),
         'kh2': ('Progress', 'Characters', 'Collection'),
+        'recom': ('Progress', 'Collection'),
+        'bbs': ('Progress', 'Character', 'Collection'),
+        'ddd': ('Progress', 'Characters', 'Collection'),
+        'kh3': ('Progress', 'Characters', 'Collection'),
+        'maxpayne': ('Equipment',),
         'webfishing': ('Progress', 'Equipment', 'Collection'),
         'ror2': ('Progress', 'Unlocks', 'Records'),
         'alice': ('Progress', 'Character', 'Collection'),
@@ -108,6 +113,25 @@ def organize_fields(game, fields):
             else:
                 section = {'Economy': 'Currency', 'Story and chapters': 'Story completion'}.get(group, group)
             selection = section
+        elif game == 'recom':
+            if item.key.startswith('card:'):
+                category = 'Collection'
+            selection = section
+        elif game == 'bbs':
+            if group in ('Attributes','Abilities'):
+                category = 'Character'
+            elif group == 'Commands':
+                category = 'Collection'
+            selection = section
+        elif game in ('ddd','kh3'):
+            if item.key.startswith('character:') or item.key.startswith('bonus:'):
+                category, section = 'Characters', 'Attributes'
+                selection = item.key.split(':')[1] if item.key.startswith('character:') else 'Sora'
+            elif item.key.startswith(('inventory:', 'material:')):
+                category = 'Collection'
+                selection = section
+        elif game == 'maxpayne':
+            category, selection = 'Equipment', section
 
         target = categories[category]
         existing = next((entry for entry in target.sections if (entry.name, entry.selection) == (section, selection)), None)
@@ -128,6 +152,6 @@ def organize_fields(game, fields):
                          'Fishing journal', 'Memories', 'Bottles', 'Snouts', 'Radula rooms',
                          'Enemy journal', 'Cinematics') if category.name == 'Collection' else priorities
         category.sections.sort(key=lambda section: (
-            ('Sora', 'Donald', 'Goofy').index(section.selection) if category.name == 'Characters' else 0,
+            (('Sora', 'Donald', 'Goofy', 'Riku').index(section.selection) if section.selection in ('Sora', 'Donald', 'Goofy', 'Riku') else 4) if category.name == 'Characters' else 0,
             section_order.index(section.name) if section.name in section_order else len(section_order)))
     return [category for category in categories.values() if category.sections]

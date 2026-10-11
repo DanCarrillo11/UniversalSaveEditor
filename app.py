@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QFrame, QLabel, QPushButton, QLineEdit,
     QVBoxLayout, QHBoxLayout, QGridLayout, QScrollArea, QStackedWidget, QComboBox,
     QTabWidget, QCheckBox, QMessageBox, QFileDialog, QDialog, QTextEdit,
-    QLayout,
+    QLayout, QInputDialog,
 )
 from core import Save, discover, read_limited, replace_current, identify_game, backup_files, restore_backup
 from catalog import GAMES, BY_ID, PLATFORMS
@@ -367,7 +367,7 @@ class Window(QMainWindow):
 
     def open_file(self,game=None):
         if not isinstance(game,str):game=None
-        filename,_=QFileDialog.getOpenFileName(self,'Open a save','', 'Save files (*.sav *.png *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
+        filename,_=QFileDialog.getOpenFileName(self,'Open a save','', 'Save files (*.sav *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
         if filename:self.open_path(Path(filename),game)
 
     def open_path(self,path,game=None):
@@ -389,7 +389,19 @@ class Window(QMainWindow):
 
     def load(self,game,path):
         if not self.may_discard():return False
-        try:save=Save(read_limited(path),game)
+        try:
+            raw = read_limited(path)
+            account = getattr(self, 'kh3_accounts', {}).get(str(path))
+            try:
+                save = Save(raw,game,path=path,account_id=account)
+            except ValueError as error:
+                from kh3_pc import AccountIdRequired
+                if not isinstance(error, AccountIdRequired):raise
+                account, accepted = QInputDialog.getText(self,'Encrypted PC save','Enter the original Steam account ID (SteamID64). It is the folder name before SaveGames. A downloaded save needs its creator\'s account ID:')
+                if not accepted:return False
+                save = Save(raw,game,path=path,account_id=account.strip())
+                if not hasattr(self, 'kh3_accounts'):self.kh3_accounts = {}
+                self.kh3_accounts[str(path)] = account.strip()
         except (ValueError,OSError) as error:
             QMessageBox.warning(self,'Could not open the save',str(error));return False
         self.save=save;self.path=Path(path);self.edits={};self.inputs={};self.exported_state=None;self.slot_index=0
@@ -520,7 +532,7 @@ class Window(QMainWindow):
         line.addLayout(caption,1)
         key=(self.slot_index,field.key)
         if field.fmt == 'xml-unlock' or field.boolean:
-            entry=QCheckBox('Unlocked' if self.save.game=='ror2' else 'Enabled')
+            entry=QCheckBox('Unlocked' if self.save.game=='ror2' else 'Owned' if self.save.game=='maxpayne' else 'Enabled')
             entry.setChecked(bool(int(self.edits.get(key,field.value))))
             entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
             self.mark_unlock(entry,field,entry.isChecked())
@@ -682,13 +694,13 @@ class Window(QMainWindow):
         def apply_backup():
             path=choice.currentData()
             if not path:return
-            try:Save(read_limited(path),self.save.game)
+            try:Save(read_limited(path),self.save.game,path=self.path,account_id=self.save.account_id)
             except (ValueError,OSError) as error:
                 QMessageBox.warning(dialog,'Invalid backup',str(error));return
             if not self.may_discard():return
             answer=QMessageBox.question(dialog,'Restore backup','Restore this backup to the opened save?\n\n'+str(path)+'\n\nThe current file will be replaced. No new backup will be created.',QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel,QMessageBox.StandardButton.Cancel)
             if answer!=QMessageBox.StandardButton.Yes:return
-            try:restore_backup(self.path,path,self.save.game)
+            try:restore_backup(self.path,path,self.save.game,account_id=self.save.account_id)
             except (ValueError,OSError) as error:
                 QMessageBox.warning(dialog,'Could not restore backup',str(error));return
             self.edits={};self.repair.setChecked(False);dialog.accept()
@@ -728,16 +740,20 @@ def main():
         import json
         destination=Path(sys.argv[sys.argv.index('--smoke-test')+1])
         def check_startup():
+            from kh3_pc import transform, derive_key
+            cipher = transform(bytes(16),'smoke-test',True)
+            crypto_ready = len(derive_key('smoke-test')) == 32 and transform(cipher,'smoke-test') == bytes(16)
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
                     'version':VERSION,
+                    'cryptoReady':crypto_ready,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}
             destination.write_text(json.dumps(report,indent=2),encoding='utf-8')
             window.grab().save(str(destination.with_suffix('.png')))
-            app.exit(0 if all(covers.values()) and all(report['platformIcons'].values()) else 1)
+            app.exit(0 if crypto_ready and all(covers.values()) and all(report['platformIcons'].values()) else 1)
         QTimer.singleShot(1000,check_startup)
     sys.exit(app.exec())
 

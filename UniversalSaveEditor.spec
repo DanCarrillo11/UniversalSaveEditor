@@ -12,6 +12,7 @@ if sys.platform == 'win32':
 a=Analysis([str(root/'app.py')], pathex=[str(root)], binaries=[],
     datas=[(str(root/'theme.qss'),'.'),(str(root/'README.md'),'.'),
            (str(root/'LICENSE'),'.'),(str(root/'SOURCES.md'),'.'),
+           (str(root/'THIRD_PARTY_NOTICES.txt'),'.'),
            (str(root/'assets'),'assets')],
     hiddenimports=[], hookspath=[], hooksconfig={}, runtime_hooks=[],
     excludes=['PySide6.QtWebEngineCore','PySide6.QtWebEngineWidgets','PySide6.QtQml','PySide6.QtQuick'],

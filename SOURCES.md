@@ -1,6 +1,6 @@
 # References and attribution
 
-The project is distributed under GPL-3.0-or-later. Its implementation uses Python and the standard library. Personal save files are not included. Cover images are included as identification resources; their rights remain with their respective owners and are not covered by the source-code license.
+The project is distributed under GPL-3.0-or-later. It uses Python, PySide6 and cryptography. Personal save files are not included. Cover images are included as identification resources; their rights remain with their respective owners and are not covered by the source-code license.
 
 - [Godot 3.5 binary serialization API](https://docs.godotengine.org/en/3.5/tutorials/io/binary_serialization_api.html): Variant types, sizes, and flags.
 - [NotNite/webfishing-save-editor](https://github.com/NotNite/webfishing-save-editor): reference for the WEBFISHING file wrapper and field names in `src/game/types.ts` and `src/App.svelte`. Its interface and visual resources are not included.
@@ -8,6 +8,28 @@ The project is distributed under GPL-3.0-or-later. Its implementation uses Pytho
 - [KatRewrites/kh1-save-editor](https://github.com/KatRewrites/kh1-save-editor), GPL-3.0: reference for PNG/sqEX containers and the need to preserve related records. Its tables and interface are not included.
 
 Game names belong to their respective owners. UniversalSaveEditor is an independent project.
+
+Additional PC game references and public-fixture checks are recorded in
+[game reference research](docs/GAME_REFERENCE_RESEARCH.md). This includes the
+maintained [BFlorry/KingdomSaveEditor](https://github.com/BFlorry/KingdomSaveEditor)
+fork and distinguishes source documentation from working support in this app.
+
+`kh_pc.py`, `kh3_pc.py` and `kh_extra_tables.py` adapt ReCoM, BBS Final Mix,
+DDD HD and KH III PC schemas, inventory tables, checksums and key derivation
+from that fork at `e5eec7403f939d7a94a62d996130d84f59887dda`, GPL-3.0-or-later.
+Copyright (C) 2020 Luciano Ciccariello; Copyright (C) 2026 Mikko Mäntylä
+(BFlorry). PC contributions are credited to fungualtissue1230 and dedede123.
+The adaptations preserve raw bytes, validate bounds and add Python field/UI
+integration. See [format scope and public fixture provenance](docs/KH_EXTRA_FORMATS.md).
+
+`maxpayne_save.py` is an independent implementation of the tagged stream,
+cross-checked with [Tatsh/dade](https://github.com/Tatsh/dade/blob/master/dade/maxpayne/memoryfile.py).
+No dade implementation or extracted Max Payne files are bundled. Factual weapon
+IDs and ammunition capacities were checked against the author's local game.
+
+The cryptography dependency is distributed under Apache-2.0 or BSD-3-Clause;
+its license texts and the OpenSSL notices accompanying its wheel are included
+in THIRD_PARTY_NOTICES.txt. PySide6/Qt retain their upstream licences.
 
 The Steam icon in `assets/platforms/steam.svg` comes from
 [Simple Icons](https://github.com/simple-icons/simple-icons/blob/develop/icons/steam.svg),
