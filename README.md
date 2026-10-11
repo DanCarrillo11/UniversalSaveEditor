@@ -98,6 +98,11 @@ does not automatically keep its previous version.
 Shortcuts: **Ctrl+O** opens a save, **Ctrl+F** focuses the current search,
 and **Ctrl+Enter** opens change review.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, bug reports, and
+pull requests. Contributions to game support, tests, UI, and documentation are welcome.
+
 ## Development
 
 Python and PySide6. Install `requirements.txt` in a virtual environment and run
