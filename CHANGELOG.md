@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.14.0-alpha
+
+- Add an initial experimental Resident Evil 4 (2005) Steam Ultimate HD adapter for record version 0x402.
+- Edit 16 values per populated slot: Pesetas, mirrored saved difficulty, player/Ashley HP, save/round counters, and combat statistics.
+- Maintain both slot CRCs, reject unknown records and invalid health relationships, and preserve account metadata, untouched slots and unrelated bytes.
+- Add the official Steam portrait, automatic save discovery and Progress/Characters/Records navigation.
+- Verify all four local slots in memory without changing the active save and add eleven editor/interface regression tests.
+- Record the ten prioritized Resident Evil Steam editions and research boundaries. Other Resident Evil formats, inventory and unlocks are not claimed as supported by this release. In-game validation remains pending.
+
 ## v0.13.0-alpha
 
 - Add accessible cover stars, a dedicated Favorites view, and favorites-first sorting within the chosen order and search filters.

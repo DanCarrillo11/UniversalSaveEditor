@@ -9,6 +9,16 @@ The project is distributed under GPL-3.0-or-later. It uses Python, PySide6 and c
 
 Game names belong to their respective owners. UniversalSaveEditor is an independent project.
 
+`re4_uhd.py` independently implements the original RE4 Steam container. Runtime
+property names, mode codes and health ranges were cross-checked with
+[nipkownix/re4_tweaks](https://github.com/nipkownix/re4_tweaks); file offsets and
+both CRC ranges were verified against a local save without changing it. No
+trainer code or personal save is bundled. See [UHD format](docs/RE4_UHD_FORMAT.md)
+and [Resident Evil research](docs/RESIDENT_EVIL_RESEARCH.md).
+
+RE4 (2005) uses official platform-free Steam library artwork; its source and
+original image URL are recorded in `assets/covers/sources.json`.
+
 Additional PC game references and public-fixture checks are recorded in
 [game reference research](docs/GAME_REFERENCE_RESEARCH.md). This includes the
 maintained [BFlorry/KingdomSaveEditor](https://github.com/BFlorry/KingdomSaveEditor)

@@ -57,6 +57,7 @@ def organize_fields(game, fields):
         'ddd': ('Progress', 'Characters', 'Collection'),
         'kh3': ('Progress', 'Characters', 'Collection'),
         'maxpayne': ('Equipment',),
+        're4_2005': ('Progress', 'Characters', 'Records'),
         'webfishing': ('Progress', 'Equipment', 'Collection'),
         'ror2': ('Progress', 'Unlocks', 'Records'),
         'alice': ('Progress', 'Character', 'Collection'),
@@ -67,6 +68,11 @@ def organize_fields(game, fields):
     for item in fields:
         group = item.group or 'Economy'
         category, section, selection = 'Progress', group, group
+        if game=='re4_2005':
+            if group in ('Player health','Ashley health'):
+                category,section,selection='Characters','Health','Ashley' if group=='Ashley health' else 'Player'
+            elif group in ('Save statistics','Combat statistics'):
+                category,section,selection='Records',group,group
         if game in ('kh1', 'kh2'):
             if item.key.startswith('inventory:'):
                 category = 'Collection'

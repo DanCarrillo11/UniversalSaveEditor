@@ -57,5 +57,12 @@
     "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2552450/library_600x900_2x.jpg",
     "bytes": 225317,
     "note": "PC edition artwork"
+  },
+  {
+    "game": "re4_2005",
+    "page": "https://store.steampowered.com/app/254700/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/254700/library_600x900_2x.jpg",
+    "bytes": 227570,
+    "note": "Official Steam library artwork for the original Ultimate HD Edition"
   }
 ]

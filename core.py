@@ -195,6 +195,12 @@ class Save:
                 raise FormatError(str(error)) from error
             self.slots = [Slot(self.maxpayne.description, self.maxpayne.fields)]
             self.notes = ['Original PC revision 48 inventory. Weapons, reserve ammunition and painkillers can be edited. Loaded rounds, health, Bullet Time and checkpoint state are preserved. Close Max Payne before applying changes. Experimental: game-load verification is still pending.']
+        elif game == 're4_2005':
+            from re4_uhd import Re4UhdSave
+            try:self.re4_uhd=Re4UhdSave(raw,Field,Slot)
+            except ValueError as error:raise FormatError(str(error)) from error
+            self.slots=self.re4_uhd.slots;self.warnings=self.re4_uhd.warnings
+            self.notes=['Steam Ultimate HD Edition. Pesetas, difficulty, player/Ashley health and statistics only. Inventory, weapons, costumes, unlocks and room state are preserved. Experimental: edited saves still need in-game verification. Close the game before applying changes.']
         elif game == 'kh3':
             from kh3_pc import Kh3PcSave, AccountIdRequired
             try:
@@ -517,6 +523,8 @@ class Save:
             result = self.kh3.patch({key:value for (index,key),value in changes.items()})
         elif self.game == 'maxpayne':
             result = self.maxpayne.patch({key:value for (index,key),value in changes.items()})
+        elif self.game == 're4_2005':
+            result = self.re4_uhd.finish(result,changes,repair_crc)
         elif self.game in ('recom', 'bbs', 'ddd'):
             result = self.extra_kh.finish(result, changes, repair_crc)
         elif self.game == 'alice':
@@ -622,6 +630,8 @@ def discover():
     for steam in steam_roots:
         for p in steam.glob('*/632360/remote/UserProfiles/*.xml'):
             found.append(('ror2',p))
+        for p in steam.glob('*/254700/remote/savegame00.sav'):
+            found.append(('re4_2005',p))
     docs = documents_folder()
     base = docs/'My Games/KINGDOM HEARTS HD 1.5+2.5 ReMIX/Steam'
     for name,game in [('KHFM_WW.png','kh1'),('KHReCoM_WW.png','recom'),('KHIIFM_WW.png','kh2'),('KHBbS_WW.png','bbs')]:
@@ -646,7 +656,8 @@ def identify_game(path):
     known = {'khfm_ww.png':'kh1', 'khiifm_ww.png':'kh2',
              'kh2fm_ww.png':'kh2', 'khrecom_ww.png':'recom',
              'khbbs_ww.png':'bbs', 'khbbsfm.png':'bbs', 'kh3dhd.png':'ddd',
-             'kh3dhd_ww.png':'ddd', 'persistentdata_pc.psd':'alice', 'gameconfig_pc.cfg':'alice'}
+             'kh3dhd_ww.png':'ddd', 'persistentdata_pc.psd':'alice', 'gameconfig_pc.cfg':'alice',
+             'savegame00.sav':'re4_2005'}
     if name in known:
         return known[name]
     if re.fullmatch(r'khiii_slot\d+\.bin',name):

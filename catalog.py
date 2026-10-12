@@ -21,6 +21,7 @@ class Game:
     platforms: tuple[str, ...] = ('steam',)
 
 GAMES = (
+    Game('re4_2005','RESIDENT EVIL 4 (2005)','Ultimate HD Edition · Steam','RESIDENT EVIL','#b7a78c',True,'Pesetas · Difficulty · Player and Ashley health · Save and combat statistics',True),
     Game('webfishing','WEBFISHING','Steam · Local save','WEBFISHING','#b6e7aa',True,'Economy · Level and XP · Bait · Upgrades · Inventory · Fishing journal'),
     Game('ror2','RISK OF RAIN 2','Steam · Local profile','RISK OF RAIN','#e7b26f',True,'Characters · Skills · Skins · Artifacts · Items · Logs · Coins and statistics'),
     Game('kh1','KINGDOM HEARTS','Final Mix · Steam','KINGDOM HEARTS','#b4b5f6',True,'Munny · Difficulty · Attributes · Items · Materials · Weapons · Accessories'),

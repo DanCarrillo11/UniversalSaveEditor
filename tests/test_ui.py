@@ -287,6 +287,20 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(w.path,self.source)
         self.assertEqual(w.stack.currentIndex(),1)
 
+    def test_re4_uhd_opens_in_three_categories_and_updates_mode_mirrors(self):
+        from test_re4_uhd import fixture
+        path=self.root/'savegame00.sav';original=fixture();path.write_bytes(original)
+        w=self.window;w.open_path(path)
+        self.assertEqual(w.save.game,'re4_2005')
+        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Characters','Records'])
+        w.inputs[(0,'money')].setText('55555');w.inputs[(0,'difficulty')].setCurrentIndex(3)
+        output=w.save.patched(w.validated_changes())
+        self.assertFalse(Save(output,'re4_2005').warnings)
+        self.assertEqual(path.read_bytes(),original)
+        w.show_favorites();w.toggle_favorite('re4_2005')
+        self.assertEqual(w.validated_changes(),{(0,'money'):55555,(0,'difficulty'):3})
+        w.show_editor();self.assertEqual(w.stack.currentIndex(),1)
+
     def test_cancel_discard_keeps_current_file(self):
         w=self.window;w.load('webfishing',self.source)
         w.inputs[(0,'money')].setText('999')

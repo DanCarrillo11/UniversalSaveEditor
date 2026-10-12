@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.13.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.14.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -43,6 +43,7 @@ executable included at its root. Startup can take a few seconds.
 
 | Game | Editable fields | Status / save action |
 |---|---|---|
+| Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics | Experimental; direct apply; inventory and unlocks are not yet editable |
 | WEBFISHING | Money, debt, earnings, level, XP, bait with automatic unlocks, capacity, upgrades, existing inventory size/quality, and fishing journal | Available; direct apply |
 | Risk of Rain 2, Steam | Lunar Coins, statistics, and 454 unlock identifiers for characters, skills, skins, artifacts, items, logs, and Newt Altars | Available; direct apply |
 | Kingdom Hearts Final Mix, Steam | Munny, difficulty, Sora/Donald/Goofy attributes, and 154 named inventory entries | Available; direct apply |
@@ -89,6 +90,14 @@ KH III story and equipment pointers, and Max Payne health, Bullet Time, loaded
 rounds and checkpoint state are preserved. KH 0.2 and Melody of Memory PC
 encryption remain unresolved and those games are not advertised as supported.
 
+Resident Evil support currently includes only the original RE4 Steam UHD
+record version `0x402`. Its account metadata and unrelated data are preserved.
+The two difficulty values and the two slot CRCs are maintained together.
+Inventory and unlock controls need more mapping; game-load validation is pending.
+See [RE4 UHD scope](docs/RE4_UHD_FORMAT.md) and the
+[prioritized Resident Evil research](docs/RESIDENT_EVIL_RESEARCH.md) for the other
+games, which are not advertised as compatible yet.
+
 ## Editing a save
 
 | Editor | Main categories |
@@ -98,6 +107,7 @@ encryption remain unresolved and those games are not advertised as supported.
 | Birth by Sleep | Progress, Character, Collection |
 | Dream Drop Distance HD / KH III | Progress, Characters, Collection |
 | Max Payne | Equipment |
+| Resident Evil 4 (2005), Steam UHD | Progress, Characters, Records |
 | WEBFISHING | Progress, Equipment, Collection |
 | Risk of Rain 2 | Progress, Unlocks, Records |
 | Alice persistent profile | Progress, Character, Collection |
