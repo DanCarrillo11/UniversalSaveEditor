@@ -58,6 +58,14 @@ def organize_fields(game, fields):
         'kh3': ('Progress', 'Characters', 'Collection'),
         'maxpayne': ('Equipment',),
         're4_2005': ('Progress', 'Characters', 'Records'),
+        're5': ('Progress', 'Unlocks', 'Collection'),
+        're6': ('Progress', 'Unlocks', 'Collection'),
+        're1_hd': ('Progress', 'Equipment', 'Collection'),
+        're2': ('Characters', 'Collection', 'Unlocks'),
+        're3': ('Progress', 'Characters', 'Collection'),
+        're4_remake': ('Progress', 'Collection'),
+        're7': ('Characters', 'Collection'),
+        're9': ('Progress', 'Collection'),
         'webfishing': ('Progress', 'Equipment', 'Collection'),
         'ror2': ('Progress', 'Unlocks', 'Records'),
         'alice': ('Progress', 'Character', 'Collection'),
@@ -68,6 +76,20 @@ def organize_fields(game, fields):
     for item in fields:
         group = item.group or 'Economy'
         category, section, selection = 'Progress', group, group
+        if game=='re1_hd':
+            if group=='Defensive supplies':category='Equipment'
+            elif group in ('Inventory','Item box'):category='Collection'
+        if game in ('re2','re3','re4_remake','re7','re9'):
+            if group=='Player health':category='Characters'
+            elif group=='Currency':category='Progress'
+            elif game=='re2' and group=='Rewards':category='Unlocks'
+            else:category='Collection'
+        if game=='re5':
+            if group=='Library files':category='Collection'
+            elif group!='Currency':category='Unlocks'
+        if game=='re6':
+            if group=='Serpent emblems' or group.endswith(' supplies'):category='Collection'
+            elif group!='Currency':category='Unlocks'
         if game=='re4_2005':
             if group in ('Player health','Ashley health'):
                 category,section,selection='Characters','Health','Ashley' if group=='Ashley health' else 'Player'

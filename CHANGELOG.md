@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.15.0-alpha
+
+- Add eight scoped experimental Resident Evil editors: HD Remaster, RE2, RE3, RE4 Remake, RE5, RE6, RE7 and Requiem.
+- Implement bounded, independent Steam envelopes and a self-describing RE Engine reader with a small field whitelist; preserve unknown payload bytes and original account encryption.
+- Authenticate encrypted blocks, retain padding and trailers, maintain file integrity, reject unsupported variants and restrict inventory counters to inventory save objects.
+- Distinguish Requiem purchase availability from purchase/acquisition/received state; preserve uninitialized carry-over balances and RE6 emblem encodings.
+- Add official Steam portraits, discovery, at most three editor categories and a general original-SteamID64 prompt for copied saves.
+- Validate public RE5/RE6/HD PC profiles and nine native Requiem files in memory. Document console-only shared-payload checks and missing Steam/gameplay validation honestly.
+- Add format, integrity, preservation, authentication and UI regression coverage; verify CityHash64 against Google's golden vectors and AES-OFB against NIST.
+- Research RE0's native PC encryption and section table without exposing unverified gameplay fields.
+
 ## v0.14.0-alpha
 
 - Add an initial experimental Resident Evil 4 (2005) Steam Ultimate HD adapter for record version 0x402.

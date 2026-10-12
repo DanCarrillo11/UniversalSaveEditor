@@ -581,6 +581,37 @@ class InterfaceTests(unittest.TestCase):
                 self.assertEqual(next(f.value for f in Save(updated,game).slots[0].fields if f.key==key),150)
                 w.edits={}
 
+    def test_resident_evil_editors_render_all_fields_without_changing_source(self):
+        from test_re5 import fixture as re5_fixture
+        from test_re6 import fixture as re6_fixture
+        from test_re_hd import fixture as hd_fixture
+        from test_re_engine import stream,wrap,ACCOUNT
+        samples={'re5':re5_fixture(),'re6':re6_fixture(),'re1_hd':hd_fixture()}
+        samples.update({game:wrap(stream(game),game) for game in ('re2','re3','re4_remake','re7','re9')})
+        for game,raw in samples.items():
+            with self.subTest(game=game):
+                path=self.root/'userdata'/'1'/'remote'/(game+'.bin')
+                path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
+                self.assertTrue(self.window.load(game,path))
+                self.assertLessEqual(self.window.tabs.count(),3)
+                self.assertEqual(len(self.window.inputs),len(self.window.save.slots[0].fields))
+                field=next(f for f in self.window.save.slots[0].fields if not f.boolean and not f.choices)
+                self.window.inputs[(0,field.key)].setText('120')
+                output=self.window.save.patched(self.window.validated_changes())
+                check=Save(output,game,path,ACCOUNT)
+                self.assertEqual(next(f.value for f in check.slots[0].fields if f.key==field.key),120)
+                self.assertEqual(path.read_bytes(),raw)
+                self.window.edits={}
+
+    def test_copied_requiem_prompts_for_original_account_only_once(self):
+        from test_re_engine import stream,wrap,ACCOUNT
+        path=self.root/'data00-1.bin';path.write_bytes(wrap(stream('re9'),'re9'))
+        with patch('app.QInputDialog.getText',return_value=(str(ACCOUNT),True)) as prompt:
+            self.assertTrue(self.window.load('re9',path))
+            self.assertTrue(self.window.load('re9',path))
+            self.assertEqual(prompt.call_count,1)
+            self.assertIn('original',prompt.call_args.args[2].lower())
+
     def test_copied_kh3_account_prompt_and_reload(self):
         from test_kh_extra import Kh3Tests
         helper=Kh3Tests();path=self.root/'KHIII_slot0.bin';raw=helper.encrypted();path.write_bytes(raw)

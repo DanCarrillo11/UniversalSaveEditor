@@ -77,3 +77,26 @@ Alice: Madness Returns research used a local Steam installation and a profile su
 The `kh_items.py` table adapts `KHSave.Lib1/Types/EquipmentType.cs` from Xeeynamo/KingdomSaveEditor under GPL-3.0. It preserves attribution and excludes story items and unused entries.
 
 The friendly names in `kh2_items.py` adapt identifiers from `KHSave.Lib2/Types/EquipmentType.cs` from Xeeynamo/KingdomSaveEditor under GPL-3.0.
+
+## Resident Evil expansion
+
+The new readers and byte-preserving patchers were written independently from
+format facts. Other editors' implementation code, generated schema files,
+translations and downloaded saves are not bundled.
+
+- [shinneider/RE5-Save-Editor](https://github.com/shinneider/RE5-Save-Editor): RE5 chaining, additive checksum and factual flag layout; cross-checked on a public Steamworks profile.
+- [lightningdotnet/resident-evil-6-save-editor](https://github.com/lightningdotnet/resident-evil-6-save-editor): factual PC RE6 header and offsets; independently checked on a public Steam profile.
+- [kvasszn/ree-save-editor](https://github.com/kvasszn/ree-save-editor): RE Engine container profiles and factual property/type identifiers. No code or SDK/translation databases are incorporated.
+- [bucanero/save-decrypters](https://github.com/bucanero/save-decrypters): public console examples of RE3/RE7 shared payloads, and Blowfish/SHA1 format references for legacy HD saves. Console samples are not represented as native Steam files.
+- [urbanware-org/re-hd-se](https://github.com/urbanware-org/re-hd-se): PS3 field-address comparison only; PC inventory notes and public PC-format bytes are checked separately.
+- [SAVE-EDITOR.com's PC HD notes](https://www.save-editor.com/tools/pc_game_save_converter_title_Resident_Evil_HD.html): factual PC inventory addresses and item identifiers.
+- [Google CityHash](https://github.com/google/cityhash): CityHash64 adaptation and golden test fingerprints under MIT. Full permission notice is in `THIRD_PARTY_NOTICES.txt`.
+- [NIST SP 800-38A](https://csrc.nist.gov/pubs/sp/800/38/a/final): AES-OFB known-answer test.
+- [descawed/re0box](https://github.com/descawed/re0box) and [SirCabby/RE0CabbyCodes](https://github.com/SirCabby/RE0CabbyCodes): RE0 container and runtime research; no gameplay offsets are claimed as verified from these references alone.
+
+New Resident Evil cover art comes from official Steam library assets. Source URLs
+and file sizes are recorded in `assets/covers/sources.json`. Artwork and trademarks
+belong to their owners and are outside the source-code licence.
+
+See [RE5](docs/RE5_FORMAT.md), [RE Engine](docs/RE_ENGINE_FORMAT.md),
+[legacy PC boundaries](docs/RE_LEGACY_PC.md), and [validation status](docs/RESIDENT_EVIL_RESEARCH.md).

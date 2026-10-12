@@ -201,6 +201,34 @@ class Save:
             except ValueError as error:raise FormatError(str(error)) from error
             self.slots=self.re4_uhd.slots;self.warnings=self.re4_uhd.warnings
             self.notes=['Steam Ultimate HD Edition. Pesetas, difficulty, player/Ashley health and statistics only. Inventory, weapons, costumes, unlocks and room state are preserved. Experimental: edited saves still need in-game verification. Close the game before applying changes.']
+        elif game == 're5':
+            from re5_save import Re5Save
+            try:self.re5=Re5Save(raw,Field)
+            except ValueError as error:raise FormatError(str(error)) from error
+            self.slots=[Slot('Steamworks profile',self.re5.fields)];self.warnings=self.re5.warnings
+            self.notes=['Money, exchange points, costume flags, screen filters, infinite-ammo flags and library-file unlocks. Weapon ownership, upgrades, inventory, chapter progress and account data are preserved. Infinite-ammo flags do not grant weapons. Experimental: in-game verification is pending. Close the game before applying changes.']
+        elif game=='re1_hd':
+            from re_hd_save import ReHdSave
+            try:self.re_hd=ReHdSave(raw,Field)
+            except ValueError as error:raise FormatError(str(error)) from error
+            self.slots=[Slot('Mapped save slot 1',self.re_hd.fields)];self.warnings=self.re_hd.warnings
+            self.notes=['Experimental HD Remaster PC support for the first mapped save slot: difficulty, save count, defensive supplies and existing inventory/item-box quantities. Other slots, item IDs, player identity and story state are preserved. Edited saves still need in-game verification. Close the game before applying changes.']
+        elif game=='re6':
+            from re6_save import Re6Save
+            try:self.re6=Re6Save(raw,Field)
+            except ValueError as error:raise FormatError(str(error)) from error
+            self.slots=[Slot('PC profile',self.re6.fields)];self.warnings=self.re6.warnings
+            self.notes=['Skill points, Mercenaries character/costume and stage flags and existing supply quantities. Profile identity, skills, emblems, weapon IDs, story state and difficulty are preserved. DLC still requires ownership. Experimental: edited saves need in-game verification. Close the game before applying changes.']
+        elif game in ('re2','re3','re4_remake','re7','re9'):
+            from re_engine_save import ReEngineSave
+            from kh3_pc import AccountIdRequired
+            try:self.re_engine=ReEngineSave(raw,game,Field,path,account_id)
+            except AccountIdRequired:raise
+            except (ValueError,struct.error) as error:raise FormatError(str(error)) from error
+            self.account_id=self.re_engine.account
+            self.slots=[Slot('Opened file',self.re_engine.fields)];self.warnings=self.re_engine.warnings
+            validation='Native Steam files were checked; edited saves still need in-game verification.' if game=='re9' else 'Experimental: compatibility with real Steam saves is still being verified.'
+            self.notes=[validation+' Gameplay slots and system profiles contain different options. Numbered collection entries follow their order in the save. Unknown data, item identities, story state and original account encryption are preserved. Close the game before applying changes.']
         elif game == 'kh3':
             from kh3_pc import Kh3PcSave, AccountIdRequired
             try:
@@ -517,7 +545,7 @@ class Save:
                 raise ValueError('Unauthorized field.')
             field = known[key]
             field.validate(value)
-            if self.game != 'kh3' and field.fmt and not field.fmt.startswith('xml-'):
+            if self.game not in ('kh3','re2','re3','re4_remake','re7','re9') and field.fmt and not field.fmt.startswith('xml-'):
                 struct.pack_into(field.fmt,result,field.offset,value)
         if self.game == 'kh3':
             result = self.kh3.patch({key:value for (index,key),value in changes.items()})
@@ -525,6 +553,14 @@ class Save:
             result = self.maxpayne.patch({key:value for (index,key),value in changes.items()})
         elif self.game == 're4_2005':
             result = self.re4_uhd.finish(result,changes,repair_crc)
+        elif self.game == 're5':
+            result = self.re5.patch({key:value for (index,key),value in changes.items()})
+        elif self.game=='re6':
+            result=self.re6.patch({key:value for (index,key),value in changes.items()})
+        elif self.game=='re1_hd':
+            result=self.re_hd.patch({key:value for (index,key),value in changes.items()})
+        elif self.game in ('re2','re3','re4_remake','re7','re9'):
+            result = self.re_engine.patch({key:value for (index,key),value in changes.items()})
         elif self.game in ('recom', 'bbs', 'ddd'):
             result = self.extra_kh.finish(result, changes, repair_crc)
         elif self.game == 'alice':
@@ -632,6 +668,16 @@ def discover():
             found.append(('ror2',p))
         for p in steam.glob('*/254700/remote/savegame00.sav'):
             found.append(('re4_2005',p))
+        for p in steam.glob('*/21690/remote/savedata.bin'):
+            found.append(('re5',p))
+        for p in steam.glob('*/221040/remote/savedata.bin'):
+            found.append(('re6',p))
+        for p in steam.glob('*/304240/remote/biodata.bin'):
+            found.append(('re1_hd',p))
+        from re_engine_save import STEAM_APPS
+        for app_id,game in STEAM_APPS.items():
+            for p in steam.glob('*/'+app_id+'/remote/win64_save/*.bin'):
+                if p.name.casefold().startswith('data'):found.append((game,p))
     docs = documents_folder()
     base = docs/'My Games/KINGDOM HEARTS HD 1.5+2.5 ReMIX/Steam'
     for name,game in [('KHFM_WW.png','kh1'),('KHReCoM_WW.png','recom'),('KHIIFM_WW.png','kh2'),('KHBbS_WW.png','bbs')]:
@@ -676,8 +722,23 @@ def identify_game(path):
         return extensions[path.suffix.casefold()]
     if path.suffix.casefold() == '.bin':
         raw = read_limited(path)
+        if raw.startswith(b'DSSS'):
+            from re_engine_save import STEAM_APPS
+            for part in path.parts:
+                if part in STEAM_APPS:return STEAM_APPS[part]
+            from re_engine_container import KEYS,blowfish_cbc
+            if len(raw)>=24:
+                for game,key in KEYS.items():
+                    if blowfish_cbc(raw[16:24],key)==b'DSSSDSSS':return game
+            raise FormatError('Open this encrypted Resident Evil file from its game cover so the correct edition can be selected.')
         if raw.startswith(b'S@vE') or (len(raw) == 0x94f4f0+17 and raw[-17] == 8):
             return 'kh3'
+        from re5_save import looks_like_re5
+        if looks_like_re5(raw):return 're5'
+        from re6_save import looks_like_re6
+        if looks_like_re6(raw):return 're6'
+        from re_hd_save import looks_like_hd
+        if looks_like_hd(raw):return 're1_hd'
     raise FormatError('Choose a supported .sav, .png, .mps, .bin, .xml, .PSD, or GameConfig_PC.CFG file.')
 
 def backup_files(source):

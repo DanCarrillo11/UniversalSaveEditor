@@ -522,7 +522,7 @@ class Window(QMainWindow):
             except ValueError as error:
                 from kh3_pc import AccountIdRequired
                 if not isinstance(error, AccountIdRequired):raise
-                account, accepted = QInputDialog.getText(self,'Encrypted PC save','Enter the original Steam account ID (SteamID64). It is the folder name before SaveGames. A downloaded save needs its creator\'s account ID:')
+                account, accepted = QInputDialog.getText(self,'Encrypted PC save','Enter the original SteamID64. Files in their normal save folder are detected automatically. A downloaded or copied save needs the original owner\'s SteamID64:')
                 if not accepted:return False
                 save = Save(raw,game,path=path,account_id=account.strip())
                 if not hasattr(self, 'kh3_accounts'):self.kh3_accounts = {}
@@ -928,6 +928,23 @@ def main():
             import re
             cipher = transform(bytes(16),'smoke-test',True)
             crypto_ready = len(derive_key('smoke-test')) == 32 and transform(cipher,'smoke-test') == bytes(16)
+            try:
+                from re_engine_container import blowfish_cbc,KEYS,_aes
+                from re_hashes import city64
+                from re5_save import encode,decode,FILE_SIZE
+                from re6_save import Re6Save
+                from re_hd_save import ReHdSave
+                marker=blowfish_cbc(b'DSSSDSSS',KEYS['re2'],True)
+                vector=_aes(bytes.fromhex('6bc1bee22e409f96e93d7e117393172a'),
+                            bytes.fromhex('2b7e151628aed2a6abf7158809cf4f3c'),
+                            bytes.fromhex('000102030405060708090a0b0c0d0e0f'))
+                resident_evil_ready=(blowfish_cbc(marker,KEYS['re2'])==b'DSSSDSSS'
+                                     and vector.hex()=='3b3fd92eb72dad20333449f8e83cfb4a'
+                                     and city64(b'')==0x9ae16a3b2f90404f
+                                     and bytes(decode(encode(bytes(FILE_SIZE))))==bytes(FILE_SIZE))
+            except Exception:
+                resident_evil_ready=False
+            crypto_ready=crypto_ready and resident_evil_ready
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
@@ -935,6 +952,7 @@ def main():
                     'appearance':window.theme,
                     'appearanceReady':all(not re.search(r'@[A-Za-z]+@',stylesheet(theme)) for theme in PALETTES) and QSvgRenderer(str(ROOT/'assets/ui/check.svg')).isValid(),
                     'cryptoReady':crypto_ready,
+                    'residentEvilReady':resident_evil_ready,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}

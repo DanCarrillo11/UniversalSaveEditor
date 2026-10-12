@@ -64,5 +64,61 @@
     "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/254700/library_600x900_2x.jpg",
     "bytes": 227570,
     "note": "Official Steam library artwork for the original Ultimate HD Edition"
+  },
+  {
+    "game": "re1_hd",
+    "page": "https://store.steampowered.com/app/304240/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/304240/library_600x900_2x.jpg",
+    "bytes": 191991,
+    "note": "Official Steam portrait artwork for this PC edition"
+  },
+  {
+    "game": "re6",
+    "page": "https://store.steampowered.com/app/221040/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/221040/library_600x900_2x.jpg",
+    "bytes": 108434,
+    "note": "Official Steam portrait artwork for this PC edition"
+  },
+  {
+    "game": "re5",
+    "page": "https://store.steampowered.com/app/21690/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/21690/library_600x900_2x.jpg",
+    "bytes": 137196,
+    "note": "Official Steam portrait artwork for this PC edition"
+  },
+  {
+    "game": "re2",
+    "page": "https://store.steampowered.com/app/883710/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/883710/library_600x900_2x.jpg",
+    "bytes": 189565,
+    "note": "Official Steam portrait artwork for this PC edition"
+  },
+  {
+    "game": "re3",
+    "page": "https://store.steampowered.com/app/952060/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/952060/library_600x900_2x.jpg",
+    "bytes": 147600,
+    "note": "Official Steam portrait artwork for this PC edition"
+  },
+  {
+    "game": "re4_remake",
+    "page": "https://store.steampowered.com/app/2050650/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2050650/library_600x900_2x.jpg",
+    "bytes": 124078,
+    "note": "Official Steam portrait artwork for this PC edition"
+  },
+  {
+    "game": "re7",
+    "page": "https://store.steampowered.com/app/418370/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/418370/library_600x900_2x.jpg",
+    "bytes": 248443,
+    "note": "Official Steam portrait artwork for this PC edition"
+  },
+  {
+    "game": "re9",
+    "page": "https://store.steampowered.com/app/3764200/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3764200/ed3b2cae7d15f598f41006f5f1e605ec5517b5e4/library_capsule.jpg",
+    "bytes": 63611,
+    "note": "Official Steam portrait artwork for this PC edition"
   }
 ]

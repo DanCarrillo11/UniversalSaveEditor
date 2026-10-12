@@ -3,16 +3,16 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.14.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.15.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
 ## Download and run
 
-Download `UniversalSaveEditor.exe` from **Releases ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Assets** and double-click it.
+Download `UniversalSaveEditor.exe` from **Releases > Assets** and double-click it.
 The application is portable; no installer, Python, or command-line setup is needed.
 
-You can also select **Code ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Download ZIP**, extract the folder, and open the
+You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
@@ -37,13 +37,21 @@ executable included at its root. Startup can take a few seconds.
 - Change review, input validation, and preservation of unrelated save data.
 - Apply directly to the opened save without exports, renaming, or automatic backups.
 - Browse and restore existing backups without creating additional files.
-- Processing stays local. No accounts or save uploads are required.
+- Processing stays local. No sign-in or save uploads are required.
 
 ## Compatibility
 
 | Game | Editable fields | Status / save action |
 |---|---|---|
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics | Experimental; direct apply; inventory and unlocks are not yet editable |
+| Resident Evil HD Remaster, PC | Mapped slot 1: difficulty, save count, defensive supplies and existing inventory/item-box quantities | Experimental; public PC fixture checked; other slots pending |
+| Resident Evil 2 (2019), Steam | Player health, existing inventory quantities, reward and library flags | Experimental; real Steam fixture validation pending |
+| Resident Evil 3 (2020), Steam | Player health, existing inventory quantities, total shop points earned, shop-item possession and reward flags | Experimental; shared console payload checked; real Steam fixture validation pending |
+| Resident Evil 4 (2023), Steam | Extra content points, Spinels and existing inventory quantities | Experimental; real Steam fixture validation pending |
+| Resident Evil 5, Steamworks | Money, exchange points, costume flags, filters, infinite-ammo flags and library files | Experimental; public Steamworks fixture checked |
+| Resident Evil 6, PC | Skill points, Mercenaries character/costume and stage flags, No Mercy stages, existing supplies | Experimental; public Steam fixture checked |
+| Resident Evil 7, Steam | Player health and existing item-box quantities | Experimental; shared console payload checked; real Steam fixture validation pending |
+| Resident Evil Requiem, Steam | Money, Clear Points, extra-shop availability/acquisition/received flags, bonus content, artwork/figure availability and purchases, special options | Experimental; nine native Steam files checked |
 | WEBFISHING | Money, debt, earnings, level, XP, bait with automatic unlocks, capacity, upgrades, existing inventory size/quality, and fishing journal | Available; direct apply |
 | Risk of Rain 2, Steam | Lunar Coins, statistics, and 454 unlock identifiers for characters, skills, skins, artifacts, items, logs, and Newt Altars | Available; direct apply |
 | Kingdom Hearts Final Mix, Steam | Munny, difficulty, Sora/Donald/Goofy attributes, and 154 named inventory entries | Available; direct apply |
@@ -55,12 +63,24 @@ executable included at its root. Startup can take a few seconds.
 | Kingdom Hearts III + Re Mind, Steam | Munny, XP, difficulty, level, party HP/MP/Focus and boosts, named inventory quantities with acquisition flags, material counters | Experimental; direct apply |
 | Max Payne 1, Steam | Original revision 48 weapon ownership, reserve ammunition and painkillers | Experimental; direct apply |
 
+All Resident Evil adapters use direct apply and retain the original account and
+unrelated bytes. Their scope is deliberately limited to recognized fields.
+**No edited Resident Evil save has been validated by loading it in-game.**
+Numbered RE Engine collection entries follow saved order; this is not yet a fully
+named catalogue. System profiles and gameplay slots expose different fields.
+RE4 Remake and Requiem detect the original SteamID64 from normal save paths;
+copied saves need their original creator's ID. DLC ownership remains necessary.
+RE0's encryption and section table have been researched, but editing is pending.
+See [research and validation status](docs/RESIDENT_EVIL_RESEARCH.md),
+[RE5](docs/RE5_FORMAT.md), [RE Engine](docs/RE_ENGINE_FORMAT.md), and
+[HD Remaster / RE6 / RE0 boundaries](docs/RE_LEGACY_PC.md).
+
 Kingdom Hearts support targets **HD 1.5 + 2.5 ReMIX, Dream Drop Distance HD and KH III on Steam**. KH II requires a
 populated slot created at an in-game save point. Containers without saved slots
 cannot be edited. Its record checksums and the outer Steam-container CRC are
 maintained when applying changes. Invalid integrity checks require explicit repair.
 
-Open **Progress ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Difficulty** after selecting a saved slot to change its mode. KH Final Mix
+Open **Progress > Difficulty** after selecting a saved slot to change its mode. KH Final Mix
 supports Beginner, Final Mix (Standard), and Proud. KH II Final Mix also supports
 Critical. Existing attributes, items, and starting bonuses are not recalculated;
 changing the saved mode does not recreate a new-game setup. In-game validation
