@@ -727,13 +727,31 @@ class InterfaceTests(unittest.TestCase):
                 self.assertEqual(next(f.value for f in Save(updated,game).slots[0].fields if f.key==key),150)
                 w.edits={}
 
+    def test_village_editor_cover_context_flags_and_readonly_items(self):
+        from test_village import fixture
+        raw=fixture();path=self.root/'data001Slot.bin';path.write_bytes(raw)
+        w=self.window;self.assertFalse(w.game_cards['re8'].artwork.pixmap.isNull())
+        w.open_path(path)
+        self.assertEqual(w.save.game,'re8')
+        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Character','Collection'])
+        money=next(f for f in w.save.slots[0].fields if f.label=='Lei')
+        cp=next(f for f in w.save.slots[0].fields if f.label=='Challenge points (CP)')
+        single=next(f for f in w.save.slots[0].fields if f.readonly)
+        self.assertTrue(w.inputs[(0,single.key)].isReadOnly())
+        w.inputs[(0,money.key)].setText('100000');w.inputs[(0,cp.key)].setText('2000')
+        owned=next(f for f in w.save.slots[0].fields if f.boolean and 'Owned' in f.label)
+        w.inputs[(0,owned.key)].setChecked(True)
+        output=w.save.patched(w.validated_changes());self.assertFalse(Save(output,'re8').warnings)
+        self.assertEqual(path.read_bytes(),raw)
+        self.assertNotIn('FEDCBA98',w.diagnostic('re8'))
+
     def test_resident_evil_editors_render_all_fields_without_changing_source(self):
         from test_re5 import fixture as re5_fixture
         from test_re6 import fixture as re6_fixture
         from test_re_hd import fixture as hd_fixture
         from test_re_engine import stream,wrap,ACCOUNT
         samples={'re5':re5_fixture(),'re6':re6_fixture(),'re1_hd':hd_fixture()}
-        samples.update({game:wrap(stream(game),game) for game in ('re2','re3','re4_remake','re7','re9')})
+        samples.update({game:wrap(stream(game),game) for game in ('re2','re3','re4_remake','re7','re8','re9')})
         for game,raw in samples.items():
             with self.subTest(game=game):
                 path=self.root/'userdata'/'1'/'remote'/(game+'.bin')

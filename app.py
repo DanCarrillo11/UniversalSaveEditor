@@ -1094,6 +1094,16 @@ def main():
             except Exception:
                 expansion_ready=False
             crypto_ready=crypto_ready and expansion_ready
+            try:
+                from re_engine_container import KEYS,blowfish_cbc
+                from re_engine_save import STEAM_APPS,SPECS
+                from village_context import VillageContext
+                village_ready=(STEAM_APPS['1196590']=='re8' and 're8' in EVIDENCE
+                               and len(SPECS['re8'])==7 and VillageContext([],b'').identities=={}
+                               and blowfish_cbc(blowfish_cbc(b'DSSSDSSS',KEYS['re8'],True),KEYS['re8'])==b'DSSSDSSS')
+            except Exception:
+                village_ready=False
+            crypto_ready=crypto_ready and village_ready
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
@@ -1105,6 +1115,7 @@ def main():
                     'eldenRingReady':elden_ring_ready,
                     'usabilityReady':usability_ready,
                     'expansionReady':expansion_ready,
+                    'villageReady':village_ready,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}

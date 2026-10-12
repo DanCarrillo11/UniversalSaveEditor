@@ -16,6 +16,7 @@ KEYS={
     're2':b'K<>$cl%isqA|~nV4W5~3z_Q)j]5DHdB9sb{cI9Hn&Gqc-zO8O6zf',
     're3':b'mAz{]jeQ+uxyNH*d<Dt2kC5r=3M9RV6c$TaG[b|}^%&)En4F(Wvp',
     're7':b'hHGb4nS653aRT29jy',
+    're8':b'j1lL1AOR31sd4HKJS90fs',
 }
 PRIME=int.from_bytes(bytes.fromhex('f33b6fb972a0b72515e45c391829e182ad8a9bdc0a64d3444d79c810ab863717'),'little')
 

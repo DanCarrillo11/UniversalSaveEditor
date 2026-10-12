@@ -127,5 +127,12 @@
     "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1245620/library_600x900_2x.jpg",
     "bytes": 175061,
     "note": "Official Steam portrait artwork for the original PC game"
+  },
+  {
+    "game": "re8",
+    "page": "https://store.steampowered.com/app/1196590/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1196590/library_600x900_2x.jpg",
+    "bytes": 172779,
+    "note": "Official Steam portrait artwork for Resident Evil Village; original asset without a platform header"
   }
 ]

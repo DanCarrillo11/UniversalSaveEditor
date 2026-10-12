@@ -11,10 +11,11 @@ from re_hashes import murmur32
 from re_engine_container import ReEngineEnvelope
 from re_engine_stream import StreamReader
 from inventory_context import InventoryContext
+from village_context import VillageContext
 
-GAMES=('re2','re3','re4_remake','re7','re9')
-STEAM_APPS={'883710':'re2','952060':'re3','2050650':'re4_remake','418370':'re7','3764200':'re9'}
-INVENTORY_OWNERS={'re2':0x41f30892,'re3':0x5f30b0dd,'re4_remake':0xbedd9bf5}
+GAMES=('re2','re3','re4_remake','re7','re8','re9')
+STEAM_APPS={'883710':'re2','952060':'re3','2050650':'re4_remake','418370':'re7','1196590':'re8','3764200':'re9'}
+INVENTORY_OWNERS={'re2':0x41f30892,'re3':0x5f30b0dd,'re4_remake':0xbedd9bf5,'re8':0x3a83076c}
 BACKUP_INVENTORY=murmur32(b'_BackupInventoryData')
 # owner hash, serialized property, label, group, type, maximum
 SPECS={
@@ -39,6 +40,15 @@ SPECS={
     're7':(
         (0x5e30cd4f,'Health','Health','Player health','<f',10000),
         (0x5e10ebe4,'Num','Quantity','Item box quantities','<i',999),
+    ),
+    're8':(
+        (0x3a83076c,'money','Lei','Currency','<i',99999999),
+        (0xe94db9b8,'CP','Challenge points (CP)','Currency','<i',9999999),
+        (0x00346547,'SaveHealth','Current health','Player health','<f',10000),
+        (0x10b5eaa5,'StackSize','Quantity','Inventory quantities','<i',999),
+        (0xf033f1ce,'Has','Owned','Extra content','<B',1),
+        (0xf033f1ce,'IsOpened','Opened','Extra content','<B',1),
+        (0xf033f1ce,'IsUnlocked','Unlocked','Extra content','<B',1),
     ),
     're9':(
         (0x187cd802,'ClearPoint','Clear points','Currency','<Q',99999999),
@@ -66,6 +76,7 @@ class ReEngineSave:
         self.data=prefix+self.envelope.payload
         nodes=StreamReader(self.data,len(prefix)).parse()
         identities=InventoryContext(nodes,self.data)
+        village=VillageContext(nodes,self.data) if game=='re8' else None
         wanted={(owner,murmur32(name.encode())):(label,group,fmt,maximum)
                 for owner,name,label,group,fmt,maximum in SPECS[game]}
         selected=[]
@@ -74,6 +85,9 @@ class ReEngineSave:
             if specification is None:continue
             if game=='re9' and any(owner==0x3a83076c and name==BACKUP_INVENTORY for owner,name,_ in node.path):continue
             label,group,fmt,maximum=specification
+            if village:
+                if group=='Inventory quantities' and not village.is_inventory_item(node):continue
+                if group=='Extra content' and not village.is_extra_content(node):continue
             if 'quantities' in group and game in INVENTORY_OWNERS:
                 if not any(owner==INVENTORY_OWNERS[game] for owner,_,_ in node.path):continue
             expected=2 if fmt=='<B' else 11 if fmt=='<f' else 10 if fmt=='<Q' else 7
@@ -108,10 +122,20 @@ class ReEngineSave:
                 shown=f'Unidentified item · {identity} · Entry {index}'
                 note='Item-name mapping is pending. Only this existing quantity is changed; identity and equipment are preserved.'
                 collection='Unidentified items'
+                if village:
+                    identifier=village.identity(node)
+                    shown=f'Item ID {identifier:08X} · Quantity · Entry {index}'
+                    collection='Existing stacks' if value>1 else 'Single items · read-only'
+                    note=('Existing stack only. Names and in-game stack caps are not mapped; item IDs, loaded ammunition, upgrades and layout are preserved.' if value>1 else
+                          'Single-item records are preserved because their stackability is not verified. Weapons, key items and other single objects are not duplicated.')
+            if village and group=='Extra content':
+                shown=f'Content ID {village.identity(node):08X} · {label} · Entry {index}'
+                note='Separate saved content flag. This does not guarantee delivery, grant DLC ownership or update related challenges. Unknown dependencies and other flags are preserved.'
             if game=='re3' and label.startswith('Total shop'):
                 note='Total points earned. The game also tracks purchased shop items separately.'
             self.fields.append(field_type(key,shown,value,node.offset,fmt,1 if 'quantities' in group else 0,maximum,group,
-                                          decimal=fmt=='<f',boolean=fmt=='<B',note=note,collection=collection))
+                                          decimal=fmt=='<f',boolean=fmt=='<B',note=note,collection=collection,
+                                          readonly=bool(village and 'quantities' in group and value==1)))
             self.operations[key]=(node.offset,fmt)
 
     def patch(self,changes):

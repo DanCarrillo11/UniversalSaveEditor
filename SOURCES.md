@@ -157,3 +157,20 @@ from an automated test pass. See docs/SUPPORT_AND_HISTORY.md.
   are not incorporated or claimed as understood.
 
 See docs/EDITOR_EXPANSION.md for the editable boundaries and validation limits.
+
+## Resident Evil Village (v0.19)
+
+The independent Village adapter uses factual Steam AppID 1196590, Blowfish key
+and property/type identifiers cross-checked in kvasszn/ree-save-editor at
+`4125e497f1ae84cc746bb4a99da612c48bea161e`: `src/save/crypto/blowfish.rs`,
+`src/save/mod.rs`, `src/save/game.rs` and `assets/re8/rszre8.json`.
+No upstream implementation, generated schema or translation database is bundled.
+`village_context.py` independently restricts existing inventory and content
+records by owner ancestry and unsigned identities.
+
+The public `village-data001Slot.bin` from bucanero/save-decrypters's
+`re7-checksum-fixer/samples` was inspected in memory in an ignored research
+directory. It is a console payload, not a native Steam fixture, and is not
+redistributed. See [exact evidence and limits](docs/RE8_FORMAT.md).
+The official Steam portrait URL and byte count appear in
+`assets/covers/sources.json`; artwork and trademarks remain owned by their holders.

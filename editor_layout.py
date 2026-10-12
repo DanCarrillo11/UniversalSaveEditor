@@ -67,6 +67,7 @@ def organize_fields(game, fields):
         're3': ('Progress', 'Characters', 'Collection'),
         're4_remake': ('Progress', 'Collection'),
         're7': ('Characters', 'Collection'),
+        're8': ('Progress', 'Character', 'Collection'),
         're9': ('Progress', 'Collection'),
         'webfishing': ('Progress', 'Equipment', 'Collection'),
         'ror2': ('Progress', 'Unlocks', 'Records'),
@@ -87,8 +88,8 @@ def organize_fields(game, fields):
             if group=='Defensive supplies':category='Equipment'
             elif group in ('Inventory','Item box'):
                 category,section,selection='Collection',item.collection or group,group
-        if game in ('re2','re3','re4_remake','re7','re9'):
-            if group=='Player health':category='Characters'
+        if game in ('re2','re3','re4_remake','re7','re8','re9'):
+            if group=='Player health':category='Character' if game=='re8' else 'Characters'
             elif group=='Currency':category='Progress'
             elif game=='re2' and group=='Rewards':category='Unlocks'
             else:

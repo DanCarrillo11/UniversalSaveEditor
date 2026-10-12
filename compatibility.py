@@ -53,6 +53,8 @@ EVIDENCE = {
    'Extra-content points, Spinels and existing inventory quantities only. Copied files need the original SteamID64.', False),
  're7': Evidence('RE7 Steam save envelopes', 'Shared console payloads and synthetic Steam fixtures were checked; native Steam file checking is pending.',
    'Player health and existing item-box quantities only. Console samples do not prove native Steam compatibility.', False),
+ 're8': Evidence('Village Steam data*.bin save envelopes', 'A public shared console gameplay payload and synthetic Steam envelopes were checked; native Steam file checking is pending.',
+   'Lei, CP, current health, existing stacks and separate extra-content flags. Single-item records, loaded ammunition, upgrades, story, challenge completion and DLC dependencies are preserved. Item/content names and game stack caps remain unmapped.', False),
  're9': Evidence('Steam Requiem gameplay saves and profiles', 'Nine native Steam files were authenticated and checked for identical output and in-memory edits.',
    'Gameplay slots and system profiles expose different options. Availability, purchase and received flags are separate; no comprehensive unlock claim.'),
 }

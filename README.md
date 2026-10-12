@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.18.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.19.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -16,6 +16,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [Resident Evil Village](docs/RE8_FORMAT.md): Lei, CP, current health, existing stacks and separate extra-content flags. Experimental Steam adapter; native Steam and in-game validation pending.
 
 - [Expanded editors](docs/EDITOR_EXPANSION.md): KH1/KH2 party equipment and abilities, Elden Ring held-goods creation, known armament upgrades and NG+ scaling, RE4 (2005) case quantities/tune-ups and RE6 equipped skills.
 
@@ -60,6 +62,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 | Resident Evil 5, Steamworks | Money, exchange points, costume flags, filters, infinite-ammo flags and library files | Experimental; public Steamworks fixture checked |
 | Resident Evil 6, PC | Skill points, Mercenaries character/costume and stage flags, No Mercy stages, existing supplies and equipped campaign/Mercenaries skills | Experimental; public Steam fixture checked |
 | Resident Evil 7, Steam | Player health and existing item-box quantities | Experimental; shared console payload checked; real Steam fixture validation pending |
+| Resident Evil Village (RE8), Steam | Lei, CP, current health, existing multi-item stack quantities and extra-content owned/opened/unlocked flags | Experimental; shared console gameplay payload and synthetic Steam envelopes checked; native Steam and in-game checks pending |
 | Resident Evil Requiem, Steam | Money, Clear Points, extra-shop availability/acquisition/received flags, bonus content, artwork/figure availability and purchases, special options | Experimental; nine native Steam files checked |
 | WEBFISHING | Money, debt, earnings, level, XP, bait with automatic unlocks, capacity, upgrades, existing inventory size/quality, and fishing journal | Available; direct apply |
 | Risk of Rain 2, Steam | Lunar Coins, statistics, and 454 unlock identifiers for characters, skills, skins, artifacts, items, logs, and Newt Altars | Available; direct apply |
@@ -124,10 +127,11 @@ KH III story and equipment pointers, and Max Payne health, Bullet Time, loaded
 rounds and checkpoint state are preserved. KH 0.2 and Melody of Memory PC
 encryption remain unresolved and those games are not advertised as supported.
 
-Resident Evil support currently includes only the original RE4 Steam UHD
-record version `0x402`. Its account metadata and unrelated data are preserved.
+Original Resident Evil 4 support targets the Steam UHD record version `0x402`.
+Its account metadata and unrelated data are preserved.
 The two difficulty values and the two slot CRCs are maintained together.
-Inventory and unlock controls need more mapping; game-load validation is pending.
+Existing case quantities and known weapon tune-up tiers are editable; new case
+objects and comprehensive unlocks need more mapping. Game-load validation is pending.
 See [RE4 UHD scope](docs/RE4_UHD_FORMAT.md) and the
 [prioritized Resident Evil research](docs/RESIDENT_EVIL_RESEARCH.md) for the other
 games, which are not advertised as compatible yet.

@@ -228,8 +228,8 @@ class Save:
             try:self.re6=Re6Save(raw,Field)
             except ValueError as error:raise FormatError(str(error)) from error
             self.slots=[Slot('PC profile',self.re6.fields)];self.warnings=self.re6.warnings
-            self.notes=['Skill points, Mercenaries character/costume and stage flags and existing supply quantities. Profile identity, skills, emblems, weapon IDs, story state and difficulty are preserved. DLC still requires ownership. Experimental: edited saves need in-game verification. Close the game before applying changes.']
-        elif game in ('re2','re3','re4_remake','re7','re9'):
+            self.notes=['Skill points, Mercenaries character/costume and stage flags, existing supplies and equipped campaign/Mercenaries skills. Profile identity, skill purchase flags, emblems, weapon IDs, story state and difficulty are preserved. DLC still requires ownership. Experimental: edited saves need in-game verification. Close the game before applying changes.']
+        elif game in ('re2','re3','re4_remake','re7','re8','re9'):
             from re_engine_save import ReEngineSave
             from kh3_pc import AccountIdRequired
             try:self.re_engine=ReEngineSave(raw,game,Field,path,account_id)
@@ -571,7 +571,7 @@ class Save:
             if field.readonly:
                 raise ValueError('This value is calculated automatically and cannot be edited directly.')
             field.validate(value)
-            if self.game not in ('kh3','re2','re3','re4_remake','re7','re9') and field.fmt and not field.fmt.startswith('xml-'):
+            if self.game not in ('kh3','re2','re3','re4_remake','re7','re8','re9') and field.fmt and not field.fmt.startswith('xml-'):
                 struct.pack_into(field.fmt,result,field.offset,value)
         if self.game == 'kh3':
             result = self.kh3.patch({key:value for (index,key),value in changes.items()})
@@ -587,7 +587,7 @@ class Save:
             result=self.re6.patch({key:value for (index,key),value in changes.items()})
         elif self.game=='re1_hd':
             result=self.re_hd.patch({key:value for (index,key),value in changes.items()})
-        elif self.game in ('re2','re3','re4_remake','re7','re9'):
+        elif self.game in ('re2','re3','re4_remake','re7','re8','re9'):
             result = self.re_engine.patch({key:value for (index,key),value in changes.items()})
         elif self.game in ('recom', 'bbs', 'ddd'):
             result = self.extra_kh.finish(result, changes, repair_crc)

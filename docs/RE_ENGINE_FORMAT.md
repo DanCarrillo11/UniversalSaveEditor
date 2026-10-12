@@ -10,9 +10,10 @@ it does not recreate the stream from a third-party SDK schema.
 | RE3 (2020) | Player HP, existing inventory quantities, total shop points earned, shop-item possession and reward flags | Synthetic Steam envelopes and public console examples of the shared serialized payload. Real Steam fixture validation pending. |
 | RE4 (2023) | Extra content points, Spinels, existing inventory quantities | Documented Lime envelope and property identifiers; synthetic fixtures only. Real Steam fixture validation pending. |
 | RE7 | Player health and existing item-box quantities | Synthetic Steam envelopes; player-health field found in two public console payloads. Real Steam fixture validation pending. |
+| Village (RE8) | Lei, CP, current health, existing stacks and extra-content flags | Shared console gameplay payload and independent synthetic Steam envelopes checked. Native Steam file and game loading pending; see [Village scope](RE8_FORMAT.md). |
 | Requiem | Money, carry-over money, Clear Points, extra-shop availability/acquisition/received flags, bonus content, artwork and figure availability/purchase flags, special-option unlocks | Nine native Steam files decoded and exported identically. In-memory edits revalidated with unrelated payload bytes preserved. |
 
-All five adapters are experimental. **No edited file has been tested by loading
+All six adapters are experimental. **No edited file has been tested by loading
 it in these games.** File verification does not establish gameplay compatibility.
 Only fields actually present in the opened file appear. Open a gameplay slot for
 health or inventory and a system profile for its unlocks and profile currency.
@@ -28,6 +29,10 @@ enemy inventories are excluded. Player HP uses a player-specific class, never
 generic enemy health properties. Difficulty, story/checkpoint state, weapons,
 upgrades and item creation are not exposed by these initial adapters.
 
+Village single-item records are read-only; only original multi-item stacks can
+change quantity. Village item/content identities are checked within their exact
+saved owner; labels use unsigned hexadecimal IDs, with names and game caps unmapped.
+
 RE3's `TotalShopPoint` is the total earned counter, not a guaranteed unspent
 balance; purchased items have separate possession flags. Requiem's purchase
 availability, actual purchase, acquisition and received flags are distinct.
@@ -41,7 +46,7 @@ with seed `0xffffffff`. A mismatched outer integrity hash requires explicit
 repair in the app. Truncation, unknown types and invalid encrypted blocks fail
 closed. Decrypted payloads and parser complexity are bounded.
 
-- RE2, RE3 and RE7: flags 3, Blowfish option 3, game-specific Blowfish-LE CBC
+- RE2, RE3, RE7 and Village: flags 3, Blowfish option 3, game-specific Blowfish-LE CBC
   keys, zero IV, payload beginning at 32. Header marker and account ciphertext
   are preserved. Incomplete final cipher blocks remain unchanged.
 - RE4 Remake: flags 16, payload beginning at 16. Each Lime block has 512 bytes
