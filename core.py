@@ -39,6 +39,7 @@ class Field:
     boolean: bool = False
     choices: tuple = ()
     note: str = ''
+    readonly: bool = False
 
     def parse(self, text):
         try:
@@ -195,6 +196,12 @@ class Save:
                 raise FormatError(str(error)) from error
             self.slots = [Slot(self.maxpayne.description, self.maxpayne.fields)]
             self.notes = ['Original PC revision 48 inventory. Weapons, reserve ammunition and painkillers can be edited. Loaded rounds, health, Bullet Time and checkpoint state are preserved. Close Max Payne before applying changes. Experimental: game-load verification is still pending.']
+        elif game == 'eldenring':
+            from elden_ring import EldenRingSave
+            try:self.elden_ring=EldenRingSave(raw,Field,Slot)
+            except (ValueError,struct.error) as error:raise FormatError(str(error)) from error
+            self.slots=self.elden_ring.slots;self.warnings=self.elden_ring.warnings
+            self.notes=['Original Elden Ring Steam SL2 files. Select a character to edit runes, attributes, current vitals and existing supported item stacks. Level, lifetime runes, menu summaries and integrity checks update automatically. Close the game before applying. Experimental: edited saves still need in-game verification. Use edited saves offline; online compatibility is not guaranteed.']
         elif game == 're4_2005':
             from re4_uhd import Re4UhdSave
             try:self.re4_uhd=Re4UhdSave(raw,Field,Slot)
@@ -544,6 +551,8 @@ class Save:
             if key not in known:
                 raise ValueError('Unauthorized field.')
             field = known[key]
+            if field.readonly:
+                raise ValueError('This value is calculated automatically and cannot be edited directly.')
             field.validate(value)
             if self.game not in ('kh3','re2','re3','re4_remake','re7','re9') and field.fmt and not field.fmt.startswith('xml-'):
                 struct.pack_into(field.fmt,result,field.offset,value)
@@ -551,6 +560,8 @@ class Save:
             result = self.kh3.patch({key:value for (index,key),value in changes.items()})
         elif self.game == 'maxpayne':
             result = self.maxpayne.patch({key:value for (index,key),value in changes.items()})
+        elif self.game == 'eldenring':
+            result = self.elden_ring.finish(result,changes,repair_crc)
         elif self.game == 're4_2005':
             result = self.re4_uhd.finish(result,changes,repair_crc)
         elif self.game == 're5':
@@ -657,6 +668,8 @@ def documents_folder():
 def discover():
     found = []
     appdata = Path(os.environ.get('APPDATA',str(Path.home())))
+    for p in (appdata/'EldenRing').glob('*/ER0000.sl2'):
+        if p.is_file():found.append(('eldenring',p))
     for p in (appdata/'Godot/app_userdata/webfishing_2_newver').glob('webfishing_save_slot_*.sav'):
         found.append(('webfishing',p))
     steam_roots = {
@@ -703,12 +716,12 @@ def identify_game(path):
              'kh2fm_ww.png':'kh2', 'khrecom_ww.png':'recom',
              'khbbs_ww.png':'bbs', 'khbbsfm.png':'bbs', 'kh3dhd.png':'ddd',
              'kh3dhd_ww.png':'ddd', 'persistentdata_pc.psd':'alice', 'gameconfig_pc.cfg':'alice',
-             'savegame00.sav':'re4_2005'}
+             'savegame00.sav':'re4_2005', 'er0000.sl2':'eldenring'}
     if name in known:
         return known[name]
     if re.fullmatch(r'khiii_slot\d+\.bin',name):
         return 'kh3'
-    extensions = {'.sav':'webfishing', '.xml':'ror2', '.psd':'alice', '.mps':'maxpayne'}
+    extensions = {'.sav':'webfishing', '.xml':'ror2', '.psd':'alice', '.mps':'maxpayne', '.sl2':'eldenring'}
     if path.suffix.casefold() == '.png':
         # Recognize renamed archives by their bounded sqEX layout.
         raw=read_limited(path)
@@ -739,7 +752,7 @@ def identify_game(path):
         if looks_like_re6(raw):return 're6'
         from re_hd_save import looks_like_hd
         if looks_like_hd(raw):return 're1_hd'
-    raise FormatError('Choose a supported .sav, .png, .mps, .bin, .xml, .PSD, or GameConfig_PC.CFG file.')
+    raise FormatError('Choose a supported .sav, .sl2, .png, .mps, .bin, .xml, .PSD, or GameConfig_PC.CFG file.')
 
 def backup_files(source):
     """Only list backups associated with this active file or its default export."""

@@ -21,6 +21,7 @@ class Game:
     platforms: tuple[str, ...] = ('steam',)
 
 GAMES = (
+    Game('eldenring','ELDEN RING','Original game · Steam','ELDEN RING','#c9b580',True,'Runes · Attributes · Automatic level · Current vitals · Existing inventory and storage stacks',True),
     Game('re1_hd','RESIDENT EVIL','HD Remaster · Steam','RESIDENT EVIL','#a3b5a3',True,'Mapped slot 1 · Difficulty · Defensive supplies · Inventory and item box quantities',True),
     Game('re2','RESIDENT EVIL 2','2019 Remake · Steam','RESIDENT EVIL','#98adc7',True,'Player health · Existing inventory quantities · Reward flags · Library files',True),
     Game('re3','RESIDENT EVIL 3','2020 Remake · Steam','RESIDENT EVIL','#aebac9',True,'Player health · Existing inventory quantities · Shop points and item flags · Rewards',True),

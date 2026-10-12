@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.16.0-alpha
+
+- Add experimental original Elden Ring Steam SL2 support with up to ten active characters and automatic save discovery.
+- Edit runes, eight attributes, current vitals and supported existing goods in inventory/storage; retain item identities and carrying limits.
+- Calculate level and lifetime runes automatically, synchronize character-menu summaries and affected player fingerprints, and maintain block MD5s.
+- Bound every variable section and validate the descriptor table; preserve inactive slots, unrelated characters, account data, world state, regulation and opaque tail bytes.
+- Add calculated read-only fields and show their automatic changes in review before direct saving.
+- Include official Steam portrait artwork, three editor categories, regression coverage and documented public-PC validation; in-game verification remains pending.
+
 ## v0.15.0-alpha
 
 - Add eight scoped experimental Resident Evil editors: HD Remaster, RE2, RE3, RE4 Remake, RE5, RE6, RE7 and Requiem.

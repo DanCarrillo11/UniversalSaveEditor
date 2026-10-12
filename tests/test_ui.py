@@ -301,6 +301,43 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(w.validated_changes(),{(0,'money'):55555,(0,'difficulty'):3})
         w.show_editor();self.assertEqual(w.stack.currentIndex(),1)
 
+    def test_elden_ring_categories_calculated_fields_and_character_edits(self):
+        from test_elden_ring import fixture
+        path=self.root/'ER0000.sl2';original=fixture();path.write_bytes(original)
+        w=self.window;w.open_path(path)
+        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Character','Collection'])
+        self.assertTrue(w.inputs[(0,'level')].isReadOnly())
+        self.assertTrue(w.inputs[(0,'runes_memory')].isReadOnly())
+        self.assertTrue(w.inputs[(0,'level')]._reset_button.isHidden())
+        w.inputs[(0,'runes')].setText('900');w.inputs[(0,'vigor')].setText('20')
+        w.change_slot(1);w.inputs[(1,'storage:0')].setText('77')
+        w.change_slot(0)
+        self.assertEqual(w.validated_changes(),{(0,'runes'):900,(0,'vigor'):20,(1,'storage:0'):77})
+        self.assertEqual(path.read_bytes(),original)
+
+    def test_elden_ring_review_shows_automatic_changes_and_applies_in_place(self):
+        from test_elden_ring import fixture
+        from PySide6.QtWidgets import QTextEdit
+        path=self.root/'ER0000.sl2';path.write_bytes(fixture())
+        w=self.window;w.load('eldenring',path)
+        w.inputs[(0,'runes')].setText('900');w.inputs[(0,'vigor')].setText('20')
+        reviews=[]
+        def apply_dialog():
+            dialog=self.app.activeModalWidget();reviews.append(dialog.findChild(QTextEdit).toPlainText())
+            for control in dialog.findChildren(QPushButton):
+                if control.text()=='Apply to active save':control.click();return
+            dialog.reject()
+        with patch('app.QMessageBox.information'):
+            QTimer.singleShot(0,apply_dialog);w.review()
+        self.assertIn('Automatic related changes',reviews[0])
+        self.assertIn('Level: 9 → 14',reviews[0])
+        self.assertIn('Lifetime runes: 1200 → 1600',reviews[0])
+        self.assertEqual(w.inputs[(0,'level')].text(),'14')
+        self.assertEqual(w.inputs[(0,'runes_memory')].text(),'1600')
+        self.assertFalse(w.save.warnings)
+        self.assertFalse(list(self.root.glob('*.bak')))
+        self.assertFalse(list(self.root.glob('*.edited*')))
+
     def test_cancel_discard_keeps_current_file(self):
         w=self.window;w.load('webfishing',self.source)
         w.inputs[(0,'money')].setText('999')

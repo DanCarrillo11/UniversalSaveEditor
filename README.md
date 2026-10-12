@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.15.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.16.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -43,6 +43,7 @@ executable included at its root. Startup can take a few seconds.
 
 | Game | Editable fields | Status / save action |
 |---|---|---|
+| Elden Ring | Runes, eight attributes, automatic level, current HP/FP/stamina, and supported existing inventory/storage stacks across active characters | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics | Experimental; direct apply; inventory and unlocks are not yet editable |
 | Resident Evil HD Remaster, PC | Mapped slot 1: difficulty, save count, defensive supplies and existing inventory/item-box quantities | Experimental; public PC fixture checked; other slots pending |
 | Resident Evil 2 (2019), Steam | Player health, existing inventory quantities, reward and library flags | Experimental; real Steam fixture validation pending |
@@ -74,6 +75,11 @@ RE0's encryption and section table have been researched, but editing is pending.
 See [research and validation status](docs/RESIDENT_EVIL_RESEARCH.md),
 [RE5](docs/RE5_FORMAT.md), [RE Engine](docs/RE_ENGINE_FORMAT.md), and
 [HD Remaster / RE6 / RE0 boundaries](docs/RE_LEGACY_PC.md).
+
+Elden Ring targets the original Steam edition and native `ER0000.sl2` files.
+Level and lifetime runes are calculated automatically; existing item stacks keep
+their IDs. See [scope, integrity and validation](docs/ELDEN_RING_FORMAT.md).
+Edited saves are intended for offline use; in-game verification remains pending.
 
 Kingdom Hearts support targets **HD 1.5 + 2.5 ReMIX, Dream Drop Distance HD and KH III on Steam**. KH II requires a
 populated slot created at an in-game save point. Containers without saved slots

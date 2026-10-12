@@ -445,3 +445,12 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+Elden Ring existing-goods labels and limits
+-----------------------------------------
+elden_items.py adapts a subset of oisis/EldenRing-SaveForge's tools,
+crafting_materials and bolstering_materials tables, distributed under GNU GPL v3.
+Upstream: https://github.com/oisis/EldenRing-SaveForge
+The adaptation is distributed under GPL-3.0-or-later, with full GPL v3 license
+text in LICENSE. See SOURCES.md for files and scope. Third-party artwork and
+game trademarks are not covered by this source-code license.

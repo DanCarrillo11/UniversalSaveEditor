@@ -100,3 +100,12 @@ belong to their owners and are outside the source-code licence.
 
 See [RE5](docs/RE5_FORMAT.md), [RE Engine](docs/RE_ENGINE_FORMAT.md),
 [legacy PC boundaries](docs/RE_LEGACY_PC.md), and [validation status](docs/RESIDENT_EVIL_RESEARCH.md).
+
+## Elden Ring
+
+- [ClayAmore/ER-Save-Lib](https://github.com/ClayAmore/ER-Save-Lib): factual PC BND4 block layout, equipment-handle records, character fields, variable section order, profile summaries and player fingerprints. The bounded Python parser and patcher are independent; Rust implementation code is not incorporated. Four public PC fixtures were checked locally in memory and are not redistributed.
+- [oisis/EldenRing-SaveForge](https://github.com/oisis/EldenRing-SaveForge): cross-checks of format facts and original-class minimum stats. The `elden_items.py` names and carrying/storage limits adapt 307 existing stackable-goods entries from `backend/db/data/tools.go`, `crafting_materials.go` and `bolstering_materials.go`, under GPL-3.0. Descriptions, quest locations, images and unlock databases are not included. The project's GPL-3.0-or-later license and this attribution cover that adaptation.
+- [EldenSave](https://github.com/WhoamiRAGE/EldenSave): secondary format comparison only; its code and item tables are not incorporated.
+- [Official Steam artwork](https://store.steampowered.com/app/1245620/): portrait URL and byte count in `assets/covers/sources.json`. Artwork and trademarks remain owned by their respective holders.
+
+See [Elden Ring scope and validation](docs/ELDEN_RING_FORMAT.md). The editor does not claim console or Nightreign support, nor verified in-game loading or online compatibility.

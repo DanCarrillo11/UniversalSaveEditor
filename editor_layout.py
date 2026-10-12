@@ -57,6 +57,7 @@ def organize_fields(game, fields):
         'ddd': ('Progress', 'Characters', 'Collection'),
         'kh3': ('Progress', 'Characters', 'Collection'),
         'maxpayne': ('Equipment',),
+        'eldenring': ('Progress', 'Character', 'Collection'),
         're4_2005': ('Progress', 'Characters', 'Records'),
         're5': ('Progress', 'Unlocks', 'Collection'),
         're6': ('Progress', 'Unlocks', 'Collection'),
@@ -76,6 +77,9 @@ def organize_fields(game, fields):
     for item in fields:
         group = item.group or 'Economy'
         category, section, selection = 'Progress', group, group
+        if game=='eldenring':
+            if group in ('Attributes','Vitals'):category='Character'
+            elif group in ('Inventory','Storage'):category='Collection'
         if game=='re1_hd':
             if group=='Defensive supplies':category='Equipment'
             elif group in ('Inventory','Item box'):category='Collection'

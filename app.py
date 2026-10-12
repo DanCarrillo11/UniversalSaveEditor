@@ -492,7 +492,7 @@ class Window(QMainWindow):
     def open_file(self,game=None):
         if not isinstance(game,str):game=None
         folder=str(self.path.parent) if self.path else self.last_directory
-        filename,_=QFileDialog.getOpenFileName(self,'Open a save',folder, 'Save files (*.sav *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
+        filename,_=QFileDialog.getOpenFileName(self,'Open a save',folder, 'Save files (*.sav *.sl2 *.SL2 *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
         if filename:self.open_path(Path(filename),game)
 
     def open_path(self,path,game=None):
@@ -658,7 +658,9 @@ class Window(QMainWindow):
     def build_field_row(self,field):
         row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
         caption=QVBoxLayout();caption.addWidget(label(field.label))
-        if field.fmt == 'xml-unlock' or field.boolean or field.choices:
+        if field.readonly:
+            caption.addWidget(label('Calculated automatically when changes are applied','small',True))
+        elif field.fmt == 'xml-unlock' or field.boolean or field.choices:
             caption.addWidget(label(f'Original: {value_text(field,field.value)}  ·  {field.key.removeprefix("unlock:")}','small',True))
         else:
             caption.addWidget(label(f'Original: {number_text(field.value)}  ·  Range: {field.minimum:,}–{field.maximum:,}','small',True))
@@ -677,13 +679,15 @@ class Window(QMainWindow):
         else:
             entry=QLineEdit(self.edits.get(key,number_text(field.value)))
             entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
-            entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
+            entry.setReadOnly(field.readonly)
+            if not field.readonly:entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
         entry.setAccessibleName(field.label)
         self.inputs[key]=entry;line.addWidget(entry)
         revert=button('↶',lambda checked=False,k=key:self.restore_field(k),'fieldReset')
         revert.setAccessibleName('Reset '+field.label);revert.setToolTip('Restore the value from the opened file')
         line.addWidget(revert)
         entry._reset_button=revert;entry._error_label=error_label;entry._field_row=row
+        revert.setVisible(not field.readonly)
         if isinstance(entry,QLineEdit):self.mark_entry(entry,field,entry.text())
         else:self.mark_unlock(entry,field,entry.isChecked() if isinstance(entry,QCheckBox) else entry.currentIndex())
         return row
@@ -771,7 +775,7 @@ class Window(QMainWindow):
         if len(visible_edits)>80:
             self.summary_box.addWidget(label(f'+ {len(visible_edits)-80} more changes','muted',True))
         if not count:self.summary_box.addWidget(label('Your edits will appear here.','muted',True))
-        if self.repair.isChecked():self.summary_box.addWidget(label('The CRC will be repaired in the opened save.','success',True))
+        if self.repair.isChecked():self.summary_box.addWidget(label('Integrity checks will be repaired in the opened save.','success',True))
         valid=True
         try:self.validated_changes()
         except ValueError as error:
@@ -809,17 +813,18 @@ class Window(QMainWindow):
         for (index,key),value in self.validated_changes().items():
             field=next(f for f in self.save.slots[index].fields if f.key==key)
             lines.append(f'{self.save.slots[index].name}\n{field.label}: {value_text(field,field.value)} → {value_text(field,value)}')
-        if self.repair.isChecked():lines.append('Repair the save block CRC in the opened save.')
+        if self.repair.isChecked():lines.append('Repair integrity checks in the opened save.')
         text.setPlainText('\n\n'.join(lines));box.addWidget(text,1)
-        if self.save.game=='alice':
-            updated=Save(output,'alice')
-            final_fields={field.key:field for field in updated.slots[0].fields}
-            requested={key for index,key in self.validated_changes()}
+        if self.save.game in ('alice','eldenring'):
+            updated=Save(output,self.save.game,path=self.path,account_id=self.save.account_id)
+            final_fields={(index,field.key):field for index,slot in enumerate(updated.slots) for field in slot.fields}
+            requested=set(self.validated_changes())
             automatic=[]
-            for field in self.save.slots[0].fields:
-                final=final_fields.get(field.key)
-                if final and field.key not in requested and final.value != field.value:
-                    automatic.append(f'{field.label}: {value_text(field,field.value)} → {value_text(final,final.value)}')
+            for index,slot in enumerate(self.save.slots):
+                for field in slot.fields:
+                    final=final_fields.get((index,field.key))
+                    if final and (index,field.key) not in requested and final.value != field.value:
+                        automatic.append(f'{slot.name} · {field.label}: {value_text(field,field.value)} → {value_text(final,final.value)}')
             if automatic:
                 text.setPlainText(text.toPlainText()+'\n\nAutomatic related changes\n'+'\n'.join(automatic))
             box.addWidget(label('Related state is synchronized automatically when affected; automatic field changes are listed above.','small',True))
@@ -945,6 +950,13 @@ def main():
             except Exception:
                 resident_evil_ready=False
             crypto_ready=crypto_ready and resident_evil_ready
+            try:
+                from elden_ring import FILE_SIZE as ELDEN_FILE_SIZE, player_hash
+                from elden_items import GOODS
+                elden_ring_ready=ELDEN_FILE_SIZE==28967888 and player_hash(bytes([1]))==0x40004 and 0x50f0 in GOODS
+            except Exception:
+                elden_ring_ready=False
+            crypto_ready=crypto_ready and elden_ring_ready
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
@@ -953,6 +965,7 @@ def main():
                     'appearanceReady':all(not re.search(r'@[A-Za-z]+@',stylesheet(theme)) for theme in PALETTES) and QSvgRenderer(str(ROOT/'assets/ui/check.svg')).isValid(),
                     'cryptoReady':crypto_ready,
                     'residentEvilReady':resident_evil_ready,
+                    'eldenRingReady':elden_ring_ready,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}

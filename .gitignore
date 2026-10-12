@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 *.sav
+*.sl2
 *.bak
 *.mps
 *.xml

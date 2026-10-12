@@ -120,5 +120,12 @@
     "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3764200/ed3b2cae7d15f598f41006f5f1e605ec5517b5e4/library_capsule.jpg",
     "bytes": 63611,
     "note": "Official Steam portrait artwork for this PC edition"
+  },
+  {
+    "game": "eldenring",
+    "page": "https://store.steampowered.com/app/1245620/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1245620/library_600x900_2x.jpg",
+    "bytes": 175061,
+    "note": "Official Steam portrait artwork for the original PC game"
   }
 ]
