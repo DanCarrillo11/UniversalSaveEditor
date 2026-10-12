@@ -35,7 +35,7 @@ Broken MD5 checks require explicit integrity repair; repair changes only MD5
 bytes. Unsupported structures and player fingerprints are refused.
 
 Character parsing walks equipment handles and every intervening variable-length
-section with bounds checks. Revisions 65–250 use the documented field layout,
+section with bounds checks. Revisions 65–261 use the documented field layout,
 including the 5118/5120 handle-count boundary at revision 81. Profile locations
 are derived from the global menu size; summary stride is 0x24c. There is no
 name/pattern search or fixed end-of-slot assumption for player fingerprints.
@@ -47,6 +47,22 @@ Equipment fingerprints and opaque padding are retained. Only affected character
 MD5s and, when necessary, global MD5 are updated. Other characters, inactive
 residual slots, account IDs, settings, equipment, world/quest state, regulation
 and tail bytes are preserved. Repair can explicitly update all 12 MD5s.
+
+## Revision-261 compatibility fix
+
+v0.16.0-alpha rejected every character above revision 250 before examining its
+structure. v0.16.1-alpha extends this ceiling through revision 261 and adds the
+documented minimum stats for class IDs 10 (Idus Knight) and 11 (Heavy Knight).
+Unknown class IDs and revisions above 261 remain rejected. Revision numbers in
+the save are preserved; this fix does not convert or downgrade a character.
+
+The field layout and new class identities/minimums are cross-checked against
+[Kamikaz07's maintained editor](https://github.com/Kamikaz07/Elden-Ring-Save-Editor),
+which targets game version 1.17. No implementation code from that editor is
+incorporated. Synthetic tests exercise revisions 260/261, mixed 250/261 characters,
+both new classes and malformed data. **No native revision-261 file was available
+to validate this fix**, and no in-game loading is claimed. The full descriptor,
+bounded-section, summary and player-fingerprint checks still run before edits.
 
 ## Validation and limits
 

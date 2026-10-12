@@ -1,36 +1,22 @@
-# v0.16.0-alpha — Elden Ring joins the library
+# v0.16.1-alpha — Elden Ring compatibility fix
 
-Initial experimental support for the **original Elden Ring on Steam**, bringing
-the library to 20 games. Open `ER0000.sl2` manually or select its detected save
-from the Elden Ring cover. Choose an active character, then use Progress,
-Character and Collection to edit:
+Fixes the “unsupported save revision 261” rejection introduced by the previous
+editor's revision-250 limit. Characters through revision 261 can be opened when
+their structure, progression summaries and player fingerprints match the known
+format. Mixed old/new character revisions are supported without rewriting or
+downgrading their revision markers.
 
-- Runes, with automatic lifetime-rune accounting.
-- All eight attributes, with automatic level and character-menu synchronization.
-- Current HP, FP and stamina within the saved maximum.
-- Quantities of supported existing goods in inventory and storage, including
-  crafting and upgrade materials. Item identities and carrying limits are retained.
+Also recognizes Idus Knight and Heavy Knight and preserves their original
+attribute floors. Future unknown revisions/classes and malformed data remain
+blocked. Existing rune, attribute, vital and inventory/storage options retain
+their integrity and byte-preservation checks.
 
-Level and lifetime runes appear as calculated values. The change review lists
-automatic related changes before applying directly to the active file. Character
-fingerprints and block integrity checks update together. Other characters,
-account data, world/quest state, equipment and regulation remain unchanged.
-No automatic backup or `.edited` copy is created. Close the game before applying.
+## Validation
 
-## Validation and limits
+Regression tests cover revisions 260/261, mixed 250/261 characters, both new
+classes, class floors and invalid fingerprints/structures. A native revision-261
+file was not available for verification. Support remains experimental; edited
+saves have not been loaded in-game. Use edited saves offline.
 
-Four public PC-format files were read and patched in memory, including six- and
-ten-character containers; the samples share some character data. Regression
-coverage checks integrity, unknown-byte preservation, calculated values,
-malformed structures, limits, character switching, change review and direct writes.
-The portable executable is checked for startup and all 20 covers.
-
-**Edited Elden Ring files have not yet been loaded in-game.** This is experimental
-support for native Steam SL2 files, not full feature/variant support. Item creation,
-weapon upgrades, boss/quest flags, NG+, character transfers, console saves and
-Nightreign are outside this release. Use edited saves offline; online compatibility
-is not guaranteed. See [format and validation details](https://github.com/DanCarrillo11/UniversalSaveEditor/blob/main/docs/ELDEN_RING_FORMAT.md).
-
-Download `UniversalSaveEditor.exe` under Assets and double-click it. No installer,
-Python or command-line setup is needed. Code > Download ZIP also includes the
-portable executable at the root.
+Download `UniversalSaveEditor.exe` under Assets and double-click it. The portable
+executable is also included in Code > Download ZIP. No installer is needed.

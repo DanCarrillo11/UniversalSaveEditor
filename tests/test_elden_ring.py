@@ -11,7 +11,7 @@ from core import Save, FormatError, discover, identify_game, replace_current
 from elden_ring import FILE_SIZE, SLOT_SIZE, BLOCK_SIZE, GLOBAL_START, EldenRingSave
 
 
-def fixture(version=211, menu_size=0x1800, projectile_count=3, regions=2, worlds=(4,32,40,32,4)):
+def fixture(version=211, menu_size=0x1800, projectile_count=3, regions=2, worlds=(4,32,40,32,4), character_versions=None, archetype=0):
     raw=bytearray(FILE_SIZE)
     raw[:4]=b'BND4';struct.pack_into('<I',raw,12,12)
     blocks=[(0x300+i*BLOCK_SIZE,BLOCK_SIZE) for i in range(10)]
@@ -23,22 +23,25 @@ def fixture(version=211, menu_size=0x1800, projectile_count=3, regions=2, worlds
     struct.pack_into('<I',raw,global_data+0x150,menu_size)
     active=global_data+0x154+menu_size
     for slot in (0,3):
+        slot_version=version if character_versions is None else character_versions[0 if slot==0 else 1]
         raw[active+slot]=1
         start=blocks[slot][0]+16
-        struct.pack_into('<I',raw,start,version)
+        struct.pack_into('<I',raw,start,slot_version)
         p=start+32
-        for i in range(5118 if version<=81 else 5120):
+        for i in range(5118 if slot_version<=81 else 5120):
             h=(0x80000001,0x90000001,0xc0000001)[i] if i<3 else 0
             struct.pack_into('<II',raw,p,h,10000 if h else 0xffffffff)
             p+=21 if h>>28==8 else 16 if h>>28==9 else 8
         player=p
         for off,value in ((8,300),(12,414),(16,414),(20,50),(24,78),(28,78),(36,90),(40,105),(44,105)):
             struct.pack_into('<I',raw,p+off,value)
-        struct.pack_into('<8I',raw,p+52,15,10,11,14,13,9,9,7)
-        struct.pack_into('<3I',raw,p+96,9,500,1200)
+        stats=(10,12,11,13,15,8,11,6) if archetype==10 else (14,8,17,15,11,7,8,9) if archetype==11 else (15,10,11,14,13,9,9,7)
+        struct.pack_into('<8I',raw,p+52,*stats)
+        raw[p+183]=archetype
+        struct.pack_into('<3I',raw,p+96,sum(stats)-79,500,1200)
         name=f'Test {slot+1}'.encode('utf-16-le');raw[p+148:p+148+len(name)]=name
         profile=active+10+slot*588;raw[profile:profile+len(name)]=name
-        struct.pack_into('<3I',raw,profile+34,9,100,1200)
+        struct.pack_into('<3I',raw,profile+34,sum(stats)-79,100,1200)
         p+=932
         for group,capacity,keys in (('held',2688,384),('storage',1920,128)):
             struct.pack_into('<I',raw,p,3)
@@ -57,7 +60,7 @@ def fixture(version=211, menu_size=0x1800, projectile_count=3, regions=2, worlds
         struct.pack_into('<II',raw,p+4,4,1);p+=12+29+0x1bf9a0
         for size in worlds:
             struct.pack_into('<I',raw,p,size);p+=4+size
-        p+=61+10+4+(1 if version>=66 else 0)+0x20004+12+12+16+8+32+50
+        p+=61+10+4+(1 if slot_version>=66 else 0)+0x20004+12+12+16+8+32+50
         for offset,data in EldenRingSave._fingerprint_data(raw,player):
             struct.pack_into('<I',raw,p+offset,(zlib.adler32(data)*2)&0xffffffff)
         raw[p+16:p+20]=b'\xfe\xff\xff\xff'  # Preserve opaque hash padding.
@@ -114,11 +117,35 @@ class EldenRingTests(unittest.TestCase):
         self.assertEqual(self.values(Save(save.patched(fields),'eldenring'))['level'],713)
 
     def test_revision_and_variable_sections_change_offsets_without_search(self):
-        for version in (65,81,82,131,250):
+        for version in (65,81,82,131,250,260,261):
             raw=fixture(version=version,menu_size=64,projectile_count=7,regions=5,worlds=(0,0,0,0,0))
             save=Save(raw,'eldenring');out=save.patched({(1,'runes'):501})
             self.assertEqual(self.values(Save(out,'eldenring'),1)['runes_memory'],1201)
             self.assertEqual(save.patched({}),raw)
+
+    def test_mixed_revision_file_does_not_block_the_newer_character(self):
+        raw=fixture(character_versions=(250,261));save=Save(raw,'eldenring')
+        out=save.patched({(1,'runes'):900,(1,'vigor'):20})
+        updated=Save(out,'eldenring')
+        self.assertEqual(self.values(updated,1)['level'],14)
+        self.assertEqual(out[0x300:0x300+BLOCK_SIZE],raw[0x300:0x300+BLOCK_SIZE])
+        self.assertEqual(struct.unpack_from('<I',out,save.elden_ring.characters[1].start)[0],261)
+
+    def test_new_starting_classes_keep_their_own_minimum_attributes(self):
+        for archetype,key,minimum in ((10,'arcane',6),(11,'endurance',17)):
+            save=Save(fixture(version=261,archetype=archetype),'eldenring')
+            self.assertEqual(self.values(save)[key],minimum)
+            with self.assertRaises(ValueError):save.patched({(0,key):minimum-1})
+            out=save.patched({(0,key):minimum+1})
+            self.assertEqual(self.values(Save(out,'eldenring'))['level'],self.values(save)['level']+1)
+
+    def test_new_revision_does_not_bypass_unknown_layout_or_fingerprint_checks(self):
+        raw=fixture(version=261);save=Save(raw,'eldenring');char=save.elden_ring.characters[1]
+        for offset,value in ((char.start,262),(char.fingerprints,0),(char.player+96,99),(char.start+32,0xffffffff)):
+            broken=bytearray(raw);struct.pack_into('<I',broken,offset,value)
+            with self.assertRaises(FormatError):Save(bytes(broken),'eldenring')
+        broken=bytearray(raw);broken[char.player+183]=12
+        with self.assertRaises(FormatError):Save(bytes(broken),'eldenring')
 
     def test_corrupted_checksum_requires_explicit_repair(self):
         raw=bytearray(self.raw);raw[0x300]^=1;raw[GLOBAL_START+0x60010]^=1

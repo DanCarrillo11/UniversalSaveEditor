@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.16.1-alpha
+
+- Fix the arbitrary Elden Ring revision-250 ceiling: allow the documented character layout through revision 261, while retaining descriptor, section, progression and fingerprint validation.
+- Support the original minimum attributes of Idus Knight and Heavy Knight instead of rejecting their class IDs.
+- Add regression coverage for mixed old/new character revisions, new class floors, unknown layouts and unknown future revisions; improve the unsupported-revision error message.
+- Native revision-261 and in-game validation remain pending; synthetic tests are not represented as real game verification.
+
 ## v0.16.0-alpha
 
 - Add experimental original Elden Ring Steam SL2 support with up to ten active characters and automatic save discovery.

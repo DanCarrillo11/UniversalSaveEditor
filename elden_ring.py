@@ -20,6 +20,7 @@ CLASS_MINIMUMS = (
     (9,15,9,8,12,16,7,9), (10,14,8,11,10,7,16,10),
     (12,11,13,12,15,9,8,8), (11,12,11,11,14,14,6,9),
     (10,13,10,12,12,9,14,9), (10,10,10,10,10,10,10,10),
+    (10,12,11,13,15,8,11,6), (14,8,17,15,11,7,8,9),
 )
 
 
@@ -99,8 +100,8 @@ class EldenRingSave:
             start = self.blocks[physical][0] + 16
             cursor = Cursor(raw, start, start+SLOT_SIZE)
             version = cursor.integer()
-            if not 65 <= version <= 250:
-                raise ValueError(f'Character {physical+1}: unsupported save revision {version}.')
+            if not 65 <= version <= 261:
+                raise ValueError(f'Character {physical+1}: save revision {version} is not supported by this editor. Check for an application update; the file has not been changed.')
             cursor.skip(28)
             for _ in range(5118 if version <= 81 else 5120):
                 handle = cursor.integer()

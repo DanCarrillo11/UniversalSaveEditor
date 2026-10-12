@@ -303,7 +303,7 @@ class InterfaceTests(unittest.TestCase):
 
     def test_elden_ring_categories_calculated_fields_and_character_edits(self):
         from test_elden_ring import fixture
-        path=self.root/'ER0000.sl2';original=fixture();path.write_bytes(original)
+        path=self.root/'ER0000.sl2';original=fixture(character_versions=(250,261));path.write_bytes(original)
         w=self.window;w.open_path(path)
         self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Character','Collection'])
         self.assertTrue(w.inputs[(0,'level')].isReadOnly())

@@ -109,3 +109,8 @@ See [RE5](docs/RE5_FORMAT.md), [RE Engine](docs/RE_ENGINE_FORMAT.md),
 - [Official Steam artwork](https://store.steampowered.com/app/1245620/): portrait URL and byte count in `assets/covers/sources.json`. Artwork and trademarks remain owned by their respective holders.
 
 See [Elden Ring scope and validation](docs/ELDEN_RING_FORMAT.md). The editor does not claim console or Nightreign support, nor verified in-game loading or online compatibility.
+
+The Elden Ring revision-261 compatibility fix cross-checks the current field
+layout and factual Idus Knight / Heavy Knight class IDs and starting stats with
+[Kamikaz07/Elden-Ring-Save-Editor](https://github.com/Kamikaz07/Elden-Ring-Save-Editor).
+No implementation code is incorporated; native revision-261 validation remains pending.
