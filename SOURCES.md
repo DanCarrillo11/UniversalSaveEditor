@@ -114,3 +114,20 @@ The Elden Ring revision-261 compatibility fix cross-checks the current field
 layout and factual Idus Knight / Heavy Knight class IDs and starting stats with
 [Kamikaz07/Elden-Ring-Save-Editor](https://github.com/Kamikaz07/Elden-Ring-Save-Editor).
 No implementation code is incorporated; native revision-261 validation remains pending.
+
+## Collection presentation and support evidence
+
+`collection_tables.py` adapts KH III `MaterialType.cs` names/order from the
+BFlorry/KingdomSaveEditor revision already referenced above, under
+GPL-3.0-or-later, Copyright (C) 2020 Luciano Ciccariello. The PC material-array
+location is cross-checked in `SaveKh3PC.cs`; unknown indexes remain unnamed.
+Elden collection categories adapt the already attributed GPL v3 SaveForge
+tools/crafting/bolstering table categories for the 307 supported goods.
+
+`inventory_context.py` independently associates factual RE2/RE3 ItemId and RE4
+Remake Item/_ItemId properties from kvasszn/ree-save-editor's schemas with
+their exact saved object. SDK assets, translation databases and implementation
+code are not bundled. Missing or ambiguous identities do not receive names.
+Compatibility evidence summarizes this repository's format documents and the
+author's WEBFISHING currency report; it does not infer gameplay confirmation
+from an automated test pass. See docs/SUPPORT_AND_HISTORY.md.

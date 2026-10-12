@@ -40,6 +40,7 @@ class Field:
     choices: tuple = ()
     note: str = ''
     readonly: bool = False
+    collection: str = ''
 
     def parse(self, text):
         try:
@@ -520,8 +521,9 @@ class Save:
                 ))
             for item_id in range(320):
                 offset = record + 0x3580 + item_id
-                item_name = KH2_ITEM_NAMES.get(item_id,f'Item ID {item_id:03d}')
-                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,'Inventory'))
+                item_name = KH2_ITEM_NAMES.get(item_id,f'Unidentified item · ID {item_id:03d}')
+                note='' if item_id in KH2_ITEM_NAMES else 'Name mapping is pending. This is the saved item index; no item identity is changed.'
+                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,'Inventory',note=note))
             name = bytes(table[descriptor:descriptor+0x40]).split(b'\0')[0].decode('ascii',errors='replace')
             level = self.raw[record+0x24ff]
             self.slots.append(Slot(f'{name or str(index+1)} · Sora level {level}',fields))

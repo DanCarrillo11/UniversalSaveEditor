@@ -1,6 +1,7 @@
 """UniversalSaveEditor desktop interface. SPDX-License-Identifier: GPL-3.0-or-later."""
 import sys
 import os
+import json
 from pathlib import Path
 from datetime import datetime
 from PySide6.QtCore import Qt, QUrl, QTimer, Signal, QRectF, QPointF, QSettings
@@ -21,6 +22,9 @@ from version import VERSION
 from appearance import PALETTES, stylesheet
 from favorites import FavoriteButton
 from motion import ViewTransition
+from compatibility import compatibility_text, evidence_label
+from diagnostics import explain_error, support_report
+from recent_files import read_history, remember, forget
 
 ROOT=Path(__file__).resolve().parent
 
@@ -121,6 +125,10 @@ class Window(QMainWindow):
         self.setMinimumSize(1100,720)
         self.setAcceptDrops(True)
         self.settings=settings
+        self.recent_files=read_history(settings.value('files/recent','[]',type=str) if settings is not None else '[]')
+        self.remember_recent=settings.value('files/rememberRecent',True,type=bool) if settings is not None else True
+        if not self.remember_recent:self.recent_files=[]
+        self.last_diagnostic=''
         stored=settings.value('library/favorites',[],type=list) if settings is not None else []
         self.favorites={game_id for game_id in stored if isinstance(game_id,str) and game_id in BY_ID}
         self.favorites_only=False
@@ -143,6 +151,9 @@ class Window(QMainWindow):
         head.addWidget(icon)
         brand=QVBoxLayout();brand.setSpacing(1);brand.addWidget(label('UniversalSaveEditor','brand'));brand.addWidget(label('Your games. Your progress. One editor.','muted'))
         head.addLayout(brand);head.addStretch();head.addWidget(label('Offline · On your device','headerStatus'))
+        self.recent_button=button('Recent saves',self.open_recents)
+        self.recent_button.setAccessibleName('Open recent saves');self.recent_button.setToolTip('Reopen a recent save (Ctrl+R)')
+        head.addWidget(self.recent_button)
         self.appearance_button=button('',self.toggle_theme,'appearanceToggle');self.appearance_button.setFixedWidth(116)
         head.addWidget(self.appearance_button);self.update_appearance_button()
         window.addWidget(header)
@@ -179,6 +190,7 @@ class Window(QMainWindow):
         QShortcut(QKeySequence('Ctrl+Return'),self,activated=self.review)
         QShortcut(QKeySequence('Ctrl+S'),self,activated=self.review)
         QShortcut(QKeySequence('Ctrl+F'),self,activated=self.focus_search)
+        QShortcut(QKeySequence('Ctrl+R'),self,activated=self.open_recents)
         self.scan();self.show_library()
         if settings is not None and settings.contains('window/geometry'):
             self.restoreGeometry(settings.value('window/geometry'))
@@ -276,6 +288,8 @@ class Window(QMainWindow):
         self.editor_eyebrow=label('SAVE EDITOR','eyebrow');self.editor_title=label('Your save','title',True)
         titles.addWidget(self.editor_eyebrow);titles.addWidget(self.editor_title);top.addLayout(titles,1)
         top.addWidget(button('Open another…',self.open_file));outer.addLayout(top)
+        self.support_button=button('Help && details',lambda:self.open_support(self.save.game if self.save else None))
+        self.support_button.setAccessibleName('Compatibility and diagnostic for this save');top.addWidget(self.support_button)
         self.backup_button=button('Restore existing backup',self.open_backups)
         top.addWidget(self.backup_button)
         self.editor_subtitle=label('','muted',True);outer.addWidget(self.editor_subtitle)
@@ -309,7 +323,7 @@ class Window(QMainWindow):
     def scan(self):
         try:self.files=discover()
         except OSError as error:
-            QMessageBox.warning(self,'Search failed',str(error));return
+            self.show_problem(error,'scan');return
         self.detected.setText(f'{len(self.files)} saves found')
         self.render_cards()
         self.statusBar().showMessage(f'{len(self.files)} files found in the usual folders · Drag a file here to open it')
@@ -412,6 +426,9 @@ class Window(QMainWindow):
         line=QFrame();line.setObjectName('divider');line.setFixedHeight(1);self.detail_box.addWidget(line)
         self.detail_box.addWidget(label('Editor features','eyebrow'))
         features=label(game.description,'detailDescription',True);features.setAccessibleName('Editor features for '+game.title);self.detail_box.addWidget(features)
+        validation=label(evidence_label(game.id)+(' · In-game checks limited' if game.id=='webfishing' else ' · In-game check pending'),'small',True)
+        validation.setAccessibleName('Validation status for '+game.title);self.detail_box.addWidget(validation)
+        self.detail_box.addWidget(button('Compatibility details',lambda checked=False,g=game.id:self.open_support(g)))
         line=QFrame();line.setObjectName('divider');line.setFixedHeight(1);self.detail_box.addWidget(line)
         self.detail_box.addWidget(label('Save files','eyebrow'))
         if files:
@@ -487,7 +504,10 @@ class Window(QMainWindow):
         if self.save and self.save.game==game.id:self.show_editor();return
         files=[p for g,p in self.files if g==game.id]
         if files:self.load(game.id,files[0])
-        else:self.open_file(game.id)
+        else:
+            recent=next((item for item in self.recent_files if item['game']==game.id and Path(item['path']).is_file()),None)
+            if recent:self.reopen_recent(recent)
+            else:self.open_file(game.id)
 
     def open_file(self,game=None):
         if not isinstance(game,str):game=None
@@ -499,7 +519,7 @@ class Window(QMainWindow):
         if game is None:
             try:game=identify_game(path)
             except (ValueError,OSError) as error:
-                QMessageBox.warning(self,'Could not identify the save',str(error));return
+                self.show_problem(error,'identify',path=path);return
         if not BY_ID[game].editable:
             QMessageBox.information(self,'Format pending','This game does not have an editor yet.');return
         self.load(game,path)
@@ -528,7 +548,7 @@ class Window(QMainWindow):
                 if not hasattr(self, 'kh3_accounts'):self.kh3_accounts = {}
                 self.kh3_accounts[str(path)] = account.strip()
         except (ValueError,OSError) as error:
-            QMessageBox.warning(self,'Could not open the save',str(error));return False
+            self.show_problem(error,'open',game,path);return False
         self.save=save;self.path=Path(path);self.edits={};self.inputs={};self.exported_state=None;self.slot_index=0
         self.last_directory=str(self.path.parent)
         gameinfo=BY_ID[game];self.selected_game=game
@@ -552,6 +572,7 @@ class Window(QMainWindow):
         if gameinfo.experimental:
             self.install_note.setText(self.install_note.text()+' Experimental support: in-game validation is still pending.')
         self.render_fields();self.show_editor()
+        self.remember_file(game,self.path)
         return True
 
     def select_file(self,index):
@@ -560,7 +581,8 @@ class Window(QMainWindow):
             self.file_combo.setCurrentIndex(self.file_combo.findData(self.path))
 
     def change_slot(self,index):
-        if self.save and index>=0:self.slot_index=index;self.render_fields()
+        if self.save and 0<=index<len(self.save.slots):
+            self.slot_index=index;self.render_fields();self.remember_file(self.save.game,self.path,index)
 
     def render_fields(self):
         previous=self.tabs.tabText(self.tabs.currentIndex()) if self.editor_page_game==self.save.game else ''
@@ -803,7 +825,7 @@ class Window(QMainWindow):
         if not self.save or not self.review_button.isEnabled():return
         try:output=self.save.patched(self.validated_changes(),repair_crc=self.repair.isChecked())
         except ValueError as error:
-            QMessageBox.warning(self,'Review your edits',str(error));return
+            self.show_problem(error,'review',self.save.game,self.path);return
         dialog=QDialog(self);dialog.setWindowTitle('Review and apply');dialog.resize(650,550)
         box=layout(dialog,True,24,16)
         box.addWidget(label('ONE LAST LOOK','eyebrow'));box.addWidget(label('Your edited save','title'))
@@ -834,7 +856,7 @@ class Window(QMainWindow):
         def write():
             try:replace_current(self.path,self.save.raw,output)
             except (ValueError,OSError) as error:
-                QMessageBox.warning(dialog,'Could not apply changes',str(error));return
+                self.show_problem(error,'apply',self.save.game,self.path,parent=dialog);return
             slot_index=self.slot_index
             self.exported_state=self.state_signature();dialog.accept()
             self.load(self.save.game,self.path)
@@ -853,7 +875,7 @@ class Window(QMainWindow):
         details=label('','muted',True);box.addWidget(details)
         try:backups=backup_files(self.path)
         except OSError as error:
-            QMessageBox.warning(self,'Could not list backups',str(error));return
+            self.show_problem(error,'restore',self.save.game,self.path);return
         for path in backups:
             try:date=datetime.fromtimestamp(path.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
             except OSError:continue
@@ -874,18 +896,112 @@ class Window(QMainWindow):
             if not path:return
             try:Save(read_limited(path),self.save.game,path=self.path,account_id=self.save.account_id)
             except (ValueError,OSError) as error:
-                QMessageBox.warning(dialog,'Invalid backup',str(error));return
+                self.show_problem(error,'restore',self.save.game,path,parent=dialog);return
             if not self.may_discard():return
             answer=QMessageBox.question(dialog,'Restore backup','Restore this backup to the opened save?\n\n'+str(path)+'\n\nThe current file will be replaced. No new backup will be created.',QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel,QMessageBox.StandardButton.Cancel)
             if answer!=QMessageBox.StandardButton.Yes:return
             try:restore_backup(self.path,path,self.save.game,account_id=self.save.account_id)
             except (ValueError,OSError) as error:
-                QMessageBox.warning(dialog,'Could not restore backup',str(error));return
+                self.show_problem(error,'restore',self.save.game,self.path,parent=dialog);return
             self.edits={};self.repair.setChecked(False);dialog.accept()
             self.load(self.save.game,self.path)
             QMessageBox.information(self,'Backup restored','Save restored:\n'+str(self.path))
         restore=button('Restore selected backup',apply_backup,'primary');restore.setEnabled(bool(choice.count()));actions.addWidget(restore);box.addLayout(actions)
         dialog.exec()
+
+    def diagnostic(self,game=None,problem=None,operation='inspect',path=None):
+        game=game if game in BY_ID else None
+        save=self.save if self.save and self.save.game==game and problem is None else None
+        source=Path(path) if path is not None else self.path if save else None
+        size=len(save.raw) if save else None
+        if source is not None and size is None:
+            try:size=source.stat().st_size
+            except OSError:pass
+        return support_report(game,save,problem,operation,source.suffix if source else None,size,self.theme,self.slot_index if save else None)
+
+    def copy_diagnostic(self,report):
+        QApplication.clipboard().setText(report)
+        self.statusBar().showMessage('Diagnostic copied · No save contents or personal identifiers included')
+
+    def show_problem(self,error,operation='open',game=None,path=None,parent=None):
+        problem=explain_error(error,operation)
+        report=self.diagnostic(game,problem,operation,path);self.last_diagnostic=report
+        message=QMessageBox(parent or self);message.setObjectName('saveProblem')
+        message.setWindowTitle(problem.title);message.setIcon(QMessageBox.Icon.Warning)
+        message.setTextFormat(Qt.TextFormat.PlainText);message.setText(problem.message)
+        message.setInformativeText('\n'.join(f'{i+1}. {step}' for i,step in enumerate(problem.steps)))
+        message.setDetailedText(report);message.setStandardButtons(QMessageBox.StandardButton.Close)
+        copy=message.addButton('Copy diagnostic',QMessageBox.ButtonRole.ActionRole)
+        copy.setAccessibleName('Copy diagnostic without personal data');copy.clicked.connect(lambda:self.copy_diagnostic(report))
+        message.exec()
+
+    def open_support(self,game=None):
+        game=game if game in BY_ID else self.selected_game
+        if game not in BY_ID:return
+        dialog=QDialog(self);dialog.setObjectName('supportDialog');dialog.setWindowTitle(BY_ID[game].title+' · Help & details');dialog.resize(740,600)
+        box=layout(dialog,True,20,12);tabs=QTabWidget();box.addWidget(tabs,1)
+        compatibility=QTextEdit();compatibility.setReadOnly(True);compatibility.setObjectName('compatibilityDetails')
+        compatibility.setPlainText(compatibility_text(game));tabs.addTab(compatibility,'Compatibility')
+        diagnostic_page=QWidget();diagnostic_box=layout(diagnostic_page,True,8,10)
+        diagnostic_box.addWidget(label('Preview what will be copied','section'))
+        diagnostic_box.addWidget(label('This report excludes save contents, filenames, paths, account IDs and character names. Nothing is sent automatically.','muted',True))
+        report=self.diagnostic(game);preview=QTextEdit();preview.setReadOnly(True);preview.setObjectName('diagnosticPreview');preview.setPlainText(report)
+        diagnostic_box.addWidget(preview,1);diagnostic_box.addWidget(button('Copy diagnostic',lambda:self.copy_diagnostic(report),'primary'))
+        tabs.addTab(diagnostic_page,'Diagnostic');box.addWidget(button('Close',dialog.accept));dialog.exec()
+
+    def persist_recents(self):
+        if self.settings is not None:
+            self.settings.setValue('files/recent',json.dumps(self.recent_files))
+            self.settings.setValue('files/rememberRecent',self.remember_recent);self.settings.sync()
+
+    def remember_file(self,game,path,slot=0):
+        if self.remember_recent:
+            self.recent_files=remember(self.recent_files,game,path,slot);self.persist_recents()
+
+    def reopen_recent(self,entry,path=None):
+        target=Path(path if path is not None else entry['path'])
+        if not self.load(entry['game'],target):return False
+        if path is not None:
+            self.recent_files=forget(self.recent_files,entry['path']);self.remember_file(entry['game'],target)
+        index=min(entry.get('slot',0),len(self.save.slots)-1)
+        self.slot_combo.setCurrentIndex(index);self.change_slot(index)
+        return True
+
+    def open_recents(self):
+        dialog=QDialog(self);dialog.setObjectName('recentDialog');dialog.setWindowTitle('Recent saves');dialog.resize(740,590)
+        box=layout(dialog,True,20,12);box.addWidget(label('Pick up where you left off','title'))
+        box.addWidget(label('Only successfully opened files are remembered on this device. Clearing history removes shortcuts, not save files.','muted',True))
+        enabled=QCheckBox('Remember recent saves');enabled.setChecked(self.remember_recent);box.addWidget(enabled)
+        scroll=QScrollArea();scroll.setWidgetResizable(True);scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        content=QWidget();rows=layout(content,True,0,10);scroll.setWidget(content);box.addWidget(scroll,1)
+        def refresh():
+            clear(rows)
+            if not self.recent_files:rows.addWidget(label('No recent saves yet. Open a save from the library or use Open save.','muted',True))
+            for item in self.recent_files:
+                entry=dict(item);path=Path(entry['path']);card=QFrame();card.setObjectName('saveRow');line=layout(card,False,12,8)
+                info=QVBoxLayout();info.addWidget(label(path.name,'section',True));info.addWidget(label(BY_ID[entry['game']].title,'small',True))
+                exists=path.is_file();state=label('Available · last selected record '+str(entry['slot']+1) if exists else 'File unavailable · use Locate to find it','small',True)
+                info.addWidget(state);card.setToolTip(str(path));line.addLayout(info,1)
+                def open_entry(checked=False,e=entry):
+                    if self.reopen_recent(e):dialog.accept()
+                line.addWidget(button('Open',open_entry))
+                def locate_entry(checked=False,e=entry):
+                    filename,_=QFileDialog.getOpenFileName(dialog,'Locate this save',self.last_directory,'Save files (*.sav *.sl2 *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
+                    if filename and self.reopen_recent(e,filename):dialog.accept()
+                line.addWidget(button('Locate…',locate_entry))
+                def remove_entry(checked=False,e=entry):
+                    self.recent_files=forget(self.recent_files,e['path']);self.persist_recents();refresh()
+                remove=button('Remove',remove_entry);remove.setAccessibleName('Remove recent shortcut for '+path.name);line.addWidget(remove);rows.addWidget(card)
+            rows.addStretch()
+        def set_enabled(value):
+            self.remember_recent=value
+            if not value:self.recent_files=[]
+            self.persist_recents();refresh()
+        enabled.toggled.connect(set_enabled)
+        actions=QHBoxLayout()
+        def clear_history():self.recent_files=[];self.persist_recents();refresh()
+        actions.addWidget(button('Clear history',clear_history));actions.addStretch();actions.addWidget(button('Close',dialog.accept));box.addLayout(actions)
+        refresh();dialog.exec()
 
     def open_guide(self):
         dialog=QDialog(self);dialog.setWindowTitle('UniversalSaveEditor guide');dialog.resize(760,650)
@@ -957,6 +1073,15 @@ def main():
             except Exception:
                 elden_ring_ready=False
             crypto_ready=crypto_ready and elden_ring_ready
+            try:
+                from compatibility import EVIDENCE
+                from collection_tables import KH3_MATERIALS,ELDEN_CATEGORIES
+                usability_ready=(len(EVIDENCE)==len(GAMES) and len(KH3_MATERIALS)==60 and len(ELDEN_CATEGORIES)==307
+                                 and read_history('invalid')==[] and window.recent_button.isVisible()
+                                 and 'file_missing' in support_report('kh1',problem=explain_error(FileNotFoundError('private-name'))))
+            except Exception:
+                usability_ready=False
+            crypto_ready=crypto_ready and usability_ready
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
@@ -966,6 +1091,7 @@ def main():
                     'cryptoReady':crypto_ready,
                     'residentEvilReady':resident_evil_ready,
                     'eldenRingReady':elden_ring_ready,
+                    'usabilityReady':usability_ready,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}

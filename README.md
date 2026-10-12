@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.16.1-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.17.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -17,6 +17,10 @@ executable included at its root. Startup can take a few seconds.
 
 ## Features
 
+- Compatibility details per game: supported format, file-check evidence, gameplay evidence and known limits.
+- Helpful errors with next steps and a Copy diagnostic button. Reports omit save contents, paths, account IDs and character names; nothing is sent automatically.
+- Recent saves in the header (Ctrl+R), remembering up to ten validated files and the last selected record. Locate moved files, remove shortcuts, clear history or turn it off.
+- Verified collection labels and grouped inventories: 60 KH III synthesis-material names, Elden Ring crafting/upgrade/consumable sections and clearly marked unidentified entries.
 - Clean light and dark appearances with a header toggle and a remembered preference.
 - Responsive game library with full cover art, search, filters, and sorting.
 - Mark games with the star on each cover. Favorites appear first in the library;
@@ -38,6 +42,8 @@ executable included at its root. Startup can take a few seconds.
 - Apply directly to the opened save without exports, renaming, or automatic backups.
 - Browse and restore existing backups without creating additional files.
 - Processing stays local. No sign-in or save uploads are required.
+
+See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTORY.md) for details.
 
 ## Compatibility
 

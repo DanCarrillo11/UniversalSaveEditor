@@ -8,6 +8,7 @@ import hashlib
 import struct
 import zlib
 from elden_items import GOODS
+from collection_tables import ELDEN_CATEGORIES
 
 SLOT_SIZE = 0x280000
 BLOCK_SIZE = SLOT_SIZE + 16
@@ -204,7 +205,8 @@ class EldenRingSave:
             if limit <= 1 or quantity > limit:
                 continue
             fields.append(field_type(f'{group.lower()}:{index}', label, quantity, offset+4, '<I', 1, limit, group,
-                note=f'Existing stack · item {handle & 0x0fffffff} · record {index+1}. Item identity is preserved.'))
+                note=f'Existing stack · item {handle & 0x0fffffff} · record {index+1}. Item identity is preserved.',
+                collection=ELDEN_CATEGORIES[handle & 0x0fffffff]))
         key_count = cursor.integer()
         if key_count > key_capacity:
             raise ValueError('Invalid Elden Ring key-item count.')

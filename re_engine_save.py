@@ -10,6 +10,7 @@ from collections import Counter, defaultdict
 from re_hashes import murmur32
 from re_engine_container import ReEngineEnvelope
 from re_engine_stream import StreamReader
+from inventory_context import InventoryContext
 
 GAMES=('re2','re3','re4_remake','re7','re9')
 STEAM_APPS={'883710':'re2','952060':'re3','2050650':'re4_remake','418370':'re7','3764200':'re9'}
@@ -64,6 +65,7 @@ class ReEngineSave:
         prefix=bytes(self.envelope.offset)
         self.data=prefix+self.envelope.payload
         nodes=StreamReader(self.data,len(prefix)).parse()
+        identities=InventoryContext(nodes,self.data)
         wanted={(owner,murmur32(name.encode())):(label,group,fmt,maximum)
                 for owner,name,label,group,fmt,maximum in SPECS[game]}
         selected=[]
@@ -99,10 +101,17 @@ class ReEngineSave:
             shown=(f'Entry {index} · {label}' if fmt=='<B' else f'{label} · Entry {index}') if indexed else label
             key=f'{node.owner:08x}:{node.field:08x}:{node.offset}'
             note='Changes an existing entry; item identity, equipment and slot layout are preserved.' if 'quantities' in group else ''
+            collection=''
+            if 'quantities' in group:
+                identifier=identities.item_id(game,node)
+                identity=f'ID {identifier}' if identifier is not None else 'identity not mapped'
+                shown=f'Unidentified item · {identity} · Entry {index}'
+                note='Item-name mapping is pending. Only this existing quantity is changed; identity and equipment are preserved.'
+                collection='Unidentified items'
             if game=='re3' and label.startswith('Total shop'):
                 note='Total points earned. The game also tracks purchased shop items separately.'
             self.fields.append(field_type(key,shown,value,node.offset,fmt,1 if 'quantities' in group else 0,maximum,group,
-                                          decimal=fmt=='<f',boolean=fmt=='<B',note=note))
+                                          decimal=fmt=='<f',boolean=fmt=='<B',note=note,collection=collection))
             self.operations[key]=(node.offset,fmt)
 
     def patch(self,changes):

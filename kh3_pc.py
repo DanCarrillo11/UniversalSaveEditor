@@ -13,6 +13,7 @@ import zlib
 from pathlib import Path
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from kh_extra_tables import KH3_ITEMS
+from collection_tables import KH3_MATERIALS
 
 
 class AccountIdRequired(ValueError):
@@ -86,7 +87,11 @@ class Kh3PcSave:
             if 0 <= identifier < 1024:
                 add(f'inventory:{identifier}', name, 0x8f4 + identifier*2, '<B', 99, group)
         for material in range(100):
-            add(f'material:{material}', f'Synthesis material {material+1:03d}', 0x165e+material*2, '<h', 999, 'Materials')
+            known=material<len(KH3_MATERIALS)
+            name=KH3_MATERIALS[material] if known else f'Unidentified material · Entry {material+1:03d}'
+            add(f'material:{material}', name, 0x165e+material*2, '<h', 999, 'Materials',
+                collection='Materials' if known else 'Unidentified materials',
+                note=f'Saved material index {material}. '+('Verified material order.' if known else 'Name mapping is pending; this entry keeps its saved index.'))
 
     def patch(self, changes):
         result = bytearray(self.plain)

@@ -454,3 +454,11 @@ Upstream: https://github.com/oisis/EldenRing-SaveForge
 The adaptation is distributed under GPL-3.0-or-later, with full GPL v3 license
 text in LICENSE. See SOURCES.md for files and scope. Third-party artwork and
 game trademarks are not covered by this source-code license.
+
+Collection presentation tables
+------------------------------
+KH III material names/order in collection_tables.py are adapted from
+BFlorry/KingdomSaveEditor MaterialType.cs under GPL-3.0-or-later.
+Copyright (C) 2020 Luciano Ciccariello. Full GPL v3 text: LICENSE.
+Elden collection categories follow the previously attributed GPL v3 SaveForge
+goods tables. See SOURCES.md for the original files and adaptation boundaries.

@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.17.0-alpha
+
+- Add explicit compatibility evidence and scope for all 20 editors, separating PC file checks from gameplay confirmation.
+- Replace raw opening/saving errors with explanations, next steps and a diagnostic-copy action; build reports from an allowlist that excludes personal identifiers and save contents.
+- Add a previewable Help & details panel and optional local recent-save history with ten entries, last-record restoration, missing-file location, removal and clearing.
+- Group Elden Ring inventory/storage goods by verified type, add 60 verified KH III material names and organize HD Remaster collections.
+- Display verified RE2/RE3/RE4 Remake inventory IDs only when tied unambiguously to the same saved object; mark missing names explicitly without making identities writable.
+- Preserve direct saving, field keys, limits, pending edits, format checks and byte preservation; add support/privacy, history, inventory-context and UI regression coverage.
+
 ## v0.16.1-alpha
 
 - Fix the arbitrary Elden Ring revision-250 ceiling: allow the documented character layout through revision 261, while retaining descriptor, section, progression and fingerprint validation.

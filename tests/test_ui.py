@@ -117,7 +117,7 @@ class InterfaceTests(unittest.TestCase):
         settings=QSettings(str(self.root/'preferences.ini'),QSettings.Format.IniFormat)
         w=Window(settings=settings);w.load('webfishing',self.source);w.resize(1280,800)
         w.close();w.deleteLater();self.app.processEvents()
-        self.assertEqual(set(settings.allKeys()),{'window/geometry','files/lastDirectory','appearance/theme','appearance/reduceMotion','library/favorites'})
+        self.assertEqual(set(settings.allKeys()),{'window/geometry','files/lastDirectory','files/recent','files/rememberRecent','appearance/theme','appearance/reduceMotion','library/favorites'})
         self.assertEqual(settings.value('files/lastDirectory'),str(self.root))
         restored=Window(settings=settings)
         self.assertEqual(restored.last_directory,str(self.root));self.assertIsNone(restored.save)
@@ -125,6 +125,80 @@ class InterfaceTests(unittest.TestCase):
             restored.open_file()
         self.assertEqual(choose.call_args.args[2],str(self.root))
         restored.close();restored.deleteLater();self.app.processEvents()
+
+    def test_compatibility_and_diagnostic_preview_are_available_without_personal_data(self):
+        from PySide6.QtWidgets import QTextEdit
+        w=self.window;w.load('webfishing',self.source);reports=[]
+        def inspect_dialog():
+            dialog=self.app.activeModalWidget()
+            details=dialog.findChild(QTextEdit,'compatibilityDetails').toPlainText()
+            self.assertIn('Money changes confirmed in-game',details)
+            self.assertIn('Other editing features still need gameplay checks',details)
+            preview=dialog.findChild(QTextEdit,'diagnosticPreview').toPlainText();reports.append(preview)
+            self.assertNotIn(str(self.root),preview);self.assertNotIn(self.source.name,preview)
+            next(b for b in dialog.findChildren(QPushButton) if b.text()=='Copy diagnostic').click()
+            dialog.accept()
+        QTimer.singleShot(0,inspect_dialog);w.open_support('webfishing')
+        self.assertEqual(self.app.clipboard().text(),reports[0])
+
+    def test_clear_recent_history_removes_shortcuts_and_preserves_save_and_edits(self):
+        w=self.window;w.load('webfishing',self.source);original=self.source.read_bytes()
+        w.inputs[(0,'money')].setText('1000');self.assertEqual(len(w.recent_files),1)
+        def clear_dialog():
+            dialog=self.app.activeModalWidget()
+            next(b for b in dialog.findChildren(QPushButton) if b.text()=='Clear history').click()
+            dialog.accept()
+        QTimer.singleShot(0,clear_dialog);w.open_recents()
+        self.assertFalse(w.recent_files);self.assertEqual(self.source.read_bytes(),original)
+        self.assertEqual(w.validated_changes(),{(0,'money'):1000})
+
+    def test_recent_reopen_restores_character_and_cancel_preserves_pending_changes(self):
+        w=self.window;w.load('kh1',self.kh);w.change_slot(1)
+        recent=dict(w.recent_files[0]);self.assertEqual(recent['slot'],1)
+        w.load('webfishing',self.source);w.inputs[(0,'money')].setText('1000')
+        with patch('app.QMessageBox.question',return_value=QMessageBox.StandardButton.Cancel):
+            self.assertFalse(w.reopen_recent(recent))
+        self.assertEqual(w.save.game,'webfishing');self.assertEqual(w.validated_changes(),{(0,'money'):1000})
+        w.edits={};self.assertTrue(w.reopen_recent(recent));self.assertEqual(w.slot_index,1)
+
+    def test_recent_location_is_only_replaced_after_a_successful_open(self):
+        w=self.window;w.load('webfishing',self.source);entry=dict(w.recent_files[0])
+        target=self.root/'relocated.sav';target.write_bytes(self.source.read_bytes())
+        with patch.object(w,'show_problem') as problem:
+            self.assertFalse(w.reopen_recent(entry,self.root/'missing.sav'));problem.assert_called_once()
+        self.assertEqual(w.recent_files[0],entry)
+        self.assertTrue(w.reopen_recent(entry,target));self.assertEqual(w.path,target)
+        self.assertEqual(len(w.recent_files),1);self.assertTrue(self.source.is_file())
+
+    def test_cover_reopens_manual_recent_save_when_discovery_has_no_file(self):
+        path=self.root/'manual-alice.psd';path.write_bytes(alice())
+        w=self.window;w.load('alice',path);w.load('webfishing',self.source)
+        with patch('app.QFileDialog.getOpenFileName') as chooser:w.activate_game(BY_ID['alice'])
+        chooser.assert_not_called();self.assertEqual(w.path,path);self.assertEqual(w.save.game,'alice')
+
+    def test_disabling_recent_history_persists_and_does_not_remember_more_files(self):
+        settings=QSettings(str(self.root/'history.ini'),QSettings.Format.IniFormat);w=Window(settings=settings)
+        w.load('webfishing',self.source)
+        def disable_dialog():
+            dialog=self.app.activeModalWidget()
+            next(item for item in dialog.findChildren(QCheckBox) if item.text()=='Remember recent saves').setChecked(False)
+            dialog.accept()
+        QTimer.singleShot(0,disable_dialog);w.open_recents();w.load('kh1',self.kh)
+        self.assertFalse(w.recent_files);w.close();w.deleteLater();self.app.processEvents()
+        restored=Window(settings=settings);self.assertFalse(restored.remember_recent);self.assertFalse(restored.recent_files)
+        restored.close();restored.deleteLater();self.app.processEvents()
+
+    def test_friendly_failed_load_preserves_open_save_and_copies_safe_diagnostic(self):
+        w=self.window;w.load('webfishing',self.source);seen=[]
+        def inspect_error():
+            dialog=self.app.activeModalWidget();self.assertIsInstance(dialog,QMessageBox)
+            seen.append(dialog.text());self.assertIn('moved, renamed or removed',dialog.text())
+            next(b for b in dialog.buttons() if b.text()=='Copy diagnostic').click();dialog.close()
+        QTimer.singleShot(0,inspect_error)
+        self.assertFalse(w.load('webfishing',self.root/'PRIVATE_SAVE.sav'))
+        report=self.app.clipboard().text();self.assertIn('file_missing',report)
+        self.assertNotIn('PRIVATE_SAVE',report);self.assertNotIn(str(self.root),report)
+        self.assertEqual(w.path,self.source);self.assertEqual(len(w.recent_files),1)
 
     def test_favorite_star_click_does_not_open_or_modify_save(self):
         w=self.window;w.show();self.app.processEvents()

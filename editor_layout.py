@@ -79,15 +79,19 @@ def organize_fields(game, fields):
         category, section, selection = 'Progress', group, group
         if game=='eldenring':
             if group in ('Attributes','Vitals'):category='Character'
-            elif group in ('Inventory','Storage'):category='Collection'
+            elif group in ('Inventory','Storage'):
+                category,section,selection='Collection',item.collection or group,group
         if game=='re1_hd':
             if group=='Defensive supplies':category='Equipment'
-            elif group in ('Inventory','Item box'):category='Collection'
+            elif group in ('Inventory','Item box'):
+                category,section,selection='Collection',item.collection or group,group
         if game in ('re2','re3','re4_remake','re7','re9'):
             if group=='Player health':category='Characters'
             elif group=='Currency':category='Progress'
             elif game=='re2' and group=='Rewards':category='Unlocks'
-            else:category='Collection'
+            else:
+                category='Collection'
+                if 'quantities' in group:section,selection=item.collection or 'Unidentified items',group.replace(' quantities','')
         if game=='re5':
             if group=='Library files':category='Collection'
             elif group!='Currency':category='Unlocks'
@@ -161,7 +165,7 @@ def organize_fields(game, fields):
                 selection = item.key.split(':')[1] if item.key.startswith('character:') else 'Sora'
             elif item.key.startswith(('inventory:', 'material:')):
                 category = 'Collection'
-                selection = section
+                section=item.collection or section;selection=section
         elif game == 'maxpayne':
             category, selection = 'Equipment', section
 
@@ -180,9 +184,9 @@ def organize_fields(game, fields):
                   'Characters', 'Skills', 'Skins and recolors', 'Artifacts', 'Items and equipment',
                   'Memories', 'Bottles', 'Snouts', 'Radula rooms', 'Enemy journal', 'Cinematics')
     for category in categories.values():
-        section_order = ('Items', 'Inventory', 'Materials', 'Weapons', 'Accessories', 'Equipment', 'Special items', 'Other entries',
+        section_order = ('Items', 'Inventory', 'Consumables', 'Ammunition', 'Crafting materials', 'Upgrade materials', 'Materials', 'Weapons', 'Accessories', 'Equipment', 'Special items', 'Other entries',
                          'Fishing journal', 'Memories', 'Bottles', 'Snouts', 'Radula rooms',
-                         'Enemy journal', 'Cinematics') if category.name == 'Collection' else priorities
+                         'Enemy journal', 'Cinematics', 'Unidentified items', 'Unidentified materials') if category.name == 'Collection' else priorities
         category.sections.sort(key=lambda section: (
             (('Sora', 'Donald', 'Goofy', 'Riku').index(section.selection) if section.selection in ('Sora', 'Donald', 'Goofy', 'Riku') else 4) if category.name == 'Characters' else 0,
             section_order.index(section.name) if section.name in section_order else len(section_order)))

@@ -1,22 +1,22 @@
-# v0.16.1-alpha — Elden Ring compatibility fix
+# v0.17.0-alpha — Clearer support, easier navigation
 
-Fixes the “unsupported save revision 261” rejection introduced by the previous
-editor's revision-250 limit. Characters through revision 261 can be opened when
-their structure, progression summaries and player fingerprints match the known
-format. Mixed old/new character revisions are supported without rewriting or
-downgrading their revision markers.
+All 20 editors now show detailed compatibility evidence: supported formats,
+tested samples, gameplay checks and known limits. “PC files checked” does not
+mean that every edit or game version has been confirmed in-game.
 
-Also recognizes Idus Knight and Heavy Knight and preserves their original
-attribute floors. Future unknown revisions/classes and malformed data remain
-blocked. Existing rune, attribute, vital and inventory/storage options retain
-their integrity and byte-preservation checks.
+- **Helpful errors:** explanations and next steps, plus Copy diagnostic.
+- **Private support reports:** preview before copying; no save contents, paths,
+  filenames, accounts, character names or values. Nothing is uploaded automatically.
+- **Recent saves:** header button or Ctrl+R, ten validated files, last selected
+  record, Locate for moved files, Remove/Clear history and an option to turn it off.
+- **Clearer collections:** 60 named KH III synthesis materials, verified Elden
+  Ring crafting/upgrade/consumable sections, organized HD Remaster collections
+  and RE inventory IDs tied to the correct saved object. Unknown names stay marked.
 
-## Validation
+The editable save-format scope and direct saving behavior are preserved. History
+clearing never deletes save files. Existing experimental editors remain experimental;
+native Elden Ring revision-261 and several Resident Evil PC variants still need
+verification. These interface improvements are not a new gameplay-validation claim.
 
-Regression tests cover revisions 260/261, mixed 250/261 characters, both new
-classes, class floors and invalid fingerprints/structures. A native revision-261
-file was not available for verification. Support remains experimental; edited
-saves have not been loaded in-game. Use edited saves offline.
-
-Download `UniversalSaveEditor.exe` under Assets and double-click it. The portable
-executable is also included in Code > Download ZIP. No installer is needed.
+Download `UniversalSaveEditor.exe` under Assets and open it. Code > Download ZIP
+also includes the portable executable. No installer or Python setup is needed.
