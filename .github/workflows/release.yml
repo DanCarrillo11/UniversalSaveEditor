@@ -48,8 +48,10 @@ jobs:
           if (-not $process.WaitForExit(60000)) { $process.Kill(); throw 'Executable startup timed out' }
           if ($process.ExitCode -ne 0) { throw 'Executable startup failed' }
           $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
+          $expectedGames = [int](python -c "from catalog import GAMES; print(len(GAMES))")
+          if ($LASTEXITCODE -ne 0) { throw 'Could not read the game catalogue' }
           $config = Get-Content release.json -Raw | ConvertFrom-Json
-          if (-not $result.cryptoReady -or -not $result.frozen -or -not $result.icon -or $result.version -ne $config.version -or $result.games -ne 10 -or $result.ror2Unlocks -ne 454 -or $result.covers.PSObject.Properties.Value -contains $false) { throw 'Packaged resources are incomplete' }
+          if (-not $result.cryptoReady -or -not $result.frozen -or -not $result.icon -or $result.version -ne $config.version -or $result.games -ne $expectedGames -or $result.ror2Unlocks -ne 454 -or $result.covers.PSObject.Properties.Value -contains $false) { throw 'Packaged resources are incomplete' }
           if (-not $result.platformIcons.steam) { throw 'Packaged Steam logo is missing' }
       - name: Preserve previous history
         shell: pwsh
