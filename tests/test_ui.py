@@ -1,4 +1,5 @@
 import os
+import struct
 os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
 import tempfile
 import unittest
@@ -50,7 +51,7 @@ class InterfaceTests(unittest.TestCase):
         self.assertIn('Experimental',w.game_cards['maxpayne'].toolTip())
         w.platform_filter.setCurrentIndex(0)
         w.set_filter('ready');self.assertEqual(set(w.visible_games),set(BY_ID))
-        w.search.setText('XP');self.assertEqual(set(w.visible_games),{'bbs','ddd','kh2','kh3','recom','webfishing'})
+        w.search.setText('XP');self.assertEqual(set(w.visible_games),{'bbs','ddd','kh1','kh2','kh3','recom','webfishing'})
         w.search.clear()
         w.set_filter('pending');self.assertEqual(len(w.visible_games),0)
         w.collection('KINGDOM HEARTS');self.assertEqual(len(w.visible_games),6)
@@ -361,12 +362,12 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(w.path,self.source)
         self.assertEqual(w.stack.currentIndex(),1)
 
-    def test_re4_uhd_opens_in_three_categories_and_updates_mode_mirrors(self):
+    def test_re4_uhd_without_inventory_opens_relevant_categories_and_updates_mode_mirrors(self):
         from test_re4_uhd import fixture
         path=self.root/'savegame00.sav';original=fixture();path.write_bytes(original)
         w=self.window;w.open_path(path)
         self.assertEqual(w.save.game,'re4_2005')
-        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Characters','Records'])
+        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Characters'])
         w.inputs[(0,'money')].setText('55555');w.inputs[(0,'difficulty')].setCurrentIndex(3)
         output=w.save.patched(w.validated_changes())
         self.assertFalse(Save(output,'re4_2005').warnings)
@@ -374,6 +375,40 @@ class InterfaceTests(unittest.TestCase):
         w.show_favorites();w.toggle_favorite('re4_2005')
         self.assertEqual(w.validated_changes(),{(0,'money'):55555,(0,'difficulty'):3})
         w.show_editor();self.assertEqual(w.stack.currentIndex(),1)
+
+    def test_party_equipment_and_abilities_are_inside_character_selector(self):
+        from test_expansion import kh_fixture
+        raw,*_=kh_fixture('kh2');path=self.root/'KHIIFM_WW.png';path.write_bytes(raw)
+        w=self.window;w.load('kh2',path)
+        selectors=[entry for entry in w.findChildren(QComboBox) if entry.objectName()=='sectionSelector']
+        self.assertTrue(any(entry.findText('Riku')>=0 for entry in selectors))
+        key=(0,'character:0:ability:0');entry=w.inputs[key]
+        entry.setCurrentIndex(entry.findText('Guard · Unequipped'))
+        output=w.save.patched(w.validated_changes())
+        field=next(f for f in w.save.slots[0].fields if f.key==key[1])
+        self.assertEqual(struct.unpack_from('<H',output,field.offset)[0],82)
+        self.assertEqual(path.read_bytes(),raw)
+        self.assertEqual(w.tabs.count(),3)
+
+    def test_elden_add_item_and_re4_upgrade_controls_reparse_without_writing_source(self):
+        from test_expansion import elden_ready,re4_ready
+        for game,name,raw,key,value in (('eldenring','ER0000.sl2',elden_ready(),'add_goods:190',5),
+                                         ('re4_2005','savegame00.sav',re4_ready(),'weapon:0:0',7)):
+            path=self.root/name;path.write_bytes(raw);w=self.window;w.load(game,path)
+            w.inputs[(0,key)].setText(str(value))
+            output=w.save.patched(w.validated_changes());parsed=Save(output,game)
+            self.assertFalse(parsed.warnings);self.assertEqual(path.read_bytes(),raw)
+            self.assertEqual(w.tabs.count(),3)
+            w.edits.clear()
+
+    def test_re6_skill_dropdown_preserves_numeric_encoding_and_other_sets(self):
+        from test_re6 import fixture
+        path=self.root/'savedata.bin';raw=fixture();path.write_bytes(raw)
+        w=self.window;w.load('re6',path);key=(0,'skill:Campaign skills:0')
+        entry=w.inputs[key];entry.setCurrentIndex(entry.findText('Firearm · Level 3'))
+        output=w.save.patched(w.validated_changes())
+        self.assertEqual(struct.unpack_from('<I',output,1920)[0],3)
+        self.assertEqual(output[2344:2440],raw[2344:2440])
 
     def test_elden_ring_categories_calculated_fields_and_character_edits(self):
         from test_elden_ring import fixture

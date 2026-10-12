@@ -19,6 +19,8 @@ from kh2_items import ITEM_NAMES as KH2_ITEM_NAMES
 from ror2_unlocks import UNLOCK_IDS, unlock_group, unlock_label
 from alice_profile import AliceProfile
 from alice_config import AliceConfig
+from kh_party import PartyEditor, KH1_CHARACTERS, KH2_CHARACTERS
+from kh_party_tables import KH2_ABILITIES, KH2_EQUIPMENT
 
 MAX_SIZE = 64 * 1024 * 1024
 
@@ -202,7 +204,7 @@ class Save:
             try:self.elden_ring=EldenRingSave(raw,Field,Slot)
             except (ValueError,struct.error) as error:raise FormatError(str(error)) from error
             self.slots=self.elden_ring.slots;self.warnings=self.elden_ring.warnings
-            self.notes=['Original Elden Ring Steam SL2 files. Select a character to edit runes, attributes, current vitals and existing supported item stacks. Level, lifetime runes, menu summaries and integrity checks update automatically. Close the game before applying. Experimental: edited saves still need in-game verification. Use edited saves offline; online compatibility is not guaranteed.']
+            self.notes=['Original Elden Ring Steam SL2 files. Select a character to edit progression, supported stacks, held-goods additions, verified weapon upgrades and NG+ scaling. Related item registry, counters, menu data and integrity checks synchronize when needed. NG+ scaling does not restart the story. Close the game before applying. Experimental: edited saves still need in-game verification. Use edited saves offline; online compatibility is not guaranteed.']
         elif game == 're4_2005':
             from re4_uhd import Re4UhdSave
             try:self.re4_uhd=Re4UhdSave(raw,Field,Slot)
@@ -381,6 +383,7 @@ class Save:
         self.slots = [Slot(f'Steam profile · {len(unlocked)} unlocks',fields)]
 
     def _kh1(self):
+        self.party=PartyEditor(self.raw,'kh1',Field)
         chunks = png_chunks(self.raw, allow_sqex_crc=True)
         regions = [(start,end) for name,start,end in chunks if name == b'sqEX']
         if len(regions) != 1:
@@ -424,6 +427,8 @@ class Save:
                 offset=record+0x499+item_id
                 group={'Synthesis':'Materials','Accessory':'Accessories','Keyblade':'Weapons','Staff':'Weapons','Shield':'Weapons'}.get(category,'Items')
                 fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group))
+            for character in range(len(KH1_CHARACTERS)):
+                self.party.character(fields,len(self.slots),record,character)
             level = self.raw[record+4]
             self.slots.append(Slot(f'{name or str(index+1)} · Sora level {level}',fields))
         if not self.slots:
@@ -449,6 +454,7 @@ class Save:
         return checksum ^ 0xffffffff
 
     def _kh2(self):
+        self.party=PartyEditor(self.raw,'kh2',Field)
         chunks = png_chunks(self.raw, allow_sqex_crc=True)
         regions = [(start,end) for name,start,end in chunks if name == b'sqEX']
         if len(regions) != 1:
@@ -467,7 +473,7 @@ class Save:
         for index in range(0xf0):
             table[index] ^= key[index % 16]
         base = archive + table_size
-        character_names = ('Sora','Donald','Goofy')
+        character_names = KH2_CHARACTERS
         form_names = ('Valor','Wisdom','Limit','Master','Final','Antiform','Lion','Unused 7','Unused 8','Roxas')
         for index in range(entry_count):
             descriptor = index * 0x158
@@ -488,7 +494,7 @@ class Save:
                 raise FormatError('The KH2 record header is invalid.')
             expected_checksum=struct.unpack_from('<I',self.raw,record+8)[0]
             if expected_checksum!=self._kh2_checksum(self.raw[record:record+stride]):
-                self.warnings.append(f'Slot {index+1}: internal checksum does not match. Enable integrity repair to export a copy.')
+                self.warnings.append(f'Slot {index+1}: internal checksum does not match. Enable integrity repair before applying changes.')
             difficulty=self.raw[record+0x2498]
             if difficulty not in (0,1,2,3):
                 raise FormatError(f'Slot {index+1}: unsupported KH II Final Mix difficulty value.')
@@ -505,6 +511,7 @@ class Save:
             ]
             for character,name in enumerate(character_names):
                 offset = record + 0x24f0 + character * 0x114
+                if character>=3 and not self.raw[offset+15]:continue
                 for delta,key_name,label,low,high in (
                     (4,'hp_current','Current HP',0,255),(5,'hp_max','Maximum HP',1,255),
                     (6,'mp_current','Current MP',0,255),(7,'mp_max','Maximum MP',0,255),
@@ -513,12 +520,20 @@ class Save:
                     (15,'level','Level',1,99),
                 ):
                     fields.append(Field(f'character:{character}:{key_name}',f'{name} · {label}',self.raw[offset+delta],offset+delta,'<B',low,high,'Characters'))
+                self.party.character(fields,len(self.slots),record,character)
             for form,name in enumerate(form_names):
                 offset = record + 0x32f4 + form * 0x38
                 fields.extend((
                     Field(f'form:{form}:level',f'{name} · Level',self.raw[offset+2],offset+2,'<B',0,7,'Drive Forms'),
                     Field(f'form:{form}:experience',f'{name} · Experience',struct.unpack_from('<I',self.raw,offset+4)[0],offset+4,'<I',0,99999999,'Drive Forms'),
                 ))
+                if form<5:
+                    weapons={i:title for i,(title,kind) in KH2_EQUIPMENT.items() if kind=='Keyblade'}
+                    if not struct.unpack_from('<H',self.raw,offset)[0]:weapons[0]='Empty'
+                    self.party.choice(fields,len(self.slots),f'form:{form}:weapon',name+' · Weapon',offset,'<H',weapons,'Equipment',
+                                      'Changes the saved form weapon only. Stock quantities and form-unlock records are preserved.')
+                    self.party.abilities(fields,len(self.slots),f'form:{form}',name,offset+8,24,'<H',
+                                         {i:title for i,(title,kind) in KH2_ABILITIES.items()},0x8000)
             for item_id in range(320):
                 offset = record + 0x3580 + item_id
                 item_name = KH2_ITEM_NAMES.get(item_id,f'Unidentified item · ID {item_id:03d}')
@@ -634,6 +649,8 @@ class Save:
                 )
                 text = text[:closing]+additions+text[closing:]
             result = bytearray(text.encode('utf-8'))
+        if self.game in ('kh1','kh2'):
+            result=self.party.finish(result,changes)
         for start,end in self.crc_regions:
             if self.game == 'kh2':
                 changed_slots={index for index,key in changes}
@@ -652,6 +669,8 @@ class Save:
             else:
                 expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
             actual=next((f.value for f in check.slots[index].fields if f.key == key),None)
+            if actual is None and self.game=='eldenring' and key.startswith('add_goods:'):
+                actual=check.elden_ring.added_amount(index,key)
             if actual is None and self.game=='alice' and not field.fmt:
                 kind,_,identifier=key.partition(':')
                 if kind in getattr(check.alice,'lists',{}):

@@ -31,7 +31,9 @@ Initial fields are Skill Points, Mercenaries character/costume and stage
 unlock bits, No Mercy stage bits and quantities in existing character loadouts.
 Weapon IDs and their upper flag bits are preserved. Supply quantities have a
 minimum of 1; creating, removing or reassigning items is outside this scope.
-Skills, difficulty, story progress, records and Serpent Emblems are retained.
+v0.18 adds equipped campaign/Mercenaries skill selectors; purchase/unlock state,
+mode-specific skills, difficulty, story progress, records and Serpent Emblems
+are retained. See [skill bounds and limitations](EDITOR_EXPANSION.md).
 In particular, a native emblem byte can be 3; it must not be treated as a plain
 0/1 flag based on a different editor's simplified control.
 

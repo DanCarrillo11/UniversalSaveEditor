@@ -43,7 +43,7 @@ class Re4UhdTests(unittest.TestCase):
         save=Save(self.raw,'re4_2005')
         self.assertEqual([slot.name for slot in save.slots],['Slot 1','Slot 5'])
         self.assertFalse(save.warnings);self.assertEqual(save.patched({}),self.raw)
-        self.assertEqual([c.name for c in organize_fields('re4_2005',save.slots[0].fields)],['Progress','Characters','Records'])
+        self.assertEqual([c.name for c in organize_fields('re4_2005',save.slots[0].fields)],['Progress','Characters'])
 
     def test_money_patch_only_changes_requested_slot_field_and_two_crcs(self):
         save=Save(self.raw,'re4_2005');output=save.patched({(1,'money'):45678})

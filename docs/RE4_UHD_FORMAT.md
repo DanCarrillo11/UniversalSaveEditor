@@ -2,8 +2,9 @@
 
 Initial experimental scope: Pesetas, saved difficulty, player/Ashley health,
 number of saves and completed rounds, and continue/kill/hit/shot counters.
-This is a save editor, not a runtime trainer. No inventory identities, weapon
-upgrades, costumes, unlock flags, player coordinates or room state are changed.
+v0.18 adds existing case quantities and known weapon tune-up tiers; identities,
+case geometry, loaded rounds, costumes, unlock flags and room state are preserved.
+See [case layout and limits](EDITOR_EXPANSION.md).
 
 ## Verified container
 

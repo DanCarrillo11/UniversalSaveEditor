@@ -4,6 +4,7 @@ UHD offsets and CRC ranges were verified on a local file. Runtime property
 names were cross-checked with nipkownix/re4_tweaks; see docs/RE4_UHD_FORMAT.md.
 """
 import struct
+from re4_items import WEAPONS, QUANTITIES
 
 FILE_SIZE=1047200
 FIRST_SLOT=0x1EE8
@@ -12,6 +13,8 @@ SLOT_COUNT=20
 VERSION=0x402
 DIFFICULTIES=(1,3,5,6)
 DIFFICULTY_NAMES=('Very Easy','Easy','Normal','Professional')
+INVENTORY=0x373c
+ITEM_COUNT=384
 
 
 def _crc_table():
@@ -37,7 +40,7 @@ def checksum(data):
 class Re4UhdSave:
     def __init__(self,raw,field_type,slot_type):
         if len(raw)!=FILE_SIZE:raise ValueError('Unsupported Resident Evil 4 (2005) Steam save size.')
-        self.slots=[];self.records=[];self.warnings=[]
+        self.slots=[];self.records=[];self.warnings=[];self.upgrades={}
         for physical_slot in range(SLOT_COUNT):
             base=FIRST_SLOT+physical_slot*SLOT_SIZE
             record=raw[base:base+SLOT_SIZE]
@@ -77,10 +80,36 @@ class Re4UhdSave:
                 ('chapter_shots','Current chapter shots',0x3518,'<I'),
                 ('total_shots','Total shots',0x351C,'<I'),
             ):add(key,label,offset,fmt,0,65535 if fmt=='<H' else 99999999,'Combat statistics')
+            for entry in range(ITEM_COUNT):
+                off=INVENTORY+entry*12
+                identifier,word,loaded=struct.unpack_from('<3H',record,off)
+                if not record[off+11]&1:continue # Only physical case entries, not residual/quest records.
+                if identifier in WEAPONS:
+                    name,limits=WEAPONS[identifier]
+                    for part,(label,maximum) in enumerate(zip(('Firepower','Firing speed','Reload speed','Capacity'),limits)):
+                        value=((word>>(part*4))&15)+1
+                        key=f'weapon:{entry}:{part}'
+                        supported=value<=maximum
+                        fields.append(field_type(key,f'{name} · {label}',value,base+off+2,'',value if part==3 else 1,max(value,maximum),'Weapon upgrades',readonly=not supported,
+                            note=f'Case entry {entry+1}. Capacity can only increase to preserve loaded ammunition. Item identity, exclusive prerequisites, case position and rotation are preserved. Unknown upgrade tiers remain read-only.'))
+                        if supported:self.upgrades[len(self.slots),key]=(base+off+2,part)
+                    fields.append(field_type(f'weapon:{entry}:loaded',name+' · Loaded ammunition',loaded>>3,base+off+4,'',0,8191,'Weapon upgrades',readonly=True,
+                        note='Loaded rounds and their low flag bits are preserved; reserve ammunition stacks can be edited separately.'))
+                elif identifier in QUANTITIES:
+                    name,limit,group=QUANTITIES[identifier]
+                    if not word:continue
+                    fields.append(field_type(f'case:{entry}',name,word,base+off+2,'<H',1,max(word,limit),group,
+                        note=f'Existing case entry {entry+1}. Item identity, placement, rotation, flags and record count are preserved; zero/deletion and new case objects are not supported.'))
             self.slots.append(slot_type(f'Slot {physical_slot+1}',fields));self.records.append(base)
         if not self.slots:raise ValueError('No populated RE4 UHD save slots found. Save at a typewriter first.')
 
     def finish(self,result,changes,repair_crc):
+        for key,value in changes.items():
+            if key not in self.upgrades:continue
+            offset,part=self.upgrades[key]
+            original=struct.unpack_from('<H',result,offset)[0]
+            mask=15<<(part*4)
+            struct.pack_into('<H',result,offset,(original&~mask)|((value-1)<<(part*4)))
         touched={index for index,key in changes}
         for index,slot in enumerate(self.slots):
             values={field.key:changes.get((index,field.key),field.value) for field in slot.fields}

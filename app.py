@@ -1082,6 +1082,18 @@ def main():
             except Exception:
                 usability_ready=False
             crypto_ready=crypto_ready and usability_ready
+            try:
+                from kh_party_tables import KH1_ABILITIES,KH2_ABILITIES
+                from elden_weapons import WEAPONS
+                from elden_registry import registry_records
+                from re4_items import WEAPONS as RE4_WEAPONS
+                from re6_skills import SKILLS
+                expansion_ready=(KH1_ABILITIES[10]=='Scan' and KH2_ABILITIES[82][0]=='Guard'
+                                 and WEAPONS[1000000][1]==25 and RE4_WEAPONS[35][0]=='Handgun'
+                                 and SKILLS[3]=='Firearm · Level 3' and registry_records(bytes(8),0)==[])
+            except Exception:
+                expansion_ready=False
+            crypto_ready=crypto_ready and expansion_ready
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
@@ -1092,6 +1104,7 @@ def main():
                     'residentEvilReady':resident_evil_ready,
                     'eldenRingReady':elden_ring_ready,
                     'usabilityReady':usability_ready,
+                    'expansionReady':expansion_ready,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}

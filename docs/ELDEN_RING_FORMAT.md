@@ -15,12 +15,16 @@ Automatic discovery searches `%APPDATA%/EldenRing/*/ER0000.sl2`.
 - Edit current HP, FP and stamina within the saved maximum. Derived maxima and
   base values remain unchanged and are recalculated by the game from attributes.
 - Edit quantities of existing, positive stacks of 307 named supported goods in
-  inventory and storage. Per-item carrying/storage limits apply; absent items,
-  zero stacks, unidentified entries, key items and equipment are preserved.
+  inventory and storage. Per-item carrying/storage limits apply;
+  unidentified entries and key items are preserved. See the expansion below for
+  supported depleted stacks and equipment reinforcement.
+- Add supported held goods and restore depleted stacks with native registry/counter updates.
+- Upgrade known owned armaments; matching equipped representations, menu IDs and fingerprints update together.
+- Adjust NG+ difficulty scaling without restarting the story or resetting world progress.
 - Review automatically related field changes before applying to the active file.
 
-Creating items, weapon upgrades, character/account transfers, boss/quest flags,
-Sites of Grace, NG+ and DLC unlocks are outside this initial scope. Pot/perfume
+New weapons, character/account transfers, boss/quest flags, Sites of Grace,
+starting a new journey and DLC unlocks remain outside this scope. Pot/perfume
 stocks with shared container limits are deliberately excluded. This is not full
 game support. Close the game before applying; use edited saves offline. This
 editor does not promise online compatibility or protection from game sanctions.
@@ -43,9 +47,10 @@ name/pattern search or fixed end-of-slot assumption for player fingerprints.
 Changed attributes update the saved level and its menu summary. Added runes
 update lifetime totals in both locations, with overflow checks. Six affected
 fingerprints use doubled Adler-32 over the documented little-endian field bytes.
-Equipment fingerprints and opaque padding are retained. Only affected character
+The weapon fingerprint updates only for verified equipped upgrades; other
+equipment fingerprints and opaque padding are retained. Only affected character
 MD5s and, when necessary, global MD5 are updated. Other characters, inactive
-residual slots, account IDs, settings, equipment, world/quest state, regulation
+residual slots, account IDs, settings, unedited equipment, world/quest state, regulation
 and tail bytes are preserved. Repair can explicitly update all 12 MD5s.
 
 ## Revision-261 compatibility fix
@@ -84,3 +89,5 @@ Format facts were cross-checked with [ER-Save-Lib](https://github.com/ClayAmore/
 [SaveForge's specifications](https://github.com/oisis/EldenRing-SaveForge/tree/main/spec)
 and actual public bytes. Conflicting fixed hash/profile offsets in older
 documentation were not used. See [source attribution](../SOURCES.md).
+
+See [v0.18 held creation, armament mirrors and NG+ limits](EDITOR_EXPANSION.md).

@@ -1,0 +1,103 @@
+"""Bounded party equipment and ability lists for the supported PC archives.
+
+Format facts/names adapted from KingdomSaveEditor; see SOURCES.md.
+SPDX-License-Identifier: GPL-3.0-or-later
+"""
+import struct
+from kh_items import ITEMS
+from kh_party_tables import KH1_ABILITIES, KH2_ABILITIES, KH2_EQUIPMENT
+
+KH1_CHARACTERS=('Sora','Donald','Goofy','Tarzan','Pooh','Aladdin','Ariel','Jack Skellington','Peter Pan','Beast')
+KH2_CHARACTERS=('Sora','Donald','Goofy','Mickey','Auron','Mulan','Aladdin','Jack Sparrow','Beast','Jack Skellington','Simba','Tron','Riku')
+
+
+class PartyEditor:
+    def __init__(self,raw,game,field_type):
+        self.raw,self.game,self.field_type=raw,game,field_type
+        self.encodings={}
+
+    def choice(self,fields,slot,key,label,offset,fmt,options,group,note=''):
+        original=struct.unpack_from(fmt,self.raw,offset)[0]
+        # Unknown identities are displayed but cannot be overwritten by a guess.
+        if original not in options:
+            fields.append(self.field_type(key,label,original,offset,fmt,0,65535,group,readonly=True,
+                note=f'Unidentified saved ID {original}. This entry is preserved.'))
+            return
+        values=tuple(options)
+        self.encodings[slot,key]=(offset,fmt,values)
+        fields.append(self.field_type(key,label,values.index(original),offset,'',0,len(values)-1,group,
+            choices=tuple(options[v] for v in values),note=note))
+
+    def abilities(self,fields,slot,prefix,label,base,count,fmt,names,inactive_bit):
+        size=struct.calcsize(fmt)
+        # Show existing entries plus a single empty entry for adding a new ability.
+        # Hidden unused bytes and their order are never rewritten.
+        empty_added=False
+        options={0:'Empty'}
+        for identifier,name in names.items():
+            enabled=identifier if self.game=='kh1' else identifier|inactive_bit
+            disabled=identifier|inactive_bit if self.game=='kh1' else identifier
+            options[disabled]=name+' · Unequipped'
+            options[enabled]=name+' · Equipped'
+        for index in range(count):
+            offset=base+index*size;original=struct.unpack_from(fmt,self.raw,offset)[0]
+            if original & ~inactive_bit==0:
+                if empty_added:continue
+                empty_added=True
+                # 0x80 (KH1) / 0x8000 (KH2) empty flags are retained as a choice.
+                if original:options[original]='Empty (saved flag)'
+            self.choice(fields,slot,f'{prefix}:ability:{index}',f'{label} · Ability entry {index+1}',offset,fmt,options,'Abilities',
+                'Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.')
+
+    def character(self,fields,slot,record,character):
+        kh1=self.game=='kh1';names=KH1_CHARACTERS if kh1 else KH2_CHARACTERS
+        name=names[character];prefix=f'{character}' if kh1 else f'character:{character}'
+        base=record+4+character*0x74 if kh1 else record+0x24f0+character*0x114
+        if kh1:
+            if character==4:return # Pooh is not a combat character.
+            if character>=3 and not self.raw[base]:return # Do not enable absent companions.
+            fields.append(self.field_type(prefix+':level',name+' · Level',self.raw[base],base,'<B',min(1,self.raw[base]),100,'Attributes',
+                note='Level and experience are independent saved values; starting bonuses and story unlocks are not recalculated.'))
+            xp=struct.unpack_from('<i',self.raw,base+0x3c)[0]
+            if 0<=xp<=99999999:fields.append(self.field_type(prefix+':experience',name+' · Experience',xp,base+0x3c,'<i',0,99999999,'Attributes'))
+            if character>=3:
+                for delta,key,title,low in ((1,'hp_current','Current HP',0),(2,'hp','Base HP',1),(3,'mp_current','Current MP',0),(4,'mp','Base MP',1),(5,'ap','Base AP',0),(6,'strength','Strength',0),(7,'defense','Defense',0)):
+                    fields.append(self.field_type(prefix+':'+key,name+' · '+title,self.raw[base+delta],base+delta,'<B',low,255,'Attributes'))
+            equipment={identifier:(title,kind) for identifier,title,kind in ITEMS}
+            weapon_kind=('Keyblade','Staff','Shield')[character] if character<3 else None
+            weapon=struct.unpack_from('<B',self.raw,base+0x32)[0]
+            weapons={identifier:title for identifier,(title,kind) in equipment.items() if kind==weapon_kind}
+            if weapon==0:weapons[0]='Empty'
+            self.choice(fields,slot,prefix+':weapon',name+' · Weapon',base+0x32,'<B',weapons,'Equipment',
+                'Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.')
+            for count_offset,array_offset,capacity,kind,title in ((0x18,0x19,8,'Accessory','Accessory'),(0x21,0x22,12,'Consumable','Item')):
+                count=self.raw[base+count_offset]
+                if count>capacity:continue # Preserve unsupported counts rather than making new slots.
+                options={0:'Empty',**{i:t for i,(t,k) in equipment.items() if k==kind}}
+                for index in range(count):self.choice(fields,slot,f'{prefix}:{title.lower()}:{index}',f'{name} · {title} {index+1}',base+array_offset+index,'<B',options,'Equipment',
+                    'Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.')
+            self.abilities(fields,slot,prefix,name,base+0x40,48,'<B',KH1_ABILITIES,0x80)
+        else:
+            if character>=3 and not self.raw[base+15]:return
+            equipment=KH2_EQUIPMENT
+            weapon_kind=('Keyblade','Staff','Shield')[character] if character<3 else 'Weapon'
+            weapon=struct.unpack_from('<H',self.raw,base)[0]
+            weapons={i:t for i,(t,k) in equipment.items() if k==weapon_kind and 'Unused' not in t}
+            if character>=3:weapons={weapon:equipment[weapon][0]} if weapon in equipment else {}
+            if not weapon:weapons[0]='Empty'
+            self.choice(fields,slot,prefix+':weapon',name+' · Weapon',base,'<H',weapons,'Equipment',
+                'Changes equipped equipment only. Stock quantities and world-specific weapon variants are preserved.')
+            for count_offset,array_offset,kind,title in ((16,20,'Armor','Armor'),(17,36,'Accessory','Accessory'),(18,52,'Consumable','Item')):
+                count=self.raw[base+count_offset]
+                if count>8:continue
+                options={0:'Empty',**{i:t for i,(t,k) in equipment.items() if k==kind}}
+                for index in range(count):self.choice(fields,slot,f'{prefix}:{title.lower()}:{index}',f'{name} · {title} {index+1}',base+array_offset+index*2,'<H',options,'Equipment',
+                    'Edits an already unlocked slot. Item auto-reload, inventory quantities and slot counts are preserved.')
+            self.abilities(fields,slot,prefix,name,base+84,80,'<H',{i:t for i,(t,k) in KH2_ABILITIES.items()},0x8000)
+
+    def finish(self,result,changes):
+        for key,value in changes.items():
+            if key not in self.encodings:continue
+            offset,fmt,values=self.encodings[key]
+            struct.pack_into(fmt,result,offset,values[value])
+        return result

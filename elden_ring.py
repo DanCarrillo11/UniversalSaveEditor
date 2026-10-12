@@ -9,6 +9,8 @@ import struct
 import zlib
 from elden_items import GOODS
 from collection_tables import ELDEN_CATEGORIES
+from elden_weapons import WEAPONS
+from elden_registry import register_item, registry_records
 
 SLOT_SIZE = 0x280000
 BLOCK_SIZE = SLOT_SIZE + 16
@@ -73,6 +75,8 @@ class Character:
     player: int
     profile: int
     fingerprints: int
+    registry: int
+    held: int
 
 
 class EldenRingSave:
@@ -80,6 +84,7 @@ class EldenRingSave:
         if len(raw) != FILE_SIZE or raw[:4] != b'BND4' or number(raw, 12) != 12:
             raise ValueError('Unsupported Elden Ring Steam SL2 container. Choose ER0000.sl2 from the original game.')
         self.raw, self.slots, self.characters, self.warnings = raw, [], [], []
+        self.weapon_records=[]
         self.blocks = [(0x300 + i * BLOCK_SIZE, BLOCK_SIZE) for i in range(10)]
         self.blocks += [(GLOBAL_START, 0x60010), (GLOBAL_START + 0x60010, 0x240020)]
         for index, (start, length) in enumerate(self.blocks):
@@ -104,12 +109,16 @@ class EldenRingSave:
             if not 65 <= version <= 261:
                 raise ValueError(f'Character {physical+1}: save revision {version} is not supported by this editor. Check for an application update; the file has not been changed.')
             cursor.skip(28)
+            weapons={};duplicates=set()
             for _ in range(5118 if version <= 81 else 5120):
                 handle = cursor.integer()
+                id_offset=cursor.pos
                 identifier = cursor.integer()
                 if handle >> 28 not in (0, 8, 9, 12) or (identifier != 0xffffffff and identifier >> 28 not in (0, 1, 8)):
                     raise ValueError('Unsupported Elden Ring equipment-handle table.')
                 if handle >> 28 == 8:
+                    if handle in weapons:duplicates.add(handle)
+                    weapons[handle]=(identifier,id_offset)
                     cursor.skip(12)
                     if raw[cursor.skip(1)] != 0:
                         raise ValueError('Unsupported Elden Ring weapon record.')
@@ -153,16 +162,24 @@ class EldenRingSave:
                 add(key, label, player+offset, 0, maximum, 'Vitals',
                     note='Maximum and base values are preserved; the game recalculates derived values from attributes.')
             cursor.skip(0xd0+0x58+0x1c+0x58+0x58)
+            held=cursor.pos
             self._inventory(cursor, fields, field_type, 0xa80, 0x180, 'Inventory')
             cursor.skip(116+140+24)
             cursor.array(8, 4096)  # Acquired projectile records.
+            armaments=cursor.pos
             cursor.skip(156+12+303)
+            storage=cursor.pos
             self._inventory(cursor, fields, field_type, 0x780, 0x80, 'Storage')
             cursor.skip(256)
             cursor.array(4, 4096)  # Unlocked regions are preserved.
+            cycle=cursor.pos+0x6d
+            if number(raw,cycle)<=7:
+                add('ng_cycle','NG+ cycle',cycle,0,7,'Journey',
+                    note='0 = first journey, 1 = NG+1, up to 7 = NG+7 scaling. Changes difficulty scaling only; does not restart the story or reset bosses, quests or Sites of Grace.')
             cursor.skip(117)
             cursor.menu()
-            cursor.skip(52+112008)
+            cursor.skip(52)
+            registry=cursor.skip(112008)
             cursor.menu()  # Tutorial payload.
             cursor.skip(29+0x1bf9a0)
             for maximum in (0x10000, 0x10000, 0x100000, 0x100000, 0x100000):
@@ -173,10 +190,93 @@ class EldenRingSave:
             for relative, data in self._fingerprint_data(raw, player):
                 if number(raw, fingerprints+relative) != player_hash(data):
                     raise ValueError('Unsupported Elden Ring player fingerprint. The file will not be edited.')
-            self.characters.append(Character(physical, start, player, profile, fingerprints))
+            self.characters.append(Character(physical, start, player, profile, fingerprints,registry,held))
+            records={}
+            equipped=player+0x2f4
+            owned=[]
+            for inv,capacity,location in ((held,0xa80,'Inventory'),(storage,0x780,'Storage')):
+                for n in range(capacity):
+                    off=inv+4+n*12;handle,quantity=struct.unpack_from('<2I',raw,off)
+                    if handle>>28==8 and quantity==1:owned.append((handle,location,n))
+            owned_counts={h:sum(other==h for other,_,_ in owned) for h,_,_ in owned}
+            for handle,location,entry in owned:
+                if handle in duplicates or owned_counts[handle]!=1 or handle not in weapons:continue
+                identifier,id_offset=weapons[handle]
+                base_id=identifier//10000*10000
+                table=WEAPONS.get(base_id)
+                if table is None or identifier>>28:continue
+                title,maximum=table;affinity=(identifier-base_id)//100;upgrade=(identifier-base_id)%100
+                if not 0<=affinity<=12 or (maximum==10 and affinity) or upgrade>maximum:continue
+                mirrors=[];safe=True
+                for n in range(6):
+                    if number(raw,equipped+0x58+n*4)!=handle:continue
+                    if number(raw,equipped+n*4)!=identifier or number(raw,armaments+n*4)!=identifier or number(raw,profile+382+n*4)!=handle or number(raw,profile+466+n*4)!=identifier:
+                        safe=False;break
+                    mirrors.extend((equipped+n*4,armaments+n*4,profile+466+n*4))
+                if mirrors and number(raw,fingerprints+28)!=self._weapon_hash(raw,equipped):safe=False
+                key=f'weapon:{handle:08x}'
+                fields.append(field_type(key,title+' · Upgrade',upgrade,id_offset,'',0,maximum,location,readonly=not safe,
+                    note=(f'Existing weapon · entry {entry+1} · affinity {affinity}. Preserves identity, affinity and Ash of War. Equipped copies and menu data synchronize automatically. The highest weapon level is never reduced.' if safe else
+                          'Read-only: equipped copies or the saved menu snapshot disagree. Unequip this weapon in the game and save again, or choose another verified weapon. No mismatched representation is overwritten.'),collection='Weapon upgrades'))
+                if safe:records[key]=(id_offset,identifier,handle,maximum,tuple(mirrors))
+            self.weapon_records.append(records)
+            self._creation_fields(raw,held,registry,fields,field_type)
             self.slots.append(slot_type(f'Character {physical+1} · {name}', fields))
         if not self.slots:
             raise ValueError('No active Elden Ring characters were found. Save a character in the game first.')
+
+    @staticmethod
+    def _creation_fields(raw,held,registry,fields,field_type):
+        try:registry_records(raw,registry)
+        except ValueError:return
+        entries=[struct.unpack_from('<3I',raw,held+4+i*12) for i in range(0xa80)]
+        active=sum(h not in (0,0xffffffff) for h,q,a in entries)
+        if active!=number(raw,held) or not any((h,q,a)==(0,0,0) for h,q,a in entries):return
+        present={h for h,q,a in entries if q}
+        for identifier,(name,held_limit,_) in GOODS.items():
+            if held_limit<=1 or 0xb0000000|identifier in present:continue
+            matching=[entry for entry in entries if entry[0]==0xb0000000|identifier]
+            if len(matching)>1:continue
+            fields.append(field_type(f'add_goods:{identifier}',name,0,held,'',0,held_limit,'Add items',
+                note='0 keeps this item absent. A positive amount creates a held inventory stack, registers the item and updates acquisition counters. No weapons, quest items or unknown identities are created.',collection=ELDEN_CATEGORIES[identifier]))
+
+    def added_amount(self,index,key):
+        identifier=int(key.split(':')[1]);held=self.characters[index].held
+        return sum(number(self.raw,held+8+i*12) for i in range(0xa80) if number(self.raw,held+4+i*12)==0xb0000000|identifier)
+
+    @staticmethod
+    def _add_goods(result,character,identifier,quantity):
+        if not quantity:return
+        start=character.held;capacity,key_capacity=0xa80,0x180
+        entries=[struct.unpack_from('<3I',result,start+4+i*12) for i in range(capacity)]
+        count=number(result,start)
+        if count!=sum(h not in (0,0xffffffff) for h,q,a in entries) or count>=capacity:
+            raise ValueError('The held inventory count is inconsistent or full. No item was added.')
+        matching=[i for i,(h,q,a) in enumerate(entries) if h==0xb0000000|identifier]
+        if matching:
+            if len(matching)!=1 or entries[matching[0]][1]:raise ValueError('This item already has an inventory record.')
+            register_item(result,character.registry,0x40000000|identifier)
+            struct.pack_into('<I',result,start+8+matching[0]*12,quantity)
+            return
+        empty=next((i for i,entry in enumerate(entries) if entry==(0,0,0)),None)
+        if empty is None:raise ValueError('No clean empty held-inventory record is available.')
+        counters=start+8+(capacity+key_capacity)*12
+        equip,acquisition=struct.unpack_from('<2I',result,counters)
+        key_start=start+8+capacity*12
+        key_entries=[struct.unpack_from('<3I',result,key_start+i*12) for i in range(key_capacity)]
+        used=[a for h,q,a in entries+key_entries if h not in (0,0xffffffff)]
+        mark=max(432,acquisition,max(used,default=0)+1)
+        mark+=(mark%2)
+        if mark>0xfffffffc or equip==0xffffffff:raise ValueError('Item acquisition counters would overflow.')
+        register_item(result,character.registry,0x40000000|identifier)
+        struct.pack_into('<3I',result,start+4+empty*12,0xb0000000|identifier,quantity,mark+1)
+        struct.pack_into('<2I',result,counters,equip+1,mark+2)
+        struct.pack_into('<I',result,start,count+1)
+
+    @staticmethod
+    def _weapon_hash(raw,equipped):
+        # Save order interleaves left/right arms and arrows/bolts; hash order does not.
+        return player_hash(b''.join(raw[equipped+n*4:equipped+n*4+4] for n in (0,2,4,1,3,5,6,8,7,9)))
 
     @staticmethod
     def _fingerprint_data(raw, player):
@@ -218,6 +318,22 @@ class EldenRingSave:
         for index in touched:
             character = self.characters[index]
             player = character.player
+            for (slot,key),value in changes.items():
+                if slot==index and key.startswith('add_goods:'):
+                    self._add_goods(result,character,int(key.split(':')[1]),value)
+            for (slot,key),value in changes.items():
+                if slot!=index or key not in self.weapon_records[index]:continue
+                offset,original,handle,maximum,mirrors=self.weapon_records[index][key]
+                identifier=original-original%100+value
+                if identifier==original:continue
+                register_item(result,character.registry,identifier)
+                struct.pack_into('<I',result,offset,identifier)
+                for mirror in mirrors:struct.pack_into('<I',result,mirror,identifier)
+                if mirrors:
+                    struct.pack_into('<I',result,character.fingerprints+28,self._weapon_hash(result,player+0x2f4))
+                    global_changed=True
+                matchmaking=value if maximum==25 else (0,0,5,7,10,12,15,17,20,24,25)[value]
+                result[player+0xda]=max(result[player+0xda],matchmaking)
             for key,offset,max_offset in (('hp',8,12),('fp',20,24),('stamina',36,40)):
                 if (index,key) in changes and number(result,player+offset)>number(self.raw,player+max_offset):
                     raise ValueError('Current vitals cannot be changed above the saved maximum.')

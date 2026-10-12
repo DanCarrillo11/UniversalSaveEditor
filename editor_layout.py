@@ -3,6 +3,7 @@
 SPDX-License-Identifier: GPL-3.0-or-later
 """
 from dataclasses import dataclass, field
+from kh_party import KH1_CHARACTERS, KH2_CHARACTERS
 
 
 @dataclass
@@ -58,7 +59,7 @@ def organize_fields(game, fields):
         'kh3': ('Progress', 'Characters', 'Collection'),
         'maxpayne': ('Equipment',),
         'eldenring': ('Progress', 'Character', 'Collection'),
-        're4_2005': ('Progress', 'Characters', 'Records'),
+        're4_2005': ('Progress', 'Characters', 'Collection'),
         're5': ('Progress', 'Unlocks', 'Collection'),
         're6': ('Progress', 'Unlocks', 'Collection'),
         're1_hd': ('Progress', 'Equipment', 'Collection'),
@@ -79,6 +80,7 @@ def organize_fields(game, fields):
         category, section, selection = 'Progress', group, group
         if game=='eldenring':
             if group in ('Attributes','Vitals'):category='Character'
+            elif group=='Add items':category,section,selection='Collection',item.collection or group,'Add items'
             elif group in ('Inventory','Storage'):
                 category,section,selection='Collection',item.collection or group,group
         if game=='re1_hd':
@@ -96,13 +98,15 @@ def organize_fields(game, fields):
             if group=='Library files':category='Collection'
             elif group!='Currency':category='Unlocks'
         if game=='re6':
-            if group=='Serpent emblems' or group.endswith(' supplies'):category='Collection'
+            if group=='Serpent emblems' or group.endswith((' supplies',' skills')):category='Collection'
             elif group!='Currency':category='Unlocks'
         if game=='re4_2005':
             if group in ('Player health','Ashley health'):
                 category,section,selection='Characters','Health','Ashley' if group=='Ashley health' else 'Player'
             elif group in ('Save statistics','Combat statistics'):
-                category,section,selection='Records',group,group
+                category,section,selection='Progress',group,group
+            elif group in ('Weapon upgrades','Ammunition','Consumables'):
+                category,section,selection='Collection',group,group
         if game in ('kh1', 'kh2'):
             if item.key.startswith('inventory:'):
                 category = 'Collection'
@@ -114,10 +118,10 @@ def organize_fields(game, fields):
             elif item.key.startswith('form:'):
                 category, selection = 'Characters', 'Sora'
                 section = item.label.split(' · ')[0] + ' form'
-            elif item.key.startswith('character:') or item.key.split(':')[0] in ('0', '1', '2'):
+            elif item.key.startswith('character:') or item.key.split(':')[0] in tuple(str(i) for i in range(10)):
                 character = int(item.key.split(':')[1] if game == 'kh2' else item.key.split(':')[0])
-                selection = ('Sora', 'Donald', 'Goofy')[character]
-                category, section = 'Characters', 'Attributes'
+                selection = (KH2_CHARACTERS if game=='kh2' else KH1_CHARACTERS)[character]
+                category, section = 'Characters', group if group in ('Equipment','Abilities') else 'Attributes'
             elif item.key.startswith('drive_'):
                 category, section, selection = 'Characters', 'Drive Gauge', 'Sora'
             else:

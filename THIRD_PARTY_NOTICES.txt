@@ -462,3 +462,12 @@ BFlorry/KingdomSaveEditor MaterialType.cs under GPL-3.0-or-later.
 Copyright (C) 2020 Luciano Ciccariello. Full GPL v3 text: LICENSE.
 Elden collection categories follow the previously attributed GPL v3 SaveForge
 goods tables. See SOURCES.md for the original files and adaptation boundaries.
+
+Expanded KH and Elden party/equipment tables
+------------------------------------------
+kh_party_tables.py adapts Xeeynamo/KingdomSaveEditor ability/equipment tables,
+GPL-3.0, Copyright (C) 2020 Luciano Ciccariello.
+elden_weapons.py adapts oisis/EldenRing-SaveForge armament names and reinforce
+limits under GPL v3. Both adaptations are GPL-3.0-or-later; full text: LICENSE.
+No upstream RE4/RE6 implementation or generated SDK assets are incorporated.
+See SOURCES.md for references, modifications and boundaries.

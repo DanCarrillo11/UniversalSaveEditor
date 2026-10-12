@@ -131,3 +131,29 @@ code are not bundled. Missing or ambiguous identities do not receive names.
 Compatibility evidence summarizes this repository's format documents and the
 author's WEBFISHING currency report; it does not infer gameplay confirmation
 from an automated test pass. See docs/SUPPORT_AND_HISTORY.md.
+
+## v0.18 party and inventory expansion
+
+- `kh_party_tables.py` adapts factual ability/equipment IDs, names and categories
+  from Xeeynamo/KingdomSaveEditor at `37a7a9dde19463a0d5f0c9588c634d6129e536f6`,
+  `KHSave.Lib1/Types/AbilityType.cs` and `KHSave.Lib2/Types/EquipmentType.cs`,
+  GPL-3.0, Copyright (C) 2020 Luciano Ciccariello. Character and DriveForm models
+  cross-check fixed array bounds; the two ability view-models confirm the opposite
+  equipped bits. The bounded Python party adapter and choice translation are new.
+- `elden_weapons.py` adapts 487 base armament names/reinforcement limits from
+  oisis/EldenRing-SaveForge's GPL v3 `melee_armaments.go`, `shields.go` and
+  `ranged_and_catalysts.go`. Affinity IDs, icons and descriptions are not bundled.
+  Native registry/counter facts, NG+ location and equipped mirrors were independently
+  cross-checked against its specifications, regressions, current Kamikaz07 structures
+  and public PC files; the bounded reader/patcher is independent.
+- `re4_items.py` independently records factual item IDs/names and bounded tier limits,
+  compared with nipkownix/re4_tweaks's `SDK/item.h` and `GameFlags.cpp`, and
+  dubiousnerd/re4vr-save-editor's documented standard tune-up presets. VR addresses
+  are not used as PC addresses; the 12-byte native case region was checked in all
+  four local UHD slots. Neither editor's implementation is incorporated.
+- `re6_skills.py` independently formats common factual IDs 0..60, cross-checked with
+  lightningdotnet/resident-evil-6-save-editor `tables.h`/`fields.cpp` and a public
+  native PC profile. Mode-specific skills, generated tables and purchase masks
+  are not incorporated or claimed as understood.
+
+See docs/EDITOR_EXPANSION.md for the editable boundaries and validation limits.

@@ -4,6 +4,7 @@ Format offsets: lightningdotnet/resident-evil-6-save-editor; independently
 cross-checked with a public Steam profile. No upstream code is bundled.
 """
 import struct
+from re6_skills import SKILLS
 
 FILE_SIZE=39416
 VERSION=bytes.fromhex('01180712')
@@ -23,13 +24,23 @@ def looks_like_re6(raw):
 class Re6Save:
     def __init__(self,raw,field_type):
         if not looks_like_re6(raw):raise ValueError('Unsupported Resident Evil 6 PC profile layout.')
-        self.raw=bytes(raw);self.fields=[];self.operations={};self.warnings=[]
+        self.raw=bytes(raw);self.fields=[];self.operations={};self.warnings=[];self.skill_operations={}
         if struct.unpack_from('<I',raw,8)[0]!=checksum(raw):
             self.warnings=['The RE6 profile integrity check does not match. Applying requires explicit integrity repair.']
         points=struct.unpack_from('<I',raw,1804)[0]
         if points>9999999:raise ValueError('Unsupported RE6 skill point balance.')
         self.fields.append(field_type('skill_points','Skill points',points,1804,'',0,9999999,'Currency'))
         self.operations['skill_points']=(1804,'<I',None)
+        for group,base,sets in (('Campaign skills',1920,1),('Mercenaries skills',2344,8)):
+            for index in range(sets*3):
+                offset=base+index*4;identifier=struct.unpack_from('<I',raw,offset)[0]
+                key=f'skill:{group}:{index}'
+                options=dict(SKILLS)
+                if identifier not in options:options[identifier]=f'Existing skill ID {identifier} (preserved)'
+                values=tuple(options)
+                self.fields.append(field_type(key,f'Skill {index%3+1}'+(f' · Set {index//3+1}' if sets>1 else ''),values.index(identifier),offset,'',0,len(values)-1,group,
+                    choices=tuple(options[v] for v in values),note='Changes this equipped skill slot only. Purchase/unlock records, game settings, stages and mode-specific skills are preserved; no purchase or infinite-ammo unlock is implied.'))
+                self.skill_operations[key]=(offset,values)
         def flag(key,label,offset,bit,group,fmt='<B'):
             value=struct.unpack_from(fmt,raw,offset)[0]
             self.fields.append(field_type(key,label,(value>>bit)&1,offset,'',0,1,group,boolean=True))
@@ -59,6 +70,9 @@ class Re6Save:
     def patch(self,changes):
         result=bytearray(self.raw)
         for key,value in changes.items():
+            if key in self.skill_operations:
+                offset,values=self.skill_operations[key]
+                struct.pack_into('<I',result,offset,values[value]);continue
             if key not in self.operations:raise ValueError('Unauthorized RE6 field.')
             offset,fmt,bit=self.operations[key]
             if bit is not None:
