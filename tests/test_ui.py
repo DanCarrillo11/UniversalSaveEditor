@@ -727,6 +727,29 @@ class InterfaceTests(unittest.TestCase):
                 self.assertEqual(next(f.value for f in Save(updated,game).slots[0].fields if f.key==key),150)
                 w.edits={}
 
+    def test_original_item_sprites_search_and_editing(self):
+        from test_item_art import fixture
+        from item_art import item_pixmap
+        raw=fixture();path=self.root/'data001Slot.bin';path.write_bytes(raw)
+        w=self.window;self.assertTrue(w.load('re2',path))
+        sprites=w.findChildren(QLabel,'itemSprite');self.assertEqual(len(sprites),3)
+        self.assertTrue(all(not s.pixmap().isNull() for s in sprites))
+        search=w.tabs.currentWidget().findChild(QLineEdit,'fieldSearch')
+        search.setText('Handgun Ammo')
+        self.assertFalse(w.inputs[(0,w.save.slots[0].fields[0].key)]._field_row.isHidden())
+        self.assertTrue(w.inputs[(0,w.save.slots[0].fields[1].key)]._field_row.isHidden())
+        search.clear()
+        self.assertTrue(item_pixmap('re3',15).isNull())
+        self.assertTrue(item_pixmap('re2',9999).isNull())
+        field=w.save.slots[0].fields[0]
+        w.inputs[(0,field.key)].setText('55')
+        out=w.save.patched(w.validated_changes())
+        self.assertEqual(Save(out,'re2').slots[0].fields[0].value,55)
+        self.assertEqual(path.read_bytes(),raw)
+        for theme in ('light','dark'):
+            if w.theme!=theme:w.toggle_theme()
+            self.assertTrue(all(not s.pixmap().isNull() for s in sprites))
+
     def test_village_editor_cover_context_flags_and_readonly_items(self):
         from test_village import fixture
         raw=fixture();path=self.root/'data001Slot.bin';path.write_bytes(raw)

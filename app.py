@@ -679,9 +679,17 @@ class Window(QMainWindow):
 
     def build_field_row(self,field):
         row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
+        from item_art import item_pixmap,item_art
+        pixmap=item_pixmap(self.save.game,field.item_id)
+        if not pixmap.isNull():
+            artwork=QLabel();artwork.setObjectName('itemSprite');artwork.setFixedSize(72,72)
+            artwork.setAlignment(Qt.AlignmentFlag.AlignCenter);artwork.setPixmap(pixmap)
+            art=item_art(self.save.game,field.item_id)
+            artwork.setAccessibleName(f'Original game icon: {art.name}')
+            artwork.setToolTip(art.name);line.addWidget(artwork)
         caption=QVBoxLayout();caption.addWidget(label(field.label))
         if field.readonly:
-            caption.addWidget(label('Calculated automatically when changes are applied','small',True))
+            caption.addWidget(label('Read-only · preserved when changes are applied','small',True))
         elif field.fmt == 'xml-unlock' or field.boolean or field.choices:
             caption.addWidget(label(f'Original: {value_text(field,field.value)}  ·  {field.key.removeprefix("unlock:")}','small',True))
         else:
@@ -1104,6 +1112,14 @@ def main():
             except Exception:
                 village_ready=False
             crypto_ready=crypto_ready and village_ready
+            try:
+                from item_art import catalogue,item_art,item_pixmap
+                item_icons_ready=(len(catalogue())==27 and item_art('re2',15).name=='Handgun Ammo'
+                                  and not item_pixmap('re2',15).isNull() and item_pixmap('re3',15).isNull()
+                                  and item_pixmap('re2',9999).isNull())
+            except Exception:
+                item_icons_ready=False
+            crypto_ready=crypto_ready and item_icons_ready
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
@@ -1116,6 +1132,8 @@ def main():
                     'usabilityReady':usability_ready,
                     'expansionReady':expansion_ready,
                     'villageReady':village_ready,
+                    'itemIconsReady':item_icons_ready,
+                    'itemIconCount':len(catalogue()) if item_icons_ready else 0,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
                     'frozen':bool(getattr(sys,'frozen',False))}

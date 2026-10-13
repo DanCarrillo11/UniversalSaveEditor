@@ -21,8 +21,9 @@ Files without recognized fields are rejected with an explanation.
 
 ## Scope
 
-Collections are numbered by their saved order; labels are not a complete named
-item catalogue. Existing quantities stay within 1–999 and do not change item
+Collections are numbered by their saved order. RE2 has 27 named supplies with
+original game icons; see [artwork scope](ITEM_ARTWORK.md). Other entries do not
+receive guessed names or images. Existing quantities stay within 1–999 and do not change item
 identity, equipment references, slot count or array lengths. Inventory counters
 must be descendants of the game's inventory save object: scene objects and
 enemy inventories are excluded. Player HP uses a player-specific class, never

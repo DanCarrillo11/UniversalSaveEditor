@@ -43,6 +43,7 @@ class Field:
     note: str = ''
     readonly: bool = False
     collection: str = ''
+    item_id: int | None = None
 
     def parse(self, text):
         try:

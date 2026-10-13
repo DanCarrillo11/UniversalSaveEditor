@@ -79,5 +79,6 @@ QCheckBox { background: transparent; spacing: 8px; }
 QCheckBox::indicator { width: 17px; height: 17px; border: 1px solid @muted@; border-radius: 5px; background: @surface@; }
 QCheckBox::indicator:checked { background: @accent@; border-color: @accent@; image: url("@checkIcon@"); }
 QToolTip { background: @surface@; color: @text@; border: 1px solid @line@; padding: 8px; }
+QLabel#itemSprite { background: #242426; border: 1px solid @line@; border-radius: 12px; }
 QStatusBar { background: @canvas@; border-top: 1px solid @line@; color: @muted@; font-size: 11px; }
 QTextEdit { background: @surface@; border: 1px solid @line@; border-radius: 12px; padding: 12px; }

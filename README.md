@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.19.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.20.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -16,6 +16,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- Original RE2 Remake inventory artwork: 27 mapped supplies with game icons, English names and collection groups. Exact source pixels, no AI images. Unknown items and other editions keep their existing text display; see [artwork sources and coverage](docs/ITEM_ARTWORK.md).
 
 - [Resident Evil Village](docs/RE8_FORMAT.md): Lei, CP, current health, existing stacks and separate extra-content flags. Experimental Steam adapter; native Steam and in-game validation pending.
 
@@ -78,8 +80,9 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 All Resident Evil adapters use direct apply and retain the original account and
 unrelated bytes. Their scope is deliberately limited to recognized fields.
 **No edited Resident Evil save has been validated by loading it in-game.**
-Numbered RE Engine collection entries follow saved order; this is not yet a fully
-named catalogue. System profiles and gameplay slots expose different fields.
+Numbered RE Engine collection entries follow saved order. RE2 has 27 named
+supplies with original icons; other entries remain unmapped. System profiles
+and gameplay slots expose different fields.
 RE4 Remake and Requiem detect the original SteamID64 from normal save paths;
 copied saves need their original creator's ID. DLC ownership remains necessary.
 RE0's encryption and section table have been researched, but editing is pending.

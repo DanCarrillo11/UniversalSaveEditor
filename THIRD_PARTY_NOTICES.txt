@@ -471,3 +471,14 @@ elden_weapons.py adapts oisis/EldenRing-SaveForge armament names and reinforce
 limits under GPL v3. Both adaptations are GPL-3.0-or-later; full text: LICENSE.
 No upstream RE4/RE6 implementation or generated SDK assets are incorporated.
 See SOURCES.md for references, modifications and boundaries.
+
+Original RE2 supply icons and coordinate table
+--------------------------------------------
+The 27-item coordinate/ID table adapts Squirrelies/RE2REmakeSRT at
+07db9f610553e6a95cee24aeac99cd1bc6c48e19 under MIT.
+Copyright (c) 2019 Travis J. Gutjahr.
+Full notice: assets/items/RE2_SRT_LICENSE.txt.
+Original inventory artwork belongs to CAPCOM CO., LTD. and is outside the
+source-code license. No Capcom license or endorsement is implied by the
+upstream software license. The first two rows are cropped without altering
+their source pixels. Hashes and attribution: assets/items/manifest.json.

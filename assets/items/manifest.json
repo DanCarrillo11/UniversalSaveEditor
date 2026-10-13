@@ -1,0 +1,319 @@
+{
+  "schema": 1,
+  "games": {
+    "re2": {
+      "1": {
+        "name": "First Aid Spray",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          0,
+          0,
+          112,
+          112
+        ]
+      },
+      "5": {
+        "name": "Mixed Herb (G+G)",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          448,
+          0,
+          112,
+          112
+        ]
+      },
+      "6": {
+        "name": "Mixed Herb (G+R)",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          560,
+          0,
+          112,
+          112
+        ]
+      },
+      "7": {
+        "name": "Mixed Herb (G+B)",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          672,
+          0,
+          112,
+          112
+        ]
+      },
+      "8": {
+        "name": "Mixed Herb (G+G+B)",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          784,
+          0,
+          112,
+          112
+        ]
+      },
+      "9": {
+        "name": "Mixed Herb (G+G+G)",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          896,
+          0,
+          112,
+          112
+        ]
+      },
+      "10": {
+        "name": "Mixed Herb (G+R+B)",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1008,
+          0,
+          112,
+          112
+        ]
+      },
+      "11": {
+        "name": "Mixed Herb (R+B)",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1120,
+          0,
+          112,
+          112
+        ]
+      },
+      "2": {
+        "name": "Green Herb",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1232,
+          0,
+          112,
+          112
+        ]
+      },
+      "3": {
+        "name": "Red Herb",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1344,
+          0,
+          112,
+          112
+        ]
+      },
+      "4": {
+        "name": "Blue Herb",
+        "category": "Healing",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1456,
+          0,
+          112,
+          112
+        ]
+      },
+      "15": {
+        "name": "Handgun Ammo",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          0,
+          112,
+          112,
+          112
+        ]
+      },
+      "16": {
+        "name": "Shotgun Shells",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          112,
+          112,
+          112,
+          112
+        ]
+      },
+      "17": {
+        "name": "Submachine Gun Ammo",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          224,
+          112,
+          112,
+          112
+        ]
+      },
+      "18": {
+        "name": "MAG Ammo",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          336,
+          112,
+          112,
+          112
+        ]
+      },
+      "26": {
+        "name": "Large-caliber Handgun Ammo",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          448,
+          112,
+          112,
+          112
+        ]
+      },
+      "27": {
+        "name": "High-powered Rounds (SLS 60)",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          560,
+          112,
+          112,
+          112
+        ]
+      },
+      "22": {
+        "name": "Acid Rounds",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          672,
+          112,
+          112,
+          112
+        ]
+      },
+      "23": {
+        "name": "Flame Rounds",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          784,
+          112,
+          112,
+          112
+        ]
+      },
+      "24": {
+        "name": "Needle Cartridges",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          896,
+          112,
+          112,
+          112
+        ]
+      },
+      "25": {
+        "name": "Fuel",
+        "category": "Ammunition",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1008,
+          112,
+          112,
+          112
+        ]
+      },
+      "32": {
+        "name": "Ink Ribbon",
+        "category": "Supplies",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1120,
+          112,
+          112,
+          112
+        ]
+      },
+      "33": {
+        "name": "Wooden Boards",
+        "category": "Supplies",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1232,
+          112,
+          112,
+          112
+        ]
+      },
+      "36": {
+        "name": "Gunpowder",
+        "category": "Crafting materials",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1344,
+          112,
+          112,
+          112
+        ]
+      },
+      "37": {
+        "name": "Gunpowder (Large)",
+        "category": "Crafting materials",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1456,
+          112,
+          112,
+          112
+        ]
+      },
+      "38": {
+        "name": "High-grade Gunpowder (Yellow)",
+        "category": "Crafting materials",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1568,
+          112,
+          112,
+          112
+        ]
+      },
+      "39": {
+        "name": "High-grade Gunpowder (White)",
+        "category": "Crafting materials",
+        "atlas": "re2/supplies.png",
+        "rect": [
+          1680,
+          112,
+          112,
+          112
+        ]
+      }
+    }
+  },
+  "sources": [
+    {
+      "game": "re2",
+      "owner": "CAPCOM CO., LTD.",
+      "archive": "Squirrelies/RE2REmakeSRT",
+      "revision": "07db9f610553e6a95cee24aeac99cd1bc6c48e19",
+      "source": "RE2REmakeSRT/Resources/ui0100_iam.texout.png",
+      "mapping": "RE2REmakeSRT/Program.cs GenerateClipping; ItemEnumeration.cs",
+      "url": "https://github.com/Squirrelies/RE2REmakeSRT/tree/07db9f610553e6a95cee24aeac99cd1bc6c48e19",
+      "original_sha256": "be8986f72a42d7210185df948af3a16f688fc701787e74aec9c916c6dfa1d895",
+      "atlas_sha256": "2c315f15e63957029d61872ac20f9f7753baee6ffe4d25d36294ed963e2d4a94",
+      "transformation": "Exact pixel crop of original atlas rows 0 and 1; no AI, recoloring or resampling.",
+      "mapping_license": "MIT; see RE2_SRT_LICENSE.txt. Game artwork belongs to Capcom and is outside the source-code license."
+    }
+  ]
+}

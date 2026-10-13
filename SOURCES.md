@@ -174,3 +174,21 @@ directory. It is a console payload, not a native Steam fixture, and is not
 redistributed. See [exact evidence and limits](docs/RE8_FORMAT.md).
 The official Steam portrait URL and byte count appear in
 `assets/covers/sources.json`; artwork and trademarks remain owned by their holders.
+
+## Original RE2 inventory artwork (v0.20)
+
+`assets/items/re2/supplies.png` is an exact first-two-row crop of the original
+RE2 (2019) inventory atlas archived as `Resources/ui0100_iam.texout.png` in
+[Squirrelies/RE2REmakeSRT](https://github.com/Squirrelies/RE2REmakeSRT/tree/07db9f610553e6a95cee24aeac99cd1bc6c48e19).
+The 27-item manifest adapts its MIT `Program.cs` clipping coordinates and
+`ItemEnumeration.cs` IDs, Copyright (c) 2019 Travis J. Gutjahr. The ID domain is
+cross-checked with the factual RE2 Item.ID enum from the previously attributed
+RE Engine schema. Uncertain herb variants and all weapon/attachment/quest maps
+are excluded. Full MIT notice: `assets/items/RE2_SRT_LICENSE.txt`.
+
+Original and cropped hashes, pinned revision and transform details are recorded
+in `assets/items/manifest.json`. No AI generation, recoloring, redraw or source
+upscaling occurs. Game artwork and trademarks belong to CAPCOM CO., LTD.; they
+are outside GPL and are not licensed by the upstream tool's MIT notice.
+The independent item resolver uses exact validated save-object identities;
+unknowns have no substituted image. See docs/ITEM_ARTWORK.md.

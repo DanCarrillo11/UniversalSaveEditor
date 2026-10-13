@@ -12,6 +12,7 @@ from re_engine_container import ReEngineEnvelope
 from re_engine_stream import StreamReader
 from inventory_context import InventoryContext
 from village_context import VillageContext
+from item_art import item_art
 
 GAMES=('re2','re3','re4_remake','re7','re8','re9')
 STEAM_APPS={'883710':'re2','952060':'re3','2050650':'re4_remake','418370':'re7','1196590':'re8','3764200':'re9'}
@@ -116,12 +117,18 @@ class ReEngineSave:
             key=f'{node.owner:08x}:{node.field:08x}:{node.offset}'
             note='Changes an existing entry; item identity, equipment and slot layout are preserved.' if 'quantities' in group else ''
             collection=''
+            identifier=None
             if 'quantities' in group:
                 identifier=identities.item_id(game,node)
                 identity=f'ID {identifier}' if identifier is not None else 'identity not mapped'
                 shown=f'Unidentified item · {identity} · Entry {index}'
                 note='Item-name mapping is pending. Only this existing quantity is changed; identity and equipment are preserved.'
                 collection='Unidentified items'
+                art=item_art(game,identifier)
+                if art:
+                    shown=f'{art.name} · Entry {index}'
+                    collection=art.category
+                    note=f'Item ID {identifier}. Existing quantity only; identity, equipment and layout are preserved.'
                 if village:
                     identifier=village.identity(node)
                     shown=f'Item ID {identifier:08X} · Quantity · Entry {index}'
@@ -135,7 +142,7 @@ class ReEngineSave:
                 note='Total points earned. The game also tracks purchased shop items separately.'
             self.fields.append(field_type(key,shown,value,node.offset,fmt,1 if 'quantities' in group else 0,maximum,group,
                                           decimal=fmt=='<f',boolean=fmt=='<B',note=note,collection=collection,
-                                          readonly=bool(village and 'quantities' in group and value==1)))
+                                          readonly=bool(village and 'quantities' in group and value==1),item_id=identifier))
             self.operations[key]=(node.offset,fmt)
 
     def patch(self,changes):

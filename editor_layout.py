@@ -189,7 +189,7 @@ def organize_fields(game, fields):
                   'Characters', 'Skills', 'Skins and recolors', 'Artifacts', 'Items and equipment',
                   'Memories', 'Bottles', 'Snouts', 'Radula rooms', 'Enemy journal', 'Cinematics')
     for category in categories.values():
-        section_order = ('Items', 'Inventory', 'Consumables', 'Ammunition', 'Crafting materials', 'Upgrade materials', 'Materials', 'Weapons', 'Accessories', 'Equipment', 'Special items', 'Other entries',
+        section_order = ('Items', 'Inventory', 'Consumables', 'Ammunition', 'Healing', 'Supplies', 'Crafting materials', 'Upgrade materials', 'Materials', 'Weapons', 'Accessories', 'Equipment', 'Special items', 'Other entries',
                          'Fishing journal', 'Memories', 'Bottles', 'Snouts', 'Radula rooms',
                          'Enemy journal', 'Cinematics', 'Unidentified items', 'Unidentified materials') if category.name == 'Collection' else priorities
         category.sections.sort(key=lambda section: (
