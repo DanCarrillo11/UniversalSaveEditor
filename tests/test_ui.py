@@ -727,6 +727,29 @@ class InterfaceTests(unittest.TestCase):
                 self.assertEqual(next(f.value for f in Save(updated,game).slots[0].fields if f.key==key),150)
                 w.edits={}
 
+    def test_elden_original_sprites_cover_inventory_storage_creation_and_weapon_upgrades(self):
+        from test_expansion import elden_ready
+        from item_art import item_pixmap
+        raw=elden_ready(True);path=self.root/'ER0000.sl2';path.write_bytes(raw)
+        w=self.window;self.assertTrue(w.load('eldenring',path))
+        sprites=w.findChildren(QLabel,'itemSprite');self.assertGreater(len(sprites),250)
+        self.assertTrue(all(not s.pixmap().isNull() for s in sprites))
+        self.assertEqual(item_pixmap('eldenring',1000000).size().width(),64)
+        self.assertTrue(item_pixmap('eldenring',0x40000000|190).width()<=64)
+        self.assertTrue(item_pixmap('eldenring',190).isNull())
+        from elden_items import GOODS
+        from item_art import catalogue
+        for game,identifier in catalogue():
+            if game=='eldenring':self.assertFalse(item_pixmap(game,identifier).isNull(),str(identifier))
+        field=next(f for f in w.save.slots[0].fields if f.key.startswith('weapon:'))
+        w.inputs[(0,field.key)].setText('25')
+        out=w.save.patched(w.validated_changes())
+        self.assertEqual(next(f.value for f in Save(out,'eldenring').slots[0].fields if f.key==field.key),25)
+        self.assertEqual(path.read_bytes(),raw)
+        for theme in ('light','dark'):
+            if w.theme!=theme:w.toggle_theme()
+            self.assertTrue(all(not s.pixmap().isNull() for s in sprites))
+
     def test_original_item_sprites_search_and_editing(self):
         from test_item_art import fixture
         from item_art import item_pixmap

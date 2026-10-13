@@ -35,3 +35,39 @@ the complete notice is `assets/items/RE2_SRT_LICENSE.txt`. **Game artwork and
 trademarks belong to CAPCOM CO., LTD. and are outside the application's source-code
 license.** The upstream software license is not a license from Capcom to game art.
 This independent, free fan utility is not affiliated with or endorsed by Capcom.
+
+## Elden Ring (v0.21)
+
+Elden Ring now has images for all **307 goods and 487 base armaments** already
+recognized by the editor. Icons appear beside inventory/storage stacks, supported
+Add items controls and existing weapon upgrades, including their read-only rows.
+Reinforcement and affinity variants use the verified base armament's image.
+This adds presentation, not support for creating new weapons, armor, quests or
+unmapped objects. Existing save-format and in-game validation limits remain.
+
+Source: the archived in-game images and six ItemData IconPath tables in
+[oisis/EldenRing-SaveForge](https://github.com/oisis/EldenRing-SaveForge/tree/ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5),
+already used for this application's labels. Names must match the existing tables
+exactly before an icon is included. Goods use their full `0x40000000`-prefixed
+identity; base weapon IDs occupy their separate domain. Registry handles and
+reinforced IDs are never interpreted as image IDs. Unknowns receive no substitute.
+
+All archived image bytes are copied unchanged into deterministic ZIP packs.
+791 files are PNG; three upstream `.png` filenames contain WebP images, which
+Qt identifies from their actual headers. No AI, source resampling, recoloring,
+cropping or additional image optimization is applied. Preview scaling preserves
+aspect ratio. Each manifest entry records the upstream path, table and SHA256;
+source records also include the pinned revision and ZIP-pack hashes.
+
+Images are decoded directly from the packaged archives, with bounded sizes and
+caches; nothing is extracted to disk or downloaded during normal use. Every
+mapped image is decoded by automated UI checks, including the WebP variants.
+Tests also check exact archive-member hashes, separate ID domains and icons after
+weapon edits. The packaged startup check loads representative goods, weapons
+and WebP artwork.
+
+The metadata adaptation follows SaveForge's GPL v3 attribution in SOURCES.md.
+**Game artwork and trademarks belong to FromSoftware, Inc. and Bandai Namco
+Entertainment Inc., outside the source-code license.** The utility is independent
+and does not claim the publishers' endorsement or a game-art license from the
+upstream software license.

@@ -19,13 +19,14 @@ def fixture():
 class ItemArtTests(unittest.TestCase):
     def test_manifest_provenance_and_item_rectangles(self):
         data=json.loads((ROOT/'manifest.json').read_text());source=data['sources'][0]
-        self.assertEqual(len(catalogue()),27)
+        self.assertEqual(sum(game=='re2' for game,identifier in catalogue()),27)
         self.assertEqual(source['revision'],'07db9f610553e6a95cee24aeac99cd1bc6c48e19')
         self.assertEqual(hashlib.sha256((ROOT/'re2/supplies.png').read_bytes()).hexdigest(),source['atlas_sha256'])
         self.assertEqual(item_art('re2',15).rect,(0,112,112,112))
         self.assertEqual(item_art('re2',2).rect,(1232,0,112,112))
         self.assertEqual(item_art('re2',36).rect,(1344,112,112,112))
         for (game,identifier),art in catalogue().items():
+            if game!='re2':continue
             x,y,w,h=art.rect;self.assertLessEqual(x+w,2048);self.assertLessEqual(y+h,224)
             self.assertEqual(game,'re2');self.assertGreater(identifier,0)
 

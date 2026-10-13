@@ -482,3 +482,13 @@ Original inventory artwork belongs to CAPCOM CO., LTD. and is outside the
 source-code license. No Capcom license or endorsement is implied by the
 upstream software license. The first two rows are cropped without altering
 their source pixels. Hashes and attribution: assets/items/manifest.json.
+
+Original Elden Ring inventory artwork
+------------------------------------
+Item/icon metadata adapts oisis/EldenRing-SaveForge at
+ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5 under GPL v3 (full text: LICENSE).
+The 794 archived game images are retained byte-for-byte; source paths and
+SHA256 hashes are recorded in assets/items/manifest.json. Artwork belongs to
+FromSoftware, Inc. and Bandai Namco Entertainment Inc., outside the source-code
+license. No publisher endorsement or game-art license is implied by the
+upstream software license. See SOURCES.md and docs/ITEM_ARTWORK.md.

@@ -217,7 +217,7 @@ class EldenRingSave:
                 key=f'weapon:{handle:08x}'
                 fields.append(field_type(key,title+' · Upgrade',upgrade,id_offset,'',0,maximum,location,readonly=not safe,
                     note=(f'Existing weapon · entry {entry+1} · affinity {affinity}. Preserves identity, affinity and Ash of War. Equipped copies and menu data synchronize automatically. The highest weapon level is never reduced.' if safe else
-                          'Read-only: equipped copies or the saved menu snapshot disagree. Unequip this weapon in the game and save again, or choose another verified weapon. No mismatched representation is overwritten.'),collection='Weapon upgrades'))
+                          'Read-only: equipped copies or the saved menu snapshot disagree. Unequip this weapon in the game and save again, or choose another verified weapon. No mismatched representation is overwritten.'),collection='Weapon upgrades',item_id=base_id))
                 if safe:records[key]=(id_offset,identifier,handle,maximum,tuple(mirrors))
             self.weapon_records.append(records)
             self._creation_fields(raw,held,registry,fields,field_type)
@@ -238,7 +238,7 @@ class EldenRingSave:
             matching=[entry for entry in entries if entry[0]==0xb0000000|identifier]
             if len(matching)>1:continue
             fields.append(field_type(f'add_goods:{identifier}',name,0,held,'',0,held_limit,'Add items',
-                note='0 keeps this item absent. A positive amount creates a held inventory stack, registers the item and updates acquisition counters. No weapons, quest items or unknown identities are created.',collection=ELDEN_CATEGORIES[identifier]))
+                note='0 keeps this item absent. A positive amount creates a held inventory stack, registers the item and updates acquisition counters. No weapons, quest items or unknown identities are created.',collection=ELDEN_CATEGORIES[identifier],item_id=0x40000000|identifier))
 
     def added_amount(self,index,key):
         identifier=int(key.split(':')[1]);held=self.characters[index].held
@@ -306,7 +306,7 @@ class EldenRingSave:
                 continue
             fields.append(field_type(f'{group.lower()}:{index}', label, quantity, offset+4, '<I', 1, limit, group,
                 note=f'Existing stack · item {handle & 0x0fffffff} · record {index+1}. Item identity is preserved.',
-                collection=ELDEN_CATEGORIES[handle & 0x0fffffff]))
+                collection=ELDEN_CATEGORIES[handle & 0x0fffffff],item_id=0x40000000|(handle & 0x0fffffff)))
         key_count = cursor.integer()
         if key_count > key_capacity:
             raise ValueError('Invalid Elden Ring key-item count.')

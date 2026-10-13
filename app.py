@@ -1114,9 +1114,12 @@ def main():
             crypto_ready=crypto_ready and village_ready
             try:
                 from item_art import catalogue,item_art,item_pixmap
-                item_icons_ready=(len(catalogue())==27 and item_art('re2',15).name=='Handgun Ammo'
+                item_icons_ready=(len(catalogue())==821 and item_art('re2',15).name=='Handgun Ammo'
                                   and not item_pixmap('re2',15).isNull() and item_pixmap('re3',15).isNull()
-                                  and item_pixmap('re2',9999).isNull())
+                                  and item_pixmap('re2',9999).isNull()
+                                  and not item_pixmap('eldenring',0x40000000|190).isNull()
+                                  and not item_pixmap('eldenring',1000000).isNull()
+                                  and not item_pixmap('eldenring',0x40000000|2003150).isNull())
             except Exception:
                 item_icons_ready=False
             crypto_ready=crypto_ready and item_icons_ready

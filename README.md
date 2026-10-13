@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.20.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.21.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -16,6 +16,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- Original Elden Ring item artwork: 307 supported goods and 487 known base armaments, shown in inventory, storage, Add items and weapon upgrade rows. Archived image bytes stay unchanged; variants retain their base weapon image. No AI images or runtime downloads.
 
 - Original RE2 Remake inventory artwork: 27 mapped supplies with game icons, English names and collection groups. Exact source pixels, no AI images. Unknown items and other editions keep their existing text display; see [artwork sources and coverage](docs/ITEM_ARTWORK.md).
 

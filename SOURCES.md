@@ -192,3 +192,20 @@ upscaling occurs. Game artwork and trademarks belong to CAPCOM CO., LTD.; they
 are outside GPL and are not licensed by the upstream tool's MIT notice.
 The independent item resolver uses exact validated save-object identities;
 unknowns have no substituted image. See docs/ITEM_ARTWORK.md.
+
+## Original Elden Ring artwork (v0.21)
+
+The 794-entry artwork manifest adapts ID/Name/IconPath associations from the six
+already attributed GPL v3 oisis/EldenRing-SaveForge tables (tools, crafting and
+bolstering materials, melee armaments, shields, ranged armaments/catalysts), at
+`ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5`. Existing labels must match exactly.
+The corresponding archived in-game image files from `frontend/public/items`
+are copied byte-for-byte into deterministic ZIP packs; the manifest records
+each original path/hash and pack hash. No upstream runtime implementation is
+incorporated. No image generation, redraw, recoloring or resampling is applied.
+
+791 images are PNG and three are WebP stored under upstream .png filenames;
+Qt decodes from headers. Game artwork belongs to FromSoftware, Inc. and
+Bandai Namco Entertainment Inc. and is outside the source-code license.
+The software's GPL license does not convey a publisher license to game art.
+See docs/ITEM_ARTWORK.md for exact coverage and runtime/validation boundaries.
