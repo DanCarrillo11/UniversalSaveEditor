@@ -63,3 +63,11 @@ loaded in-game. Research downloads, source checkouts and account data are not bu
 ## v0.25 expansion
 
 See [functionality expansion](FUNCTIONAL_EXPANSION.md) for new mapped operations, context/type guards, native-file checks and explicit limits.
+
+## v0.25.1 reserve correction
+
+The initial generic RE6 quantity scope above is superseded. Only known existing
+ammunition/herb reserves are writable, including depleted quantity zero. Weapon
+and unknown count words are read-only; actual stack caps remain unmapped. See
+[editor polish and native checks](EDITOR_POLISH.md). The v0.25 HD directory/item
+expansion also supersedes the initial first-slot-only scope above.

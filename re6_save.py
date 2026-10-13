@@ -5,6 +5,7 @@ cross-checked with a public Steam profile. No upstream code is bundled.
 """
 import struct
 from re6_skills import SKILLS,MODE_SKILLS
+from re6_items import SUPPLIES
 
 FILE_SIZE=39416
 VERSION=bytes.fromhex('01180712')
@@ -65,11 +66,14 @@ class Re6Save:
                 offset=base+index*4
                 identifier=struct.unpack_from('<H',raw,offset)[0]&0xfff
                 count=struct.unpack_from('<h',raw,offset+2)[0]
-                if identifier==0 or not 0<count<=999:continue
+                if identifier==0 or not 0<=count<=999:continue
                 key=f'supply:{character}:{index}'
-                self.fields.append(field_type(key,f'Slot {index+1} quantity',count,offset+2,'',1,999,name+' supplies',
-                                              note=f'Existing item ID {identifier}. Item identity and its flags are preserved.'))
-                self.operations[key]=(offset+2,'<h',None)
+                mapped=identifier in SUPPLIES
+                title=SUPPLIES.get(identifier,f'Unmapped item ID {identifier}')
+                self.fields.append(field_type(key,f'Slot {index+1} · {title}',count,offset+2,'',0,999,name+' supplies',readonly=not mapped,
+                    note=(f'Existing reserve supply ID {identifier}. Depleted entries can be refilled. Identity, flags, weapon state and layout are preserved; actual game stack caps are not mapped.' if mapped else
+                          'Preserved read-only: this may be a weapon record whose count word also stores state, or an unknown item. It is not treated as a simple supply quantity.')))
+                if mapped:self.operations[key]=(offset+2,'<h',None)
         for campaign,name in enumerate(('Leon','Chris','Jake','Ada')):
             for index in range(20):
                 offset=2016+campaign*20+index;original=raw[offset]

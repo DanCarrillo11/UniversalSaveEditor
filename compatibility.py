@@ -20,7 +20,7 @@ EVIDENCE = {
  'ror2': Evidence('Steam UserProfiles .xml files', 'A local Steam profile was inspected and automated edits are checked.',
    'Profile unlock identifiers and existing numeric statistics, including saved character/enemy/stage/item records. Unknown units/dependencies are explicit. DLC requires ownership; no live-run inventory editing.'),
  'kh1': Evidence('Final Mix Steam KHFM_WW.png archives', 'Local and public PC archives were inspected, including multi-slot saves.',
-   'Currency, difficulty, saved companion attributes, equipment slots and known ability entries. Unknown IDs and unexposed records are preserved. Equipment changes do not exchange bag quantities; per-character magic availability does not upgrade spell tiers. Ability AP and character-specific rules are not recalculated.'),
+   'Currency, difficulty, saved companion attributes, equipment slots and known ability entries. Identified save-menu level/difficulty mirrors are synchronized. Unknown IDs and unexposed records are preserved. Equipment changes do not exchange bag quantities; per-character magic availability does not upgrade spell tiers. Ability AP and character-specific rules are not recalculated.'),
  'kh2': Evidence('Final Mix Steam KHIIFM_WW.png archives', 'Local and public populated PC archives were inspected.',
    'Populated save-point records only. Saved party attributes, equipment and ability lists; five main Drive Forms expose equipment/abilities. Known item auto-reload identities are editable for existing slots. Slot counts, story and world variants are preserved; no AP-cost or character-specific ability validation.'),
  'recom': Evidence('Steam KHReCoM_WW.png archives', 'Two public Steam fixtures and their mirrored currency/checksums were inspected.',
@@ -30,13 +30,13 @@ EVIDENCE = {
  'ddd': Evidence('Steam Dream Drop Distance HD PNG archives', 'Public PC records were inspected and mirrored fields checked.',
    'Sora/Riku progression, equipped Keyblades, known inventory and existing recognized spirit Attack/Magic/Defense. Spirit creation, boards, XP, party/deck references, story and theater records are preserved.'),
  'kh3': Evidence('Steam encrypted KHIII_slot*.bin files', 'An encrypted public PC fixture was decrypted, edited and re-encrypted.',
-   'Copied files need the original ownerâ€™s SteamID64. Party equipment, active weapon and known ability learned/equipped states are editable. Exact mapped equipment acquisition synchronizes; reserved flags are retained. AP costs, character-specific behavior, derived stats and story dependencies are not recalculated.'),
+   'Copied files need the original owner’s SteamID64. Party equipment, active weapon and known ability learned/equipped states are editable. Exact mapped equipment acquisition synchronizes; reserved flags are retained. AP costs, character-specific behavior, derived stats and story dependencies are not recalculated.'),
  'maxpayne': Evidence('Original PC revision-48 .mps files', 'Three locally generated PC saves were parsed during format research.',
    'Weapon ownership, reserve ammunition and painkillers only. Health, Bullet Time, loaded rounds and checkpoint state are preserved.'),
  'alice': Evidence('Steam PersistentData_PC.PSD and GameConfig_PC.CFG', 'A local persistent profile and configuration were inspected.',
    'Persistent upgrades, flags and collectibles; configuration edits difficulty. Checkpoint position and active outfit are preserved.'),
  'eldenring': Evidence('Original Steam ER0000.sl2 files', 'Four public PC files were checked. Revisions 260/261 and new classes have synthetic tests; native revision-261 checking is pending.',
-   'Revisions 65â€“261 with the known layout. Supported stackable goods can be added to held inventory; known existing weapons can be upgraded when their saved references agree. NG+ edits scaling only, not a story restart. Named FACE appearance sliders and the saved death counter are editable; models, unknown face blocks, body type and presets are preserved. No new weapons, quests, transfers, console or Nightreign support. Use edited saves offline.'),
+   'Revisions 65–261 with the known layout. Supported stackable goods can be added to held inventory; known existing weapons can be upgraded when their saved references agree. NG+ edits scaling only, not a story restart. Named FACE appearance sliders and the saved death counter are editable; models, unknown face blocks, body type and presets are preserved. No new weapons, quests, transfers, console or Nightreign support. Use edited saves offline.'),
  're4_2005': Evidence('Steam Ultimate HD Edition savegame00.sav', 'Four local revision-0x402 records were inspected.',
    'Pesetas, difficulty, health and statistics; existing supported case quantities and weapon tune-up tiers. Capacity can only increase; loaded ammunition and geometry are preserved. No new case objects, costumes or comprehensive unlocks.'),
  're1_hd': Evidence('HD Remaster PC encrypted save format', 'A public PC-format profile was checked for integrity and byte preservation.',
@@ -44,7 +44,7 @@ EVIDENCE = {
  're5': Evidence('Steamworks savedata.bin profiles', 'A public Steamworks Gold profile was checked for integrity and in-memory edits.',
    'Profile currency, costume/ammo/filter/library and 45 figure flags only. Infinite-ammo flags do not grant weapons. Weapon upgrades, inventory and story remain unchanged.'),
  're6': Evidence('PC RE6 profile format', 'A public Steam profile was checked for integrity and in-memory edits.',
-   'Skill points, Mercenaries flags/results, uncollected emblems, existing supplies and equipped campaign/extra-mode slots. Existing nonzero emblem encodings are preserved. Mode-specific skill compatibility, purchase/unlock state, weapon identities and campaign progress are not recalculated.'),
+   'Skill points, Mercenaries flags/results, uncollected emblems, named existing ammunition/herb reserves and equipped campaign/extra-mode slots. Depleted mapped reserves can be refilled; weapon and unknown count words remain read-only. Existing nonzero emblem encodings are preserved. Mode-specific skill compatibility, purchase/unlock state, weapon identities and campaign progress are not recalculated.'),
  're2': Evidence('RE2 (2019) Steam save envelopes', 'Documented layouts and synthetic Steam fixtures; native Steam file checking is pending.',
    'Saved difficulty, player health, existing quantities, reward/library flags, completion/challenge records and Ghost Survivors counters. Unknown identities, adaptive rank, story and reward delivery are not synthesized.', False),
  're3': Evidence('RE3 (2020) Steam save envelopes', 'Shared console payloads and synthetic Steam fixtures were checked; native Steam file checking is pending.',
@@ -69,7 +69,7 @@ def coverage_label(game):
     return 'Partial coverage'
 
 def coverage_text(game):
-    return coverage_label(game)+' Â· '+EVIDENCE[game].limits
+    return coverage_label(game)+' · '+EVIDENCE[game].limits
 
 
 def evidence_label(game):
@@ -79,10 +79,10 @@ def evidence_label(game):
 def compatibility_text(game):
     item=BY_ID[game];evidence=EVIDENCE[game]
     return (f'{item.title}\n{item.subtitle}\n\n'
-            f'Editor coverage Â· {coverage_label(game)}\n{item.description}\n'
+            f'Editor coverage · {coverage_label(game)}\n{item.description}\n'
             'No editor is currently classified as full support. Feature scope and in-game validation are separate.\n\n'
             f'Save format\n{evidence.format}\n\n'
-            f'File checks Â· {evidence_label(game)}\n{evidence.files}\n\n'
+            f'File checks · {evidence_label(game)}\n{evidence.files}\n\n'
             f'In-game checks\n{evidence.gameplay}\n\n'
             f'Scope and limits\n{evidence.limits}\n\n'
             'File checks and automated tests do not guarantee in-game loading or every game version. '

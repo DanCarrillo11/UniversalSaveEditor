@@ -269,3 +269,17 @@ RE Engine type/property facts use pinned kvasszn metadata 4125e497f1ae84cc746bb4
 no upstream SDK, translation database or unlicensed implementation is bundled.
 See docs/FUNCTIONAL_EXPANSION.md for boundaries; identifiers/format facts are
 not a certification of every dependency or in-game behavior.
+
+## v0.25.1 menu and supply checks
+
+KH1 bounded KHSQ pairing and level field facts were compared with the GPL
+[KatRewrites/kh1-save-editor format notes](https://github.com/KatRewrites/kh1-save-editor/blob/d168c035ff392029d8fc45688cc08ad99e4dfc94/OFFSETS.md)
+at d168c035ff392029d8fc45688cc08ad99e4dfc94, and cross-checked against 40 native PC
+records. Difficulty mirrors were compared in those native records. Unverified
+summary XP/currency widths are not implemented; no leveling tables are bundled.
+
+Twenty short RE6 reserve ammunition/herb identities use factual IDs from the
+previously attributed lightningdotnet editor's tables.h at
+baa6a9e0d51f7f8ac2ce26bda6a2a64d74e04919. No upstream implementation or weapon
+state decoder is included. Original native count words are retained for weapons
+and unknown identities. See docs/EDITOR_POLISH.md for checks and limits.

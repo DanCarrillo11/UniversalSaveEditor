@@ -17,6 +17,25 @@ import test_extended
 from editor_layout import organize_fields
 
 class InterfaceTests(unittest.TestCase):
+    def test_equipment_search_finds_selected_item_name_and_keeps_unrelated_edits(self):
+        from test_expansion import kh_fixture
+        raw,*_=kh_fixture('kh2');w=self.window;w.display_save(Save(raw,'kh2'),self.root/'equipment.png')
+        w.show();self.app.processEvents()
+        page=w.tabs.widget(next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)=='Characters'))
+        search=page.findChild(QLineEdit,'fieldSearch');key=(0,'character:0:item:0')
+        entry=w.inputs[key];selected=entry.currentText();self.assertTrue(selected)
+        w.inputs[0,'munny'].setText('1234');search.setText(selected);self.app.processEvents()
+        self.assertFalse(entry.parentWidget().isHidden());self.assertEqual(w.validated_changes(),{(0,'munny'):1234})
+        search.setText('not-a-real-equipped-item');self.app.processEvents();self.assertTrue(entry.parentWidget().isHidden())
+        search.clear();self.app.processEvents();self.assertFalse(entry.parentWidget().isHidden())
+        self.assertEqual(w.validated_changes(),{(0,'munny'):1234})
+
+    def test_extreme_numeric_input_is_highlighted_and_review_is_disabled(self):
+        w=self.window;w.load('webfishing',self.source);entry=w.inputs[0,'max_bait']
+        entry.setText('9'*1000);self.app.processEvents()
+        self.assertTrue(entry.property('invalid'));self.assertFalse(w.review_button.isEnabled())
+        entry.setText('20');self.assertEqual(w.validated_changes(),{(0,'max_bait'):20})
+
     def test_large_profile_records_are_paged_and_keep_edits_when_search_changes(self):
         raw=('<UserProfile><coins>7</coins><stats>'+''.join(f'<stat name="killsAs.Example{i}">{i}</stat>' for i in range(2200))+'</stats></UserProfile>').encode()
         save=Save(raw,'ror2');w=self.window;w.display_save(save,self.root/'large.xml');self.app.processEvents()

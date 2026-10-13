@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.25.1-alpha — Safer supplies and smoother editing
+
+- KH1: synchronize level and difficulty with precisely identified save-menu snapshots; preserve currency, XP and unknown summary data.
+- RE6: name recognized reserve ammunition and herbs, allow refilling depleted entries, and protect weapon/unknown count words from quantity editing.
+- Search equipment by its currently selected item name while preserving pending edits and page changes.
+- Give specific guidance for known conflicting edits without exposing paths or account IDs.
+- Reject extreme numeric input normally instead of crashing validation.
+- Refresh offline examples and the per-game coverage documentation; no new games or icons.
+
 ## v0.25.0-alpha — Equipment, cosmetics, unlocks and records
 
 - Expand 17 existing editors; defer new games and icons while completing functionality.

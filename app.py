@@ -630,6 +630,13 @@ class Window(QMainWindow):
             if self.tabs.tabText(index)==previous:self.tabs.setCurrentIndex(index);break
         self.update_summary()
 
+    def field_search_text(self,field,base):
+        if not field.choices:return base
+        entry=self.inputs.get((self.slot_index,field.key))
+        try:index=entry.currentIndex() if isinstance(entry,QComboBox) else field.parse(self.edits.get((self.slot_index,field.key),str(field.value)))
+        except ValueError:return base
+        return base+' '+field.choices[index].casefold() if 0<=index<len(field.choices) else base
+
     def build_category(self,category):
         if sum(len(s.fields) for s in category.sections)>2000:return self.build_large_category(category)
         page=QWidget();box=layout(page,True,4,10)
@@ -703,7 +710,7 @@ class Window(QMainWindow):
                 eligible=not selection or selection==section.selection
                 count=0
                 for searchable,row,key in rows:
-                    visible=eligible and query in searchable and (not changed_only.isChecked() or (self.slot_index,key) in self.edits)
+                    visible=eligible and query in self.field_search_text(row._field,searchable) and (not changed_only.isChecked() or (self.slot_index,key) in self.edits)
                     row.setVisible(visible);count+=visible
                 block.setVisible(bool(count));total+=count
                 expanded=header.isChecked() or bool(query) or changed_only.isChecked()
@@ -748,7 +755,7 @@ class Window(QMainWindow):
             nonlocal signature,visible_keys
             selection=selector.currentData();query=search.text().casefold().strip()
             state.update(query=search.text(),selection=selection,changed_only=changed.isChecked())
-            matches=[(s,f) for s,f,text in records if (not selection or s.selection==selection) and query in text and
+            matches=[(s,f) for s,f,text in records if (not selection or s.selection==selection) and query in self.field_search_text(f,text) and
                      (not changed.isChecked() or (self.slot_index,f.key) in self.edits)]
             total=len(matches);page_count=max(1,(total+99)//100)
             index=0 if reset else min(int(state.get('page',0)),page_count-1);state['page']=index
@@ -790,7 +797,7 @@ class Window(QMainWindow):
         return page
 
     def build_field_row(self,field):
-        row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
+        row=QFrame();row.setObjectName('field');row._field=field;line=layout(row,False,8,16)
         from item_art import item_pixmap,item_art,field_art_key
         key=(self.slot_index,field.key)
         art_key=field_art_key(field,int(self.edits.get(key,field.value)) if field.art_choices else None)
@@ -1283,9 +1290,12 @@ def main():
                 from re_engine_extensions import EngineExtensions,DIFFICULTIES
                 from re5_save import FIGURES
                 from re6_skills import MODE_SKILLS
+                from re6_items import SUPPLIES
+                from kh_menu import menu_snapshot
                 sample=struct.pack('<I4s2I',0xffffffff,b'FACE',4,0x120)+bytes(303-16)
                 functionality_ready=(len(appearance_fields(sample,0,Field))==96 and len(FIGURES)==45
                     and MODE_SKILLS[96]=='Creature Stamina · Level 3' and DIFFICULTIES['re2'][2]=='Hardcore'
+                    and SUPPLIES[513]=='9mm ammunition' and menu_snapshot(bytes(1),bytes(200*0x158),0,0,1) is None
                     and 'fish_lake_salmon' in ITEMS and bool(COSMETICS))
             except Exception:functionality_ready=False
             crypto_ready=crypto_ready and functionality_ready

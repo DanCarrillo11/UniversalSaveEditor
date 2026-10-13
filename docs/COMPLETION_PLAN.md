@@ -45,3 +45,5 @@ is in progress. See [current coverage](EDITOR_COVERAGE.md),
 [artwork coverage](ITEM_ARTWORK.md) and [Resident Evil evidence](RESIDENT_EVIL_RESEARCH.md).
 
 See [v0.25 functionality expansion](FUNCTIONAL_EXPANSION.md) for the implemented changes and remaining dependencies.
+
+See [v0.25.1 editor polish](EDITOR_POLISH.md) for dependent KH1 menu fields, protected RE6 state words and common input/search improvements.

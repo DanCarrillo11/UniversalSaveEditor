@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.25.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.25.1-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -33,7 +33,7 @@ executable included at its root. Startup can take a few seconds.
 - [Expanded editors](docs/EDITOR_EXPANSION.md): KH1/KH2 party equipment and abilities, Elden Ring held-goods creation, known armament upgrades and NG+ scaling, RE4 (2005) case quantities/tune-ups and RE6 equipped skills.
 
 - Compatibility details per game: supported format, file-check evidence, gameplay evidence and known limits.
-- Helpful errors with next steps and a Copy diagnostic button. Reports omit save contents, paths, account IDs and character names; nothing is sent automatically.
+- Helpful errors with specific guidance for known conflicting edits and a Copy diagnostic button. Reports omit save contents, paths, account IDs and character names; nothing is sent automatically.
 - Recent saves in the header (Ctrl+R), remembering up to ten validated files and the last selected record. Locate moved files, remove shortcuts, clear history or turn it off.
 - Verified collection labels and grouped inventories: 60 KH III synthesis-material names, Elden Ring crafting/upgrade/consumable sections and clearly marked unidentified entries.
 - Clean light and dark appearances with a header toggle and a remembered preference.
@@ -46,7 +46,7 @@ executable included at its root. Startup can take a few seconds.
 - Click a compatible cover to open its detected save directly.
 - Automatic discovery, manual file selection, and drag and drop.
 - Up to three main categories per editor, with section and character selectors.
-- Foldable sections and field search, including inventory IDs and unlocks.
+- Foldable sections and field search, including inventory IDs, unlocks and the selected equipment name.
 - Changed-only filtering, field counts, individual undo, and inline validation.
 - Compact editor controls and scrollable save details for smaller windows.
 - Open a detected save from its file row; view size and modification time.
@@ -71,7 +71,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 | Resident Evil 3 (2020), Steam | Health, existing quantities, shop/rewards, completion/challenge/combat records | Experimental; shared console payload checked; real Steam fixture validation pending |
 | Resident Evil 4 (2023), Steam | Points, Spinels, existing quantities, profile-scoped costume/accessory/extra-shop and challenge records | Experimental; real Steam fixture validation pending |
 | Resident Evil 5, Steamworks | Money, points, costumes, filters, infinite ammo, library files and 45 figures | Experimental; public Steamworks fixture checked |
-| Resident Evil 6, PC | Skill points, equipped campaign/extra-mode slots, Mercenaries flags and results, emblems and existing supplies | Experimental; public Steam fixture checked |
+| Resident Evil 6, PC | Skill points, equipped campaign/extra-mode slots, Mercenaries flags and results, emblems and named existing reserve ammunition/herbs | Experimental; public Steam fixture checked |
 | Resident Evil 7, Steam | Difficulty, health, existing item-box quantities, restarts and existing DLC mode/completion flags | Experimental; shared console payload checked; real Steam fixture validation pending |
 | Resident Evil Village (RE8), Steam | Lei, CP, saved player health, existing stacks, content flags and lifetime/completion/combat records | Experimental; shared console gameplay payload and synthetic Steam envelopes checked; native Steam and in-game checks pending |
 | Resident Evil Requiem, Steam | Money/points, player health/upgrades, existing stocks, attached upgrades, content flags and lifetime/challenge/combat records | Experimental; nine native Steam files checked |

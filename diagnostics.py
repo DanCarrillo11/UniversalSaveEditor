@@ -20,9 +20,43 @@ class Problem:
     revision: int | None = None
     character: int | None = None
 
+# Fixed guidance only: never show an arbitrary exception, path, identifier or
+# save value. These are known editing conflicts, not unsupported-file errors.
+EDIT_CONFLICTS=(
+    ('the hotbar cannot reference an item being removed', 'A hotbar slot refers to an item selected for removal.',
+     ('Choose a surviving item or Empty for that hotbar slot.','Then review the removal again.')),
+    ('restore other edits to an item before removing it', 'The same item has edits and a removal selected.',
+     ('Reset that item’s quantity, size, quality or identity edits.','Keep its removal selected and review again.')),
+    ('a removed item cannot remain locked', 'An item selected for removal is also selected as locked.',
+     ('Disable its item-lock change or reset the removal.','Then review again.')),
+    ('an equipped selection cannot be removed from its ownership list', 'An equipped cosmetic or lure is also selected for removal from your collection.',
+     ('Keep it unlocked, or choose different equipment.','Then review again.')),
+    ('add a positive quantity before selecting this bait', 'The selected bait has no saved quantity.',
+     ('Add at least one unit of the selected bait.','Its acquisition is synchronized automatically.')),
+    ('the active weapon slot must contain an enabled weapon', 'The selected active weapon slot is empty or disabled.',
+     ('Equip a weapon in that slot, or select an occupied active slot.','Then review again.')),
+    ('an equipped item must have a positive inventory quantity', 'An equipped item also has a zero-stock edit.',
+     ('Give that inventory item at least one copy or reset its zero-stock edit.','Then review the equipment again.')),
+    ('choose an item before setting a new item-box quantity', 'An empty item-box entry has a quantity but no selected item.',
+     ('Choose the item in that entry’s Item selector.','Set its quantity and review again.')),
+    ('an empty item cannot have a positive quantity', 'An entry selected as Empty still has a positive quantity edit.',
+     ('Reset its quantity edit or set it to zero.','Then review the empty entry again.')),
+    ('active ability stacks cannot exceed acquired stacks', 'An ability has more active stacks than acquired stacks.',
+     ('Increase its acquired stacks or reduce its active stacks.','Then review again.')),
+    ('the weapon level conflicts with its acquired ability', 'The weapon level and its acquisition flag disagree.',
+     ('Use a positive weapon level with acquisition enabled, or level zero with acquisition disabled.','Reset one of the conflicting edits if needed.')),
+    ('paint-pot count conflicts with the selected individual pickups', 'The paint-pot total conflicts with individual pickup changes.',
+     ('Reset the total and edit individual pickups, or reset individual changes and choose the total.','Then review again.')),
+    ('current hp cannot exceed maximum hp', 'Current health exceeds the selected maximum health.',
+     ('Lower current health or increase maximum health for the same character.','Then review again.')),
+)
+
 
 def explain_error(error, operation='open'):
     text=str(error).casefold()
+    if operation in ('review','apply') and isinstance(error,ValueError):
+        for prefix,message,steps in EDIT_CONFLICTS:
+            if text.startswith(prefix):return Problem('invalid_edit','Resolve conflicting edits',message,steps)
     revision=re.search(r'(?:save )?revision\s+(\d{1,10})(?!\d)',text)
     if revision and ('unsupported' in text or 'not supported' in text):
         value=int(revision[1]);character=re.search(r'(?:character|slot)\s+(\d{1,3})(?!\d)',text)
@@ -48,7 +82,7 @@ def explain_error(error, operation='open'):
     if any(word in text for word in ('no active','no populated','no supported editable','populated slot','save point','typewriter')):
         return Problem('no_editable_records','No editable records found','This file has no supported player records or editable values for the selected editor.',
             ('Choose a populated gameplay save or the appropriate system profile.','Compatibility details explain which files and features are supported.'))
-    if any(word in text for word in ('range','between','cannot exceed','below','overflow','unauthorized','calculated automatically','invalid character level','above the saved')):
+    if any(word in text for word in ('range','between','cannot exceed','below','overflow','unauthorized','calculated automatically','read-only','invalid character level','above the saved')):
         return Problem('invalid_edit','Review the selected values','One or more edits exceed a supported limit or conflict with related values.',
             ('Check the highlighted fields and their allowed ranges.','Reset the affected value if needed, then review again.'))
     if isinstance(error,OSError):

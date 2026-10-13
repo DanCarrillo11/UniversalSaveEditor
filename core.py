@@ -56,7 +56,7 @@ class Field:
         return value
 
     def validate(self, value):
-        if type(value) not in ((int, float) if self.decimal else (int,)) or not math.isfinite(value) or not self.minimum <= value <= self.maximum:
+        if type(value) not in ((int, float) if self.decimal else (int,)) or (type(value) is float and not math.isfinite(value)) or not self.minimum <= value <= self.maximum:
             raise ValueError(f'{self.label}: use a value between {self.minimum} and {self.maximum}.')
 
 @dataclass
@@ -411,6 +411,8 @@ class Save:
         self.slots = [Slot(f'Steam profile · {len(unlocked)} unlocks',fields)]
 
     def _kh1(self):
+        from kh_menu import menu_snapshot
+        self.kh_menu={}
         self.party=PartyEditor(self.raw,'kh1',Field)
         chunks = png_chunks(self.raw, allow_sqex_crc=True)
         regions = [(start,end) for name,start,end in chunks if name == b'sqEX']
@@ -457,6 +459,12 @@ class Save:
                 fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group,item_id=item_id))
             for character in range(len(KH1_CHARACTERS)):
                 self.party.character(fields,len(self.slots),record,character)
+            snapshot=menu_snapshot(self.raw,table,index,record,end)
+            if snapshot is not None:
+                self.kh_menu[len(self.slots)]=snapshot
+                for field in fields:
+                    if field.key in ('0:level','difficulty'):
+                        field.note+=' The identified save-menu snapshot is updated together.'
             level = self.raw[record+4]
             self.slots.append(Slot(f'{name or str(index+1)} · Sora level {level}',fields))
         if not self.slots:
@@ -597,7 +605,7 @@ class Save:
                 raise ValueError('Unauthorized field.')
             field = known[key]
             if field.readonly:
-                raise ValueError('This value is calculated automatically and cannot be edited directly.')
+                raise ValueError('This field is read-only and cannot be edited directly.')
             field.validate(value)
             if self.game not in ('kh3','re2','re3','re4_remake','re7','re8','re9') and field.fmt and not field.fmt.startswith('xml-'):
                 struct.pack_into(field.fmt,result,field.offset,value)
@@ -685,6 +693,9 @@ class Save:
             result = bytearray(text.encode('utf-8'))
         if self.game in ('kh1','kh2'):
             result=self.party.finish(result,changes)
+        if self.game=='kh1':
+            from kh_menu import synchronize
+            synchronize(result,self.kh_menu,changes)
         for start,end in self.crc_regions:
             if self.game == 'kh2':
                 changed_slots={index for index,key in changes}

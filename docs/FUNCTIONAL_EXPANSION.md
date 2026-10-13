@@ -61,7 +61,7 @@ existing card quantities, XP, money and difficulty scope; decks/CP/HP are unmapp
 - RE6: add uncollected Serpent Emblems without rewriting existing nonzero states;
   edit Solo/Duo Mercenaries rank, score, defeated enemies and combo records for ten
   stages and sixteen character variants. Add equipped skill slots for Siege,
-  Onslaught, Survivors and Predator. Extra modes expose known shared IDs 0â€“96;
+  Onslaught, Survivors and Predator. Extra modes expose known shared IDs 0–96;
   mode compatibility and purchase records are not verified or automatically granted.
 - RE2: saved difficulty, completion/challenge records, counterattacks and Ghost
   Survivors counters/flags. RE3: existing completion/challenge/combat counters.
@@ -113,3 +113,5 @@ KH3, HD Remaster, RE5/RE6, four public Elden Ring files and nine Requiem files. 
 files are not overwritten during verification. Some samples share player data;
 they are not independent gameplay certifications. Complete support and loading
 edited saves in every game cannot yet be claimed.
+
+Subsequent corrections and input improvements are documented in [v0.25.1 editor polish](EDITOR_POLISH.md). RE6 generic quantities are superseded by identified ammunition/herb reserves; weapon and unknown count words are protected.
