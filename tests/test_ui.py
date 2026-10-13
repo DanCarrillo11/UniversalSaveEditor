@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from PySide6.QtCore import QTimer, QSettings, Qt
+from PySide6.QtCore import QTimer, QSettings, Qt, QObject, QEvent
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton, QLabel, QCheckBox, QLineEdit, QFrame, QComboBox
 from app import Window, platform_pixmap
@@ -17,6 +17,24 @@ import test_extended
 from editor_layout import organize_fields
 
 class InterfaceTests(unittest.TestCase):
+    def test_opening_editors_never_shows_detached_icon_windows(self):
+        class WindowShows(QObject):
+            def __init__(self):
+                super().__init__();self.detached=[]
+            def eventFilter(self,widget,event):
+                if event.type()==QEvent.Type.Show and isinstance(widget,QLabel) and widget.isWindow():
+                    self.detached.append(widget.objectName())
+                return False
+        w=self.window;w.show();self.app.processEvents()
+        watch=WindowShows();self.app.installEventFilter(watch)
+        try:
+            path=self.root/'KHIIFM_WW.png';path.write_bytes(kingdom2())
+            for game,source in (('kh2',path),('ror2',self.ror)):
+                self.assertTrue(w.load(game,source));self.app.processEvents()
+                w.show_library();self.app.processEvents()
+            self.assertEqual(watch.detached,[],'Icon labels must be parented before they become visible')
+        finally:self.app.removeEventFilter(watch)
+
     def test_all_original_art_decodes_and_equipment_preview_tracks_choice_and_reset(self):
         from item_art import catalogue,item_pixmap
         for game,key in catalogue():

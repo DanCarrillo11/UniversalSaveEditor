@@ -685,7 +685,8 @@ class Window(QMainWindow):
         pixmap=item_pixmap(self.save.game,art_key)
         artwork=None
         if not pixmap.isNull() or field.art_choices:
-            artwork=QLabel();artwork.setObjectName('itemSprite');artwork.setFixedSize(72,72)
+            # Parent before setVisible: an unattached QLabel opens a native window.
+            artwork=QLabel(row);artwork.setObjectName('itemSprite');artwork.setFixedSize(72,72)
             artwork.setAlignment(Qt.AlignmentFlag.AlignCenter);artwork.setPixmap(pixmap)
             def refresh_art(value=None):
                 identity=field_art_key(field,value);art=item_art(self.save.game,identity)

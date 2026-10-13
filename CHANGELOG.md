@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.22.1-alpha — Fix flashing icon windows
+
+- Fix small native windows flashing while opening an editor: icon labels now belong to their field row before visibility is set.
+- Preserve existing artwork, equipment previews and view transitions.
+- Add a regression check that monitors window-show events while opening Kingdom Hearts II and Risk of Rain 2.
+
 ## v0.22.0-alpha — Original artwork across game editors
 
 - Extend original artwork to all six supported Kingdom Hearts editors, WEBFISHING, Risk of Rain 2, Resident Evil HD Remaster, RE3 Remake, RE5 and RE7.
