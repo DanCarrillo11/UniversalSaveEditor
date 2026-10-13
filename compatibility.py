@@ -59,6 +59,18 @@ EVIDENCE = {
    'Gameplay slots and system profiles expose different options. Availability, purchase and received flags are separate; no comprehensive unlock claim.'),
 }
 
+# Scope describes exposed features; it is independent of file/gameplay evidence.
+BROAD = frozenset(('webfishing','ror2','kh1','kh2'))
+LIMITED = frozenset(('maxpayne','re1_hd','re2','re3','re4_remake','re7','re8','re9'))
+
+def coverage_label(game):
+    if game in BROAD:return 'Broad coverage'
+    if game in LIMITED:return 'Limited coverage'
+    return 'Partial coverage'
+
+def coverage_text(game):
+    return coverage_label(game)+' · '+EVIDENCE[game].limits
+
 
 def evidence_label(game):
     return 'PC files checked' if EVIDENCE[game].native_checked else 'PC file check pending'
@@ -67,7 +79,8 @@ def evidence_label(game):
 def compatibility_text(game):
     item=BY_ID[game];evidence=EVIDENCE[game]
     return (f'{item.title}\n{item.subtitle}\n\n'
-            f'Editable features\n{item.description}\n\n'
+            f'Editor coverage · {coverage_label(game)}\n{item.description}\n'
+            'No editor is currently classified as full support. Feature scope and in-game validation are separate.\n\n'
             f'Save format\n{evidence.format}\n\n'
             f'File checks · {evidence_label(game)}\n{evidence.files}\n\n'
             f'In-game checks\n{evidence.gameplay}\n\n'

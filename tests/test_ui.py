@@ -17,6 +17,47 @@ import test_extended
 from editor_layout import organize_fields
 
 class InterfaceTests(unittest.TestCase):
+    def test_games_without_saves_open_read_only_previews_without_file_dialogs(self):
+        w=self.window;w.files=[];history=list(w.recent_files)
+        with patch('app.QFileDialog.getOpenFileName',side_effect=AssertionError('Preview must not require a file')):
+            for game in BY_ID.values():
+                with self.subTest(game=game.id):
+                    w.activate_game(game);self.app.processEvents()
+                    self.assertTrue(w.preview_mode);self.assertIsNone(w.path)
+                    self.assertEqual(w.stack.currentIndex(),1)
+                    self.assertIn('No save data found',w.warning.text())
+                    self.assertIn('Not full support',w.coverage.text())
+                    self.assertFalse(w.review_button.isEnabled());self.assertFalse(w.backup_button.isEnabled())
+                    self.assertEqual(len(w.inputs),len(w.save.slots[0].fields))
+                    self.assertTrue(all(control.isEnabled()==isinstance(control,QComboBox) for control in w.inputs.values()))
+                    for control in w.inputs.values():
+                        if isinstance(control,QComboBox) and control.count()>1:control.setCurrentIndex((control.currentIndex()+1)%control.count())
+                    self.assertEqual(w.edits,{})
+                    w.review();w.open_backups()
+                    self.assertEqual(w.recent_files,history);self.assertEqual(w.edits,{})
+                    self.assertFalse(w.diagnostic(game.id).find('Save file size: 0')>=0)
+                    if len(w.save.slots)>1:w.change_slot(1);self.app.processEvents()
+                    self.assertEqual(w.recent_files,history)
+                    w.resize(1400,900);self.assertTrue(w.save_steps.isHidden())
+                    w.show_library()
+
+    def test_preview_switching_to_real_save_restores_editing_and_preserves_discard_guard(self):
+        w=self.window;w.files=[];w.select_game(BY_ID['webfishing'])
+        self.assertTrue(w.preview_mode)
+        with patch('app.replace_current') as replace:
+            w.edits[(0,'money')]='500';w.review_button.setEnabled(True);w.review()
+            replace.assert_not_called()
+        w.edits={};self.assertTrue(w.load('webfishing',self.source))
+        self.assertFalse(w.preview_mode);self.assertEqual(w.path,self.source)
+        self.assertTrue(w.inputs[0,'money'].isEnabled());self.assertTrue(w.backup_button.isEnabled())
+        self.assertFalse(w.file_combo.isHidden());self.assertNotIn('Preview only',w.warning.text())
+        w.inputs[0,'money'].setText('200')
+        with patch('app.QMessageBox.question',return_value=QMessageBox.StandardButton.Cancel):
+            self.assertFalse(w.open_preview('re9'))
+        self.assertFalse(w.preview_mode);self.assertEqual(w.save.game,'webfishing')
+        w.edits={};w.open_preview('webfishing');w.files=[('webfishing',self.source)]
+        w.select_game(BY_ID['webfishing']);self.assertFalse(w.preview_mode)
+
     def test_opening_editors_never_shows_detached_icon_windows(self):
         class WindowShows(QObject):
             def __init__(self):

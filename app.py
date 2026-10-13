@@ -22,7 +22,8 @@ from version import VERSION
 from appearance import PALETTES, stylesheet
 from favorites import FavoriteButton
 from motion import ViewTransition
-from compatibility import compatibility_text, evidence_label
+from compatibility import compatibility_text, evidence_label, coverage_label, coverage_text
+from editor_preview import EditorPreview
 from diagnostics import explain_error, support_report
 from recent_files import read_history, remember, forget
 
@@ -136,7 +137,7 @@ class Window(QMainWindow):
         preferred=settings.value('appearance/theme','light',type=str) if settings is not None else 'light'
         self.theme=preferred if preferred in PALETTES else 'light'
         self.setStyleSheet(stylesheet(self.theme))
-        self.files=[];self.save=None;self.path=None;self.inputs={};self.edits={}
+        self.files=[];self.save=None;self.path=None;self.inputs={};self.edits={};self.preview_mode=False
         self.exported_state=None;self.slot_index=0;self.filter='all';self.selected_game='kh1'
         self.editor_view_state={};self.editor_page_game=None
         self.last_directory='';self.category_filters=[];self._batch_edit=False
@@ -287,12 +288,14 @@ class Window(QMainWindow):
         top=QHBoxLayout();titles=QVBoxLayout()
         self.editor_eyebrow=label('SAVE EDITOR','eyebrow');self.editor_title=label('Your save','title',True)
         titles.addWidget(self.editor_eyebrow);titles.addWidget(self.editor_title);top.addLayout(titles,1)
-        top.addWidget(button('Open another…',self.open_file));outer.addLayout(top)
+        self.open_editor_file=button('Open another…',self.open_file)
+        top.addWidget(self.open_editor_file);outer.addLayout(top)
         self.support_button=button('Help && details',lambda:self.open_support(self.save.game if self.save else None))
         self.support_button.setAccessibleName('Compatibility and diagnostic for this save');top.addWidget(self.support_button)
         self.backup_button=button('Restore existing backup',self.open_backups)
         top.addWidget(self.backup_button)
         self.editor_subtitle=label('','muted',True);outer.addWidget(self.editor_subtitle)
+        self.coverage=label('','small',True);self.coverage.setObjectName('editorCoverage');outer.addWidget(self.coverage)
         self.file_combo=QComboBox();self.file_combo.setAccessibleName('Save file');self.file_combo.activated.connect(self.select_file)
         selectors=QHBoxLayout();selectors.addWidget(self.file_combo,1)
         self.slot_combo=QComboBox();self.slot_combo.setAccessibleName('Save slot');self.slot_combo.activated.connect(self.change_slot)
@@ -426,6 +429,8 @@ class Window(QMainWindow):
         line=QFrame();line.setObjectName('divider');line.setFixedHeight(1);self.detail_box.addWidget(line)
         self.detail_box.addWidget(label('Editor features','eyebrow'))
         features=label(game.description,'detailDescription',True);features.setAccessibleName('Editor features for '+game.title);self.detail_box.addWidget(features)
+        scope=label(coverage_label(game.id)+' · Not full support','small',True)
+        scope.setAccessibleName('Feature coverage for '+game.title);self.detail_box.addWidget(scope)
         validation=label(evidence_label(game.id)+(' · In-game checks limited' if game.id=='webfishing' else ' · In-game check pending'),'small',True)
         validation.setAccessibleName('Validation status for '+game.title);self.detail_box.addWidget(validation)
         self.detail_box.addWidget(button('Compatibility details',lambda checked=False,g=game.id:self.open_support(g)))
@@ -448,6 +453,7 @@ class Window(QMainWindow):
         else:self.detail_box.addWidget(label('No save detected in the usual folders.','muted',True))
         self.detail_box.addStretch()
         self.detail_box.addWidget(label('Actions','eyebrow'))
+        self.detail_box.addWidget(button('Preview functions',lambda checked=False,g=game.id:self.open_preview(g)))
         choose=button('Choose save file…',lambda:self.open_file(game.id));choose.setEnabled(game.editable);self.detail_box.addWidget(choose)
         if files:self.detail_box.addWidget(button('Open save folder',lambda:self.open_save_folder(files[0])))
         if not game.editable:self.detail_box.addWidget(label('Support for this game will be added in a future update.','small',True))
@@ -462,7 +468,7 @@ class Window(QMainWindow):
         super().resizeEvent(event)
         if hasattr(self,'save_steps'):
             compact=self.height()<850
-            self.save_steps.setVisible(not compact);self.summary_description.setVisible(not compact)
+            self.save_steps.setVisible(not compact and not self.preview_mode);self.summary_description.setVisible(not compact)
             self.saving_heading.setVisible(not compact);self.saving_note.setVisible(not compact)
         if not hasattr(self,'library_scroll') or self._reflow_pending:return
         self._reflow_pending=True
@@ -501,13 +507,21 @@ class Window(QMainWindow):
     def select_game(self,game):
         if not game.editable:
             QMessageBox.information(self,game.title,'Compatibility pending\n\n'+game.description+'\n\nEditing is not available for this game yet.');return
-        if self.save and self.save.game==game.id:self.show_editor();return
         files=[p for g,p in self.files if g==game.id]
+        if self.save and self.save.game==game.id and (not self.preview_mode or not files):self.show_editor();return
         if files:self.load(game.id,files[0])
         else:
             recent=next((item for item in self.recent_files if item['game']==game.id and Path(item['path']).is_file()),None)
             if recent:self.reopen_recent(recent)
-            else:self.open_file(game.id)
+            else:self.open_preview(game.id)
+
+    def open_preview(self,game):
+        if not self.may_discard():return False
+        try:preview=EditorPreview(game)
+        except (OSError,ValueError,KeyError,TypeError) as error:
+            self.show_problem(error,'open',game);return False
+        self.display_save(preview,None)
+        return True
 
     def open_file(self,game=None):
         if not isinstance(game,str):game=None
@@ -528,6 +542,7 @@ class Window(QMainWindow):
         return (tuple(sorted(self.edits.items())),self.repair.isChecked())
 
     def may_discard(self):
+        if self.preview_mode:return True
         if not self.edits and not self.repair.isChecked():return True
         if self.state_signature()==self.exported_state:return True
         return QMessageBox.question(self,'Unsaved changes','Discard the changes made to this save?',QMessageBox.StandardButton.Discard|QMessageBox.StandardButton.Cancel,QMessageBox.StandardButton.Cancel)==QMessageBox.StandardButton.Discard
@@ -549,40 +564,59 @@ class Window(QMainWindow):
                 self.kh3_accounts[str(path)] = account.strip()
         except (ValueError,OSError) as error:
             self.show_problem(error,'open',game,path);return False
-        self.save=save;self.path=Path(path);self.edits={};self.inputs={};self.exported_state=None;self.slot_index=0
-        self.last_directory=str(self.path.parent)
+        self.display_save(save,path)
+        self.remember_file(game,self.path)
+        return True
+
+    def display_save(self,save,path):
+        game=save.game;self.preview_mode=getattr(save,'is_preview',False)
+        self.save=save;self.path=Path(path) if path is not None else None
+        self.edits={};self.inputs={};self.exported_state=None;self.slot_index=0
+        if self.path is not None:self.last_directory=str(self.path.parent)
         gameinfo=BY_ID[game];self.selected_game=game
         self.editor_title.setText(gameinfo.title)
         self.editor_eyebrow.setText('EDITOR / '+gameinfo.subtitle.upper())
         self.editor_subtitle.setText(gameinfo.description)
+        self.coverage.setText('Coverage: '+coverage_label(game)+' · Not full support')
+        self.coverage.setToolTip(coverage_text(game))
+        self.open_editor_file.setText('Open save…' if self.preview_mode else 'Open another…')
         self.review_button.setText('Review and apply  →')
         self.install_note.setText('Apply updates the opened file in its current location and keeps its name. No automatic backup is created. Close the game before applying.')
         self.file_combo.blockSignals(True);self.file_combo.clear()
         paths=[p for g,p in self.files if g==game]
-        if self.path not in paths:paths.append(self.path)
+        if self.path is not None and self.path not in paths:paths.append(self.path)
         for p in paths:self.file_combo.addItem(p.name,p)
-        self.file_combo.setCurrentIndex(paths.index(self.path));self.file_combo.setToolTip(str(self.path));self.file_combo.blockSignals(False)
+        self.file_combo.setCurrentIndex(paths.index(self.path) if self.path in paths else -1)
+        self.file_combo.setToolTip(str(self.path) if self.path else 'No save file opened')
+        self.file_combo.setVisible(not self.preview_mode);self.file_combo.blockSignals(False)
         self.slot_combo.blockSignals(True);self.slot_combo.clear()
         self.slot_combo.addItems([s.name for s in save.slots]);self.slot_combo.blockSignals(False)
         self.slot_combo.setVisible(len(save.slots)>1)
-        self.warning.setText('\n'.join(save.warnings));self.warning.setVisible(bool(save.warnings))
+        preview_message=('No save file opened.' if paths else 'No save data found.')+' Preview only — open a save file to edit and apply changes.'
+        self.warning.setText(preview_message if self.preview_mode else '\n'.join(save.warnings))
+        self.warning.setVisible(self.preview_mode or bool(save.warnings))
         notes=getattr(save,'notes',[]);self.editor_notes.setText('\n'.join(notes));self.editor_notes.setVisible(bool(notes))
         self.repair.blockSignals(True);self.repair.setChecked(False);self.repair.setVisible(bool(save.warnings));self.repair.blockSignals(False)
         self.editor_nav.setEnabled(True)
+        self.backup_button.setEnabled(not self.preview_mode)
+        self.save_steps.setVisible(not self.preview_mode and self.height()>=850)
+        self.summary_description.setText('Browse supported functions. Example values are not a real save.' if self.preview_mode else 'Compare your edits with the file you opened.')
         if gameinfo.experimental:
             self.install_note.setText(self.install_note.text()+' Experimental support: in-game validation is still pending.')
+        if self.preview_mode:
+            self.install_note.setText('Preview only. Browse examples and drop-down options. Open a real save to edit. No files are created or changed.')
         self.render_fields();self.show_editor()
-        self.remember_file(game,self.path)
-        return True
 
     def select_file(self,index):
+        if self.preview_mode:return
         target=self.file_combo.itemData(index)
         if not self.load(self.save.game,target):
             self.file_combo.setCurrentIndex(self.file_combo.findData(self.path))
 
     def change_slot(self,index):
         if self.save and 0<=index<len(self.save.slots):
-            self.slot_index=index;self.render_fields();self.remember_file(self.save.game,self.path,index)
+            self.slot_index=index;self.render_fields()
+            if not self.preview_mode:self.remember_file(self.save.game,self.path,index)
 
     def render_fields(self):
         previous=self.tabs.tabText(self.tabs.currentIndex()) if self.editor_page_game==self.save.game else ''
@@ -638,6 +672,9 @@ class Window(QMainWindow):
                 if self.save.game=='alice':actions.addWidget(button('Disable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,0)))
                 actions.addWidget(button('Restore section',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,None)))
                 actions.addStretch();body_box.addLayout(actions)
+                if self.preview_mode:
+                    for i in range(actions.count()):
+                        if actions.itemAt(i).widget():actions.itemAt(i).widget().setEnabled(False)
             rows=[]
             for field in section.fields:
                 row=self.build_field_row(field)
@@ -697,7 +734,9 @@ class Window(QMainWindow):
             refresh_art(int(self.edits.get(key,field.value)) if field.art_choices else None)
             line.addWidget(artwork)
         caption=QVBoxLayout();caption.addWidget(label(field.label))
-        if field.readonly:
+        if self.preview_mode:
+            caption.addWidget(label('Example value · open a save to edit','small',True))
+        elif field.readonly:
             caption.addWidget(label('Read-only · preserved when changes are applied','small',True))
         elif field.fmt == 'xml-unlock' or field.boolean or field.choices:
             caption.addWidget(label(f'Original: {value_text(field,field.value)}  ·  {field.key.removeprefix("unlock:")}','small',True))
@@ -722,6 +761,10 @@ class Window(QMainWindow):
             entry.setReadOnly(field.readonly)
             if not field.readonly:entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
         entry.setAccessibleName(field.label)
+        if self.preview_mode:
+            # Drop-downs remain browsable; preview callbacks never create edits.
+            entry.setEnabled(isinstance(entry,QComboBox))
+            entry.setToolTip('Preview only. Browse available choices; nothing is saved.')
         self.inputs[key]=entry;line.addWidget(entry)
         revert=button('↶',lambda checked=False,k=key:self.restore_field(k),'fieldReset')
         revert.setAccessibleName('Reset '+field.label);revert.setToolTip('Restore the value from the opened file')
@@ -741,6 +784,7 @@ class Window(QMainWindow):
         self.edits.pop(key,None);self.update_summary()
 
     def set_unlock_fields(self,fields,value):
+        if self.preview_mode:return
         self._batch_edit=True
         try:
             for field in fields:
@@ -760,11 +804,13 @@ class Window(QMainWindow):
         entry.style().unpolish(entry);entry.style().polish(entry)
 
     def unlock_changed(self,key,field,entry,checked):
+        if self.preview_mode:return
         if int(checked) == field.value:self.edits.pop(key,None)
         else:self.edits[key]=str(int(checked))
         self.mark_unlock(entry,field,checked);self.update_summary()
 
     def choice_changed(self,key,field,entry,value):
+        if self.preview_mode:return
         if value == field.value:self.edits.pop(key,None)
         else:self.edits[key]=str(value)
         self.mark_unlock(entry,field,value);self.update_summary()
@@ -781,6 +827,7 @@ class Window(QMainWindow):
         entry.style().unpolish(entry);entry.style().polish(entry)
 
     def edit_changed(self,key,field,entry,text):
+        if self.preview_mode:return
         try:unchanged=field.parse(text)==field.value
         except ValueError:unchanged=False
         if unchanged:self.edits.pop(key,None)
@@ -788,6 +835,7 @@ class Window(QMainWindow):
         self.mark_entry(entry,field,text);self.update_summary()
 
     def validated_changes(self):
+        if self.preview_mode and self.edits:raise ValueError('Preview only. Open a save file to edit.')
         changes={}
         for (index,key),text in self.edits.items():
             field=next(f for f in self.save.slots[index].fields if f.key==key)
@@ -823,8 +871,8 @@ class Window(QMainWindow):
         self.summary_box.addStretch()
         has_work=bool(count or self.repair.isChecked())
         can_repair=not self.save or not self.save.warnings or self.repair.isChecked()
-        self.review_button.setEnabled(bool(self.save and has_work and valid and can_repair))
-        self.reset_button.setEnabled(has_work)
+        self.review_button.setEnabled(bool(self.save and not self.preview_mode and has_work and valid and can_repair))
+        self.reset_button.setEnabled(has_work and not self.preview_mode)
         if self.save:
             marker=' *' if has_work else ''
             self.setWindowTitle(f'UniversalSaveEditor — {BY_ID[self.save.game].title}{marker}')
@@ -832,7 +880,7 @@ class Window(QMainWindow):
             if not valid:state+=' · Fix invalid values before applying'
             elif self.repair.isChecked():state+=' · Integrity repair selected'
             elif self.save.warnings:state+=' · Integrity repair required'
-            self.statusBar().showMessage(f'{self.path.name} · {state}')
+            self.statusBar().showMessage('Preview only · No save file opened' if self.preview_mode else f'{self.path.name} · {state}')
         for refresh in self.category_filters:refresh()
 
     def reset(self):
@@ -840,7 +888,7 @@ class Window(QMainWindow):
             self.edits={};self.exported_state=None;self.repair.setChecked(False);self.render_fields()
 
     def review(self):
-        if not self.save or not self.review_button.isEnabled():return
+        if not self.save or self.preview_mode or not self.review_button.isEnabled():return
         try:output=self.save.patched(self.validated_changes(),repair_crc=self.repair.isChecked())
         except ValueError as error:
             self.show_problem(error,'review',self.save.game,self.path);return
@@ -885,7 +933,7 @@ class Window(QMainWindow):
         dialog.exec()
 
     def open_backups(self):
-        if not self.save:return
+        if not self.save or self.preview_mode:return
         dialog=QDialog(self);dialog.setWindowTitle('Restore existing backup');dialog.resize(720,440)
         box=layout(dialog,True,24,14);box.addWidget(label('Restore a previous save','title'))
         box.addWidget(label('Restore a backup you already have. This replaces the opened save without creating a new backup. Close the game before restoring.','muted',True))
@@ -929,7 +977,7 @@ class Window(QMainWindow):
 
     def diagnostic(self,game=None,problem=None,operation='inspect',path=None):
         game=game if game in BY_ID else None
-        save=self.save if self.save and self.save.game==game and problem is None else None
+        save=self.save if self.save and not self.preview_mode and self.save.game==game and problem is None else None
         source=Path(path) if path is not None else self.path if save else None
         size=len(save.raw) if save else None
         if source is not None and size is None:
@@ -973,7 +1021,7 @@ class Window(QMainWindow):
             self.settings.setValue('files/rememberRecent',self.remember_recent);self.settings.sync()
 
     def remember_file(self,game,path,slot=0):
-        if self.remember_recent:
+        if self.remember_recent and path is not None:
             self.recent_files=remember(self.recent_files,game,path,slot);self.persist_recents()
 
     def reopen_recent(self,entry,path=None):
@@ -1137,6 +1185,11 @@ def main():
             except Exception:
                 item_icons_ready=False
             crypto_ready=crypto_ready and item_icons_ready
+            try:
+                preview_ready=all(EditorPreview(g.id).slots and all(f.readonly and f.offset==-1
+                    for s in EditorPreview(g.id).slots for f in s.fields) for g in GAMES)
+            except (OSError,ValueError,KeyError,TypeError):preview_ready=False
+            crypto_ready=crypto_ready and preview_ready
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
@@ -1150,6 +1203,7 @@ def main():
                     'expansionReady':expansion_ready,
                     'villageReady':village_ready,
                     'itemIconsReady':item_icons_ready,
+                    'previewReady':preview_ready,
                     'itemIconCount':len(catalogue()) if item_icons_ready else 0,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),

@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.22.1-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.23.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -16,6 +16,9 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- Browse every editor without a save or game installation. A “No save data found” banner identifies the read-only preview; examples show real supported field types and categories. Drop-down choices remain browsable, while Apply, backups and editable values are disabled. Opening a real save restores normal editing.
+- Honest [feature coverage per game](docs/EDITOR_COVERAGE.md): broad, partial or limited. No game is currently labelled full support; this rating is separate from file checks and gameplay validation.
 
 - Original game artwork across 14 editors: all six supported Kingdom Hearts, WEBFISHING, Risk of Rain 2, Elden Ring, RE HD Remaster, RE2 Remake, RE3 Remake, RE5 and RE7. KH equipment images follow dropdown changes. Coverage varies by game; [exact counts and pending games](docs/ITEM_ARTWORK.md) are documented. No AI artwork or runtime downloads.
 

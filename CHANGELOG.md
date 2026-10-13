@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.23.0-alpha — Browse editors without saves
+
+- Open all 21 game editors without a save file or installation, with a clear preview banner and example categories/fields.
+- Generate the offline preview catalogue from synthetic adapter fixtures; ship field metadata without saves, private data or writable offsets.
+- Allow browsing example drop-down options without creating edits; block applying changes, backups and preview history entries.
+- Restore normal controls when a real save is opened and retain the existing unsaved-change prompt.
+- Show broad/partial/limited feature coverage in editor headers, library details and compatibility information. No full-support or gameplay guarantee is implied.
+
 ## v0.22.1-alpha — Fix flashing icon windows
 
 - Fix small native windows flashing while opening an editor: icon labels now belong to their field row before visibility is set.

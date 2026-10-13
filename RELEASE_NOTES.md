@@ -1,11 +1,17 @@
-# v0.22.1-alpha — Fix flashing icon windows
+# v0.23.0-alpha — Browse every editor without a save
 
-- Fix the small empty windows flashing before the save editor opens. Original artwork labels are now attached to their field row before they become visible.
-- Keep original game icons, live equipment previews, light/dark themes and view transitions.
-- Add a regression test that observes actual window-show events while opening Kingdom Hearts II and Risk of Rain 2; the previous version reproduced the unwanted windows and the fix prevents them.
+- Open all 21 game editors even without a game installation or save file. A “No save data found” banner clearly identifies preview mode.
+- Browse real supported categories, example fields, original artwork and drop-down options. Example values do not represent your progress.
+- Block applying changes, backup restoration and history entries in previews. Opening a real save restores normal editing and the existing unsaved-change prompt.
+- Add “Preview functions” to each game's actions, including games with detected files.
+- Show broad, partial or limited feature coverage in editor headers, library details and Help & details. No editor is currently classified as full support.
+- Generate the offline preview catalogue through actual adapters using synthetic fixtures. No personal saves, credentials or writable offsets are packaged.
 
-Save editing behavior and artwork coverage are unchanged. No saves are modified
-by opening an editor or loading an image.
+The broadest feature coverage is WEBFISHING, Risk of Rain 2, KH1 and KH2.
+Requiem remains limited to currency/clear points and separate content flags;
+this release does not add inventory, weapon or character editing for that game.
+Coverage is separate from native-file evidence and in-game validation. See
+[all-game coverage](docs/EDITOR_COVERAGE.md) for the current scope and gaps.
 
 Download UniversalSaveEditor.exe under Assets and double-click it. Code > Download
-ZIP also includes the updated portable executable; no installation is required.
+ZIP also includes the portable executable; no installation is required.
