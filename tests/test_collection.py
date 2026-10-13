@@ -20,7 +20,8 @@ class CollectionTests(unittest.TestCase):
     def test_collection_groups_keep_location_and_every_field_without_new_writable_data(self):
         save=Save(fixture(),'eldenring');fields=save.slots[0].fields
         categories=organize_fields('eldenring',fields);collection=next(c for c in categories if c.name=='Collection')
-        self.assertEqual([(s.name,s.selection) for s in collection.sections],[('Crafting materials','Inventory'),('Crafting materials','Storage')])
+        self.assertEqual([(s.name,s.selection) for s in collection.sections if s.selection in ('Inventory','Storage')],[('Crafting materials','Inventory'),('Crafting materials','Storage')])
+        self.assertEqual(sum(len(s.fields) for s in collection.sections if s.selection=='World map'),263)
         self.assertCountEqual([f.key for c in categories for s in c.sections for f in s.fields],[f.key for f in fields])
         out=save.patched({(0,'inventory:0'):20})
         self.assertEqual(next(f.value for f in Save(out,'eldenring').slots[0].fields if f.key=='inventory:0'),20)

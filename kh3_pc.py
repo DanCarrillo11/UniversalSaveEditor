@@ -15,6 +15,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from kh_extra_tables import KH3_ITEMS
 from collection_tables import KH3_MATERIALS
 from kh3_characters import Kh3CharacterFeatures
+from kh3_progress import Kh3Progress
 
 
 class AccountIdRequired(ValueError):
@@ -95,6 +96,8 @@ class Kh3PcSave:
                 note=f'Saved material index {material}. '+('Verified material order.' if known else 'Name mapping is pending; this entry keeps its saved index.'))
         self.characters=Kh3CharacterFeatures(plain,Field)
         self.fields.extend(self.characters.fields)
+        self.progress=Kh3Progress(plain,Field)
+        self.fields.extend(self.progress.fields)
 
     def patch(self, changes):
         result = bytearray(self.plain)
@@ -106,6 +109,7 @@ class Kh3PcSave:
             if key.startswith('inventory:') and value > 0:
                 result[field.offset+1] |= 1  # Obtained; preserve all other flags.
         self.characters.patch(result,changes)
+        self.progress.patch(result,changes)
         struct.pack_into('<I', result, 12, zlib.crc32(result[16:self.hash_end]))
         plain = bytes(result)
         if self.encrypted:

@@ -11,6 +11,8 @@ from re_hashes import murmur32
 # The ranges below are editor input bounds, not claims about reward thresholds.
 EXTRA_SPECS = {
     're2': (
+        (0x41f30892,'GetItemCount','Items obtained','Lifetime records','<i',999999999),
+        (0x4e4210f9,'The4thClearPlayTime','The 4th Survivor clear-time record','Completion records','<Q',2**63-1),
         (0xa31dc018,'CurrentDifficulty','Difficulty','Difficulty','<i',2),
         (0x2412050a,'CounterAttackNumber','Counterattacks','Combat records','<i',999999999),
         (0x4e4210f9,'IsClearedGame','Scenario completed','Completion records','<B',1),
@@ -28,6 +30,7 @@ EXTRA_SPECS = {
         (0xb6f9870b,'RogueRaccoonFigureCount','Mr. Raccoon figures','Ghost Survivors','<i',999999999),
     ),
     're3': (
+        (0x5f30b0dd,'GetItemCount','Items obtained','Lifetime records','<i',999999999),
         (0xbacebc1e,'DeadCount','Deaths','Combat records','<i',999999999),
         (0x7bcf2d1f,'NemesisDownCount','Nemesis knockdowns','Combat records','<i',999999999),
         (0x7bcf2d1f,'EmergencyAvoidanceCount','Perfect dodges','Combat records','<i',999999999),
@@ -38,6 +41,11 @@ EXTRA_SPECS = {
         (0x4ff2c755,'RecordProgressNumber','Challenge progress','Challenge records','<i',999999999),
     ),
     're4_remake': (
+        (0x5f2dc096,'_KillCount','Chapter kills','Chapter records','<i',999999999),
+        (0x5f2dc096,'_DamageCount','Chapter damage events','Chapter records','<i',999999999),
+        (0x5f2dc096,'_SaveCount','Chapter saves','Chapter records','<i',999999999),
+        (0x5f2dc096,'_HookShotCount','Chapter hook shots','Chapter records','<i',999999999),
+        (0x7334449f,'_GameClearTime','Campaign clear-time record','Completion records','<Q',2**63-1),
         (0x3862c64c,'_IsUnlock','Accessory unlocked','Accessories','<B',1),
         (0xa4ad52ff,'_IsUnlock','Costume unlocked','Costumes','<B',1),
         (0x48d2099d,'_IsUnlock','Bonus available','Extra content','<B',1),
@@ -46,6 +54,15 @@ EXTRA_SPECS = {
         (0x237579b8,'_Count','Challenge progress','Challenge records','<i',999999999),
     ),
     're7': (
+        (0x1db1bef4,'_successJustGuardCount','Successful timed guards','Combat records','<I',999999999),
+        (0x1db1bef4,'_openedItemBoxCount','Item boxes opened','Lifetime records','<I',999999999),
+        (0x1db1bef4,'_antiqueCoinCount','Antique coins collected statistic','Lifetime records','<I',999999999),
+        (0x1db1bef4,'_useStabilizersCount','Stabilizers used statistic','Lifetime records','<I',999999999),
+        (0x1db1bef4,'_useSteroidsCount','Steroids used statistic','Lifetime records','<I',999999999),
+        (0x1db1bef4,'_useHealingCount','Healing items used','Lifetime records','<I',999999999),
+        (0x76e7226f,'ClearFlagArray','DLC completion entry','DLC modes','<B',1),
+        (0x76e7226f,'ClearFlagArrayHard','DLC hard-mode completion entry','DLC modes','<B',1),
+        (0x90e78581,'_clearCount','DLC game completions','Completion records','<I',999999999),
         (0xf627f2fd,'GameDifficulty','Difficulty','Difficulty','<i',2),
         (0xf627f2fd,'RestartCount','Restarts','Combat records','<i',999999999),
         (0xae97aa2f,'IsSurvivalUnlocked','Survival unlocked','DLC modes','<B',1),
@@ -55,6 +72,14 @@ EXTRA_SPECS = {
         (0xa78a4649,'IsTrueEndCleared','True ending completed','DLC modes','<B',1),
     ),
     're8': (
+        (0x2c6618d5,'ClearedStageCount','Mercenaries stages cleared','Mercenaries records','<i',999999999),
+        (0x2c6618d5,'KillEnemyCount','Mercenaries kills','Mercenaries records','<i',999999999),
+        (0x2c6618d5,'GetAbilityCount','Mercenaries abilities obtained','Mercenaries records','<i',999999999),
+        (0x79d310f9,'ActionCount','Mercenaries action count','Mercenaries records','<i',999999999),
+        (0x40082379,'CountOfDead','DLC player deaths','Combat records','<i',999999999),
+        (0x40082379,'CountOfGameClears','DLC player completions','Completion records','<i',999999999),
+        (0x09df4207,'CountOfGameClears','DLC completions','Completion records','<i',999999999),
+        (0x5055ec19,'IsCleared','Unique challenge completed','Challenge records','<B',1),
         (0x00346547,'SaveHealthPl2000','Additional player health','Player health','<f',10000),
         (0x1c003475,'CountOfGameClears','Game completions','Completion records','<i',999999999),
         (0x1c003475,'TotalGotMoney','Total Lei earned','Lifetime records','<i',2147483647),
@@ -64,6 +89,7 @@ EXTRA_SPECS = {
         (0xb1a52427,'CountOfCompound','Crafted items','Lifetime records','<i',999999999),
     ),
     're9': (
+        (0x9d8901e7,'ReceivedClearPoint','Challenge points received','Challenge reward records','<B',1),
         (0x5ec19702,'ClearCount','Game completions','Completion records','<i',999999999),
         (0x6ba744fd,'TotalClearCount','Total game completions','Completion records','<i',999999999),
         (0x6ba744fd,'NewGameCount','New games started','Lifetime records','<i',999999999),
@@ -110,4 +136,10 @@ class EngineExtensions:
             note='Existing profile entry only. Does not grant DLC ownership or install content. Related scenario state and other unlock flags are preserved.'
         if group=='Difficulty':
             note='Changes the saved gameplay difficulty. Adaptive rank, completion records and platform achievements are preserved.'
+        elif 'time record' in label:
+            note+=' Saved timer units are not mapped; this is not displayed as seconds.'
+        elif group=='Chapter records':
+            note+=' The chapter identity and its stored difficulty are preserved.'
+        elif group=='Challenge reward records':
+            note='Saved claimed-reward state only. Does not add or subtract points, change challenge progress or grant platform achievements.'
         return label,note

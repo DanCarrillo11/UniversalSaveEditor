@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.25.1-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.26.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -16,6 +16,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [Current completion work](docs/CURRENT_GAME_COMPLETION.md): additional KH systems, mapped Elden Ring world/capacity controls and Resident Evil records. All 21 existing games remain the priority; new games and icons are deferred.
 
 - [Functionality expansion across 17 existing editors](docs/FUNCTIONAL_EXPANSION.md): cosmetic/item tools in WEBFISHING, KH3 equipment/abilities, BBS/DDD character tools, Elden Ring appearance, additional Resident Evil settings/unlocks/records, and searchable paged Risk of Rain 2 statistics. Icons and new games are deferred.
 
@@ -78,12 +80,12 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 | WEBFISHING | Economy/progression, bait/lures, upgrades, cosmetics/appearance, inventory creation/replacement/removal, hotbar/locks, quests and journal | Available; direct apply |
 | Risk of Rain 2, Steam | Coins, 454 unlock identifiers, additional existing numeric statistics and paged character/enemy/stage/item records | Available; direct apply |
 | Kingdom Hearts Final Mix, Steam | Munny, difficulty, party attributes/XP, equipment/abilities, character magic availability and inventory | Experimental expanded party editing; direct apply |
-| Kingdom Hearts II Final Mix, Steam | Munny, difficulty, XP, party attributes/equipment/abilities, item auto-reload, forms and inventory | Experimental; direct apply |
+| Kingdom Hearts II Final Mix, Steam | Munny, difficulty, XP, party attributes/equipment/abilities, companion AI, item auto-reload, forms and inventory | Experimental; direct apply |
 | Alice: Madness Returns, Steam | Teeth, four weapon levels, abilities, health upgrades and paint pots, dress abilities, 89 memories, 83 bottles, 59 snouts, Radula rooms, chapters, difficulty, enemy journal, cinematics, and statistics | Experimental; direct apply |
-| Re:Chain of Memories, Steam | Moogle Points, XP, difficulty and 1,139 named card quantities, including numbered and premium variants | Experimental; direct apply |
+| Re:Chain of Memories, Steam | Moogle Points, XP, difficulty, 1,139 named card quantities, mapped acquisition/friend flags and monotonic completion flags | Experimental; native flag edits reparsed; in-game flag effects pending |
 | Birth by Sleep Final Mix, Steam | Currency, difficulty, character progression, commands/abilities, equipped Keyblade, finisher XP and existing command-deck references | Experimental; direct apply |
 | Dream Drop Distance HD, Steam | Currency/difficulty, Sora/Riku progression, Keyblades, inventory and existing recognized spirit Attack/Magic/Defense | Experimental; direct apply |
-| Kingdom Hearts III + Re Mind, Steam | Currency/difficulty, progression, party attributes/equipment/active weapon/abilities, mapped acquisition, inventory/materials | Experimental; direct apply |
+| Kingdom Hearts III + Re Mind, Steam | Currency/difficulty, progression, party attributes/equipment/active weapon/abilities, magic, Links, shortcuts, minigame records, mapped acquisition and inventory/materials | Experimental; direct apply |
 | Max Payne 1, Steam | Original revision 48 weapon ownership, reserve ammunition and painkillers | Experimental; direct apply |
 
 All Resident Evil adapters use direct apply and retain the original account and

@@ -12,6 +12,7 @@ from collection_tables import ELDEN_CATEGORIES
 from elden_weapons import WEAPONS
 from elden_registry import register_item, registry_records
 from elden_appearance import appearance_fields
+from elden_world_tables import MAPS
 
 SLOT_SIZE = 0x280000
 BLOCK_SIZE = SLOT_SIZE + 16
@@ -86,6 +87,7 @@ class EldenRingSave:
             raise ValueError('Unsupported Elden Ring Steam SL2 container. Choose ER0000.sl2 from the original game.')
         self.raw, self.slots, self.characters, self.warnings = raw, [], [], []
         self.weapon_records=[]
+        self.world_flags=[]
         self.blocks = [(0x300 + i * BLOCK_SIZE, BLOCK_SIZE) for i in range(10)]
         self.blocks += [(GLOBAL_START, 0x60010), (GLOBAL_START + 0x60010, 0x240020)]
         for index, (start, length) in enumerate(self.blocks):
@@ -163,6 +165,11 @@ class EldenRingSave:
                 add(key, label, player+offset, 0, maximum, 'Vitals',
                     note='Maximum and base values are preserved; the game recalculates derived values from attributes.')
             cursor.skip(0xd0+0x58+0x1c+0x58+0x58)
+            talismans=raw[player+0xbe]
+            if talismans<=3:
+                fields.append(field_type('talisman_slots','Talisman slots',talismans,player+0xbe,'<B',talismans,3,'Equipment capacity',
+                    choices=('1 slot','2 slots','3 slots','4 slots'),
+                    note='Increases the saved available slots only. Existing equipment, talismans, quest rewards and item-acquisition flags are preserved. Capacity is not reduced.'))
             held=cursor.pos
             self._inventory(cursor, fields, field_type, 0xa80, 0x180, 'Inventory')
             cursor.skip(116+140+24)
@@ -187,6 +194,14 @@ class EldenRingSave:
             if number(raw,deaths)<=999999999:
                 add('deaths','Total deaths',deaths,0,999999999,'Statistics',
                     note='Saved lifetime death counter only. Multiplayer state and world progression are preserved.')
+            event_flags=cursor.pos+29
+            world={}
+            for identifier,(label,area,relative,bit) in MAPS.items():
+                offset=event_flags+relative;value=(raw[offset]>>bit)&1;key='map:'+str(identifier)
+                fields.append(field_type(key,label,value,offset,'',value,1,'World map',boolean=True,readonly=bool(value),collection=area,
+                    note='Reveals the mapped map texture only. Existing revealed regions are protected. Does not grant map-fragment items, activate Sites of Grace or change bosses, quests, travel eligibility or DLC ownership.'))
+                if not value:world[key]=(offset,bit)
+            self.world_flags.append(world)
             cursor.skip(29+0x1bf9a0)
             for maximum in (0x10000, 0x10000, 0x100000, 0x100000, 0x100000):
                 cursor.blob(maximum)
@@ -324,6 +339,10 @@ class EldenRingSave:
         for index in touched:
             character = self.characters[index]
             player = character.player
+            for (slot,key),value in changes.items():
+                if slot==index and key in self.world_flags[index]:
+                    offset,bit=self.world_flags[index][key]
+                    result[offset]=(result[offset]&~(1<<bit))|(value<<bit)
             for (slot,key),value in changes.items():
                 if slot==index and key.startswith('add_goods:'):
                     self._add_goods(result,character,int(key.split(':')[1]),value)

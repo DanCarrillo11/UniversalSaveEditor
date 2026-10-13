@@ -17,6 +17,26 @@ class PartyEditor:
         self.encodings={}
         self.bits={}
 
+    def shared(self,fields,slot,record):
+        if self.game!='kh1':return
+        options={0:'Empty',0x80:'Empty (saved flag)'}
+        for identifier,label in ((1,'High Jump'),(2,'Mermaid Kick'),(3,'Glide'),(4,'Superglide')):
+            options[identifier]=label+' · Equipped';options[identifier|0x80]=label+' · Unequipped'
+        for index in range(4):
+            self.choice(fields,slot,f'shared_ability:{index}',f'Shared entry {index+1}',record+0x599+index,'<B',options,'Shared abilities',
+                'Changes a known shared movement ability and its enabled state. Unknown identities, character-specific abilities and story flags are preserved.')
+
+    def companion_ai(self,fields,slot,record,character):
+        if self.game!='kh2' or character not in (1,2):return
+        base=record+0x24f0+character*0x114;name=KH2_CHARACTERS[character]
+        self.choice(fields,slot,f'character:{character}:ai:combat',name+' · Combat style',base+244,'<B',
+            dict(enumerate(('Technic Attack','Target Attack','Huddle Attack','Party Attack','Sora Attack','Relentless Attack'))),
+            'Companion AI','Saved companion combat behavior only. Equipment, abilities, stats, story and world variants are preserved.')
+        for index in range(4):
+            self.choice(fields,slot,f'character:{character}:ai:ability:{index}',f'{name} · Ability-use setting {index+1}',base+245+index,'<B',
+                {0:'Free',1:'Well-balanced',2:'Rare'},'Companion AI',
+                'Changes an existing ability-use preference. The underlying ability identity/order and its acquisition are preserved.')
+
     def choice(self,fields,slot,key,label,offset,fmt,options,group,note=''):
         original=struct.unpack_from(fmt,self.raw,offset)[0]
         # Unknown identities are displayed but cannot be overwritten by a guess.
@@ -104,6 +124,7 @@ class PartyEditor:
                     for index in range(count):self.choice(fields,slot,f'{prefix}:auto_reload:{index}',f'{name} · Item {index+1} auto-reload',base+68+index*2,'<H',options,'Equipment',
                         'Changes the saved item auto-reload identity for an existing slot. Does not create stock; only available inventory can be reloaded in the game.')
             self.abilities(fields,slot,prefix,name,base+84,80,'<H',{i:t for i,(t,k) in KH2_ABILITIES.items()},0x8000)
+            self.companion_ai(fields,slot,record,character)
 
     def finish(self,result,changes):
         for key,value in changes.items():

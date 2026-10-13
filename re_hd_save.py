@@ -9,6 +9,7 @@ import struct
 import zlib
 from cryptography.hazmat.primitives.ciphers import Cipher,modes
 from cryptography.hazmat.decrepit.ciphers.algorithms import Blowfish
+from re_hd_items import ITEMS as DOCUMENTED_ITEMS
 
 FILE_SIZE=457376
 KEY=b'SBmdYgEamc=#sA0)Mhs9#>/4iiXbMPxW'
@@ -20,6 +21,11 @@ ITEMS={0x01:'Jill knife',0x02:'Chris knife',0x03:'Handgun',0x05:'Samurai Edge',
        0x13:'Acid shells',0x14:'Incendiary shells',0x19:'Magnum ammunition',
        0x21:'First aid spray',0x22:'Green herb',0x23:'Red herb',0x24:'Blue herb',
        0x37:'Master key',0x44:'Ink ribbons'}
+ITEMS={**DOCUMENTED_ITEMS,**ITEMS}
+# The documented one-object entries are never duplicated as arbitrary stacks.
+# Weapon rounds, ammo, canteen fuel, old keys and ribbons keep their separate
+# existing quantity representation until all game-specific caps are established.
+NONSTACKABLE=set(ITEMS)-set((*range(3,21),0x19,0x1b,0x2c,0x44))
 
 
 def swap_words(raw):return b''.join(raw[i:i+4][::-1] for i in range(0,len(raw),4))
@@ -90,21 +96,31 @@ class ReHdSave:
                 key=keyname(group.lower().replace(' ','_')+':'+str(index))
                 known=identifier in ITEMS
                 label=f'Slot {index+1} · {ITEMS.get(identifier,"Unidentified item · ID "+str(identifier))}'
-                category='Weapons' if identifier in (1,2,3,5,6,7,8,9,10,11,12,13,14) else 'Ammunition' if identifier in (16,17,18,19,20,25) else 'Consumables' if identifier in (33,34,35,36,68) else 'Other items' if known else 'Unidentified items'
+                category='Weapons' if identifier in (*range(1,16),0x42) else 'Ammunition' if identifier in (16,17,18,19,20,25) else 'Consumables' if identifier in (*range(33,43),68) else 'Other items' if known else 'Unidentified items'
                 fields.append(field_type(key,label,quantity,offset+4,'',0,255,group,
-                                              note=f'Item ID {identifier}. Quantity or loaded ammunition of an existing item. Item identity is preserved.',collection=category,item_id=identifier))
+                    readonly=identifier in NONSTACKABLE and quantity>1,
+                    note=f'Item ID {identifier}. '+('Single-object quantity is limited to 1. ' if identifier in NONSTACKABLE else 'Quantity or loaded ammunition of an existing entry. ')+
+                         'Item identity is preserved; unknown game-specific stack/weapon caps remain unverified.',collection=category,item_id=identifier))
                 self.operations[key]=(offset+4,None)
                 if known or identifier==0:
                     options={0:'Empty',**ITEMS};values=tuple(options)
                     item_key=key+':identity'
                     fields.append(field_type(item_key,f'Slot {index+1} · Item',values.index(identifier),offset,'',0,len(values)-1,group,
                         choices=tuple(options[i] for i in values),collection=category,
-                        note='Replaces this known item or fills the next empty item-box entry. The item-box capacity and other save records are preserved. A new item gets quantity 1 unless a positive quantity is chosen.'))
+                        note='Replaces this known item or fills the next empty item-box entry. Examinable/composite item state, equipment, story dependencies, capacity and other records are preserved. A new item gets quantity 1 unless a positive quantity is chosen.'))
                     self.operations[item_key]=(offset,values)
         return fields
 
     def patch(self,changes):
         result=bytearray(self.plain)
+        for key,value in changes.items():
+            offset,values=self.operations[key]
+            if values is not None:continue
+            if 'inventory:' not in key and 'item_box:' not in key:continue
+            selected=changes.get(key+':identity')
+            identifier=(self.operations[key+':identity'][1][selected] if selected is not None else struct.unpack_from('<I',result,offset-4)[0])
+            if identifier in NONSTACKABLE and value>1:
+                raise ValueError('A single-object item cannot have a quantity above 1. Choose one copy or a stackable item.')
         for key,value in changes.items():
             if key not in self.operations:raise ValueError('Unauthorized HD Remaster field.')
             offset,values=self.operations[key]
@@ -121,6 +137,7 @@ class ReHdSave:
                 quantity_key=key.removesuffix(':identity')
                 quantity=changes.get(quantity_key,struct.unpack_from('<I',result,offset+4)[0])
                 if not identifier and changes.get(quantity_key,0):raise ValueError('An empty item cannot have a positive quantity.')
+                if identifier in NONSTACKABLE:quantity=min(1,quantity)
                 struct.pack_into('<I',result,offset+4,0 if not identifier else max(1,quantity))
         result[12:32]=swap_words(hashlib.sha1(result[64:]).digest())
         return crypt(result,True)

@@ -1,17 +1,21 @@
-# v0.25.1-alpha — Safer supplies and smoother editing
+# v0.26.0-alpha — Continue completing the existing games
 
-- KH1: synchronize level and difficulty with precisely identified save-menu snapshots; preserve currency, XP and unknown summary data.
-- RE6: name recognized reserve ammunition and herbs, allow refilling depleted entries, and protect weapon/unknown count words from quantity editing.
-- Search equipment by its currently selected item name while preserving pending edits and page changes.
-- Give specific guidance for known conflicting edits without exposing paths or account IDs.
-- Reject extreme numeric input normally instead of crashing validation.
-- Refresh offline examples and the per-game coverage documentation; no new games or icons.
+- KH3: known magic tiers, Links, three shortcut sets, minigame scores/counters and saved statistics. Acquisition order is identified rather than assumed; matching shortcuts synchronize, unknown/duplicate commands are protected.
+- ReCoM: known card/friend acquisition flags and monotonic completion flags. Adding mapped card quantities synchronizes acquisition; decks and unknown bits are preserved.
+- KH1: four shared movement-ability entries. KH2: Donald/Goofy combat and ability-use preferences.
+- Elden Ring: 263 mapped map visibility flags and increasing talisman capacity. Existing world state, equipment and unrelated character data remain unchanged.
+- HD Remaster: 131 documented item identities for known replacements and the next clean empty item-box entry. Unknown ID 0x59 remains excluded.
+- RE6: last-selected difficulty and uncompleted Mercenaries completion records, preserving existing nonzero encodings.
+- RE2/RE3/RE4 Remake/RE7/Village/Requiem: additional existing acquisition, chapter, minigame, DLC and reward-claim statistics with exact types.
+- Risk of Rain 2: preserve extreme unknown statistics without an integer-to-float overflow.
+- Keep the catalogue at 21 games and defer icon work. Completion is measured per feature and evidence; no full-support claim.
 
-This alpha improves the current editors; it does not establish full support or
-in-game verification for every game. RE6 reserve bounds are editor limits, not
-verified game stack caps. KH1 summary synchronization requires an exact matching
-archive entry; unidentified summary data remains untouched.
+This release continues the existing-game completion work. It does **not** mean
+that all games are complete. File preservation, adapter round trips and synthetic
+tests are separate from successful in-game loading. Acquisition/completion flags
+do not universally grant rewards, CP/HP, story progress, DLC or achievements.
+See the completion plan and current functionality/evidence notes.
 
-Download UniversalSaveEditor.exe under Assets and double-click it. The portable
-executable is also included in Code > Download ZIP. Changes apply directly to
-the opened save; no automatic backups are created.
+Download UniversalSaveEditor.exe under Assets. The executable is portable and
+also included in Code > Download ZIP. Changes apply directly to the opened file;
+no automatic backups are created.

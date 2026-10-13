@@ -17,6 +17,20 @@ import test_extended
 from editor_layout import organize_fields
 
 class InterfaceTests(unittest.TestCase):
+    def test_kh3_review_shows_synchronized_shortcuts_without_writing_on_cancel(self):
+        import zlib
+        from test_kh_extra import kh3_plain
+        raw=bytearray(kh3_plain());struct.pack_into('<i',raw,0xbf50,29);struct.pack_into('<i',raw,0xbf20,29)
+        struct.pack_into('<I',raw,12,zlib.crc32(raw[16:0x94f4e8]));raw=bytes(raw)
+        path=self.root/'kh3-review.bin';path.write_bytes(raw);w=self.window;w.display_save(Save(raw,'kh3'),path)
+        w.inputs[0,'magic:Fire'].setCurrentIndex(3);captured=[]
+        def inspect_review():
+            from PySide6.QtWidgets import QTextEdit
+            dialog=self.app.activeModalWidget();captured.append(dialog.findChild(QTextEdit).toPlainText());dialog.reject()
+        QTimer.singleShot(0,inspect_review);w.review()
+        self.assertEqual(len(captured),1);self.assertIn('Automatic related changes',captured[0])
+        self.assertIn('Set 1 · Circle: Fire → Firaga',captured[0]);self.assertEqual(path.read_bytes(),raw)
+        self.assertEqual(w.validated_changes(),{(0,'magic:Fire'):3})
     def test_equipment_search_finds_selected_item_name_and_keeps_unrelated_edits(self):
         from test_expansion import kh_fixture
         raw,*_=kh_fixture('kh2');w=self.window;w.display_save(Save(raw,'kh2'),self.root/'equipment.png')

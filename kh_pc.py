@@ -9,6 +9,7 @@ import struct
 import zlib
 from kh_extra_tables import RECOM_CARDS, BBS_COMMANDS, BBS_ABILITIES, DDD_ITEMS
 from kh_extra_features import ExtraKhFeatures
+from recom_features import RecomFeatures
 
 
 def recom_checksum(data):
@@ -134,7 +135,7 @@ class ExtraKhArchive:
                 if character is None:
                     raise ValueError('Unsupported BBS playable character record.')
                 name = character+' · '+name
-            features=ExtraKhFeatures(raw,game,record,len(self.records),Field) if game in ('bbs','ddd') else None
+            features=(RecomFeatures(raw,record,Field) if game=='recom' else ExtraKhFeatures(raw,game,record,len(self.records),Field))
             self.features.append(features)
             if features:fields.extend(features.fields)
             self.records.append((record, length))

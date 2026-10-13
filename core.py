@@ -192,6 +192,7 @@ class Save:
             self.warnings = self.extra_kh.warnings
             self.crc_regions = self.extra_kh.crc_regions
             self.notes = ['Close the game before applying changes. Difficulty edits do not recalculate starting bonuses. Only explicitly exposed deck references are editable; unknown and multi-slot layouts are preserved.']
+            if game=='recom':self.notes.append('Mapped acquisition and completion flags are experimental. Adding mapped card quantities enables acquisition; decks, HP/CP, scenario events and reward delivery are not rebuilt. Native edits were reparsed, but their in-game effect is not yet confirmed.')
         elif game == 'alice':
             self._alice()
         elif game == 'maxpayne':
@@ -390,7 +391,7 @@ class Save:
                 elif re.fullmatch(r'\d+(?:\.\d+)?(?:[eE][+-]?\d+)?',saved):
                     decimal=True;value=float(saved);high=1e15
                 else:continue
-                if not math.isfinite(value) or value>high:continue
+                if value>high or (type(value) is float and not math.isfinite(value)):continue
                 label=re.sub(r'(?<=[a-z0-9])(?=[A-Z])',' ',name).replace('.',' · ').replace('_',' ').strip()
                 low=0;group='Additional saved statistics'
             add_value('stat:'+name,label,match.group(2),match.start(2),low,high,group,decimal)
@@ -459,6 +460,7 @@ class Save:
                 fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group,item_id=item_id))
             for character in range(len(KH1_CHARACTERS)):
                 self.party.character(fields,len(self.slots),record,character)
+            self.party.shared(fields,len(self.slots),record)
             snapshot=menu_snapshot(self.raw,table,index,record,end)
             if snapshot is not None:
                 self.kh_menu[len(self.slots)]=snapshot

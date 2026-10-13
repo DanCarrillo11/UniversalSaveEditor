@@ -1,0 +1,91 @@
+# Complete the current catalogue before adding games
+
+The target is all 21 existing Steam editors, with useful character, inventory,
+equipment, customization, unlock and persistent progression tools wherever the
+supported save format can represent them. New games and icon work are paused.
+This document records implemented work and the actual remaining gates. No editor
+is marked full support and no completion percentage is inferred from field count.
+
+## v0.26 functionality
+
+- KH3: identify the six magic families and five Links by their saved command IDs,
+  not acquisition order. Unique entries and clean empty capacity are required;
+  unknown and duplicate commands stay protected. Edit learned tiers, Links and
+  three four-button shortcut sets. Tier changes synchronize recognized shortcuts;
+  disabling a Link clears its matching shortcuts. Explicit shortcut choices must
+  reference an acquired command. Item, sea and form shortcuts remain protected.
+  Add known minigame records and counters; timer units and rewards are not inferred.
+- ReCoM: 26 card, 13 extra-card and nine friend acquisition flags. Adding a mapped
+  card quantity enables its exact flag; conflicting removal is rejected. Known
+  completion flags may be added without clearing prior completion. Unknown bits,
+  decks and the current scenario are retained. Native flag changes were reparsed,
+  but their in-game effect has not been confirmed; HP/CP/sleights remain unmapped.
+- KH1: four shared movement-ability entries with enabled/disabled state and
+  protected unknown IDs. KH2: Donald/Goofy combat and four ability-use preferences;
+  character stats, ability entries and world variants remain unchanged.
+- Elden Ring: 263 mapped map visibility flags, preserving existing revealed
+  flags. Exact table entries are checked against the known block directory; all
+  remaining positions are materialized from that directory. No guessed ID-address fallback is used. These reveal map texture, not
+  map-fragment ownership, fast-travel eligibility or quests. Talisman capacity can
+  increase from one to four slots; reducing it is blocked to preserve equipment.
+- HD Remaster: 131 documented item IDs, compared with the PC item table. The known
+  replacement/next-empty-box operations now offer these identities. Unknown 0x59,
+  composite/examination state, capacities and unrelated sections remain unchanged.
+  Documented single-object entries cannot be duplicated as stacks. Replacing an
+  ammo stack with a single object defaults to one copy; explicit conflicts are
+  rejected. Full weapon/ammunition caps still require validation.
+- RE6: last-selected difficulty and monotonic Mercenaries completion entries;
+  existing nonzero completion encodings remain protected. Last-selected difficulty
+  does not convert a checkpoint or rewrite campaign completion.
+- RE2/RE3: acquisition statistics. RE4 Remake: chapter counters and a campaign
+  clear-time record. RE7: item-use statistics and additional existing DLC records.
+  Village: existing Mercenaries/DLC records and challenge flags. Requiem: existing
+  challenge reward-claim flags. Claim-state changes do not award points.
+- Risk of Rain 2: preserve excessively large unknown numeric statistics without
+  overflowing a conversion to floating point during load.
+- Review screens for all editors list additional exposed values changed by
+  synchronization, including KH3 shortcuts and ReCoM acquisition. Canceling the
+  review preserves the file and staged edits.
+
+Exact serialized type and object context checks remain mandatory. New RE Engine
+fields edit existing records only; they do not grow arrays or synthesize rewards,
+progression events, installed content or platform achievements.
+
+## All-game implementation gates
+
+| Game | Principal remaining gate |
+| --- | --- |
+| Requiem | Map active player variants, full named unlocks, item caps and complete inventory/weapon relationships. Difficulty value/hash pairs need named identity verification. |
+| Village | Name item/content hashes, establish stack caps, weapon upgrades and difficulty identity relationships; validate native Steam payloads. |
+| RE4 Remake | Locate actual money/player-health records; map inventory geometry, weapon parameters and complete named rewards. Chapter difficulty records are not gameplay difficulty. |
+| RE2 Remake | Full item/equipment identities, inventory-slot state and dependent reward delivery; validate native Steam files. |
+| RE3 Remake | Difficulty and complete inventory/equipment/shop dependencies; validate native Steam files. |
+| RE7 | Inventory outside the box, exact upgrade and unlock dependencies; validate native Steam files. Use-statistic edits are not health-upgrade grants. |
+| HD Remaster | Verify character health/equipment, game-progress/system unlock records and composite item state in the PC layout. |
+| RE4 (2005) | Obtain verified case footprints/placement, weapon-capacity tables, acquisition/equipment relationships and unlock state. Live-memory SDK structures alone do not establish save-array serialization. |
+| RE5 | Locate Steamworks inventory/equipment/upgrade and campaign records. The inspected public reference editor only maps profile flags/currency/figures; older Xbox/GFWL offsets are not substituted. |
+| RE6 | Purchase/owned-skill state, weapon word decoding and campaign checkpoint dependencies. Last-selected settings are not checkpoint conversions. |
+| KH1 | AP/equipment/stock dependencies, full character rules, spell tiers and persistent progression. Shared movement abilities are separate from character abilities. |
+| KH2 | AP/equipment/stock and character ability rules, full named puzzle/progression systems and actual spell-acquisition relationships. |
+| ReCoM | Native confirmation of acquisition/completion flags; locate HP/CP, sleights and deck/card-state dependencies in gameplay data. |
+| BBS | Resolve Hp1/Hp2 semantics, full command footprints/capacity, command acquisition flags, D-Link/finisher status and story dependencies. |
+| DDD | Resolve Dream Eater boards, XP/level, creation and full command decks. Source deck data still contains large unknown blocks. |
+| KH3 | Full character/AP/equipment rules, consumable shortcut references, remaining records, minigame rewards and named progression dependencies. |
+| Elden Ring | Full weapon/armor/equipment creation, affinities/Ashes, Grace/quest/boss prerequisites, gesture/spell state, model/preset/mirror dependencies and version-specific DLC state. |
+| WEBFISHING | Missing quest/collection creation and reward rules, complete customization dependencies and gameplay verification beyond currency. |
+| Risk of Rain 2 | Remaining exact names/units/dependencies for profile records and unlocks. Live-run inventory is not represented by the profile editor. |
+| Alice | Remaining persistent/configuration rules and gameplay validation. Active outfit/checkpoint stay outside scope per the earlier user preference. |
+| Max Payne | Identify serialized health, Bullet Time and loaded-round semantics. Local tagged-stream research is insufficient to label all unnamed player values; public sample download access is limited. |
+
+## Checks
+
+Local tests cover all current adapters and UI examples. The new targeted checks
+cover acquisition order/duplicates, known shortcut synchronization, encrypted KH3
+output, reserved ReCoM bits, independent characters/slots, map bits/MD5, protected
+capacity/completion, HD section preservation and large XML integers.
+
+In-memory reference checks covered encrypted KH3, two ReCoM files, 59 KH2 and
+39 KH1 records, eight HD records, RE6, four Elden Ring files (28 characters),
+and a native Requiem system profile. All original files remained unchanged.
+These checks establish reading, integrity and round-trip preservation; they do
+not certify successful game loading, full reward dependencies or every variant.

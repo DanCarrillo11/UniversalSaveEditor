@@ -283,3 +283,35 @@ previously attributed lightningdotnet editor's tables.h at
 baa6a9e0d51f7f8ac2ce26bda6a2a64d74e04919. No upstream implementation or weapon
 state decoder is included. Original native count words are retained for weapons
 and unknown identities. See docs/EDITOR_POLISH.md for checks and limits.
+
+## v0.26 existing-game completion work
+
+KH3 PC magic/Link/shortcut and minigame positions, ReCoM bitfield models and KH1
+shared-ability metadata use the already attributed GPL Kingdom Save Editor
+references. KH2 combat/ability-use enum labels were additionally compared at
+`e5eec7403f939d7a94a62d996130d84f59887dda` in
+[BFlorry/KingdomSaveEditor](https://github.com/BFlorry/KingdomSaveEditor).
+Copyright (C) 2020 Luciano Ciccariello; PC work by Mikko Mäntylä (BFlorry).
+Xe.BinaryMapper's documented bit packing was inspected as a research reference;
+its implementation is not bundled. Magic acquisition order is independently
+resolved from unique saved command identities, with unknown/duplicate protection.
+
+Elden Ring map names/regions, exact precomputed bit positions and talisman-slot
+facts are adapted from GPL oisis/EldenRing-SaveForge at
+`ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5`. The 263 MapVisible entries use exact
+positions materialized from EventFlags and the known eventflag_bst directory.
+Their overlapping table/directory positions are checked for agreement. No ID-linear fallback formulas, quest
+or boss data, unsafe maps, new artwork or upstream runtime is incorporated.
+
+131 HD Remaster item-ID facts were compared with the
+[PC save converter's item table](https://www.save-editor.com/tools/pc_game_save_converter_title_Resident_Evil_HD.html).
+Short factual labels were also compared with the previously attributed
+urbanware-org/re-hd-se Inventory.cs at
+`ce27876918d63151d142d225d8736d931e6fb03a`; no implementation is reused.
+Unknown ID 0x59 is excluded and composite item state is not inferred.
+
+Additional RE6 completion/last-selected setting facts use the previously
+attributed lightningdotnet reference. Additional typed RE Engine record/property
+facts use pinned kvasszn metadata
+`4125e497f1ae84cc746bb4a99da612c48bea161e`. No upstream SDK or message database is
+bundled. See docs/CURRENT_GAME_COMPLETION.md for native checks and remaining gates.

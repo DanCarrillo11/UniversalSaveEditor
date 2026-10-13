@@ -80,12 +80,13 @@ def organize_fields(game, fields):
         group = item.group or 'Economy'
         category, section, selection = 'Progress', group, group
         if game=='eldenring':
-            if group in ('Attributes','Vitals','Appearance'):
+            if group in ('Attributes','Vitals','Appearance','Equipment capacity'):
                 category='Character'
                 if group=='Appearance':section,selection=item.collection or group,'Appearance'
             elif group=='Add items':category,section,selection='Collection',item.collection or group,'Add items'
             elif group in ('Inventory','Storage'):
                 category,section,selection='Collection',item.collection or group,group
+            elif group=='World map':category,section,selection='Collection',item.collection or group,'World map'
         if game=='re1_hd':
             if group=='Defensive supplies':category='Equipment'
             elif group in ('Inventory','Item box'):
@@ -109,7 +110,7 @@ def organize_fields(game, fields):
         if game=='re6':
             if group=='Serpent emblems' or group.endswith((' supplies',' skills')):category='Collection'
             elif group=='Mercenaries records':category,section,selection='Collection','Results',item.collection or 'Mercenaries'
-            elif group!='Currency':category='Unlocks'
+            elif group not in ('Currency','Difficulty'):category='Unlocks'
         if game=='re4_2005':
             if group in ('Player health','Ashley health'):
                 category,section,selection='Characters','Health','Ashley' if group=='Ashley health' else 'Player'
@@ -118,7 +119,8 @@ def organize_fields(game, fields):
             elif group in ('Weapon upgrades','Ammunition','Consumables'):
                 category,section,selection='Collection',group,group
         if game in ('kh1', 'kh2'):
-            if item.key.startswith('inventory:'):
+            if group=='Shared abilities':category,section,selection='Characters',group,'Party'
+            elif item.key.startswith('inventory:'):
                 category = 'Collection'
                 if game == 'kh2':
                     section = kh2_inventory_section(item.key)
@@ -131,7 +133,7 @@ def organize_fields(game, fields):
             elif item.key.startswith('character:') or item.key.split(':')[0] in tuple(str(i) for i in range(10)):
                 character = int(item.key.split(':')[1] if game == 'kh2' else item.key.split(':')[0])
                 selection = (KH2_CHARACTERS if game=='kh2' else KH1_CHARACTERS)[character]
-                category, section = 'Characters', group if group in ('Equipment','Abilities','Magic') else 'Attributes'
+                category, section = 'Characters', group if group in ('Equipment','Abilities','Magic','Companion AI') else 'Attributes'
             elif item.key.startswith('drive_'):
                 category, section, selection = 'Characters', 'Drive Gauge', 'Sora'
             else:
@@ -169,7 +171,7 @@ def organize_fields(game, fields):
                 section = {'Economy': 'Currency', 'Story and chapters': 'Story completion'}.get(group, group)
             selection = section
         elif game == 'recom':
-            if item.key.startswith('card:'):
+            if item.key.startswith('card:') or group in ('Card acquisition','Extra card acquisition','Friend acquisition'):
                 category = 'Collection'
             selection = section
         elif game == 'bbs':
@@ -179,6 +181,10 @@ def organize_fields(game, fields):
                 category = 'Collection'
             selection = item.collection or section
         elif game in ('ddd','kh3'):
+            if game=='kh3' and group in ('Magic','Links','Shortcuts'):
+                category,section,selection='Characters',group,'Sora'
+            elif game=='kh3' and group=='Minigame records':
+                category,section,selection='Collection',group,group
             if game=='ddd' and group=='Dream Eaters':
                 category,section,selection='Characters','Attributes',item.collection or 'Spirit'
             if item.key.startswith('character:') or item.key.startswith('bonus:'):

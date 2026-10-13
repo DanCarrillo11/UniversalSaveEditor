@@ -47,3 +47,9 @@ is in progress. See [current coverage](EDITOR_COVERAGE.md),
 See [v0.25 functionality expansion](FUNCTIONAL_EXPANSION.md) for the implemented changes and remaining dependencies.
 
 See [v0.25.1 editor polish](EDITOR_POLISH.md) for dependent KH1 menu fields, protected RE6 state words and common input/search improvements.
+
+## Current pass
+
+The goal remains all 21 existing editors. See [current completion work](CURRENT_GAME_COMPLETION.md)
+for new operations, evidence and specific gates still blocking complete systems.
+No count of controls, tests or native files is used as a percentage of completion.

@@ -32,6 +32,12 @@ class Re6Save:
         if points>9999999:raise ValueError('Unsupported RE6 skill point balance.')
         self.fields.append(field_type('skill_points','Skill points',points,1804,'',0,9999999,'Currency'))
         self.operations['skill_points']=(1804,'<I',None)
+        difficulty=struct.unpack_from('<I',raw,32532)[0]
+        if difficulty<=4:
+            self.fields.append(field_type('last_difficulty','Last selected campaign difficulty',difficulty,32532,'',0,4,'Difficulty',
+                choices=('Amateur','Normal','Veteran','Professional','No Hope'),
+                note='Changes the saved last-selected difficulty only. Does not rewrite existing checkpoint state, campaign completion or online records.'))
+            self.operations['last_difficulty']=(32532,'<I',None)
         for group,base,sets in (('Campaign skills',1920,1),('Mercenaries skills',2344,8),
                                ('Siege skills',1752,8),('Onslaught skills',26732,8),
                                ('Survivors skills',26768,8),('Predator skills',26804,8)):
@@ -88,6 +94,11 @@ class Re6Save:
                 for character,name in enumerate(merc_characters):
                     offset=base+stage_index*432+character*12
                     collection=f'{mode} · {stage}'
+                    original=raw[offset];key=f'merc_record:{mode}:{stage_index}:{character}:completed'
+                    self.fields.append(field_type(key,name+' · Recorded completion',int(bool(original)),offset,'',int(bool(original)),1,'Mercenaries records',
+                        boolean=True,readonly=bool(original),collection=collection,
+                        note='Adds an uncompleted stored record only; existing nonzero encodings are protected. Does not complete a campaign or submit online results.'))
+                    if not original:self.operations[key]=(offset,'<B',None)
                     for delta,part,label,fmt,maximum in ((1,'rank','Rank','<B',6),(4,'score','Score','<I',999999999),
                                                        (8,'kills','Enemies defeated','<B',255),(9,'combo','Maximum combo','<B',255)):
                         value=struct.unpack_from(fmt,raw,offset+delta)[0]

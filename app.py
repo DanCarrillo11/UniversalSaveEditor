@@ -1011,7 +1011,7 @@ class Window(QMainWindow):
             lines.append(f'{self.save.slots[index].name}\n{field.label}: {value_text(field,field.value)} → {value_text(field,value)}')
         if self.repair.isChecked():lines.append('Repair integrity checks in the opened save.')
         text.setPlainText('\n\n'.join(lines));box.addWidget(text,1)
-        if self.save.game in ('alice','eldenring'):
+        if self.save.game in BY_ID:
             updated=Save(output,self.save.game,path=self.path,account_id=self.save.account_id)
             final_fields={(index,field.key):field for index,slot in enumerate(updated.slots) for field in slot.fields}
             requested=set(self.validated_changes())
@@ -1292,10 +1292,16 @@ def main():
                 from re6_skills import MODE_SKILLS
                 from re6_items import SUPPLIES
                 from kh_menu import menu_snapshot
+                from kh3_progress import Kh3Progress
+                from recom_features import RecomFeatures
+                from re_hd_items import ITEMS as HD_ITEMS
+                from elden_world_tables import MAPS
                 sample=struct.pack('<I4s2I',0xffffffff,b'FACE',4,0x120)+bytes(303-16)
                 functionality_ready=(len(appearance_fields(sample,0,Field))==96 and len(FIGURES)==45
                     and MODE_SKILLS[96]=='Creature Stamina · Level 3' and DIFFICULTIES['re2'][2]=='Hardcore'
                     and SUPPLIES[513]=='9mm ammunition' and menu_snapshot(bytes(1),bytes(200*0x158),0,0,1) is None
+                    and len(Kh3Progress(bytes(0x83e00),Field).fields)==58 and len(RecomFeatures(bytes(0x4b1),0,Field).fields)==52
+                    and len(HD_ITEMS)==131 and len(MAPS)==263
                     and 'fish_lake_salmon' in ITEMS and bool(COSMETICS))
             except Exception:functionality_ready=False
             crypto_ready=crypto_ready and functionality_ready

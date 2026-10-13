@@ -23,6 +23,12 @@ class Problem:
 # Fixed guidance only: never show an arbitrary exception, path, identifier or
 # save value. These are known editing conflicts, not unsupported-file errors.
 EDIT_CONFLICTS=(
+    ('a single-object item cannot have a quantity above 1', 'The selected item represents one object and cannot be duplicated as a stack.',
+     ('Use quantity 1, or select a stackable item.','Existing ammunition and weapon quantities have separate limits.')),
+    ('a shortcut must reference an acquired spell or link', 'The shortcut points to an unacquired command or spell tier.',
+     ('Acquire the matching spell tier or Link in the same review, or choose a learned command.','Then review the shortcut again.')),
+    ('a card with a positive quantity cannot have its acquisition disabled', 'The card quantity conflicts with its acquisition flag.',
+     ('Keep acquisition enabled or reset that acquisition change.','Adding a mapped card quantity enables acquisition automatically.')),
     ('the hotbar cannot reference an item being removed', 'A hotbar slot refers to an item selected for removal.',
      ('Choose a surviving item or Empty for that hotbar slot.','Then review the removal again.')),
     ('restore other edits to an item before removing it', 'The same item has edits and a removal selected.',
