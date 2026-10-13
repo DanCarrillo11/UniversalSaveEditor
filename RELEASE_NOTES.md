@@ -1,21 +1,26 @@
-# v0.26.0-alpha — Continue completing the existing games
+# v0.27.0-alpha — Clearer editor navigation
 
-- KH3: known magic tiers, Links, three shortcut sets, minigame scores/counters and saved statistics. Acquisition order is identified rather than assumed; matching shortcuts synchronize, unknown/duplicate commands are protected.
-- ReCoM: known card/friend acquisition flags and monotonic completion flags. Adding mapped card quantities synchronizes acquisition; decks and unknown bits are preserved.
-- KH1: four shared movement-ability entries. KH2: Donald/Goofy combat and ability-use preferences.
-- Elden Ring: 263 mapped map visibility flags and increasing talisman capacity. Existing world state, equipment and unrelated character data remain unchanged.
-- HD Remaster: 131 documented item identities for known replacements and the next clean empty item-box entry. Unknown ID 0x59 remains excluded.
-- RE6: last-selected difficulty and uncompleted Mercenaries completion records, preserving existing nonzero encodings.
-- RE2/RE3/RE4 Remake/RE7/Village/Requiem: additional existing acquisition, chapter, minigame, DLC and reward-claim statistics with exact types.
-- Risk of Rain 2: preserve extreme unknown statistics without an integer-to-float overflow.
-- Keep the catalogue at 21 games and defer icon work. Completion is measured per feature and evidence; no full-support claim.
+The editor now shows sections directly in a sidebar instead of hiding them in
+an All sections dropdown. Party members share one Characters category with
+visible character buttons and remembered sections.
 
-This release continues the existing-game completion work. It does **not** mean
-that all games are complete. File preservation, adapter round trips and synthetic
-tests are separate from successful in-game loading. Acquisition/completion flags
-do not universally grant rewards, CP/HP, story progress, DLC or achievements.
-See the completion plan and current functionality/evidence notes.
+- One header search reaches names, saved IDs and selected equipment across all
+  categories, sections and characters. Clearing search restores navigation.
+- A fixed bottom bar shows pending changes, Review changes, Reset and Save
+  changes. The pending-change dialog is read-only and supports individual undo.
+- Saving keeps the existing final review, related-state synchronization,
+  original-file checks and direct-file replacement. Canceling does not save.
+- The library sidebar gives way to the editor; a Library link returns to your
+  covers. Save details holds adapter notes, compatibility, diagnostic help and
+  existing-backup restoration. Integrity warnings remain visible.
+- Refined light/dark panels, selected states and responsive attribute columns.
+  Original game artwork, all 21 editors, offline previews and large-profile
+  pagination remain available.
 
-Download UniversalSaveEditor.exe under Assets. The executable is portable and
-also included in Code > Download ZIP. Changes apply directly to the opened file;
-no automatic backups are created.
+This is a navigation and presentation update. It does not change save-format
+coverage or mean that all games are complete or gameplay-verified.
+
+Download UniversalSaveEditor.exe under Assets and double-click it. The application
+is portable, with no installer or command-line setup. The executable is also
+included in Code > Download ZIP. Changes apply to the opened file; no automatic
+backup is created.

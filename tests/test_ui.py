@@ -15,8 +15,62 @@ from test_core import fishing, kingdom, kingdom2, alice, ror2
 from test_alice import configuration
 import test_extended
 from editor_layout import organize_fields
+from editor_navigation import category_title
 
 class InterfaceTests(unittest.TestCase):
+    def test_visible_navigation_changes_characters_without_losing_edits(self):
+        w=self.window;self.assertTrue(w.load('kh1',self.kh));w.show();w.tabs.setCurrentIndex(1);self.app.processEvents()
+        page=w.tabs.currentWidget();navigation=page.navigation
+        self.assertTrue(navigation.selector.isHidden())
+        self.assertFalse(navigation.list.isHidden())
+        self.assertTrue(w.workspace_sidebar.isHidden())
+        w.inputs[0,'0:strength'].setText('120')
+        QTest.mouseClick(navigation.character_buttons['Donald'],Qt.MouseButton.LeftButton)
+        self.assertEqual(navigation.selector.currentData(),'Donald')
+        self.assertTrue(navigation.character_buttons['Donald'].isChecked())
+        self.assertFalse(navigation.character_buttons['Sora'].isChecked())
+        self.assertFalse(w.inputs[0,'1:strength'].parentWidget().isHidden())
+        self.assertTrue(w.inputs[0,'0:strength'].parentWidget().isHidden())
+        self.assertEqual(w.validated_changes(),{(0,'0:strength'):120})
+        w.show_library();self.assertFalse(w.workspace_sidebar.isHidden())
+
+    def test_global_search_reaches_other_categories_and_restores_section_navigation(self):
+        w=self.window;w.load('kh1',self.kh);w.tabs.setCurrentIndex(0)
+        w.inputs[0,'munny'].setText('1000')
+        w.editor_search.setText('Potion');self.app.processEvents()
+        self.assertEqual(w.tabs.tabText(w.tabs.currentIndex()),'Inventory')
+        navigation=w.tabs.currentWidget().navigation
+        self.assertEqual(navigation.heading.text(),'Search results')
+        self.assertFalse(navigation.list.isEnabled())
+        w.editor_search.clear();self.app.processEvents()
+        self.assertTrue(navigation.list.isEnabled())
+        self.assertEqual(navigation.heading.text(),navigation.active_section.name)
+        w.focus_search();self.assertTrue(w.editor_search.hasFocus() or not w.isVisible())
+        self.assertEqual(w.validated_changes(),{(0,'munny'):1000})
+
+    def test_pending_change_dialog_is_read_only_and_footer_stays_visible(self):
+        w=self.window;w.load('webfishing',self.source);original=self.source.read_bytes()
+        w.show();w.resize(1100,720);self.app.processEvents()
+        w.inputs[0,'money'].setText('1000');w.inputs[0,'max_bait'].setText('-1')
+        self.assertFalse(w.review_button.isEnabled());self.assertTrue(w.changes_button.isEnabled())
+        self.assertLessEqual(w.review_button.geometry().bottom(),w.review_button.parentWidget().height())
+        inspected=[]
+        def inspect():
+            dialog=self.app.activeModalWidget();inspected.append(dialog.windowTitle())
+            self.assertTrue(any('1000' in l.text() for l in dialog.findChildren(QLabel)))
+            self.assertTrue(any(l.objectName()=='warning' for l in dialog.findChildren(QLabel)))
+            dialog.accept()
+        QTimer.singleShot(0,inspect);w.show_pending_changes()
+        self.assertEqual(inspected,['Pending changes']);self.assertEqual(self.source.read_bytes(),original)
+        w.restore_field((0,'max_bait'));self.assertTrue(w.review_button.isEnabled())
+
+    def test_global_search_does_not_remain_hidden_after_reopening_a_save(self):
+        w=self.window;w.load('kh1',self.kh);w.editor_search.setText('no-match-in-this-save')
+        self.assertTrue(w.inputs[0,'munny'].parentWidget().isHidden())
+        w.load('kh1',self.kh)
+        self.assertEqual(w.editor_search.text(),'')
+        self.assertFalse(w.inputs[0,'munny'].parentWidget().isHidden())
+
     def test_kh3_review_shows_synchronized_shortcuts_without_writing_on_cancel(self):
         import zlib
         from test_kh_extra import kh3_plain
@@ -41,7 +95,9 @@ class InterfaceTests(unittest.TestCase):
         w.inputs[0,'munny'].setText('1234');search.setText(selected);self.app.processEvents()
         self.assertFalse(entry.parentWidget().isHidden());self.assertEqual(w.validated_changes(),{(0,'munny'):1234})
         search.setText('not-a-real-equipped-item');self.app.processEvents();self.assertTrue(entry.parentWidget().isHidden())
-        search.clear();self.app.processEvents();self.assertFalse(entry.parentWidget().isHidden())
+        search.clear();self.app.processEvents()
+        page.navigation.list.setCurrentRow(next(i for i in range(page.navigation.list.count()) if page.navigation.list.item(i).text()=='Equipment'))
+        self.assertFalse(entry.parentWidget().isHidden())
         self.assertEqual(w.validated_changes(),{(0,'munny'):1234})
 
     def test_extreme_numeric_input_is_highlighted_and_review_is_disabled(self):
@@ -95,7 +151,7 @@ class InterfaceTests(unittest.TestCase):
         w=self.window;raw=fixture(parts=True);path=self.root/'requiem.bin';path.write_bytes(raw)
         save=Save(raw,'re9',account_id=ACCOUNT)
         w.display_save(save,path);self.app.processEvents()
-        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Characters','Collection'])
+        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Characters','Inventory'])
         capacity=next(f for f in save.slots[0].fields if f.label=='Silver Tube Extension' and f.group=='Weapon upgrades')
         entry=w.inputs[0,capacity.key]
         self.assertFalse(entry.model().item(0).isEnabled());self.assertTrue(entry.model().item(2).isEnabled())
@@ -123,6 +179,8 @@ class InterfaceTests(unittest.TestCase):
                     self.assertFalse(w.review_button.isEnabled());self.assertFalse(w.backup_button.isEnabled())
                     self.assertEqual(len(w.inputs),len(w.save.slots[0].fields))
                     self.assertTrue(all(control.isEnabled()==isinstance(control,QComboBox) for control in w.inputs.values()))
+                    self.assertTrue(all(w.tabs.widget(i).navigation.list.count()>0 for i in range(w.tabs.count())))
+                    self.assertTrue(all(w.tabs.widget(i).navigation.selector.isHidden() for i in range(w.tabs.count())))
                     for control in w.inputs.values():
                         if isinstance(control,QComboBox) and control.count()>1:control.setCurrentIndex((control.currentIndex()+1)%control.count())
                     self.assertEqual(w.edits,{})
@@ -582,7 +640,7 @@ class InterfaceTests(unittest.TestCase):
         from test_elden_ring import fixture
         path=self.root/'ER0000.sl2';original=fixture(character_versions=(250,261));path.write_bytes(original)
         w=self.window;w.open_path(path)
-        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Character','Collection'])
+        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Character','Inventory'])
         self.assertTrue(w.inputs[(0,'level')].isReadOnly())
         self.assertTrue(w.inputs[(0,'runes_memory')].isReadOnly())
         self.assertTrue(w.inputs[(0,'level')]._reset_button.isHidden())
@@ -676,7 +734,7 @@ class InterfaceTests(unittest.TestCase):
     def test_alice_apply_replaces_active_profile_without_backup(self):
         path=self.root/'PersistentData_PC.PSD';original=alice();path.write_bytes(original)
         w=self.window;w.open_path(path);w.inputs[(0,'teeth')].setText('1234')
-        self.assertIn('apply',w.review_button.text())
+        self.assertEqual(w.review_button.text(),'Save changes')
         def apply_dialog():
             dialog=self.app.activeModalWidget()
             for item in dialog.findChildren(QPushButton):
@@ -689,7 +747,7 @@ class InterfaceTests(unittest.TestCase):
 
     def test_inventory_search_keeps_pending_changes_and_editor_focus(self):
         w=self.window;w.load('kh1',self.kh)
-        inventory=next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)=='Collection')
+        inventory=next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)==category_title(w.save.game,'Collection'))
         w.tabs.setCurrentIndex(inventory);tab=w.tabs.currentWidget()
         entry=w.inputs[(0,'inventory:1')];entry.setText('20')
         search=tab.findChild(QLineEdit,'fieldSearch');search.setText('Potion')
@@ -823,7 +881,7 @@ class InterfaceTests(unittest.TestCase):
             with self.subTest(game=game,number=number):
                 path=self.root/f'categories-{number}.save';path.write_bytes(raw)
                 w=self.window;w.load(game,path)
-                self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],expected)
+                self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],[category_title(game,name) for name in expected])
                 original=w.save.slots[0].fields
                 mapped=[field.key for category in organize_fields(game,original) for section in category.sections for field in section.fields]
                 self.assertCountEqual(mapped,[field.key for field in original])
@@ -855,8 +913,9 @@ class InterfaceTests(unittest.TestCase):
         tab=w.tabs.currentWidget();selector=tab.findChild(QComboBox,'sectionSelector')
         form=w.inputs[(0,'form:0:level')]
         header=next(b for b in tab.findChildren(QPushButton,'sectionToggle') if 'Valor form' in b.text())
-        self.assertFalse(header.isChecked())
-        header.click();self.assertTrue(header.isChecked())
+        navigation=tab.navigation.list
+        navigation.setCurrentRow(next(i for i in range(navigation.count()) if navigation.item(i).text()=='Valor form'))
+        self.assertTrue(header.isChecked())
         form.setText('5')
         selector.setCurrentIndex(selector.findData('Donald'))
         self.assertTrue(form.parentWidget().isHidden())
@@ -947,7 +1006,7 @@ class InterfaceTests(unittest.TestCase):
         w=self.window;self.assertFalse(w.game_cards['re8'].artwork.pixmap.isNull())
         w.open_path(path)
         self.assertEqual(w.save.game,'re8')
-        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Character','Collection'])
+        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Character','Inventory'])
         money=next(f for f in w.save.slots[0].fields if f.label=='Lei')
         cp=next(f for f in w.save.slots[0].fields if f.label=='Challenge points (CP)')
         single=next(f for f in w.save.slots[0].fields if f.readonly)

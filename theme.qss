@@ -75,6 +75,39 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
 QTabWidget::pane { border: none; padding-top: 12px; }
 QTabBar::tab { background: @input@; padding: 9px 18px; color: @secondary@; border: 1px solid transparent; border-radius: 9px; margin: 2px; }
 QTabBar::tab:selected { background: @surface@; color: @accent@; border-color: @line@; font-weight: 600; }
+QTabWidget#editorCategories::pane { border: none; padding-top: 18px; }
+QTabWidget#editorCategories QTabBar::tab { padding: 11px 24px; margin: 0 8px 0 0; border-radius: 12px; background: @input@; font-weight: 600; }
+QTabWidget#editorCategories QTabBar::tab:selected { background: @selection@; color: @selectionText@; border-color: @selection@; }
+QTabWidget#editorCategories QTabBar::tab:hover { background: @hover@; }
+QWidget#categoryWorkspace { background: transparent; }
+QFrame#sectionSidebar { background: @surface@; border: 1px solid @line@; border-radius: 16px; }
+QLabel#navigationCaption { padding: 3px 8px 10px; color: @muted@; font-size: 10px; font-weight: 600; }
+QListWidget#sectionNavigation { background: transparent; border: none; outline: none; padding: 0; }
+QListWidget#sectionNavigation::item { color: @secondary@; padding: 12px 10px; border-radius: 10px; margin: 2px 0; }
+QListWidget#sectionNavigation::item:hover { background: @hover@; }
+QListWidget#sectionNavigation::item:selected { background: @selection@; color: @selectionText@; font-weight: 600; }
+QListWidget#sectionNavigation:disabled { color: @disabledText@; }
+QLabel#editorBreadcrumb { color: @muted@; font-size: 11px; }
+QLabel#editorSectionTitle { font-size: 24px; font-weight: 600; }
+QPushButton#characterChip { background: @input@; border-color: transparent; border-radius: 11px; padding: 9px 18px; }
+QPushButton#characterChip:checked { background: @selection@; color: @selectionText@; }
+QPushButton#characterChip:hover { background: @hover@; }
+QScrollArea#characterStrip, QScrollArea#editorFieldsScroll, QScrollArea#editorFieldsScroll > QWidget { background: transparent; }
+QFrame#editorFooter { background: @surface@; border: 1px solid @line@; border-radius: 16px; }
+QFrame#editorFooter QLabel { background: transparent; }
+QLabel#pendingCount { font-size: 14px; font-weight: 600; color: @selectionText@; }
+QPushButton#editorReset { background: transparent; border-color: transparent; color: @secondary@; }
+QPushButton#editorReset:hover { background: @input@; }
+QFrame#saveDetails { background: @surface@; border: 1px solid @line@; border-radius: 14px; }
+QFrame#saveDetails QLabel { background: transparent; }
+QFrame#field QLabel { background: transparent; }
+QFrame#field:hover { background: @input@; border-radius: 10px; }
+QFrame#editorSection { border: none; border-radius: 16px; background: @surface@; }
+QPushButton#sectionToggle { padding: 5px 8px 8px; font-size: 12px; font-weight: 600; }
+QLineEdit#fieldSearch, QLineEdit#editorSearch { padding: 11px 14px; }
+QPushButton#editorBack { text-align: left; color: @accent@; padding: 0; border: none; background: transparent; font-size: 12px; }
+QWidget#attributeGrid { background: transparent; }
+QComboBox[changed="true"], QCheckBox[changed="true"] { color: @success@; }
 QCheckBox { background: transparent; spacing: 8px; }
 QCheckBox::indicator { width: 17px; height: 17px; border: 1px solid @muted@; border-radius: 5px; background: @surface@; }
 QCheckBox::indicator:checked { background: @accent@; border-color: @accent@; image: url("@checkIcon@"); }

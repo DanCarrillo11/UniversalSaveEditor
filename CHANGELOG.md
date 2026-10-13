@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.27.0-alpha — Clearer editor navigation
+
+- Replace visible section dropdowns with a section list; choose party members with character buttons and remember each character's section.
+- Search every category from the editor header, including fields outside the current section or character. Clearing search restores navigation; reopening a file clears stale searches.
+- Replace the right-hand change panel with a fixed bottom action bar and a read-only pending-change dialog. Saving keeps the existing review, related-state synchronization and direct-file validation.
+- Hide library navigation while editing, with a visible Library link; put compatibility notes, backup restoration and technical guidance under Save details. Integrity warnings stay visible.
+- Polish light/dark selection, rounded panels, field hints and responsive attribute columns. Preserve all 21 adapters, original artwork, previews and paged large profiles.
+
+
 ## v0.26.0-alpha — Continue completing the existing games
 
 - KH3: known magic tiers, Links, three shortcut sets, minigame scores/counters and saved statistics. Acquisition order is identified rather than assumed; matching shortcuts synchronize, unknown/duplicate commands are protected.

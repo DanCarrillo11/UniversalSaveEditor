@@ -17,6 +17,8 @@ executable included at its root. Startup can take a few seconds.
 
 ## Features
 
+- Visible editor navigation: section lists, character buttons and one search across all categories. A fixed bottom bar keeps pending changes, review and saving within reach. [Navigation and saving](docs/EDITOR_NAVIGATION.md).
+
 - [Current completion work](docs/CURRENT_GAME_COMPLETION.md): additional KH systems, mapped Elden Ring world/capacity controls and Resident Evil records. All 21 existing games remain the priority; new games and icons are deferred.
 
 - [Functionality expansion across 17 existing editors](docs/FUNCTIONAL_EXPANSION.md): cosmetic/item tools in WEBFISHING, KH3 equipment/abilities, BBS/DDD character tools, Elden Ring appearance, additional Resident Evil settings/unlocks/records, and searchable paged Risk of Rain 2 statistics. Icons and new games are deferred.
@@ -47,7 +49,7 @@ executable included at its root. Startup can take a few seconds.
   detected saves remain in the details panel. Coming-soon games are not editable.
 - Click a compatible cover to open its detected save directly.
 - Automatic discovery, manual file selection, and drag and drop.
-- Up to three main categories per editor, with section and character selectors.
+- Game-specific categories with visible section navigation and character selection; names include Inventory, Cards, Commands and Collectibles where appropriate.
 - Foldable sections and field search, including inventory IDs, unlocks and the selected equipment name.
 - Changed-only filtering, field counts, individual undo, and inline validation.
 - Compact editor controls and scrollable save details for smaller windows.
