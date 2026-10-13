@@ -14,6 +14,7 @@ from pathlib import Path
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from kh_extra_tables import KH3_ITEMS
 from collection_tables import KH3_MATERIALS
+from kh3_characters import Kh3CharacterFeatures
 
 
 class AccountIdRequired(ValueError):
@@ -92,15 +93,19 @@ class Kh3PcSave:
             add(f'material:{material}', name, 0x165e+material*2, '<h', 999, 'Materials',
                 collection='Materials' if known else 'Unidentified materials',
                 note=f'Saved material index {material}. '+('Verified material order.' if known else 'Name mapping is pending; this entry keeps its saved index.'))
+        self.characters=Kh3CharacterFeatures(plain,Field)
+        self.fields.extend(self.characters.fields)
 
     def patch(self, changes):
         result = bytearray(self.plain)
         fields = {f.key:f for f in self.fields}
         for key, value in changes.items():
             field = fields[key]
+            if not field.fmt:continue
             struct.pack_into(field.fmt, result, field.offset, value)
             if key.startswith('inventory:') and value > 0:
                 result[field.offset+1] |= 1  # Obtained; preserve all other flags.
+        self.characters.patch(result,changes)
         struct.pack_into('<I', result, 12, zlib.crc32(result[16:self.hash_end]))
         plain = bytes(result)
         if self.encrypted:

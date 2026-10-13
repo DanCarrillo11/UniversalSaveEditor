@@ -82,3 +82,7 @@ Tests cover key mismatch, block authentication, damaged hashes, truncation,
 unsupported flags/types, size preservation, unknown data, reserved metadata,
 float round trips, inventory ancestry and field limits. Personal saves, account
 identifiers and downloaded fixtures remain outside the repository.
+
+## v0.25 expansion
+
+See [functionality expansion](FUNCTIONAL_EXPANSION.md) for new mapped operations, context/type guards, native-file checks and explicit limits.

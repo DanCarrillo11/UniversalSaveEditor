@@ -251,3 +251,21 @@ computed from UTF-16LE codes. No upstream implementation, SDK schema or
 multilingual translation asset is bundled; unknowns remain explicitly unmapped.
 Game names and trademarks belong to CAPCOM CO., LTD. Requiem artwork remains
 pending; no modded or substitute images are shipped. See docs/RE9_FORMAT.md.
+
+## v0.25 functionality metadata
+
+Additional KH equipment/ability/command/Spirit labels and layout facts are adapted
+from the already attributed GPL Kingdom Save Editor sources (Luciano Ciccariello;
+BFlorry PC container contributions). WEBFISHING original item/cosmetic/lure names
+and serialization facts use the already attributed MIT NotNite metadata at
+b3687a817700d2b766bf2406dfbd8a2b35bb4bf5; no new artwork is included.
+
+Elden Ring FACE slider positions/names and the saved death counter are checked
+against the already attributed GPL SaveForge metadata at
+ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5 and four public native PC files.
+RE5 figure bits and RE6 extra-mode/results/emblem positions use the previously
+attributed primary format references and public native profiles. Additional
+RE Engine type/property facts use pinned kvasszn metadata 4125e497f1ae84cc746bb4a99da612c48bea161e;
+no upstream SDK, translation database or unlicensed implementation is bundled.
+See docs/FUNCTIONAL_EXPANSION.md for boundaries; identifiers/format facts are
+not a certification of every dependency or in-game behavior.

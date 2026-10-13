@@ -13,7 +13,7 @@ class ExtendedTests(unittest.TestCase):
     def test_extended_fields_preserve_every_other_byte(self):
         raw=self.fixture();save=Save(raw,'webfishing')
         changes={(0,'xp'):123.1,(0,'level'):30,(0,'rod_power'):5,
-            (0,'item:0:size'):42.3,(0,'item:0:quality'):5,(0,'journal:lake:salmon:count'):88}
+            (0,'item_ref:73:size'):42.3,(0,'item_ref:73:quality'):5,(0,'journal:lake:salmon:count'):88}
         output=save.patched(changes)
         allowed=set()
         for field in save.slots[0].fields:
@@ -25,7 +25,7 @@ class ExtendedTests(unittest.TestCase):
     def test_invalid_decimals_and_capacity(self):
         save=Save(self.fixture(),'webfishing')
         for changes in ({(0,'xp'):float('nan')},{(0,'xp'):float('inf')},
-                        {(0,'item:0:quality'):6},{(0,'max_bait'):7},{(0,'level'):51}):
+                        {(0,'item_ref:73:quality'):6},{(0,'max_bait'):7},{(0,'level'):51}):
             with self.assertRaises(ValueError):save.patched(changes)
 
     def test_named_inventory_across_slots(self):

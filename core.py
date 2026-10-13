@@ -4,6 +4,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 Format references and attribution: SOURCES.md.
 """
 from dataclasses import dataclass
+from collections import Counter
 from pathlib import Path
 import ctypes
 import hashlib
@@ -190,7 +191,7 @@ class Save:
             self.slots = self.extra_kh.slots
             self.warnings = self.extra_kh.warnings
             self.crc_regions = self.extra_kh.crc_regions
-            self.notes = ['Close the game before applying changes. Difficulty edits do not recalculate starting bonuses. Command and card deck references are preserved.']
+            self.notes = ['Close the game before applying changes. Difficulty edits do not recalculate starting bonuses. Only explicitly exposed deck references are editable; unknown and multi-slot layouts are preserved.']
         elif game == 'alice':
             self._alice()
         elif game == 'maxpayne':
@@ -212,25 +213,25 @@ class Save:
             try:self.re4_uhd=Re4UhdSave(raw,Field,Slot)
             except ValueError as error:raise FormatError(str(error)) from error
             self.slots=self.re4_uhd.slots;self.warnings=self.re4_uhd.warnings
-            self.notes=['Steam Ultimate HD Edition. Pesetas, difficulty, player/Ashley health and statistics only. Inventory, weapons, costumes, unlocks and room state are preserved. Experimental: edited saves still need in-game verification. Close the game before applying changes.']
+            self.notes=['Steam Ultimate HD Edition. Pesetas, difficulty, player/Ashley health, statistics, existing case quantities and mapped weapon tiers. New case objects, geometry, costumes, unlock dependencies and room state are preserved. Experimental: edited saves still need in-game verification. Close the game before applying changes.']
         elif game == 're5':
             from re5_save import Re5Save
             try:self.re5=Re5Save(raw,Field)
             except ValueError as error:raise FormatError(str(error)) from error
             self.slots=[Slot('Steamworks profile',self.re5.fields)];self.warnings=self.re5.warnings
-            self.notes=['Money, exchange points, costume flags, screen filters, infinite-ammo flags and library-file unlocks. Weapon ownership, upgrades, inventory, chapter progress and account data are preserved. Infinite-ammo flags do not grant weapons. Experimental: in-game verification is pending. Close the game before applying changes.']
+            self.notes=['Money, exchange points, costume flags, screen filters, infinite-ammo, library-file and figure unlocks. Weapon ownership, upgrades, inventory, chapter progress and account data are preserved. Infinite-ammo flags do not grant weapons. Experimental: in-game verification is pending. Close the game before applying changes.']
         elif game=='re1_hd':
             from re_hd_save import ReHdSave
             try:self.re_hd=ReHdSave(raw,Field)
             except ValueError as error:raise FormatError(str(error)) from error
-            self.slots=[Slot('Mapped save slot 1',self.re_hd.fields)];self.warnings=self.re_hd.warnings
-            self.notes=['Experimental HD Remaster PC support for the first mapped save slot: difficulty, save count, defensive supplies and existing inventory/item-box quantities. Other slots, item IDs, player identity and story state are preserved. Edited saves still need in-game verification. Close the game before applying changes.']
+            self.slots=[Slot(f'Save record {index+1}',fields) for index,fields in self.re_hd.slot_records];self.warnings=self.re_hd.warnings
+            self.notes=['Experimental HD Remaster PC gameplay records: difficulty, save count, defensive supplies, known inventory/item-box replacement and next empty box entry. Other sections, capacities, player identity and story are preserved. Edited saves still need in-game verification. Close the game before applying changes.']
         elif game=='re6':
             from re6_save import Re6Save
             try:self.re6=Re6Save(raw,Field)
             except ValueError as error:raise FormatError(str(error)) from error
             self.slots=[Slot('PC profile',self.re6.fields)];self.warnings=self.re6.warnings
-            self.notes=['Skill points, Mercenaries character/costume and stage flags, existing supplies and equipped campaign/Mercenaries skills. Profile identity, skill purchase flags, emblems, weapon IDs, story state and difficulty are preserved. DLC still requires ownership. Experimental: edited saves need in-game verification. Close the game before applying changes.']
+            self.notes=['Skill points, Mercenaries flags/results, uncollected emblems, existing supplies and equipped campaign/extra-mode skills. Existing nonzero emblems, profile identity, purchase flags, weapon IDs, story and difficulty are preserved. Extra-mode skill restrictions need further verification. DLC still requires ownership. Experimental: edited saves need in-game verification. Close the game before applying changes.']
         elif game in ('re2','re3','re4_remake','re7','re8','re9'):
             from re_engine_save import ReEngineSave
             from kh3_pc import AccountIdRequired
@@ -305,12 +306,16 @@ class Save:
             ('buddy_level','Buddy level',0,5,'Upgrades',False),
             ('buddy_speed','Buddy speed',0,5,'Upgrades',False),
         ]: add((key,),key,label,low,high,group,decimal)
+        reference_counts=Counter(i.get('ref') for i in self.info['inventory'] if isinstance(i,dict) and type(i.get('ref')) is int)
         for index,item in enumerate(self.info['inventory']):
             if not isinstance(item,dict):continue
             name=f'{index+1} · {item.get("id","Item")}'
             identity='item:'+item['id'] if isinstance(item.get('id'),str) else None
-            add(('inventory',index,'quality'),f'item:{index}:quality',name+' · quality (0–5)',0,5,'Inventory',item_id=identity)
-            add(('inventory',index,'size'),f'item:{index}:size',name+' · size',0.001,999999,'Inventory',True,item_id=identity)
+            ref=item.get('ref')
+            unique=type(ref) is int and ref>0 and reference_counts[ref]==1
+            prefix=f'item_ref:{ref}' if unique else f'item:{index}'
+            add(('inventory',index,'quality'),prefix+':quality',name+' · quality (0–5)',0,5,'Inventory',item_id=identity)
+            add(('inventory',index,'size'),prefix+':size',name+' · size',0.001,999999,'Inventory',True,item_id=identity)
         journal=self.info.get('journal',{})
         if isinstance(journal,dict):
             for category,entries in journal.items():
@@ -321,6 +326,9 @@ class Save:
                     identity='item:'+fish if isinstance(fish,str) else None
                     add(('journal',category,fish,'count'),f'journal:{category}:{fish}:count',name+' · catches',0,9999999,'Journal',item_id=identity)
                     add(('journal',category,fish,'record'),f'journal:{category}:{fish}:record',name+' · record',0,999999,'Journal',True,item_id=identity)
+        from webfishing_features import WebfishingFeatures
+        self.webfishing=WebfishingFeatures(self.raw,self.info,reader,Field)
+        fields.extend(self.webfishing.fields)
         self.slots = [Slot(f'Level {self.info["level"]} · {len(self.info["inventory"])} items',fields)]
 
     def _ror2(self):
@@ -370,10 +378,26 @@ class Save:
         seen = set()
         for match in re.finditer(r'<stat\s+name="([^"]+)"\s*>([^<]*)</stat>',text):
             name = match.group(1)
-            if name not in stat_specs or name in seen:
+            if name in seen:
                 continue
-            seen.add(name); label,low,high,group,decimal = stat_specs[name]
+            seen.add(name)
+            if name in stat_specs:label,low,high,group,decimal = stat_specs[name]
+            else:
+                saved=match.group(2).strip()
+                # Unknown nonnumeric statistics are retained, not coerced. Keep
+                # integer representation for integer counters and reject infinities.
+                if re.fullmatch(r'\d+',saved):decimal=False;value=int(saved);high=2**64-1
+                elif re.fullmatch(r'\d+(?:\.\d+)?(?:[eE][+-]?\d+)?',saved):
+                    decimal=True;value=float(saved);high=1e15
+                else:continue
+                if not math.isfinite(value) or value>high:continue
+                label=re.sub(r'(?<=[a-z0-9])(?=[A-Z])',' ',name).replace('.',' · ').replace('_',' ').strip()
+                low=0;group='Additional saved statistics'
             add_value('stat:'+name,label,match.group(2),match.start(2),low,high,group,decimal)
+            if name not in stat_specs:
+                fields[-1].note='Existing saved statistic. The internal identifier is '+name+'. Its gameplay dependencies and units are not mapped; nonnumeric entries and other XML are preserved.'
+                family=name.split('.')[0] if '.' in name else 'Additional saved statistics'
+                fields[-1].collection=re.sub(r'(?<=[a-z0-9])(?=[A-Z])',' ',family).replace('_',' ').strip().capitalize()
         if not fields or not any(field.key == 'coins' for field in fields):
             raise FormatError('The profile does not contain the expected Risk of Rain 2 fields.')
         stats_node = root.find('stats')
@@ -599,6 +623,7 @@ class Save:
             try:result = self.alice.patch(result,{key:value for (index,key),value in changes.items()})
             except ValueError as error:raise FormatError(str(error)) from error
         elif self.game == 'webfishing':
+            variable_updates=[]
             capacity=changes.get((0,'max_bait'),self.info.get('max_bait',100))
             for field in self.slots[0].fields:
                 if field.key.startswith('bait:') and changes.get((0,field.key),field.value)>capacity:
@@ -615,8 +640,13 @@ class Save:
                 if not self.bait_unlocked_span:
                     raise FormatError('The unlocked bait list was not found.')
                 start, end = self.bait_unlocked_span
-                result[start:end] = godot_string_array(unlocked)
-                struct.pack_into('<I', result, 0, len(result)-4)
+                encoded=bytearray(godot_string_array(unlocked))
+                flags=struct.unpack_from('<I',self.raw,start+4)[0]&0x80000000
+                struct.pack_into('<I',encoded,4,flags|len(unlocked))
+                variable_updates.append((start,end,bytes(encoded)))
+            variable_updates.extend(self.webfishing.replacements(result,{key:value for (index,key),value in changes.items()}))
+            for start,end,encoded in sorted(variable_updates,reverse=True):result[start:end]=encoded
+            struct.pack_into('<I',result,0,len(result)-4)
         elif self.game == 'ror2':
             text = self.xml_text
             replacements = []
@@ -675,6 +705,18 @@ class Save:
             actual=next((f.value for f in check.slots[index].fields if f.key == key),None)
             if actual is None and self.game=='eldenring' and key.startswith('add_goods:'):
                 actual=check.elden_ring.added_amount(index,key)
+            if actual is None and self.game=='re1_hd' and key.endswith(':identity') and value==0:
+                identifier,quantity=struct.unpack_from('<2I',check.re_hd.plain,field.offset)
+                if (identifier,quantity)==(0,0):actual=0
+            if actual is None and self.game=='re1_hd' and field.group in ('Inventory','Item box') and not key.endswith(':identity') and value==0:
+                identifier,quantity=struct.unpack_from('<2I',check.re_hd.plain,field.offset-4)
+                if (identifier,quantity)==(0,0):actual=0
+            if actual is None and self.game=='webfishing' and key.startswith('remove_item:'):
+                actual=check.webfishing.removed(key)
+            if self.game=='webfishing' and key in self.webfishing.hotbar_choices:
+                actual=expected if self.webfishing.verify_hotbar(key,value,check.webfishing) else -1
+            if actual is None and self.game=='webfishing' and key.startswith('item_lock:'):
+                actual=int(int(key.split(':')[1]) in check.info.get('locked_refs',[]))
             if actual is None and self.game=='alice' and not field.fmt:
                 kind,_,identifier=key.partition(':')
                 if kind in getattr(check.alice,'lists',{}):

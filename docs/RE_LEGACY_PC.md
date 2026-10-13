@@ -59,3 +59,7 @@ offered as an editor yet**. Public fixtures are never installed over active save
 
 All newly introduced adapters remain experimental; edited files have not been
 loaded in-game. Research downloads, source checkouts and account data are not bundled.
+
+## v0.25 expansion
+
+See [functionality expansion](FUNCTIONAL_EXPANSION.md) for new mapped operations, context/type guards, native-file checks and explicit limits.

@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.24.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.25.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -16,6 +16,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [Functionality expansion across 17 existing editors](docs/FUNCTIONAL_EXPANSION.md): cosmetic/item tools in WEBFISHING, KH3 equipment/abilities, BBS/DDD character tools, Elden Ring appearance, additional Resident Evil settings/unlocks/records, and searchable paged Risk of Rain 2 statistics. Icons and new games are deferred.
 
 - Browse every editor without a save or game installation. A “No save data found” banner identifies the read-only preview; examples show real supported field types and categories. Drop-down choices remain browsable, while Apply, backups and editable values are disabled. Opening a real save restores normal editing.
 - Honest [feature coverage per game](docs/EDITOR_COVERAGE.md): broad, partial or limited. No game is currently labelled full support; this rating is separate from file checks and gameplay validation.
@@ -62,26 +64,26 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 
 | Game | Editable fields | Status / save action |
 |---|---|---|
-| Elden Ring | Runes, eight attributes, automatic level, current HP/FP/stamina, supported inventory/storage stacks, held-goods creation, known existing armament upgrades and NG+ scaling across active characters | Experimental Steam SL2; in-game verification pending |
+| Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics, existing case quantities and known weapon tune-up tiers | Experimental; direct apply; new case objects and comprehensive unlocks pending |
-| Resident Evil HD Remaster, PC | Mapped slot 1: difficulty, save count, defensive supplies and existing inventory/item-box quantities | Experimental; public PC fixture checked; other slots pending |
-| Resident Evil 2 (2019), Steam | Player health, existing inventory quantities, reward and library flags | Experimental; real Steam fixture validation pending |
-| Resident Evil 3 (2020), Steam | Player health, existing inventory quantities, total shop points earned, shop-item possession and reward flags | Experimental; shared console payload checked; real Steam fixture validation pending |
-| Resident Evil 4 (2023), Steam | Extra content points, Spinels and existing inventory quantities | Experimental; real Steam fixture validation pending |
-| Resident Evil 5, Steamworks | Money, exchange points, costume flags, filters, infinite-ammo flags and library files | Experimental; public Steamworks fixture checked |
-| Resident Evil 6, PC | Skill points, Mercenaries character/costume and stage flags, No Mercy stages, existing supplies and equipped campaign/Mercenaries skills | Experimental; public Steam fixture checked |
-| Resident Evil 7, Steam | Player health and existing item-box quantities | Experimental; shared console payload checked; real Steam fixture validation pending |
-| Resident Evil Village (RE8), Steam | Lei, CP, current health, existing multi-item stack quantities and extra-content owned/opened/unlocked flags | Experimental; shared console gameplay payload and synthetic Steam envelopes checked; native Steam and in-game checks pending |
-| Resident Evil Requiem, Steam | Money/Clear Points, player-specific health and table-backed health upgrades, existing inventory/item-box stacks, mapped attached part tiers, separate shop/content/artwork/figure flags | Experimental; nine native Steam files checked |
-| WEBFISHING | Money, debt, earnings, level, XP, bait with automatic unlocks, capacity, upgrades, existing inventory size/quality, and fishing journal | Available; direct apply |
-| Risk of Rain 2, Steam | Lunar Coins, statistics, and 454 unlock identifiers for characters, skills, skins, artifacts, items, logs, and Newt Altars | Available; direct apply |
-| Kingdom Hearts Final Mix, Steam | Munny, difficulty, saved party attributes, level/XP, equipment/ability lists and 154 named inventory entries | Experimental expanded party editing; direct apply |
-| Kingdom Hearts II Final Mix, Steam | Munny, difficulty, experience, character attributes/levels, bonus and summon levels, Drive Gauge, Drive Forms, party/form equipment and abilities, and 320 inventory quantities | Experimental; direct apply |
+| Resident Evil HD Remaster, PC | Recognized gameplay records, difficulty, defensive supplies, known inventory/item-box identities and quantities, next empty box entry | Experimental; public PC fixture checked; recognized gameplay sections selectable |
+| Resident Evil 2 (2019), Steam | Difficulty, health, existing quantities, rewards/files, completion/challenge records and Ghost Survivors counters | Experimental; real Steam fixture validation pending |
+| Resident Evil 3 (2020), Steam | Health, existing quantities, shop/rewards, completion/challenge/combat records | Experimental; shared console payload checked; real Steam fixture validation pending |
+| Resident Evil 4 (2023), Steam | Points, Spinels, existing quantities, profile-scoped costume/accessory/extra-shop and challenge records | Experimental; real Steam fixture validation pending |
+| Resident Evil 5, Steamworks | Money, points, costumes, filters, infinite ammo, library files and 45 figures | Experimental; public Steamworks fixture checked |
+| Resident Evil 6, PC | Skill points, equipped campaign/extra-mode slots, Mercenaries flags and results, emblems and existing supplies | Experimental; public Steam fixture checked |
+| Resident Evil 7, Steam | Difficulty, health, existing item-box quantities, restarts and existing DLC mode/completion flags | Experimental; shared console payload checked; real Steam fixture validation pending |
+| Resident Evil Village (RE8), Steam | Lei, CP, saved player health, existing stacks, content flags and lifetime/completion/combat records | Experimental; shared console gameplay payload and synthetic Steam envelopes checked; native Steam and in-game checks pending |
+| Resident Evil Requiem, Steam | Money/points, player health/upgrades, existing stocks, attached upgrades, content flags and lifetime/challenge/combat records | Experimental; nine native Steam files checked |
+| WEBFISHING | Economy/progression, bait/lures, upgrades, cosmetics/appearance, inventory creation/replacement/removal, hotbar/locks, quests and journal | Available; direct apply |
+| Risk of Rain 2, Steam | Coins, 454 unlock identifiers, additional existing numeric statistics and paged character/enemy/stage/item records | Available; direct apply |
+| Kingdom Hearts Final Mix, Steam | Munny, difficulty, party attributes/XP, equipment/abilities, character magic availability and inventory | Experimental expanded party editing; direct apply |
+| Kingdom Hearts II Final Mix, Steam | Munny, difficulty, XP, party attributes/equipment/abilities, item auto-reload, forms and inventory | Experimental; direct apply |
 | Alice: Madness Returns, Steam | Teeth, four weapon levels, abilities, health upgrades and paint pots, dress abilities, 89 memories, 83 bottles, 59 snouts, Radula rooms, chapters, difficulty, enemy journal, cinematics, and statistics | Experimental; direct apply |
 | Re:Chain of Memories, Steam | Moogle Points, XP, difficulty and 1,139 named card quantities, including numbered and premium variants | Experimental; direct apply |
-| Birth by Sleep Final Mix, Steam | Per-slot character XP, level, Munny, medals, attributes, Arena level, existing command levels/XP and acquired/active ability stacks | Experimental; direct apply |
-| Dream Drop Distance HD, Steam | Munny, difficulty, Sora/Riku XP, levels and Drop Points, existing command/item quantities | Experimental; direct apply |
-| Kingdom Hearts III + Re Mind, Steam | Munny, XP, difficulty, level, party HP/MP/Focus and boosts, named inventory quantities with acquisition flags, material counters | Experimental; direct apply |
+| Birth by Sleep Final Mix, Steam | Currency, difficulty, character progression, commands/abilities, equipped Keyblade, finisher XP and existing command-deck references | Experimental; direct apply |
+| Dream Drop Distance HD, Steam | Currency/difficulty, Sora/Riku progression, Keyblades, inventory and existing recognized spirit Attack/Magic/Defense | Experimental; direct apply |
+| Kingdom Hearts III + Re Mind, Steam | Currency/difficulty, progression, party attributes/equipment/active weapon/abilities, mapped acquisition, inventory/materials | Experimental; direct apply |
 | Max Payne 1, Steam | Original revision 48 weapon ownership, reserve ammunition and painkillers | Experimental; direct apply |
 
 All Resident Evil adapters use direct apply and retain the original account and

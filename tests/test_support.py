@@ -19,7 +19,7 @@ class SupportTests(unittest.TestCase):
             self.assertIn('In-game checks',text);self.assertIn('Scope and limits',text)
             self.assertIn('do not guarantee',text)
         self.assertIn('native revision-261 checking is pending',compatibility_text('eldenring'))
-        self.assertIn('first mapped',compatibility_text('re1_hd').lower())
+        self.assertIn('recognized gameplay sections',compatibility_text('re1_hd').lower())
         self.assertIn('native Steam file checking is pending',compatibility_text('re2'))
 
     def test_error_categories_have_actions_and_do_not_echo_sensitive_messages(self):

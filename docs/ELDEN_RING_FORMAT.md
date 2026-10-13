@@ -91,3 +91,7 @@ and actual public bytes. Conflicting fixed hash/profile offsets in older
 documentation were not used. See [source attribution](../SOURCES.md).
 
 See [v0.18 held creation, armament mirrors and NG+ limits](EDITOR_EXPANSION.md).
+
+## v0.25 expansion
+
+See [functionality expansion](FUNCTIONAL_EXPANSION.md) for new mapped operations, context/type guards, native-file checks and explicit limits.

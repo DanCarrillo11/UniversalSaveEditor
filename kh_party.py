@@ -15,6 +15,7 @@ class PartyEditor:
     def __init__(self,raw,game,field_type):
         self.raw,self.game,self.field_type=raw,game,field_type
         self.encodings={}
+        self.bits={}
 
     def choice(self,fields,slot,key,label,offset,fmt,options,group,note=''):
         original=struct.unpack_from(fmt,self.raw,offset)[0]
@@ -78,6 +79,11 @@ class PartyEditor:
                 for index in range(count):self.choice(fields,slot,f'{prefix}:{title.lower()}:{index}',f'{name} · {title} {index+1}',base+array_offset+index,'<B',options,'Equipment',
                     'Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.')
             self.abilities(fields,slot,prefix,name,base+0x40,48,'<B',KH1_ABILITIES,0x80)
+            for bit,spell in enumerate(('Fire','Blizzard','Thunder','Cure','Gravity','Stop','Aero')):
+                key=prefix+':magic:'+str(bit);offset=base+0x70
+                fields.append(self.field_type(key,spell+' available',(self.raw[offset]>>bit)&1,offset,'',0,1,'Magic',boolean=True,
+                    note='Character-specific availability flag. Spell tiers, shortcuts, world events and related acquisition records are preserved.'))
+                self.bits[slot,key]=(offset,bit)
         else:
             if character>=3 and not self.raw[base+15]:return
             equipment=KH2_EQUIPMENT
@@ -94,10 +100,16 @@ class PartyEditor:
                 options={0:'Empty',**{i:t for i,(t,k) in equipment.items() if k==kind}}
                 for index in range(count):self.choice(fields,slot,f'{prefix}:{title.lower()}:{index}',f'{name} · {title} {index+1}',base+array_offset+index*2,'<H',options,'Equipment',
                     'Edits an already unlocked slot. Item auto-reload, inventory quantities and slot counts are preserved.')
+                if kind=='Consumable':
+                    for index in range(count):self.choice(fields,slot,f'{prefix}:auto_reload:{index}',f'{name} · Item {index+1} auto-reload',base+68+index*2,'<H',options,'Equipment',
+                        'Changes the saved item auto-reload identity for an existing slot. Does not create stock; only available inventory can be reloaded in the game.')
             self.abilities(fields,slot,prefix,name,base+84,80,'<H',{i:t for i,(t,k) in KH2_ABILITIES.items()},0x8000)
 
     def finish(self,result,changes):
         for key,value in changes.items():
+            if key in self.bits:
+                offset,bit=self.bits[key];result[offset]=(result[offset]&~(1<<bit))|(value<<bit)
+                continue
             if key not in self.encodings:continue
             offset,fmt,values=self.encodings[key]
             struct.pack_into(fmt,result,offset,values[value])

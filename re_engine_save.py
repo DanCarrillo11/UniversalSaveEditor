@@ -14,6 +14,7 @@ from inventory_context import InventoryContext
 from village_context import VillageContext
 from item_art import item_art
 from requiem_context import RequiemContext
+from re_engine_extensions import EXTRA_SPECS,DIFFICULTIES,EngineExtensions
 
 GAMES=('re2','re3','re4_remake','re7','re8','re9')
 STEAM_APPS={'883710':'re2','952060':'re3','2050650':'re4_remake','418370':'re7','1196590':'re8','3764200':'re9'}
@@ -67,6 +68,7 @@ SPECS={
         (0xce5ec358,'Unlocked','Unlocked','Special options','<B',1),
     ),
 }
+for _game,_specs in EXTRA_SPECS.items():SPECS[_game]+= _specs
 
 
 class ReEngineSave:
@@ -78,6 +80,8 @@ class ReEngineSave:
         self.data=prefix+self.envelope.payload
         nodes=StreamReader(self.data,len(prefix)).parse()
         identities=InventoryContext(nodes,self.data)
+        extensions=EngineExtensions(nodes,self.data,game)
+        extra_ids={(owner,murmur32(name.encode())) for owner,name,*_ in EXTRA_SPECS[game]}
         village=VillageContext(nodes,self.data) if game=='re8' else None
         self.requiem=RequiemContext(nodes,self.data) if game=='re9' else None
         wanted={(owner,murmur32(name.encode())):(label,group,fmt,maximum)
@@ -86,6 +90,8 @@ class ReEngineSave:
         for node in nodes:
             specification=wanted.get((node.owner,node.field))
             if specification is None:continue
+            extended=(node.owner,node.field) in extra_ids
+            if extended and not extensions.allowed(node):continue
             if game=='re9' and any(owner==0x3a83076c and name==BACKUP_INVENTORY for owner,name,_ in node.path):continue
             label,group,fmt,maximum=specification
             if village:
@@ -93,13 +99,13 @@ class ReEngineSave:
                 if group=='Extra content' and not village.is_extra_content(node):continue
             if 'quantities' in group and game in INVENTORY_OWNERS:
                 if not any(owner==INVENTORY_OWNERS[game] for owner,_,_ in node.path):continue
-            expected=2 if fmt=='<B' else 11 if fmt=='<f' else 10 if fmt=='<Q' else 7
+            expected=2 if fmt=='<B' else 11 if fmt=='<f' else 10 if fmt=='<Q' else 8 if fmt=='<I' else 7
             if node.kind!=expected or node.fmt!=fmt:
                 raise ValueError('A recognized RE Engine field has an unsupported type.')
             value=struct.unpack_from(fmt,self.data,node.offset)[0]
             if not math.isfinite(value) or not 0<=value<=maximum:
                 # Empty inventory entries can have sentinel counts; never expose them.
-                if 'quantities' in group or (game=='re9' and label=='Carry-over money' and value==-1):continue
+                if extended or 'quantities' in group or (game=='re9' and label=='Carry-over money' and value==-1):continue
                 raise ValueError('A recognized RE Engine field is outside its supported range.')
             if 'quantities' in group and value==0:continue
             selected.append((node,specification,value))
@@ -143,8 +149,12 @@ class ReEngineSave:
                 note='Separate saved content flag. This does not guarantee delivery, grant DLC ownership or update related challenges. Unknown dependencies and other flags are preserved.'
             if game=='re3' and label.startswith('Total shop'):
                 note='Total points earned. The game also tracks purchased shop items separately.'
+            choices=()
+            if (node.owner,node.field) in extra_ids:
+                shown,note=extensions.describe(node,shown,group)
+                if group=='Difficulty':choices=DIFFICULTIES[game]
             self.fields.append(field_type(key,shown,value,node.offset,fmt,1 if 'quantities' in group else 0,maximum,group,
-                                          decimal=fmt=='<f',boolean=fmt=='<B',note=note,collection=collection,
+                                          decimal=fmt=='<f',boolean=fmt=='<B',choices=choices,note=note,collection=collection,
                                           readonly=bool(village and 'quantities' in group and value==1),item_id=identifier))
             self.operations[key]=(node.offset,fmt)
         self.fields.extend(extra)

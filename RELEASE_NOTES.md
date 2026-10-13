@@ -1,19 +1,19 @@
-# v0.24.0-alpha — Requiem health, inventory and attached upgrades
+# v0.25.0-alpha — Equipment, cosmetics, unlocks and records
 
-- Add current health for player-specific saved records, excluding enemy health.
-- Add health upgrade levels when the record's own ordered health table and saved maximum agree. Update maximum health automatically and clamp current health on reductions.
-- Add existing inventory/item-box/storage stacks with exact item/parent identities. Identify 95 mapped supplies, weapons and parts by their original names.
-- Add base/improved/maximum tiers for 44 mapped attached weapon parts when owned part and target weapon references agree. Capacity tiers can only increase; maximal capacity parts are read-only.
-- Preserve loaded/chamber ammunition, item identities, equipment/socket references, geometry, backups, enemy records, story state and original account encryption.
-- Expand Requiem's offline preview to Progress, Characters and Collection. Disable unsupported/readonly real-save choices while keeping preview choices browsable.
-- Pause new game additions while completing functionality and original artwork for the current catalogue; track remaining work per game.
+- Expand 17 existing editors; defer new games and icons while completing functionality.
+- WEBFISHING: cosmetics/appearance/lures, known item creation and replacement, removal/reference cleanup, hotbar, item locks, quest progress and journal qualities.
+- KH3: party equipment, active weapon, mapped acquisition and known learned/equipped abilities with bulk actions. KH1: magic availability. KH2: item auto-reload. BBS: Keyblades, finishers and existing deck references. DDD: Keyblades and existing spirit attributes.
+- Elden Ring: 96 named appearance sliders per recognized character and saved deaths.
+- HD Remaster: recognized gameplay sections, known item replacement/clearing and the next empty item-box entry. RE5: 45 figures. RE6: emblems, Mercenaries results and extra-mode skill slots.
+- RE2/RE7: saved difficulty. RE2/RE3/RE4 Remake/RE7/Village/Requiem: additional existing unlock, completion, challenge and combat records with exact context/type checks.
+- Risk of Rain 2: additional existing numeric statistics, full search/section filtering and 100-record pages for large profiles.
+- Preserve unknown data, identities and original encryption; regenerate offline previews from synthetic fixtures. No personal saves are shipped.
 
-Requiem remains partial support. Character names/active saved variants, actual
-stack caps, item creation, difficulty, full weapon/story systems and original
-item icons remain pending. Single objects are read-only except mapped ammunition.
-Gameplay/system profiles expose different fields. Nine native Steam files pass
-identical-output and authenticated in-memory edit checks; game loading is not
-yet confirmed. No editor is labelled full support.
+This is an alpha functionality expansion, **not full support for every game**.
+AP/equipment rules, complete story systems, several weapon/inventory mappings,
+array creation and gameplay checks remain pending. Completion flags do not
+synthesize rewards or Steam achievements; DLC requires ownership. Exact scope,
+validation and remaining work: [Functionality details](docs/FUNCTIONAL_EXPANSION.md).
 
 Download UniversalSaveEditor.exe under Assets and double-click it. Code > Download
 ZIP also includes the portable executable; no installation is required.

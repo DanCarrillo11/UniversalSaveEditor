@@ -6,7 +6,10 @@ from re_hd_save import FILE_SIZE,crypt,swap_words,looks_like_hd
 
 
 def fixture():
-    plain=bytearray(FILE_SIZE);struct.pack_into('<3I',plain,0,1,0,36)
+    plain=bytearray(FILE_SIZE);struct.pack_into('<3I',plain,0,1,0,4)
+    struct.pack_into('<I',plain,64,0xdf94)
+    import zlib
+    struct.pack_into('<4I',plain,0xdf94,~zlib.crc32(b'GAMEDATA0')&0xffffffff,12,0xdf20,0)
     struct.pack_into('<I',plain,32,FILE_SIZE-64)
     struct.pack_into('<I',plain,0xe05c,1)
     struct.pack_into('<2I',plain,0x163ec,0x11,30)

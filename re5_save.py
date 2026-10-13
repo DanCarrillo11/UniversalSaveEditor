@@ -10,6 +10,16 @@ CHAIN_SEED=bytes.fromhex('00211108c04b0000')
 GUNS=('M92F','H&K P8','SIG P226','M93R','Ithaca M37','Jail Breaker','M3','Hydra',
       'VZ61','AK-74','H&K MP5','SIG 556','S75','Dragunov SVD','H&K PSG-1',
       'S&W M29','L. Hawk','S&W M500','Rocket Launcher')
+FILES=('History of Resident Evil','BSAA','Majini','Chris Redfield','Sheva Alomar',
+       'Ricardo Irving','Ndipaya Tribe','U-8','Tricell','Jill Valentine','Excella Gionne','Albert Wesker')
+FIGURES=('Chris (BSAA)','Sheva (BSAA)','Josh','Jill (Brainwashed)','Wesker','Excella','Irving',
+ 'Spencer','DeChant','Dave','Kirk','Reynard','Majini (Town A)','Majini (Town B)','Majini (Town C)',
+ 'Majini (Town D)','Majini (Cephalo)','Majini (Agitator)','Majini (Wetlands A)',
+ 'Majini (Wetlands B)','Majini (Wetlands C)','Giant Majini','Majini (Base A)','Majini (Base B)',
+ 'Majini (Duvalia)','Reaper','Big Man Majini','Executioner Majini','Chainsaw Majini',
+ 'Gatling Gun Majini','Motorcycle Majini','Uroboros','Licker β','Kipepeo','Bui Kichwa','Adjule',
+ 'Crocodile','Uroboros Aheri','U-8','Popokarimu','Ndesu','Irving (Transformed)',
+ 'Chris (Rare)','Sheva (Rare)','Jill (Rare)')
 
 
 def decode(raw):
@@ -56,27 +66,28 @@ class Re5Save:
             value=struct.unpack_from('<I',self.plain,offset)[0]
             if value>limit:raise ValueError('Unsupported '+label.lower()+' value in the RE5 profile.')
             self.fields.append(field_type(key,label,value,offset,'',0,limit,'Currency'))
-            self.operations[key]=(offset,None)
-        def flags(prefix,labels,offset,group):
-            original=struct.unpack_from('<I',self.plain,offset)[0]
+            self.operations[key]=(offset,None,'<I')
+        def flags(prefix,labels,offset,group,fmt='<I'):
+            original=struct.unpack_from(fmt,self.plain,offset)[0]
             for bit,label in enumerate(labels):
                 key=prefix+':'+str(bit)
                 self.fields.append(field_type(key,label,(original>>bit)&1,offset,'',0,1,group,boolean=True))
-                self.operations[key]=(offset,bit)
+                self.operations[key]=(offset,bit,fmt)
         flags('chris_costume',('BSAA','Safari','S.T.A.R.S.','Warrior'),0x124,'Chris costumes')
         flags('sheva_costume',('BSAA','Clubbin’','Tribal','Business'),0x128,'Sheva costumes')
         flags('filter',('Default','Classic Horror','Retro','Noise'),0x12C,'Screen filters')
         flags('infinite_ammo',GUNS,0x130,'Infinite ammo')
-        flags('file',tuple('File '+str(index+1) for index in range(12)),0x134,'Library files')
+        flags('file',FILES,0x134,'Library files')
+        flags('figure',FIGURES,0x138,'Figures','<Q')
 
     def patch(self,changes):
         result=bytearray(self.plain)
         for key,value in changes.items():
             if key not in self.operations:raise ValueError('Unauthorized RE5 field.')
-            offset,bit=self.operations[key]
-            if bit is None:struct.pack_into('<I',result,offset,value)
+            offset,bit,fmt=self.operations[key]
+            if bit is None:struct.pack_into(fmt,result,offset,value)
             else:
-                original=struct.unpack_from('<I',result,offset)[0]
-                struct.pack_into('<I',result,offset,(original&~(1<<bit))|(value<<bit))
+                original=struct.unpack_from(fmt,result,offset)[0]
+                struct.pack_into(fmt,result,offset,(original&~(1<<bit))|(value<<bit))
         struct.pack_into('<I',result,8,checksum(result))
         return encode(result)

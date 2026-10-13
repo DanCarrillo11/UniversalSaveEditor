@@ -8,6 +8,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 import struct
 import zlib
 from kh_extra_tables import RECOM_CARDS, BBS_COMMANDS, BBS_ABILITIES, DDD_ITEMS
+from kh_extra_features import ExtraKhFeatures
 
 
 def recom_checksum(data):
@@ -27,6 +28,7 @@ class ExtraKhArchive:
 
     def __init__(self, raw, game, Field, Slot, png_chunks):
         self.raw, self.game, self.records, self.slots, self.warnings = raw, game, [], [], []
+        self.features=[]
         regions = [(s, e) for name, s, e in png_chunks(raw, allow_sqex_crc=True) if name == b'sqEX']
         if len(regions) != 1:
             raise ValueError('A single sqEX save block is required.')
@@ -101,7 +103,8 @@ class ExtraKhArchive:
                     identifier = struct.unpack_from('<H', raw, record+delta)[0]
                     if identifier in BBS_COMMANDS:
                         name = f'{BBS_COMMANDS[identifier]} · Entry {command+1}'
-                        add(f'command:{command}:level', name+' · Level', delta+2, '<H', 5, 'Commands', 1,item_id=identifier)
+                        original_level=struct.unpack_from('<H',raw,record+delta+2)[0]
+                        add(f'command:{command}:level', name+' · Level', delta+2, '<H', max(5,original_level), 'Commands', min(1,original_level),item_id=identifier)
                         add(f'command:{command}:experience', name+' · Experience', delta+4, '<H', 65535, 'Commands',item_id=identifier)
                 for ability, name in enumerate(BBS_ABILITIES):
                     delta = 0x4d64 + ability * 4
@@ -131,6 +134,9 @@ class ExtraKhArchive:
                 if character is None:
                     raise ValueError('Unsupported BBS playable character record.')
                 name = character+' · '+name
+            features=ExtraKhFeatures(raw,game,record,len(self.records),Field) if game in ('bbs','ddd') else None
+            self.features.append(features)
+            if features:fields.extend(features.fields)
             self.records.append((record, length))
             self.slots.append(Slot(name or f'Slot {index+1}', fields))
         if not self.slots:
@@ -140,6 +146,7 @@ class ExtraKhArchive:
         for index, (record, length) in enumerate(self.records):
             if not repair and not any(slot == index for slot, key in changes):
                 continue
+            if self.features[index]:self.features[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index})
             if self.game == 'recom':
                 result[record+0x14:record+0x18] = result[record+0x2d58:record+0x2d5c]
                 struct.pack_into('<I', result, record+4, recom_checksum(result[record+16:record+length]))

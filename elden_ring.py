@@ -11,6 +11,7 @@ from elden_items import GOODS
 from collection_tables import ELDEN_CATEGORIES
 from elden_weapons import WEAPONS
 from elden_registry import register_item, registry_records
+from elden_appearance import appearance_fields
 
 SLOT_SIZE = 0x280000
 BLOCK_SIZE = SLOT_SIZE + 16
@@ -168,6 +169,7 @@ class EldenRingSave:
             cursor.array(8, 4096)  # Acquired projectile records.
             armaments=cursor.pos
             cursor.skip(156+12+303)
+            fields.extend(appearance_fields(raw,cursor.pos-303,field_type))
             storage=cursor.pos
             self._inventory(cursor, fields, field_type, 0x780, 0x80, 'Storage')
             cursor.skip(256)
@@ -181,6 +183,10 @@ class EldenRingSave:
             cursor.skip(52)
             registry=cursor.skip(112008)
             cursor.menu()  # Tutorial payload.
+            deaths=cursor.pos+3
+            if number(raw,deaths)<=999999999:
+                add('deaths','Total deaths',deaths,0,999999999,'Statistics',
+                    note='Saved lifetime death counter only. Multiplayer state and world progression are preserved.')
             cursor.skip(29+0x1bf9a0)
             for maximum in (0x10000, 0x10000, 0x100000, 0x100000, 0x100000):
                 cursor.blob(maximum)

@@ -1,4 +1,4 @@
-"""RE HD Remaster PC, first mapped save slot. GPL-3.0-or-later.
+"""RE HD Remaster PC gameplay section directory. GPL-3.0-or-later.
 
 Independent implementation. PC inventory addresses: SAVE-EDITOR.com;
 Blowfish/SHA1 format: bucanero/save-decrypters, cross-checked on a PC fixture.
@@ -6,6 +6,7 @@ Supporting field-address comparison: urbanware-org/re-hd-se (PS3).
 """
 import hashlib
 import struct
+import zlib
 from cryptography.hazmat.primitives.ciphers import Cipher,modes
 from cryptography.hazmat.decrepit.ciphers.algorithms import Blowfish
 
@@ -25,16 +26,17 @@ def swap_words(raw):return b''.join(raw[i:i+4][::-1] for i in range(0,len(raw),4
 
 
 def crypt(raw,encrypt=False):
-    if len(raw)!=FILE_SIZE:raise ValueError('Unsupported Resident Evil HD Remaster PC save size.')
+    if not 64<=len(raw)<=2*1024*1024 or len(raw)%8:raise ValueError('Unsupported Resident Evil HD Remaster PC save size.')
     cipher=Cipher(Blowfish(KEY),modes.ECB())
     operation=cipher.encryptor() if encrypt else cipher.decryptor()
     return swap_words(operation.update(swap_words(raw))+operation.finalize())
 
 
 def looks_like_hd(raw):
-    if len(raw)!=FILE_SIZE:return False
-    plain=crypt(raw)
-    return struct.unpack_from('<3I',plain)==(1,0,36) and struct.unpack_from('<I',plain,32)[0]==FILE_SIZE-64
+    try:plain=crypt(raw)
+    except ValueError:return False
+    version,flags,table_size=struct.unpack_from('<3I',plain)
+    return (version,flags)==(1,0) and 4<=table_size<=84 and table_size%4==0 and struct.unpack_from('<I',plain,32)[0]==len(raw)-64
 
 
 class ReHdSave:
@@ -43,32 +45,82 @@ class ReHdSave:
         self.plain=crypt(raw);self.fields=[];self.operations={};self.warnings=[]
         if self.plain[12:32]!=swap_words(hashlib.sha1(self.plain[64:]).digest()):
             self.warnings=['The HD Remaster integrity check does not match. Applying requires explicit integrity repair.']
-        def number(key,label,offset,group,maximum,choices=()):
+        self.slot_records=[]
+        table_size=struct.unpack_from('<I',self.plain,8)[0]
+        offsets=struct.unpack_from('<'+str(table_size//4)+'I',self.plain,64)
+        if tuple(sorted(set(offsets)))!=offsets or offsets[0]<64+table_size:
+            raise ValueError('Invalid HD Remaster section directory.')
+        hashes={~zlib.crc32(('GAMEDATA'+str(i)).encode())&0xffffffff:i for i in range(20)}
+        seen=set()
+        for index,offset in enumerate(offsets):
+            end=offsets[index+1] if index+1<len(offsets) else len(self.plain)
+            if offset+16>end:raise ValueError('Truncated HD Remaster section header.')
+            identifier,version,size,reserved=struct.unpack_from('<4I',self.plain,offset)
+            if offset+16+size>end:raise ValueError('HD Remaster section exceeds its allocation.')
+            if identifier not in hashes:continue
+            slot=hashes[identifier]
+            if slot in seen or version!=12 or size!=0xdf20 or reserved!=0:
+                raise ValueError('Unsupported HD Remaster gameplay section.')
+            seen.add(slot);self.slot_records.append((slot,self.slot_fields(offset,slot,field_type)))
+        self.slot_records.sort(key=lambda row:row[0])
+        if not self.slot_records:raise ValueError('No supported HD Remaster gameplay records were found.')
+        self.fields=self.slot_records[0][1]
+
+    def slot_fields(self,record,slot,field_type):
+        fields=[]
+        def keyname(key):return key if slot==0 else f'slot:{slot}:{key}'
+        def number(key,label,delta,group,maximum,choices=()):
+            offset=record+delta;key=keyname(key)
             value=struct.unpack_from('<I',self.plain,offset)[0]
             if value>maximum:raise ValueError('Unsupported '+label.lower()+' value in the mapped save slot.')
-            self.fields.append(field_type(key,label,value,offset,'',0,maximum,group,choices=choices))
-            self.operations[key]=offset
-        number('difficulty','Difficulty',0xe05c,'Difficulty',3,('Easy','Normal','Hard','Very Easy'))
-        number('save_count','Save count',0xdfb0,'Statistics',9999)
-        number('daggers','Daggers',0x1b454,'Defensive supplies',255)
-        number('grenades','Flash grenades',0x1b458,'Defensive supplies',255)
-        for group,base,count in (('Inventory',0x163ec,8),('Item box',0x1643c,256)):
+            fields.append(field_type(key,label,value,offset,'',0,maximum,group,choices=choices))
+            self.operations[key]=(offset,None)
+        number('difficulty','Difficulty',0xc8,'Difficulty',3,('Easy','Normal','Hard','Very Easy'))
+        number('save_count','Save count',0x1c,'Statistics',9999)
+        number('daggers','Daggers',0xd4c0,'Defensive supplies',255)
+        number('grenades','Flash grenades',0xd4c4,'Defensive supplies',255)
+        for group,base,count in (('Inventory',record+0x8458,8),('Item box',record+0x84a8,256)):
+            empty_added=False
             for index in range(count):
                 offset=base+index*8;identifier,quantity=struct.unpack_from('<2I',self.plain,offset)
-                if identifier==0:continue
+                if identifier==0:
+                    if group!='Item box' or quantity or empty_added:continue
+                    empty_added=True
                 if identifier>0xff or quantity>255:raise ValueError('Unsupported item entry in the mapped HD Remaster save slot.')
-                key=group.lower().replace(' ','_')+':'+str(index)
+                key=keyname(group.lower().replace(' ','_')+':'+str(index))
                 known=identifier in ITEMS
                 label=f'Slot {index+1} · {ITEMS.get(identifier,"Unidentified item · ID "+str(identifier))}'
                 category='Weapons' if identifier in (1,2,3,5,6,7,8,9,10,11,12,13,14) else 'Ammunition' if identifier in (16,17,18,19,20,25) else 'Consumables' if identifier in (33,34,35,36,68) else 'Other items' if known else 'Unidentified items'
-                self.fields.append(field_type(key,label,quantity,offset+4,'',0,255,group,
+                fields.append(field_type(key,label,quantity,offset+4,'',0,255,group,
                                               note=f'Item ID {identifier}. Quantity or loaded ammunition of an existing item. Item identity is preserved.',collection=category,item_id=identifier))
-                self.operations[key]=offset+4
+                self.operations[key]=(offset+4,None)
+                if known or identifier==0:
+                    options={0:'Empty',**ITEMS};values=tuple(options)
+                    item_key=key+':identity'
+                    fields.append(field_type(item_key,f'Slot {index+1} · Item',values.index(identifier),offset,'',0,len(values)-1,group,
+                        choices=tuple(options[i] for i in values),collection=category,
+                        note='Replaces this known item or fills the next empty item-box entry. The item-box capacity and other save records are preserved. A new item gets quantity 1 unless a positive quantity is chosen.'))
+                    self.operations[item_key]=(offset,values)
+        return fields
 
     def patch(self,changes):
         result=bytearray(self.plain)
         for key,value in changes.items():
             if key not in self.operations:raise ValueError('Unauthorized HD Remaster field.')
-            struct.pack_into('<I',result,self.operations[key],value)
+            offset,values=self.operations[key]
+            if values is None:
+                if ':identity' not in key and 'item_box:' in key:
+                    current=struct.unpack_from('<I',result,offset-4)[0]
+                    chosen=changes.get(key+':identity')
+                    if not current and value and chosen in (None,0):raise ValueError('Choose an item before setting a new item-box quantity.')
+                struct.pack_into('<I',result,offset,value)
+        for key,value in changes.items():
+            offset,values=self.operations[key]
+            if values is not None:
+                identifier=values[value];struct.pack_into('<I',result,offset,identifier)
+                quantity_key=key.removesuffix(':identity')
+                quantity=changes.get(quantity_key,struct.unpack_from('<I',result,offset+4)[0])
+                if not identifier and changes.get(quantity_key,0):raise ValueError('An empty item cannot have a positive quantity.')
+                struct.pack_into('<I',result,offset+4,0 if not identifier else max(1,quantity))
         result[12:32]=swap_words(hashlib.sha1(result[64:]).digest())
         return crypt(result,True)

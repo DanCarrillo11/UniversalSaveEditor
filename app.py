@@ -631,6 +631,7 @@ class Window(QMainWindow):
         self.update_summary()
 
     def build_category(self,category):
+        if sum(len(s.fields) for s in category.sections)>2000:return self.build_large_category(category)
         page=QWidget();box=layout(page,True,4,10)
         scroll=QScrollArea();scroll.setWidgetResizable(True)
         content=QWidget();sections_box=layout(content,True,0,12)
@@ -665,7 +666,9 @@ class Window(QMainWindow):
             collapsed=state.setdefault('collapsed',{}).get((section.selection,section.name),section.name.endswith(' form'))
             header.setChecked(not collapsed);section_box.addWidget(header)
             body=QWidget();body.setObjectName('clearSurface');body_box=layout(body,True,0,8)
-            unlock_fields=[field for field in section.fields if field.fmt=='xml-unlock' or field.boolean]
+            unlock_fields=[field for field in section.fields if not field.readonly and
+                           not field.key.startswith(('remove_item:','equipped_accessory:')) and
+                           (field.fmt=='xml-unlock' or field.boolean)]
             if unlock_fields:
                 actions=QHBoxLayout()
                 actions.addWidget(button('Unlock section' if self.save.game=='ror2' else 'Enable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,1),'primary'))
@@ -675,6 +678,13 @@ class Window(QMainWindow):
                 if self.preview_mode:
                     for i in range(actions.count()):
                         if actions.itemAt(i).widget():actions.itemAt(i).widget().setEnabled(False)
+            ability_fields=[f for f in section.fields if self.save.game=='kh3' and ':ability:' in f.key and not f.readonly]
+            if ability_fields:
+                actions=QHBoxLayout()
+                for title,mode in (('Learn all','learn'),('Equip learned','equip'),('Unequip all','unequip'),('Restore abilities','restore')):
+                    action=button(title,lambda checked=False,fs=ability_fields,m=mode:self.set_ability_fields(fs,m))
+                    action.setEnabled(not self.preview_mode);actions.addWidget(action)
+                actions.addStretch();body_box.addLayout(actions)
             rows=[]
             for field in section.fields:
                 row=self.build_field_row(field)
@@ -714,6 +724,71 @@ class Window(QMainWindow):
         sections_box.addStretch();scroll.setWidget(content);box.addWidget(scroll,1)
         return page
 
+    def build_large_category(self,category):
+        """Keep large profiles searchable without constructing thousands of rows."""
+        page=QWidget();box=layout(page,True,4,10)
+        box.addWidget(label(category.description,'muted',True))
+        state=self.editor_view_state.setdefault((self.save.game,str(self.path),category.name),{})
+        records=[(s,f,' '.join((s.name,s.selection,f.label,f.key)).casefold()) for s in category.sections for f in s.fields]
+        controls=QHBoxLayout();search=QLineEdit(page);search.setObjectName('fieldSearch');search.setClearButtonEnabled(True)
+        search.setPlaceholderText('Search all saved records…');search.setText(state.get('query',''));controls.addWidget(search,1)
+        selector=QComboBox(page);selector.setObjectName('sectionSelector');selector.setAccessibleName(category.selector_label+' in '+category.name)
+        if category.selector_label!='Character':selector.addItem('All sections','')
+        for name in dict.fromkeys(s.selection for s in category.sections):selector.addItem(name,name)
+        selector.setCurrentIndex(max(0,selector.findData(state.get('selection',''))));controls.addWidget(selector)
+        box.addLayout(controls)
+        tools=QHBoxLayout();changed=QCheckBox('Changed only',page);changed.setObjectName('changedOnly')
+        changed.setChecked(state.get('changed_only',False));tools.addWidget(changed);tools.addStretch()
+        count=label('','small');count.setObjectName('fieldCount');tools.addWidget(count)
+        pages=QComboBox(page);pages.setObjectName('recordPage');pages.setAccessibleName('Saved record page');tools.addWidget(pages)
+        box.addLayout(tools);scroll=QScrollArea();scroll.setWidgetResizable(True);content=QWidget()
+        rows=layout(content,True,0,8);scroll.setWidget(content);box.addWidget(scroll,1)
+        visible_keys=[];signature=None
+        def refresh(reset=False):
+            nonlocal signature,visible_keys
+            selection=selector.currentData();query=search.text().casefold().strip()
+            state.update(query=search.text(),selection=selection,changed_only=changed.isChecked())
+            matches=[(s,f) for s,f,text in records if (not selection or s.selection==selection) and query in text and
+                     (not changed.isChecked() or (self.slot_index,f.key) in self.edits)]
+            total=len(matches);page_count=max(1,(total+99)//100)
+            index=0 if reset else min(int(state.get('page',0)),page_count-1);state['page']=index
+            pages.blockSignals(True);pages.clear()
+            for n in range(page_count):pages.addItem(f'Page {n+1} of {page_count}',n)
+            pages.setCurrentIndex(index);pages.setEnabled(page_count>1);pages.blockSignals(False)
+            start=index*100;visible=matches[start:start+100]
+            count.setText(f'{start+1 if total else 0}–{start+len(visible)} of {total:,} matching records')
+            current=tuple(f.key for s,f in visible)
+            if signature==current:return # Preserve focus while values are typed.
+            for key in visible_keys:self.inputs.pop((self.slot_index,key),None)
+            clear(rows);visible_keys=list(current);signature=current
+            last=None
+            for section,field in visible:
+                identity=(section.name,section.selection)
+                if identity!=last:
+                    rows.addWidget(label(section.name,'eyebrow'));last=identity
+                    abilities=[f for f in section.fields if self.save.game=='kh3' and ':ability:' in f.key and not f.readonly]
+                    unlocks=[f for f in section.fields if not f.readonly and f.boolean and not f.key.startswith(('remove_item:','equipped_accessory:'))]
+                    if abilities or unlocks:
+                        actions=QHBoxLayout()
+                        if abilities:
+                            for title,mode in (('Learn section','learn'),('Equip learned','equip'),('Unequip section','unequip'),('Restore section','restore')):
+                                action=button(title,lambda checked=False,fs=abilities,m=mode:self.set_ability_fields(fs,m))
+                                action.setToolTip('Applies to this entire ability section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)
+                        else:
+                            for title,value in (('Enable section',1),('Restore section',None)):
+                                action=button(title,lambda checked=False,fs=unlocks,v=value:self.set_unlock_fields(fs,v))
+                                action.setToolTip('Applies to this entire section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)
+                        actions.addStretch();rows.addLayout(actions)
+                rows.addWidget(self.build_field_row(field))
+            if not visible:rows.addWidget(label('No saved records match this search.','muted',True))
+            rows.addStretch();scroll.verticalScrollBar().setValue(0)
+        def select_page(index):
+            state['page']=max(0,index);refresh()
+        selector.currentIndexChanged.connect(lambda:refresh(True));search.textChanged.connect(lambda:refresh(True))
+        changed.toggled.connect(lambda:refresh(True));pages.currentIndexChanged.connect(select_page)
+        self.category_filters.append(refresh);refresh()
+        return page
+
     def build_field_row(self,field):
         row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
         from item_art import item_pixmap,item_art,field_art_key
@@ -749,6 +824,7 @@ class Window(QMainWindow):
         if field.fmt == 'xml-unlock' or field.boolean:
             entry=QCheckBox('Unlocked' if self.save.game=='ror2' else 'Owned' if self.save.game=='maxpayne' else 'Enabled')
             entry.setChecked(bool(int(self.edits.get(key,field.value))))
+            entry.setEnabled(not field.readonly)
             entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
         elif field.choices:
             entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(190)
@@ -792,10 +868,31 @@ class Window(QMainWindow):
         self._batch_edit=True
         try:
             for field in fields:
+                if field.readonly or field.key.startswith(('remove_item:','equipped_accessory:')):continue
                 key=(self.slot_index,field.key)
                 checkbox=self.inputs.get(key)
                 if isinstance(checkbox,QCheckBox):
                     checkbox.setChecked(bool(field.value if value is None else value))
+                elif checkbox is None and (field.boolean or field.fmt=='xml-unlock'):
+                    target=field.value if value is None else value
+                    if target==field.value:self.edits.pop(key,None)
+                    else:self.edits[key]=str(int(target))
+        finally:self._batch_edit=False;self.update_summary()
+
+    def set_ability_fields(self,fields,mode):
+        if self.preview_mode:return
+        self._batch_edit=True
+        try:
+            for field in fields:
+                if field.readonly:continue
+                entry=self.inputs.get((self.slot_index,field.key))
+                key=(self.slot_index,field.key)
+                if entry is not None and not isinstance(entry,QComboBox):continue
+                current=entry.currentIndex() if entry is not None else field.parse(self.edits.get(key,str(field.value)))
+                value=field.value if mode=='restore' else max(1,current) if mode=='learn' else 2 if mode=='equip' and current else min(current,1) if mode=='unequip' else current
+                if entry is not None:entry.setCurrentIndex(int(value))
+                elif value==field.value:self.edits.pop(key,None)
+                else:self.edits[key]=str(int(value))
         finally:self._batch_edit=False;self.update_summary()
 
     def mark_unlock(self,entry,field,checked):
@@ -1169,11 +1266,29 @@ def main():
                 from re_engine_save import STEAM_APPS,SPECS
                 from village_context import VillageContext
                 village_ready=(STEAM_APPS['1196590']=='re8' and 're8' in EVIDENCE
-                               and len(SPECS['re8'])==7 and VillageContext([],b'').identities=={}
+                               and {(o,n,fmt) for o,n,label,group,fmt,limit in SPECS['re8']} >= {
+                                   (0x3a83076c,'money','<i'),(0xe94db9b8,'CP','<i'),(0x00346547,'SaveHealth','<f')}
+                               and VillageContext([],b'').identities=={}
                                and blowfish_cbc(blowfish_cbc(b'DSSSDSSS',KEYS['re8'],True),KEYS['re8'])==b'DSSSDSSS')
             except Exception:
                 village_ready=False
             crypto_ready=crypto_ready and village_ready
+            try:
+                import struct
+                from core import Field
+                from elden_appearance import appearance_fields
+                from kh3_characters import Kh3CharacterFeatures
+                from kh_extra_features import ExtraKhFeatures
+                from webfishing_features import WebfishingFeatures,ITEMS,COSMETICS
+                from re_engine_extensions import EngineExtensions,DIFFICULTIES
+                from re5_save import FIGURES
+                from re6_skills import MODE_SKILLS
+                sample=struct.pack('<I4s2I',0xffffffff,b'FACE',4,0x120)+bytes(303-16)
+                functionality_ready=(len(appearance_fields(sample,0,Field))==96 and len(FIGURES)==45
+                    and MODE_SKILLS[96]=='Creature Stamina · Level 3' and DIFFICULTIES['re2'][2]=='Hardcore'
+                    and 'fish_lake_salmon' in ITEMS and bool(COSMETICS))
+            except Exception:functionality_ready=False
+            crypto_ready=crypto_ready and functionality_ready
             try:
                 from item_art import catalogue,item_art,item_pixmap
                 samples=(('kh1',81),('kh2',1),('kh3',1),('recom','card:0'),('bbs',196),('ddd',98),
@@ -1206,6 +1321,7 @@ def main():
                     'usabilityReady':usability_ready,
                     'expansionReady':expansion_ready,
                     'villageReady':village_ready,
+                    'functionalityReady':functionality_ready,
                     'itemIconsReady':item_icons_ready,
                     'previewReady':preview_ready,
                     'itemIconCount':len(catalogue()) if item_icons_ready else 0,

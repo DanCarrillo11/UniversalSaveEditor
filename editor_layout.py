@@ -63,10 +63,10 @@ def organize_fields(game, fields):
         're5': ('Progress', 'Unlocks', 'Collection'),
         're6': ('Progress', 'Unlocks', 'Collection'),
         're1_hd': ('Progress', 'Equipment', 'Collection'),
-        're2': ('Characters', 'Collection', 'Unlocks'),
+        're2': ('Progress', 'Characters', 'Collection'),
         're3': ('Progress', 'Characters', 'Collection'),
         're4_remake': ('Progress', 'Collection'),
-        're7': ('Characters', 'Collection'),
+        're7': ('Progress', 'Characters', 'Collection'),
         're8': ('Progress', 'Character', 'Collection'),
         're9': ('Progress', 'Characters', 'Collection'),
         'webfishing': ('Progress', 'Equipment', 'Collection'),
@@ -80,7 +80,9 @@ def organize_fields(game, fields):
         group = item.group or 'Economy'
         category, section, selection = 'Progress', group, group
         if game=='eldenring':
-            if group in ('Attributes','Vitals'):category='Character'
+            if group in ('Attributes','Vitals','Appearance'):
+                category='Character'
+                if group=='Appearance':section,selection=item.collection or group,'Appearance'
             elif group=='Add items':category,section,selection='Collection',item.collection or group,'Add items'
             elif group in ('Inventory','Storage'):
                 category,section,selection='Collection',item.collection or group,group
@@ -95,7 +97,7 @@ def organize_fields(game, fields):
             elif group=='Currency':category='Progress'
             elif game=='re9' and group=='Weapon upgrades':
                 category,section,selection='Collection','Attached upgrades',item.collection or 'Weapons'
-            elif game=='re2' and group=='Rewards':category='Unlocks'
+            elif group in ('Difficulty','Combat records','Lifetime records','Completion records'):category='Progress'
             else:
                 category='Collection'
                 if 'quantities' in group:
@@ -106,6 +108,7 @@ def organize_fields(game, fields):
             elif group!='Currency':category='Unlocks'
         if game=='re6':
             if group=='Serpent emblems' or group.endswith((' supplies',' skills')):category='Collection'
+            elif group=='Mercenaries records':category,section,selection='Collection','Results',item.collection or 'Mercenaries'
             elif group!='Currency':category='Unlocks'
         if game=='re4_2005':
             if group in ('Player health','Ashley health'):
@@ -128,26 +131,31 @@ def organize_fields(game, fields):
             elif item.key.startswith('character:') or item.key.split(':')[0] in tuple(str(i) for i in range(10)):
                 character = int(item.key.split(':')[1] if game == 'kh2' else item.key.split(':')[0])
                 selection = (KH2_CHARACTERS if game=='kh2' else KH1_CHARACTERS)[character]
-                category, section = 'Characters', group if group in ('Equipment','Abilities') else 'Attributes'
+                category, section = 'Characters', group if group in ('Equipment','Abilities','Magic') else 'Attributes'
             elif item.key.startswith('drive_'):
                 category, section, selection = 'Characters', 'Drive Gauge', 'Sora'
             else:
                 section = {'Difficulty': 'Difficulty', 'Economy': 'Currency', 'Progress': 'Level and experience'}.get(group, group)
                 selection = section
         elif game == 'webfishing':
-            if item.key.startswith('bait:') or group in ('Bait', 'Upgrades'):
+            if group in ('Appearance','Lures','Hotbar'):category,section,selection='Equipment',item.collection or group,group
+            elif group in ('Cosmetics','Add items','Journal qualities'):
+                category,section,selection='Collection',item.collection or group,group
+            elif group=='Quests':category,section,selection='Progress','Quests','Quests'
+            elif item.key.startswith('bait:') or group in ('Bait', 'Upgrades'):
                 category = 'Equipment'
                 section = 'Bait' if item.key.startswith('bait:') or group == 'Bait' else 'Rod and buddy upgrades'
             elif group in ('Inventory', 'Journal'):
                 category, section = 'Collection', 'Items' if group == 'Inventory' else 'Fishing journal'
             else:
                 section = 'Currency' if group == 'Economy' else 'Level and fishing progress'
-            selection = section
+            if group not in ('Appearance','Lures','Hotbar','Cosmetics','Add items','Journal qualities','Quests'):selection = section
         elif game == 'ror2':
             if item.fmt == 'xml-unlock':
                 category, section = 'Unlocks', group
             elif group in ('Progress', 'Combat') or item.key.startswith('stat:'):
                 category, section = 'Records', {'Progress': 'Run records', 'Combat': 'Combat statistics', 'Economy': 'Economy statistics'}.get(group, group)
+                if item.collection:section=item.collection
             else:
                 section = 'Currency'
             selection = section
@@ -165,14 +173,18 @@ def organize_fields(game, fields):
                 category = 'Collection'
             selection = section
         elif game == 'bbs':
-            if group in ('Attributes','Abilities'):
+            if group in ('Attributes','Abilities','Equipment','Finishers'):
                 category = 'Character'
-            elif group == 'Commands':
+            elif group in ('Commands','Decks'):
                 category = 'Collection'
-            selection = section
+            selection = item.collection or section
         elif game in ('ddd','kh3'):
+            if game=='ddd' and group=='Dream Eaters':
+                category,section,selection='Characters','Attributes',item.collection or 'Spirit'
             if item.key.startswith('character:') or item.key.startswith('bonus:'):
                 category, section = 'Characters', 'Attributes'
+                if game=='kh3' and item.group in ('Equipment','Abilities'):section=item.group
+                if game=='ddd' and item.group=='Equipment':section=item.group
                 selection = item.key.split(':')[1] if item.key.startswith('character:') else 'Sora'
             elif item.key.startswith(('inventory:', 'material:')):
                 category = 'Collection'

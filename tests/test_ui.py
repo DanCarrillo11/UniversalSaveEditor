@@ -17,6 +17,45 @@ import test_extended
 from editor_layout import organize_fields
 
 class InterfaceTests(unittest.TestCase):
+    def test_large_profile_records_are_paged_and_keep_edits_when_search_changes(self):
+        raw=('<UserProfile><coins>7</coins><stats>'+''.join(f'<stat name="killsAs.Example{i}">{i}</stat>' for i in range(2200))+'</stats></UserProfile>').encode()
+        save=Save(raw,'ror2');w=self.window;w.display_save(save,self.root/'large.xml');self.app.processEvents()
+        records=w.tabs.widget(next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)=='Records'))
+        pages=records.findChild(QComboBox,'recordPage');search=records.findChild(QLineEdit,'fieldSearch')
+        self.assertEqual(pages.count(),22);self.assertLess(len(w.inputs),600)
+        pages.setCurrentIndex(21);self.app.processEvents();self.assertIn((0,'stat:killsAs.Example2199'),w.inputs)
+        search.setText('Example2199');self.app.processEvents();entry=w.inputs[0,'stat:killsAs.Example2199']
+        entry.setText('9000');self.app.processEvents();self.assertIs(w.inputs[0,'stat:killsAs.Example2199'],entry)
+        search.setText('Example1099');self.app.processEvents();w.inputs[0,'stat:killsAs.Example1099'].setText('8000')
+        changes=w.validated_changes();self.assertEqual(changes,{(0,'stat:killsAs.Example2199'):9000,(0,'stat:killsAs.Example1099'):8000})
+        output=save.patched(changes);self.assertIn(b'<stat name="killsAs.Example2199">9000</stat>',output)
+        self.assertIn(b'<stat name="killsAs.Example1099">8000</stat>',output)
+
+    def test_collection_bulk_actions_never_stage_item_removal_or_readonly_flags(self):
+        from test_collection_expansion import fishing as collection_fixture
+        raw=collection_fixture();save=Save(raw,'webfishing');w=self.window
+        w.display_save(save,self.root/'collection.sav');self.app.processEvents()
+        fields=[f for f in save.slots[0].fields if f.boolean]
+        w.set_unlock_fields(fields,1)
+        self.assertFalse(any(key.startswith(('remove_item:','equipped_accessory:')) for slot,key in w.edits))
+        for f in fields:
+            if f.key.startswith('remove_item:'):self.assertFalse(w.inputs[0,f.key].isChecked())
+
+    def test_kh3_bulk_ability_actions_preserve_equipped_state_and_restore_originals(self):
+        from test_kh_extra import kh3_plain
+        import zlib
+        raw=bytearray(kh3_plain());save=Save(raw,'kh3')
+        keys=list(save.kh3.characters.abilities)[:2]
+        struct.pack_into('<I',raw,save.kh3.characters.abilities[keys[1]],3)
+        struct.pack_into('<I',raw,12,zlib.crc32(raw[16:0x94f4e8]));save=Save(raw,'kh3')
+        w=self.window;w.display_save(save,self.root/'kh3.bin');self.app.processEvents()
+        fields=[f for f in save.slots[0].fields if f.key in keys]
+        w.set_ability_fields(fields,'learn')
+        self.assertEqual([w.inputs[0,k].currentIndex() for k in keys],[1,2])
+        w.set_ability_fields(fields,'equip');self.assertEqual([w.inputs[0,k].currentIndex() for k in keys],[2,2])
+        w.set_ability_fields(fields,'unequip');self.assertEqual([w.inputs[0,k].currentIndex() for k in keys],[1,1])
+        w.set_ability_fields(fields,'restore');self.assertEqual(w.edits,{})
+
     def test_requiem_upgrade_choices_disable_unsupported_tiers_but_preview_stays_browsable(self):
         from test_requiem import fixture
         from test_re_engine import ACCOUNT

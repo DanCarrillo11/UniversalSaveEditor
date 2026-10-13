@@ -75,12 +75,12 @@ def stream(game):
             number('<I',murmur32(b'Items'));number('<i',17)
         number('<I',2);number('<I',owner)
         number('<I',murmur32(name.encode()))
-        kind=2 if fmt=='<B' else 11 if fmt=='<f' else 10 if fmt=='<Q' else 7
+        kind=2 if fmt=='<B' else 11 if fmt=='<f' else 10 if fmt=='<Q' else 8 if fmt=='<I' else 7
         if fmt=='<B':
             number('<i',-1);align(4)
             data.extend(struct.pack('<iIIi',kind,1,3,0));data.extend(b'\x00\x01\x00');align(4)
         else:
-            number('<i',kind);number('<I',struct.calcsize(fmt));align(struct.calcsize(fmt));number(fmt,25);align(4)
+            number('<i',kind);number('<I',struct.calcsize(fmt));align(struct.calcsize(fmt));number(fmt,min(25,maximum));align(4)
         # Unknown property is deliberately retained, never offered by the editor.
         number('<I',murmur32(b'UnknownProperty'));number('<i',16);number('<I',16);align(16)
         data.extend(b'KEEPUNKNOWNSTATE');align(4)
@@ -135,7 +135,7 @@ class EngineSaveTests(unittest.TestCase):
                 self.assertFalse(save.warnings);self.assertEqual(save.patched({}),raw)
                 fields=save.slots[0].fields
                 self.assertTrue(fields);self.assertEqual(len({f.key for f in fields}),len(fields))
-                edits={(0,f.key):(1-f.value if f.boolean else 123.1 if f.decimal else 123) for f in fields}
+                edits={(0,f.key):(1-f.value if f.boolean else min(123.1,f.maximum) if f.decimal else min(123,f.maximum)) for f in fields}
                 output=save.patched(edits);check=Save(output,game,account_id=ACCOUNT)
                 before=ReEngineEnvelope(raw,game,account_id=ACCOUNT).payload
                 after=ReEngineEnvelope(output,game,account_id=ACCOUNT).payload
