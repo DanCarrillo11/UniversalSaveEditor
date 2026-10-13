@@ -10,6 +10,7 @@ from functools import lru_cache
 from pathlib import Path
 import json
 import zipfile
+import re
 from pathlib import PurePosixPath
 
 ROOT=Path(__file__).resolve().parent/'assets/items'
@@ -43,14 +44,27 @@ def catalogue():
                 x,y,w,h=rect
                 if min(x,y)<0 or not 1<=w<=2048 or not 1<=h<=2048 or x+w>4096 or y+h>4096:continue
                 if not isinstance(entry['name'],str) or not isinstance(entry['category'],str):continue
-                result[game,int(identifier)]=ItemArt(entry['name'],entry['category'],atlas,tuple(rect),archive)
+                if identifier.isdecimal():identity=int(identifier)
+                elif re.fullmatch(r'[A-Za-z0-9_.:-]{1,160}',identifier):identity=identifier
+                else:continue
+                result[game,identity]=ItemArt(entry['name'],entry['category'],atlas,tuple(rect),archive)
     except (OSError,ValueError,KeyError,TypeError):
         return {}
     return result
 
 def item_art(game,identifier):
-    if type(identifier)!=int or identifier<=0:return None
+    if type(identifier)==int:
+        if identifier<=0:return None
+    elif not isinstance(identifier,str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,160}',identifier):return None
     return catalogue().get((game,identifier))
+
+def field_art_key(field,value=None):
+    """Use raw equipment IDs, never the UI's choice index or unrelated ability IDs."""
+    if field.art_choices:
+        index=field.value if value is None else value
+        if type(index)!=int or not 0<=index<len(field.art_choices):return None
+        return field.art_choices[index]
+    return field.item_id if field.item_id is not None else field.key
 
 @lru_cache(maxsize=32)
 def _atlas(name,archive=''):

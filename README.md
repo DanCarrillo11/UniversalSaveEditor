@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.21.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.22.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -17,9 +17,11 @@ executable included at its root. Startup can take a few seconds.
 
 ## Features
 
+- Original game artwork across 14 editors: all six supported Kingdom Hearts, WEBFISHING, Risk of Rain 2, Elden Ring, RE HD Remaster, RE2 Remake, RE3 Remake, RE5 and RE7. KH equipment images follow dropdown changes. Coverage varies by game; [exact counts and pending games](docs/ITEM_ARTWORK.md) are documented. No AI artwork or runtime downloads.
+
 - Original Elden Ring item artwork: 307 supported goods and 487 known base armaments, shown in inventory, storage, Add items and weapon upgrade rows. Archived image bytes stay unchanged; variants retain their base weapon image. No AI images or runtime downloads.
 
-- Original RE2 Remake inventory artwork: 27 mapped supplies with game icons, English names and collection groups. Exact source pixels, no AI images. Unknown items and other editions keep their existing text display; see [artwork sources and coverage](docs/ITEM_ARTWORK.md).
+- Original RE2 Remake inventory artwork: 27 mapped supplies with game icons, English names and collection groups. Exact source pixels, no AI images. Unmapped items keep their existing text display; see [artwork sources and coverage](docs/ITEM_ARTWORK.md).
 
 - [Resident Evil Village](docs/RE8_FORMAT.md): Lei, CP, current health, existing stacks and separate extra-content flags. Experimental Steam adapter; native Steam and in-game validation pending.
 

@@ -62,7 +62,7 @@ class ReHdSave:
                 label=f'Slot {index+1} · {ITEMS.get(identifier,"Unidentified item · ID "+str(identifier))}'
                 category='Weapons' if identifier in (1,2,3,5,6,7,8,9,10,11,12,13,14) else 'Ammunition' if identifier in (16,17,18,19,20,25) else 'Consumables' if identifier in (33,34,35,36,68) else 'Other items' if known else 'Unidentified items'
                 self.fields.append(field_type(key,label,quantity,offset+4,'',0,255,group,
-                                              note=f'Item ID {identifier}. Quantity or loaded ammunition of an existing item. Item identity is preserved.',collection=category))
+                                              note=f'Item ID {identifier}. Quantity or loaded ammunition of an existing item. Item identity is preserved.',collection=category,item_id=identifier))
                 self.operations[key]=offset+4
 
     def patch(self,changes):

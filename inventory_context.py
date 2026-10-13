@@ -5,13 +5,16 @@ Factual property/owner IDs: kvasszn/ree-save-editor. No SDK assets bundled.
 """
 from collections import defaultdict
 import struct
+import re
 from re_hashes import murmur32
 
 
 class InventoryContext:
     def __init__(self,nodes,data):
-        self.data=data;self.direct=defaultdict(list);self.remake=defaultdict(list)
+        self.data=data;self.direct=defaultdict(list);self.remake=defaultdict(list);self.named=defaultdict(list)
         for node in nodes:
+            if node.owner==0x5e10ebe4 and node.field==murmur32(b'ItemDataID') and node.kind==15:
+                self.named[node.path[:-1]].append(node)
             if node.fmt not in ('<i','<I') or node.size!=4:continue
             if node.owner in (0x2675722d,0xd759bf3d) and node.field==murmur32(b'ItemId'):
                 self.direct[node.owner,node.path[:-1]].append(node)
@@ -21,6 +24,13 @@ class InventoryContext:
                     self.remake[node.path[:-2]].append(node)
 
     def item_id(self,game,node):
+        if game=='re7':
+            candidates=self.named.get(node.path[:-1],[])
+            if len(candidates)!=1 or not 0<candidates[0].size<=320:return None
+            candidate=candidates[0]
+            try:value=self.data[candidate.offset:candidate.offset+candidate.size].decode('utf-16-le').rstrip('\0')
+            except UnicodeDecodeError:return None
+            return 'item:'+value if re.fullmatch(r'[A-Za-z0-9_-]{1,150}',value) else None
         candidates=self.remake.get(node.path[:-1],[]) if game=='re4_remake' else self.direct.get((node.owner,node.path[:-1]),[]) if game in ('re2','re3') else []
         if len(candidates)!=1:return None
         candidate=candidates[0];value=struct.unpack_from(candidate.fmt,self.data,candidate.offset)[0]

@@ -209,3 +209,34 @@ Qt decodes from headers. Game artwork belongs to FromSoftware, Inc. and
 Bandai Namco Entertainment Inc. and is outside the source-code license.
 The software's GPL license does not convey a publisher license to game art.
 See docs/ITEM_ARTWORK.md for exact coverage and runtime/validation boundaries.
+
+## Original multi-game artwork (v0.22)
+Source mappings, pinned revisions, original image hashes, preview hashes and
+transform descriptions are in assets/items/manifest.json. Exact coverage and
+pending games are documented in docs/ITEM_ARTWORK.md. All icons/renders are
+original game content; large renders use aspect-preserving 128px previews.
+No AI generation or redraws. Base ReCoM art does not depict card values/premium.
+
+WEBFISHING ID/icon metadata: NotNite/webfishing-save-editor at
+b3687a817700d2b766bf2406dfbd8a2b35bb4bf5, MIT notice in
+assets/items/WEBFISHING_ICON_METADATA_LICENSE.txt. Original sprites explicitly
+excluded from upstream's software license; game art belongs to lamedeveloper.
+
+RE3 clipping/ID metadata: Squirrelies/SRTPluginUIRE3WinForms at
+d70d15c880cfb262c0ced7aa8ce0857dba777897; provider enum at
+813f961372ae6646200bdb4748e8fa87c58c202c. MIT notice in
+assets/items/RE3_SRT_LICENSE.txt, Copyright (c) 2020 Travis J. Gutjahr.
+RE1R/RE5/RE7 icon lookup metadata: SpeedrunTooling/InventoryHUD at
+b1385a15c205a7a270d0949388d948712952d904, MIT notice in
+assets/items/INVENTORY_HUD_LICENSE.txt, Copyright (c) 2021 Speedrun Tooling.
+Resident Evil art belongs to CAPCOM CO., LTD., outside the software license.
+
+Kingdom Hearts original renders/card sprites: edition-specific KHWiki file
+pages with upload timestamps, credited individually in the manifest. Artwork
+belongs to Disney and Square Enix, outside the source-code license.
+Risk of Rain 2 original achievement textures: extracted from installed Steam
+Addressables, using exact UnlockableDef icon GUIDs and catalog asset paths.
+Artwork belongs to Gearbox Software / Hopoo Games, outside source-code license.
+UnityPy and the MIT renanliberato/unity-addressables-id-re catalog parser were
+research tools only; their implementation is not bundled or needed at runtime.
+Software licensing does not imply a game-art license or publisher endorsement.

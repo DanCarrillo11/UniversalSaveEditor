@@ -17,6 +17,22 @@ import test_extended
 from editor_layout import organize_fields
 
 class InterfaceTests(unittest.TestCase):
+    def test_all_original_art_decodes_and_equipment_preview_tracks_choice_and_reset(self):
+        from item_art import catalogue,item_pixmap
+        for game,key in catalogue():
+            self.assertFalse(item_pixmap(game,key).isNull(),f'{game}: {key}')
+        from test_expansion import kh_fixture
+        raw,*_=kh_fixture('kh2');path=self.root/'KHIIFM_WW.png';path.write_bytes(raw)
+        w=self.window;self.assertTrue(w.load('kh2',path))
+        field=next(f for f in w.save.slots[0].fields if f.art_choices and len([i for i in f.art_choices if not item_pixmap('kh2',i).isNull()])>=2)
+        entry=w.inputs[0,field.key];sprite=entry._field_row.findChild(QLabel,'itemSprite')
+        selected=[i for i,key in enumerate(field.art_choices) if not item_pixmap('kh2',key).isNull()][:2]
+        entry.setCurrentIndex(selected[0]);first=sprite.pixmap().cacheKey()
+        entry.setCurrentIndex(selected[1]);self.assertNotEqual(sprite.pixmap().cacheKey(),first)
+        self.assertEqual(sprite.pixmap().cacheKey(),item_pixmap('kh2',field.art_choices[selected[1]]).cacheKey())
+        w.restore_field((0,field.key));self.assertEqual(entry.currentIndex(),field.value)
+        self.assertEqual(path.read_bytes(),raw)
+
     @classmethod
     def setUpClass(cls):
         cls.app=QApplication.instance() or QApplication([])

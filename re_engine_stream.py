@@ -55,7 +55,8 @@ class StreamReader:
         self.guard(depth)
         if kind==17:self.clazz(path,depth+1);return
         if kind==15:
-            self.align(4);length=self.read('<I');self.take(length*2);return
+            self.align(4);length=self.read('<I');offset=self.take(length*2)
+            self.nodes.append(Node(owner,field,kind,offset,length*2,path,'utf16'));return
         if kind==-1:self.array(owner,field,path,depth+1);return
         self.align(4);size=self.read('<I')
         self.sized(owner,field,kind,size,path,depth)

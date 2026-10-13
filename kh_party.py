@@ -26,7 +26,8 @@ class PartyEditor:
         values=tuple(options)
         self.encodings[slot,key]=(offset,fmt,values)
         fields.append(self.field_type(key,label,values.index(original),offset,'',0,len(values)-1,group,
-            choices=tuple(options[v] for v in values),note=note))
+            choices=tuple(options[v] for v in values),note=note,
+            art_choices=values if group=='Equipment' else ()))
 
     def abilities(self,fields,slot,prefix,label,base,count,fmt,names,inactive_bit):
         size=struct.calcsize(fmt)

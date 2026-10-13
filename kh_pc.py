@@ -101,8 +101,8 @@ class ExtraKhArchive:
                     identifier = struct.unpack_from('<H', raw, record+delta)[0]
                     if identifier in BBS_COMMANDS:
                         name = f'{BBS_COMMANDS[identifier]} · Entry {command+1}'
-                        add(f'command:{command}:level', name+' · Level', delta+2, '<H', 5, 'Commands', 1)
-                        add(f'command:{command}:experience', name+' · Experience', delta+4, '<H', 65535, 'Commands')
+                        add(f'command:{command}:level', name+' · Level', delta+2, '<H', 5, 'Commands', 1,item_id=identifier)
+                        add(f'command:{command}:experience', name+' · Experience', delta+4, '<H', 65535, 'Commands',item_id=identifier)
                 for ability, name in enumerate(BBS_ABILITIES):
                     delta = 0x4d64 + ability * 4
                     add(f'ability:{ability}:active', name+' · Active stacks', delta, '<B', 5, 'Abilities')
@@ -124,7 +124,7 @@ class ExtraKhArchive:
                     identifier = struct.unpack_from('<H', raw, record+delta)[0]
                     if identifier in DDD_ITEMS and identifier:
                         label, group = DDD_ITEMS[identifier]
-                        add(f'inventory:{item}', label+f' · Entry {item+1}', delta+5, '<B', 99, group)
+                        add(f'inventory:{item}', label+f' · Entry {item+1}', delta+5, '<B', 99, group,item_id=identifier)
             name = bytes(table[index*0x158:index*0x158+0x40]).split(b'\0')[0].decode('ascii', errors='replace')
             if game == 'bbs':
                 character = {1:'Ventus', 2:'Aqua', 3:'Terra', 5:'Ventus', 6:'Aqua', 7:'Terra'}.get(raw[record+0x17])

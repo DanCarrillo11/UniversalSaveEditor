@@ -43,7 +43,8 @@ class Field:
     note: str = ''
     readonly: bool = False
     collection: str = ''
-    item_id: int | None = None
+    item_id: int | str | None = None
+    art_choices: tuple = ()
 
     def parse(self, text):
         try:
@@ -285,12 +286,12 @@ class Save:
                 if not isinstance(limit,int) or limit < 0:
                     raise FormatError('Invalid bait capacity.')
                 fields.append(Field('bait:'+bait,'Bait · '+bait,amount,node[0],node[1],0,limit))
-        def add(path, key, label, low, high, group, decimal=False):
+        def add(path, key, label, low, high, group, decimal=False,**options):
             node=reader.nodes.get(path)
             if node and node[1] in ('<i','<q','<f','<d'):
                 if not math.isfinite(node[2]):
                     raise FormatError('Invalid value: '+label)
-                fields.append(Field(key,label,node[2],node[0],node[1],low,high,group,decimal and node[1] in ('<f','<d')))
+                fields.append(Field(key,label,node[2],node[0],node[1],low,high,group,decimal and node[1] in ('<f','<d'),**options))
         for key,label,low,high,group,decimal in [
             ('level','Level',1,50,'Progress',False),
             ('xp','Experience (XP)',0,9999999,'Progress',True),
@@ -307,8 +308,9 @@ class Save:
         for index,item in enumerate(self.info['inventory']):
             if not isinstance(item,dict):continue
             name=f'{index+1} · {item.get("id","Item")}'
-            add(('inventory',index,'quality'),f'item:{index}:quality',name+' · quality (0–5)',0,5,'Inventory')
-            add(('inventory',index,'size'),f'item:{index}:size',name+' · size',0.001,999999,'Inventory',True)
+            identity='item:'+item['id'] if isinstance(item.get('id'),str) else None
+            add(('inventory',index,'quality'),f'item:{index}:quality',name+' · quality (0–5)',0,5,'Inventory',item_id=identity)
+            add(('inventory',index,'size'),f'item:{index}:size',name+' · size',0.001,999999,'Inventory',True,item_id=identity)
         journal=self.info.get('journal',{})
         if isinstance(journal,dict):
             for category,entries in journal.items():
@@ -316,8 +318,9 @@ class Save:
                 for fish,entry in entries.items():
                     if not isinstance(entry,dict):continue
                     name=f'{category} / {fish}'
-                    add(('journal',category,fish,'count'),f'journal:{category}:{fish}:count',name+' · catches',0,9999999,'Journal')
-                    add(('journal',category,fish,'record'),f'journal:{category}:{fish}:record',name+' · record',0,999999,'Journal',True)
+                    identity='item:'+fish if isinstance(fish,str) else None
+                    add(('journal',category,fish,'count'),f'journal:{category}:{fish}:count',name+' · catches',0,9999999,'Journal',item_id=identity)
+                    add(('journal',category,fish,'record'),f'journal:{category}:{fish}:record',name+' · record',0,999999,'Journal',True,item_id=identity)
         self.slots = [Slot(f'Level {self.info["level"]} · {len(self.info["inventory"])} items',fields)]
 
     def _ror2(self):
@@ -427,7 +430,7 @@ class Save:
             for item_id,item_name,category in ITEMS:
                 offset=record+0x499+item_id
                 group={'Synthesis':'Materials','Accessory':'Accessories','Keyblade':'Weapons','Staff':'Weapons','Shield':'Weapons'}.get(category,'Items')
-                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group))
+                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group,item_id=item_id))
             for character in range(len(KH1_CHARACTERS)):
                 self.party.character(fields,len(self.slots),record,character)
             level = self.raw[record+4]
@@ -539,7 +542,7 @@ class Save:
                 offset = record + 0x3580 + item_id
                 item_name = KH2_ITEM_NAMES.get(item_id,f'Unidentified item · ID {item_id:03d}')
                 note='' if item_id in KH2_ITEM_NAMES else 'Name mapping is pending. This is the saved item index; no item identity is changed.'
-                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,'Inventory',note=note))
+                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,'Inventory',note=note,item_id=item_id))
             name = bytes(table[descriptor:descriptor+0x40]).split(b'\0')[0].decode('ascii',errors='replace')
             level = self.raw[record+0x24ff]
             self.slots.append(Slot(f'{name or str(index+1)} · Sora level {level}',fields))

@@ -679,14 +679,22 @@ class Window(QMainWindow):
 
     def build_field_row(self,field):
         row=QFrame();row.setObjectName('field');line=layout(row,False,8,16)
-        from item_art import item_pixmap,item_art
-        pixmap=item_pixmap(self.save.game,field.item_id)
-        if not pixmap.isNull():
+        from item_art import item_pixmap,item_art,field_art_key
+        key=(self.slot_index,field.key)
+        art_key=field_art_key(field,int(self.edits.get(key,field.value)) if field.art_choices else None)
+        pixmap=item_pixmap(self.save.game,art_key)
+        artwork=None
+        if not pixmap.isNull() or field.art_choices:
             artwork=QLabel();artwork.setObjectName('itemSprite');artwork.setFixedSize(72,72)
             artwork.setAlignment(Qt.AlignmentFlag.AlignCenter);artwork.setPixmap(pixmap)
-            art=item_art(self.save.game,field.item_id)
-            artwork.setAccessibleName(f'Original game icon: {art.name}')
-            artwork.setToolTip(art.name);line.addWidget(artwork)
+            def refresh_art(value=None):
+                identity=field_art_key(field,value);art=item_art(self.save.game,identity)
+                artwork.setPixmap(item_pixmap(self.save.game,identity))
+                artwork.setVisible(art is not None)
+                artwork.setAccessibleName(f'Original game icon: {art.name}' if art else '')
+                artwork.setToolTip(art.name if art else '')
+            refresh_art(int(self.edits.get(key,field.value)) if field.art_choices else None)
+            line.addWidget(artwork)
         caption=QVBoxLayout();caption.addWidget(label(field.label))
         if field.readonly:
             caption.addWidget(label('Read-only · preserved when changes are applied','small',True))
@@ -706,6 +714,7 @@ class Window(QMainWindow):
             entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(190)
             entry.setCurrentIndex(int(self.edits.get(key,field.value)))
             entry.currentIndexChanged.connect(lambda value,k=key,f=field,e=entry:self.choice_changed(k,f,e,value))
+            if artwork is not None and field.art_choices:entry.currentIndexChanged.connect(refresh_art)
         else:
             entry=QLineEdit(self.edits.get(key,number_text(field.value)))
             entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
@@ -1114,12 +1123,16 @@ def main():
             crypto_ready=crypto_ready and village_ready
             try:
                 from item_art import catalogue,item_art,item_pixmap
-                item_icons_ready=(len(catalogue())==821 and item_art('re2',15).name=='Handgun Ammo'
+                samples=(('kh1',81),('kh2',1),('kh3',1),('recom','card:0'),('bbs',196),('ddd',98),
+                         ('ror2','unlock:Skins.Bandit2.Alt2'),('webfishing','bait:worms'),
+                         ('re1_hd',17),('re5','infinite_ammo:0'),('re7','item:HandgunBullet'),('re3',31))
+                item_icons_ready=(len(catalogue())==3155 and item_art('re2',15).name=='Handgun Ammo'
                                   and not item_pixmap('re2',15).isNull() and item_pixmap('re3',15).isNull()
                                   and item_pixmap('re2',9999).isNull()
                                   and not item_pixmap('eldenring',0x40000000|190).isNull()
                                   and not item_pixmap('eldenring',1000000).isNull()
-                                  and not item_pixmap('eldenring',0x40000000|2003150).isNull())
+                                  and not item_pixmap('eldenring',0x40000000|2003150).isNull()
+                                  and all(not item_pixmap(g,i).isNull() for g,i in samples))
             except Exception:
                 item_icons_ready=False
             crypto_ready=crypto_ready and item_icons_ready

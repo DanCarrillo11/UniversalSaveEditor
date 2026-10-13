@@ -85,7 +85,7 @@ class Kh3PcSave:
                 add(f'character:{name}:{key}', name+' · '+label, base+delta, fmt, maximum, 'Attributes')
         for identifier, (name, group) in KH3_ITEMS.items():
             if 0 <= identifier < 1024:
-                add(f'inventory:{identifier}', name, 0x8f4 + identifier*2, '<B', 99, group)
+                add(f'inventory:{identifier}', name, 0x8f4 + identifier*2, '<B', 99, group,item_id=identifier)
         for material in range(100):
             known=material<len(KH3_MATERIALS)
             name=KH3_MATERIALS[material] if known else f'Unidentified material · Entry {material+1:03d}'

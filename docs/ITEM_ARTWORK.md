@@ -1,5 +1,58 @@
 # Original item artwork
 
+## Current coverage (v0.22)
+
+The offline catalogue contains **3,155 artwork associations across 14 editors**.
+An association is a field/identity mapping, not necessarily a unique image:
+ReCoM card values share their original base card art and KH3 materials share
+matching inventory art. This does not mean every item or field in those games
+has an image. Unknown, ambiguous and unsupported identities keep text labels.
+
+| Game | Associations | Where images appear |
+| --- | ---: | --- |
+| Elden Ring | 794 | Known goods, storage, Add items and base weapon upgrades |
+| RE2 Remake | 27 | Mapped inventory supplies |
+| Kingdom Hearts | 42 | Known weapons in inventory and party equipment |
+| Kingdom Hearts II | 135 | Consumables, weapons, armor, accessories and equipped items |
+| Re:Chain of Memories | 1,123 | Recognized card quantities; shared base artwork |
+| Birth by Sleep | 47 | Existing command entries with matching original artwork |
+| Dream Drop Distance | 56 | Existing item entries with matching original artwork |
+| Kingdom Hearts III | 408 | Known inventory objects and 60 materials |
+| WEBFISHING | 169 | Seven baits and recognized fish/tool/prop IDs in inventory/journal |
+| Risk of Rain 2 | 93 | Unlocks with an exact installed achievement-icon reference |
+| RE HD Remaster | 25 | Recognized inventory/item-box objects |
+| RE3 Remake | 76 | Original atlas supplies, attachments and key items |
+| RE5 | 19 | Weapon images beside existing infinite-ammo flags |
+| RE7 | 141 | Item-box rows with a matching, unique ItemDataID string |
+
+### Sources and mapping
+
+- [Kingdom Hearts Wiki](https://www.khwiki.com): original game renders and isolated card sprites, using exact edition-specific file titles matched to existing editor tables. Opaque gameplay screenshots are excluded. Card values and premium state stay in the field label/save; shared base art does not depict those variants. Large original renders receive aspect-preserving 128px previews; smaller sprites keep their original pixels. Lossless PNG packing can remove nonvisual metadata without changing pixels. Individual file pages, upload timestamps, original hashes, preview hashes and transforms are in the manifest.
+- Installed Steam Risk of Rain 2 Addressables: UnlockableDef achievementIconRef GUID to catalog asset to exact texture name. Original textures decoded to PNG; no guessed associations. Includes base-game and DLC assets present in the installation; a picture does not grant DLC ownership. The MIT [catalog parser](https://github.com/renanliberato/unity-addressables-id-re/tree/c7eb4be551516e7a60c2c353e7fd9682e1219b08) and [UnityPy](https://github.com/K0lb3/UnityPy) were research tools only, not runtime dependencies or shipped code.
+- [NotNite/webfishing-save-editor](https://github.com/NotNite/webfishing-save-editor/tree/b3687a817700d2b766bf2406dfbd8a2b35bb4bf5): extracted original sprites and resource ID/name/icon tables. Inventory position is never used as item identity. Artwork is expressly separate from that project's MIT code license.
+- [Squirrelies/SRTPluginUIRE3WinForms](https://github.com/Squirrelies/SRTPluginUIRE3WinForms/tree/d70d15c880cfb262c0ced7aa8ce0857dba777897): unmodified original atlas, exact upstream clipping rectangles and separately pinned provider enum. Full MIT notice included.
+- [SpeedrunTooling/InventoryHUD](https://github.com/SpeedrunTooling/InventoryHUD/tree/b1385a15c205a7a270d0949388d948712952d904): RE1R numeric item filenames, RE7 internal item-name filenames and RE5 named weapon CSS rectangles. RE5 sprite crops retain original pixels. RE7 identity strings are inspected only in the same serialized quantity object; duplicate/invalid strings cannot select an image. Full MIT notice included.
+
+One WEBFISHING .png filename contains the original GIF image; Qt detects its
+actual format and shows the first frame. Resource packs deduplicate shared images,
+decode offline and use bounded caches. Tests decode every association, check
+hashes/dimensions and verify equipment image changes and save-byte preservation.
+
+### Pending artwork
+
+Alice: Madness Returns, Max Payne, RE4 (2005), RE4 Remake, RE6, RE8 and RE9
+currently have **no verified item artwork** in this release. Research found
+modified/fan-made imagery, inaccessible archives, or resources without a safe
+mapping to existing save fields. These are not presented as completed collections.
+Those editors retain their existing text controls.
+
+Adding artwork does not add save-edit permissions, remove experimental status,
+or establish in-game validation. Publisher art belongs to its respective owners
+(Disney/Square Enix, lamedeveloper, Gearbox/Hopoo and Capcom); source-code licenses
+do not convey game-art licenses or publisher endorsement.
+
+## Initial RE2 collection
+
 The first artwork collection covers **27 Resident Evil 2 (2019) supply IDs**:
 First Aid Spray; green, red and blue herbs; seven herb mixtures; ten ammunition
 types; Ink Ribbon; Wooden Boards; and four gunpowder variants. Inventory rows
