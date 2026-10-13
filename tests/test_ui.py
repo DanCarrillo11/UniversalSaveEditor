@@ -28,6 +28,8 @@ class InterfaceTests(unittest.TestCase):
         QTest.mouseClick(navigation.character_buttons['Donald'],Qt.MouseButton.LeftButton)
         self.assertEqual(navigation.selector.currentData(),'Donald')
         self.assertTrue(navigation.character_buttons['Donald'].isChecked())
+        QTest.mouseClick(navigation.character_buttons['Donald'],Qt.MouseButton.LeftButton)
+        self.assertTrue(navigation.character_buttons['Donald'].isChecked())
         self.assertFalse(navigation.character_buttons['Sora'].isChecked())
         self.assertFalse(w.inputs[0,'1:strength'].parentWidget().isHidden())
         self.assertTrue(w.inputs[0,'0:strength'].parentWidget().isHidden())

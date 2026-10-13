@@ -122,6 +122,7 @@ class SectionNavigation(QWidget):
                 chip = QPushButton(value, chips)
                 chip.setObjectName('characterChip')
                 chip.setCheckable(True)
+                chip.setAutoExclusive(True)
                 chip.setAccessibleName('Choose ' + value)
                 chip.setCursor(Qt.CursorShape.PointingHandCursor)
                 chip.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
