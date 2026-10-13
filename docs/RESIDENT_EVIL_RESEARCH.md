@@ -16,7 +16,7 @@ in-game validation are not claimed**. RE0 remains research-only.
 | RE6 | 221040 | Skill Points, Mercenaries character/costume/stage flags, existing supplies and equipped campaign/Mercenaries skills. Public Steam profile checked; purchase flags, emblems and unrelated data retained. |
 | RE7 Biohazard | 418370 | Player health and existing item-box quantities. Player health identified in two public console payloads; native Steam validation pending. |
 | RE Village (RE8) | 1196590 | Lei, CP, current health, existing stacks and extra-content flags. Shared console gameplay payload and synthetic Steam envelopes checked; native Steam validation pending. |
-| RE Requiem | 3764200 | Currency and scoped collection/shop flags. Nine native Steam files authenticated, exported identically and revalidated after in-memory edits. |
+| RE Requiem | 3764200 | Currency, scoped content flags, player-specific health/table upgrades, existing stacks and mapped attached part tiers. Nine native Steam files authenticated, exported identically and revalidated after in-memory edits; in-game loading pending. |
 
 All enabled Resident Evil editors are marked experimental. No edited save has
 been loaded in-game. A checksum match and byte-preserving export establish file

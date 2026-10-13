@@ -38,6 +38,6 @@ class PreviewTests(unittest.TestCase):
                 for entry in sample['fields']:
                     self.assertNotIn('offset',entry);self.assertNotIn('raw',entry)
         requiem=EditorPreview('re9')
-        self.assertEqual(coverage_label('re9'),'Limited coverage')
+        self.assertEqual(coverage_label('re9'),'Partial coverage')
         self.assertNotIn('Inventory',{c.name for c in organize_fields('re9',requiem.slots[0].fields)})
         self.assertEqual(len(EditorPreview('alice').slots),2)

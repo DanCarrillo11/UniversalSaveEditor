@@ -11,7 +11,7 @@ it does not recreate the stream from a third-party SDK schema.
 | RE4 (2023) | Extra content points, Spinels, existing inventory quantities | Documented Lime envelope and property identifiers; synthetic fixtures only. Real Steam fixture validation pending. |
 | RE7 | Player health and existing item-box quantities | Synthetic Steam envelopes; player-health field found in two public console payloads. Real Steam fixture validation pending. |
 | Village (RE8) | Lei, CP, current health, existing stacks and extra-content flags | Shared console gameplay payload and independent synthetic Steam envelopes checked. Native Steam file and game loading pending; see [Village scope](RE8_FORMAT.md). |
-| Requiem | Money, carry-over money, Clear Points, extra-shop availability/acquisition/received flags, bonus content, artwork and figure availability/purchase flags, special-option unlocks | Nine native Steam files decoded and exported identically. In-memory edits revalidated with unrelated payload bytes preserved. |
+| Requiem | Money/points, player-specific health and health-table upgrades, existing stacks, mapped attached part tiers and separate content flags; see [Requiem scope](RE9_FORMAT.md) | Nine native Steam files decoded and exported identically. In-memory edits revalidated with unrelated payload bytes preserved. |
 
 All six adapters are experimental. **No edited file has been tested by loading
 it in these games.** File verification does not establish gameplay compatibility.
@@ -27,8 +27,9 @@ receive guessed names or images. Existing quantities stay within 1–999 and do 
 identity, equipment references, slot count or array lengths. Inventory counters
 must be descendants of the game's inventory save object: scene objects and
 enemy inventories are excluded. Player HP uses a player-specific class, never
-generic enemy health properties. Difficulty, story/checkpoint state, weapons,
-upgrades and item creation are not exposed by these initial adapters.
+generic enemy health properties. Difficulty, story/checkpoint state and item creation remain unexposed. Requiem adds
+scoped player-health/table upgrades and tiers for mapped already-attached parts;
+other weapon systems remain pending.
 
 Village single-item records are read-only; only original multi-item stacks can
 change quantity. Village item/content identities are checked within their exact

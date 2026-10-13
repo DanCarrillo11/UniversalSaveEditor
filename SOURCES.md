@@ -240,3 +240,14 @@ Artwork belongs to Gearbox Software / Hopoo Games, outside source-code license.
 UnityPy and the MIT renanliberato/unity-addressables-id-re catalog parser were
 research tools only; their implementation is not bundled or needed at runtime.
 Software licensing does not imply a game-art license or publisher endorsement.
+
+
+Requiem expansion: serialized property/class facts checked against
+kvasszn/ree-save-editor at 4125e497f1ae84cc746bb4a99da612c48bea161e.
+95 selected short item names and 44 three-tier part identities checked against
+original English game text exposed by Synthlight/RE-Editor at
+48310c16a915545dc96d254ab59ec69665c31447. Item hashes are independently
+computed from UTF-16LE codes. No upstream implementation, SDK schema or
+multilingual translation asset is bundled; unknowns remain explicitly unmapped.
+Game names and trademarks belong to CAPCOM CO., LTD. Requiem artwork remains
+pending; no modded or substitute images are shipped. See docs/RE9_FORMAT.md.

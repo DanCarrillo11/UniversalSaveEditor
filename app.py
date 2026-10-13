@@ -752,6 +752,10 @@ class Window(QMainWindow):
             entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
         elif field.choices:
             entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(190)
+            if not self.preview_mode:
+                for index in range(len(field.choices)):
+                    entry.model().item(index).setEnabled(field.minimum <= index <= field.maximum)
+                entry.setEnabled(not field.readonly)
             entry.setCurrentIndex(int(self.edits.get(key,field.value)))
             entry.currentIndexChanged.connect(lambda value,k=key,f=field,e=entry:self.choice_changed(k,f,e,value))
             if artwork is not None and field.art_choices:entry.currentIndexChanged.connect(refresh_art)

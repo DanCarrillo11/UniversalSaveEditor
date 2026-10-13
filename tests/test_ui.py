@@ -17,6 +17,27 @@ import test_extended
 from editor_layout import organize_fields
 
 class InterfaceTests(unittest.TestCase):
+    def test_requiem_upgrade_choices_disable_unsupported_tiers_but_preview_stays_browsable(self):
+        from test_requiem import fixture
+        from test_re_engine import ACCOUNT
+        w=self.window;raw=fixture(parts=True);path=self.root/'requiem.bin';path.write_bytes(raw)
+        save=Save(raw,'re9',account_id=ACCOUNT)
+        w.display_save(save,path);self.app.processEvents()
+        self.assertEqual([w.tabs.tabText(i) for i in range(w.tabs.count())],['Progress','Characters','Collection'])
+        capacity=next(f for f in save.slots[0].fields if f.label=='Silver Tube Extension' and f.group=='Weapon upgrades')
+        entry=w.inputs[0,capacity.key]
+        self.assertFalse(entry.model().item(0).isEnabled());self.assertTrue(entry.model().item(2).isEnabled())
+        entry.setCurrentIndex(2);self.assertEqual(w.validated_changes()[0,capacity.key],2)
+        updated=Save(save.patched({(0,capacity.key):2}),'re9',account_id=ACCOUNT)
+        w.edits={};w.display_save(updated,path);self.assertFalse(w.inputs[0,capacity.key].isEnabled())
+        self.assertTrue(w.open_preview('re9'))
+        upgrades=[f for f in w.save.slots[0].fields if f.group=='Weapon upgrades']
+        for f in upgrades:
+            control=w.inputs[0,f.key];self.assertTrue(control.isEnabled())
+            self.assertTrue(all(control.model().item(i).isEnabled() for i in range(control.count())))
+            control.setCurrentIndex(0)
+        self.assertEqual(w.edits,{})
+
     def test_games_without_saves_open_read_only_previews_without_file_dialogs(self):
         w=self.window;w.files=[];history=list(w.recent_files)
         with patch('app.QFileDialog.getOpenFileName',side_effect=AssertionError('Preview must not require a file')):

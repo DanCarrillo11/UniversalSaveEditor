@@ -56,12 +56,12 @@ EVIDENCE = {
  're8': Evidence('Village Steam data*.bin save envelopes', 'A public shared console gameplay payload and synthetic Steam envelopes were checked; native Steam file checking is pending.',
    'Lei, CP, current health, existing stacks and separate extra-content flags. Single-item records, loaded ammunition, upgrades, story, challenge completion and DLC dependencies are preserved. Item/content names and game stack caps remain unmapped.', False),
  're9': Evidence('Steam Requiem gameplay saves and profiles', 'Nine native Steam files were authenticated and checked for identical output and in-memory edits.',
-   'Gameplay slots and system profiles expose different options. Availability, purchase and received flags are separate; no comprehensive unlock claim.'),
+   'Player-specific saved health records, table-backed health upgrades, existing stacks and mapped attached part tiers. Player names/active variants, unknown item names, stack caps, item creation and original icons remain pending. Capacity upgrades can only increase; loaded ammunition, story and backup inventories are preserved. Gameplay/system files expose different options; content flags are separate.'),
 }
 
 # Scope describes exposed features; it is independent of file/gameplay evidence.
 BROAD = frozenset(('webfishing','ror2','kh1','kh2'))
-LIMITED = frozenset(('maxpayne','re1_hd','re2','re3','re4_remake','re7','re8','re9'))
+LIMITED = frozenset(('maxpayne','re1_hd','re2','re3','re4_remake','re7','re8'))
 
 def coverage_label(game):
     if game in BROAD:return 'Broad coverage'

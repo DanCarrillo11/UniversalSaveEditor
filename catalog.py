@@ -31,7 +31,7 @@ GAMES = (
     Game('re6','RESIDENT EVIL 6','PC profile · Steam','RESIDENT EVIL','#b0babc',True,'Skill points · Equipped skills · Mercenaries characters, costumes and stages · Existing supply quantities',True),
     Game('re7','RESIDENT EVIL 7 BIOHAZARD','PC saves · Steam','RESIDENT EVIL','#c2b389',True,'Player health · Existing item box quantities',True),
     Game('re8','RESIDENT EVIL VILLAGE','Resident Evil 8 · Steam','RESIDENT EVIL','#baa885',True,'Lei · Challenge points (CP) · Current health · Existing inventory stacks · Extra content flags',True),
-    Game('re9','RESIDENT EVIL REQUIEM','PC saves and profiles · Steam','RESIDENT EVIL','#a7b7bd',True,'Money · Clear points · Extra shop flags · Bonus content · Artwork · Figures',True),
+    Game('re9','RESIDENT EVIL REQUIEM','PC saves and profiles · Steam','RESIDENT EVIL','#a7b7bd',True,'Money · Clear points · Player health and upgrades · Existing inventory and item box stacks · Attached weapon upgrades · Content flags',True),
     Game('webfishing','WEBFISHING','Steam · Local save','WEBFISHING','#b6e7aa',True,'Economy · Level and XP · Bait · Upgrades · Inventory · Fishing journal'),
     Game('ror2','RISK OF RAIN 2','Steam · Local profile','RISK OF RAIN','#e7b26f',True,'Characters · Skills · Skins · Artifacts · Items · Logs · Coins and statistics'),
     Game('kh1','KINGDOM HEARTS','Final Mix · Steam','KINGDOM HEARTS','#b4b5f6',True,'Munny · Difficulty · Party attributes and XP · Equipped weapons and accessories · Abilities · Items · Materials',True),

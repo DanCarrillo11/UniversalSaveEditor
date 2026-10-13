@@ -1,3 +1,11 @@
+## v0.24.0-alpha — Requiem gameplay expansion
+
+- Add scoped player health and health-table upgrade levels with dependent maximum/current-health updates.
+- Add existing inventory/item-box/storage stocks, 95 selected original item names, and 44 mapped attached-part tiers with ownership/reference checks.
+- Preserve enemy state, backups, loaded ammunition, single objects, geometry and story data. Capacity tiers may only increase.
+- Expand the offline preview and disable invalid/read-only real-save dropdown choices.
+- Pause new game additions and document pending functionality/artwork for every current game. No full-support claim.
+
 # Changelog
 
 ## v0.23.0-alpha — Browse editors without saves

@@ -68,7 +68,7 @@ def organize_fields(game, fields):
         're4_remake': ('Progress', 'Collection'),
         're7': ('Characters', 'Collection'),
         're8': ('Progress', 'Character', 'Collection'),
-        're9': ('Progress', 'Collection'),
+        're9': ('Progress', 'Characters', 'Collection'),
         'webfishing': ('Progress', 'Equipment', 'Collection'),
         'ror2': ('Progress', 'Unlocks', 'Records'),
         'alice': ('Progress', 'Character', 'Collection'),
@@ -89,12 +89,18 @@ def organize_fields(game, fields):
             elif group in ('Inventory','Item box'):
                 category,section,selection='Collection',item.collection or group,group
         if game in ('re2','re3','re4_remake','re7','re8','re9'):
-            if group=='Player health':category='Character' if game=='re8' else 'Characters'
+            if group=='Player health':
+                category='Character' if game=='re8' else 'Characters'
+                if game=='re9':section,selection='Health',item.collection or 'Player'
             elif group=='Currency':category='Progress'
+            elif game=='re9' and group=='Weapon upgrades':
+                category,section,selection='Collection','Attached upgrades',item.collection or 'Weapons'
             elif game=='re2' and group=='Rewards':category='Unlocks'
             else:
                 category='Collection'
-                if 'quantities' in group:section,selection=item.collection or 'Unidentified items',group.replace(' quantities','')
+                if 'quantities' in group:
+                    section,selection=item.collection or 'Unidentified items',group.replace(' quantities','')
+                    if game=='re9':section,selection='Existing items',item.collection or 'Inventory'
         if game=='re5':
             if group=='Library files':category='Collection'
             elif group!='Currency':category='Unlocks'

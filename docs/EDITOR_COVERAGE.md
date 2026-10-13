@@ -26,7 +26,7 @@ the application's Help & details view explains both for each game.
 | RE4 Remake | Limited | Extra-content points, Spinels and existing quantities. No current weapon/stat/story editor. |
 | RE7 | Limited | Health and existing item-box quantities. No current money, weapon upgrade, progression or full unlock editor. |
 | RE8 / Village | Limited | Lei, CP, health, existing stacks and separate content flags. Item names/caps and dependencies remain unmapped; single objects, upgrades and story are preserved. |
-| RE9 / Requiem | Limited | Money, clear points and separate shop/content/artwork/figure flags. Different file types expose different options; no current inventory, weapon, character or story editor. |
+| RE9 / Requiem | Partial | Money/points, player-specific health, table-backed health upgrades, existing stacks and mapped attached part tiers, separate content flags. Character names/active variants, item caps/creation, icons and full weapon/story systems remain pending. |
 | Max Payne | Limited | Weapon ownership, reserve ammo and painkillers. Health, Bullet Time, loaded ammo and checkpoint state are preserved. |
 
 ## No-save browsing

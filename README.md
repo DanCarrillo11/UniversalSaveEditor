@@ -3,7 +3,7 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.23.0-alpha** is a pre-release. Editors use a few game-specific categories
+**v0.24.0-alpha** is a pre-release. Editors use a few game-specific categories
 with section selectors and foldable blocks. All available editors save directly
 to the opened file, keeping its name and location. No automatic backups are created.
 
@@ -72,7 +72,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 | Resident Evil 6, PC | Skill points, Mercenaries character/costume and stage flags, No Mercy stages, existing supplies and equipped campaign/Mercenaries skills | Experimental; public Steam fixture checked |
 | Resident Evil 7, Steam | Player health and existing item-box quantities | Experimental; shared console payload checked; real Steam fixture validation pending |
 | Resident Evil Village (RE8), Steam | Lei, CP, current health, existing multi-item stack quantities and extra-content owned/opened/unlocked flags | Experimental; shared console gameplay payload and synthetic Steam envelopes checked; native Steam and in-game checks pending |
-| Resident Evil Requiem, Steam | Money, Clear Points, extra-shop availability/acquisition/received flags, bonus content, artwork/figure availability and purchases, special options | Experimental; nine native Steam files checked |
+| Resident Evil Requiem, Steam | Money/Clear Points, player-specific health and table-backed health upgrades, existing inventory/item-box stacks, mapped attached part tiers, separate shop/content/artwork/figure flags | Experimental; nine native Steam files checked |
 | WEBFISHING | Money, debt, earnings, level, XP, bait with automatic unlocks, capacity, upgrades, existing inventory size/quality, and fishing journal | Available; direct apply |
 | Risk of Rain 2, Steam | Lunar Coins, statistics, and 454 unlock identifiers for characters, skills, skins, artifacts, items, logs, and Newt Altars | Available; direct apply |
 | Kingdom Hearts Final Mix, Steam | Munny, difficulty, saved party attributes, level/XP, equipment/ability lists and 154 named inventory entries | Experimental expanded party editing; direct apply |
@@ -94,7 +94,7 @@ RE4 Remake and Requiem detect the original SteamID64 from normal save paths;
 copied saves need their original creator's ID. DLC ownership remains necessary.
 RE0's encryption and section table have been researched, but editing is pending.
 See [research and validation status](docs/RESIDENT_EVIL_RESEARCH.md),
-[RE5](docs/RE5_FORMAT.md), [RE Engine](docs/RE_ENGINE_FORMAT.md), and
+[RE5](docs/RE5_FORMAT.md), [Requiem](docs/RE9_FORMAT.md), [RE Engine](docs/RE_ENGINE_FORMAT.md), and
 [HD Remaster / RE6 / RE0 boundaries](docs/RE_LEGACY_PC.md).
 
 Elden Ring targets the original Steam edition and native `ER0000.sl2` files.
@@ -219,3 +219,5 @@ Supported save extensions and development output are excluded by `.gitignore`.
 
 Source code: GPL-3.0-or-later. Cover art, game names, and visible logos belong to
 their respective owners. See [SOURCES.md](SOURCES.md) and [LICENSE](LICENSE).
+
+New game additions are paused while we complete the existing catalogue. Resident Evil, starting with Requiem, is the priority. See the [completion work list](docs/COMPLETION_PLAN.md); no game is currently labelled full support.

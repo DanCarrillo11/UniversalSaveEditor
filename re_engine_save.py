@@ -13,6 +13,7 @@ from re_engine_stream import StreamReader
 from inventory_context import InventoryContext
 from village_context import VillageContext
 from item_art import item_art
+from requiem_context import RequiemContext
 
 GAMES=('re2','re3','re4_remake','re7','re8','re9')
 STEAM_APPS={'883710':'re2','952060':'re3','2050650':'re4_remake','418370':'re7','1196590':'re8','3764200':'re9'}
@@ -78,6 +79,7 @@ class ReEngineSave:
         nodes=StreamReader(self.data,len(prefix)).parse()
         identities=InventoryContext(nodes,self.data)
         village=VillageContext(nodes,self.data) if game=='re8' else None
+        self.requiem=RequiemContext(nodes,self.data) if game=='re9' else None
         wanted={(owner,murmur32(name.encode())):(label,group,fmt,maximum)
                 for owner,name,label,group,fmt,maximum in SPECS[game]}
         selected=[]
@@ -101,9 +103,10 @@ class ReEngineSave:
                 raise ValueError('A recognized RE Engine field is outside its supported range.')
             if 'quantities' in group and value==0:continue
             selected.append((node,specification,value))
-        if not selected:
+        extra=self.requiem.fields(field_type) if self.requiem else []
+        if not selected and not extra:
             raise ValueError('This file has no supported editable fields. Open a gameplay slot for health or inventory, or the system profile for currency and unlocks.')
-        if len(selected)>5000:raise ValueError('Too many editable fields in this RE Engine variant.')
+        if len(selected)+len(extra)>5000:raise ValueError('Too many editable fields in this RE Engine variant.')
         totals=Counter((node.owner,node.field) for node,_,_ in selected)
         indexes=defaultdict(dict);self.fields=[];self.operations={}
         for node,(label,group,fmt,maximum),value in selected:
@@ -144,6 +147,8 @@ class ReEngineSave:
                                           decimal=fmt=='<f',boolean=fmt=='<B',note=note,collection=collection,
                                           readonly=bool(village and 'quantities' in group and value==1),item_id=identifier))
             self.operations[key]=(node.offset,fmt)
+        self.fields.extend(extra)
+        self.operations.update({f.key:(f.offset,f.fmt) for f in extra if not f.readonly})
 
     def patch(self,changes):
         result=bytearray(self.data)
@@ -151,4 +156,5 @@ class ReEngineSave:
             if key not in self.operations:raise ValueError('Unauthorized RE Engine field.')
             offset,fmt=self.operations[key]
             struct.pack_into(fmt,result,offset,value)
+        if self.requiem:self.requiem.apply_health_levels(result,changes)
         return self.envelope.patch(bytes(result[self.envelope.offset:]))

@@ -1,17 +1,19 @@
-# v0.23.0-alpha — Browse every editor without a save
+# v0.24.0-alpha — Requiem health, inventory and attached upgrades
 
-- Open all 21 game editors even without a game installation or save file. A “No save data found” banner clearly identifies preview mode.
-- Browse real supported categories, example fields, original artwork and drop-down options. Example values do not represent your progress.
-- Block applying changes, backup restoration and history entries in previews. Opening a real save restores normal editing and the existing unsaved-change prompt.
-- Add “Preview functions” to each game's actions, including games with detected files.
-- Show broad, partial or limited feature coverage in editor headers, library details and Help & details. No editor is currently classified as full support.
-- Generate the offline preview catalogue through actual adapters using synthetic fixtures. No personal saves, credentials or writable offsets are packaged.
+- Add current health for player-specific saved records, excluding enemy health.
+- Add health upgrade levels when the record's own ordered health table and saved maximum agree. Update maximum health automatically and clamp current health on reductions.
+- Add existing inventory/item-box/storage stacks with exact item/parent identities. Identify 95 mapped supplies, weapons and parts by their original names.
+- Add base/improved/maximum tiers for 44 mapped attached weapon parts when owned part and target weapon references agree. Capacity tiers can only increase; maximal capacity parts are read-only.
+- Preserve loaded/chamber ammunition, item identities, equipment/socket references, geometry, backups, enemy records, story state and original account encryption.
+- Expand Requiem's offline preview to Progress, Characters and Collection. Disable unsupported/readonly real-save choices while keeping preview choices browsable.
+- Pause new game additions while completing functionality and original artwork for the current catalogue; track remaining work per game.
 
-The broadest feature coverage is WEBFISHING, Risk of Rain 2, KH1 and KH2.
-Requiem remains limited to currency/clear points and separate content flags;
-this release does not add inventory, weapon or character editing for that game.
-Coverage is separate from native-file evidence and in-game validation. See
-[all-game coverage](docs/EDITOR_COVERAGE.md) for the current scope and gaps.
+Requiem remains partial support. Character names/active saved variants, actual
+stack caps, item creation, difficulty, full weapon/story systems and original
+item icons remain pending. Single objects are read-only except mapped ammunition.
+Gameplay/system profiles expose different fields. Nine native Steam files pass
+identical-output and authenticated in-memory edit checks; game loading is not
+yet confirmed. No editor is labelled full support.
 
 Download UniversalSaveEditor.exe under Assets and double-click it. Code > Download
 ZIP also includes the portable executable; no installation is required.
