@@ -17,7 +17,7 @@ from core import Save, discover, read_limited, replace_current, identify_game, b
 from catalog import GAMES, BY_ID, PLATFORMS
 from artwork import Artwork
 from editor_layout import organize_fields
-from editor_navigation import SectionNavigation, AttributeGrid, category_title
+from editor_navigation import SectionNavigation, AttributeGrid, FieldControls, category_title
 from ror2_unlocks import UNLOCK_IDS
 from version import VERSION
 from appearance import PALETTES, stylesheet
@@ -27,6 +27,7 @@ from compatibility import compatibility_text, evidence_label, coverage_label, co
 from editor_preview import EditorPreview
 from diagnostics import explain_error, support_report
 from recent_files import read_history, remember, forget
+from runtime_errors import install_error_reporting
 
 ROOT=Path(__file__).resolve().parent
 
@@ -131,6 +132,7 @@ class Window(QMainWindow):
         self.remember_recent=settings.value('files/rememberRecent',True,type=bool) if settings is not None else True
         if not self.remember_recent:self.recent_files=[]
         self.last_diagnostic=''
+        self.runtime_error=False
         stored=settings.value('library/favorites',[],type=list) if settings is not None else []
         self.favorites={game_id for game_id in stored if isinstance(game_id,str) and game_id in BY_ID}
         self.favorites_only=False
@@ -605,8 +607,10 @@ class Window(QMainWindow):
         return True
 
     def display_save(self,save,path):
+        self.runtime_error=False
         game=save.game;self.preview_mode=getattr(save,'is_preview',False)
         self.save=save;self.path=Path(path) if path is not None else None
+        self.field_index={(index,field.key):field for index,slot in enumerate(save.slots) for field in slot.fields}
         self.edits={};self.inputs={};self.exported_state=None;self.slot_index=0
         if self.path is not None:self.last_directory=str(self.path.parent)
         gameinfo=BY_ID[game];self.selected_game=game
@@ -660,9 +664,14 @@ class Window(QMainWindow):
             if not self.preview_mode:self.remember_file(self.save.game,self.path,index)
 
     def render_fields(self):
+        self.tabs.setUpdatesEnabled(False)
+        try:self._render_fields()
+        finally:self.tabs.setUpdatesEnabled(True)
+
+    def _render_fields(self):
         previous=self.tabs.tabText(self.tabs.currentIndex()) if self.editor_page_game==self.save.game else ''
         self.editor_page_game=self.save.game
-        self.inputs={};self.category_filters=[]
+        self.inputs=FieldControls(self.reveal_field);self.category_filters=[]
         while self.tabs.count():
             widget=self.tabs.widget(0);self.tabs.removeTab(0);widget.deleteLater()
         for category in organize_fields(self.save.game,self.save.slots[self.slot_index].fields):
@@ -670,6 +679,28 @@ class Window(QMainWindow):
         for index in range(self.tabs.count()):
             if self.tabs.tabText(index)==previous:self.tabs.setCurrentIndex(index);break
         self.update_summary()
+
+    def reveal_field(self,key):
+        """Navigate to an existing field; never create controls for absent data."""
+        index,identifier=key
+        if index!=self.slot_index or key not in self.field_index:return
+        field=self.field_index[key]
+        self.editor_search.clear()
+        for tab_index in range(self.tabs.count()):
+            page=self.tabs.widget(tab_index);navigation=page.navigation
+            section=next((s for s in navigation.category.sections if any(f is field for f in s.fields)),None)
+            if section is None:continue
+            self.tabs.setCurrentIndex(tab_index)
+            page.findChild(QLineEdit,'fieldSearch').clear()
+            page.findChild(QCheckBox,'changedOnly').setChecked(False)
+            if navigation.character_buttons:navigation.select_character(section.selection)
+            section_index=navigation.category.sections.index(section)
+            for row in range(navigation.list.count()):
+                if navigation.list.item(row).data(Qt.ItemDataRole.UserRole)==section_index:
+                    navigation.list.setCurrentRow(row);break
+            pages=page.findChild(QComboBox,'recordPage')
+            if pages:pages.setCurrentIndex(section.fields.index(field)//100)
+            return
 
     def field_search_text(self,field,base):
         if not field.choices:return base
@@ -679,7 +710,7 @@ class Window(QMainWindow):
         return base+' '+field.choices[index].casefold() if 0<=index<len(field.choices) else base
 
     def build_category(self,category):
-        if sum(len(s.fields) for s in category.sections)>2000:return self.build_large_category(category)
+        if sum(len(s.fields) for s in category.sections)>160:return self.build_large_category(category)
         page=QWidget();box=layout(page,True,4,10)
         state=self.editor_view_state.setdefault((self.save.game,str(self.path),category.name),{})
         navigation=SectionNavigation(category,state,category_title(self.save.game,category.name),page)
@@ -782,8 +813,8 @@ class Window(QMainWindow):
         changed.setChecked(state.get('changed_only',False));tools.addWidget(changed);tools.addStretch()
         count=label('','small');count.setObjectName('fieldCount');tools.addWidget(count)
         pages=QComboBox(page);pages.setObjectName('recordPage');pages.setAccessibleName('Saved record page');tools.addWidget(pages)
-        box.addLayout(tools);scroll=QScrollArea();scroll.setObjectName('editorFieldsScroll');scroll.setWidgetResizable(True);content=QWidget();content.setObjectName('clearSurface')
-        rows=layout(content,True,0,8);scroll.setWidget(content);box.addWidget(scroll,1)
+        box.addLayout(tools);scroll=QScrollArea();scroll.setObjectName('editorFieldsScroll');scroll.setWidgetResizable(True);content=QFrame();content.setObjectName('editorSection')
+        rows=layout(content,True,14,8);scroll.setWidget(content);box.addWidget(scroll,1)
         visible_keys=[];signature=None
         def refresh(reset=False):
             nonlocal signature,visible_keys
@@ -804,12 +835,14 @@ class Window(QMainWindow):
             for key in visible_keys:self.inputs.pop((self.slot_index,key),None)
             clear(rows);visible_keys=list(current);signature=current
             last=None
+            identities={(s.name,s.selection) for s,f in visible}
+            attribute_grid=AttributeGrid(content) if len(identities)==1 and visible and visible[0][0].name in ('Attributes','Vitals','Health') and len(visible)>=4 else None
             for section,field in visible:
                 identity=(section.name,section.selection)
                 if identity!=last:
                     rows.addWidget(label((section.selection+' / ' if query and category.selector_label=='Character' else '')+section.name,'eyebrow'));last=identity
                     abilities=[f for f in section.fields if self.save.game=='kh3' and ':ability:' in f.key and not f.readonly]
-                    unlocks=[f for f in section.fields if not f.readonly and f.boolean and not f.key.startswith(('remove_item:','equipped_accessory:'))]
+                    unlocks=[f for f in section.fields if not f.readonly and (f.boolean or f.fmt=='xml-unlock') and not f.key.startswith(('remove_item:','equipped_accessory:'))]
                     if abilities or unlocks:
                         actions=QHBoxLayout()
                         if abilities:
@@ -817,11 +850,18 @@ class Window(QMainWindow):
                                 action=button(title,lambda checked=False,fs=abilities,m=mode:self.set_ability_fields(fs,m))
                                 action.setToolTip('Applies to this entire ability section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)
                         else:
-                            for title,value in (('Enable section',1),('Restore section',None)):
+                            options=[('Unlock section' if self.save.game=='ror2' else 'Enable section',1)]
+                            if self.save.game=='alice':options.append(('Disable all',0))
+                            options.append(('Restore section',None))
+                            for title,value in options:
                                 action=button(title,lambda checked=False,fs=unlocks,v=value:self.set_unlock_fields(fs,v))
                                 action.setToolTip('Applies to this entire section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)
                         actions.addStretch();rows.addLayout(actions)
-                rows.addWidget(self.build_field_row(field))
+                field_row=self.build_field_row(field)
+                if attribute_grid:
+                    if rows.indexOf(attribute_grid)<0:rows.addWidget(attribute_grid)
+                    attribute_grid.add_row(field_row)
+                else:rows.addWidget(field_row)
             if not visible:rows.addWidget(label('No saved records match this search.','muted',True))
             rows.addStretch();scroll.verticalScrollBar().setValue(0)
         def select_page(index):
@@ -831,8 +871,8 @@ class Window(QMainWindow):
         self.category_filters.append(refresh);refresh()
         return page
 
-    def build_field_row(self,field):
-        row=QFrame();row.setObjectName('field');row._field=field;line=layout(row,False,8,16)
+    def build_field_row(self,field,parent=None):
+        row=QFrame(parent);row.setObjectName('field');row._field=field;line=layout(row,False,8,16)
         from item_art import item_pixmap,item_art,field_art_key
         key=(self.slot_index,field.key)
         art_key=field_art_key(field,int(self.edits.get(key,field.value)) if field.art_choices else None)
@@ -899,7 +939,7 @@ class Window(QMainWindow):
         return row
 
     def restore_field(self,key):
-        field=next(f for f in self.save.slots[key[0]].fields if f.key==key[1])
+        field=self.field_index[key]
         entry=self.inputs.get(key)
         if isinstance(entry,QLineEdit):entry.setText(number_text(field.value))
         elif isinstance(entry,QCheckBox):entry.setChecked(bool(field.value))
@@ -982,7 +1022,7 @@ class Window(QMainWindow):
         if self.preview_mode and self.edits:raise ValueError('Preview only. Open a save file to edit.')
         changes={}
         for (index,key),text in self.edits.items():
-            field=next(f for f in self.save.slots[index].fields if f.key==key)
+            field=self.field_index[index,key]
             try:value=field.parse(text)
             except ValueError as error:
                 message=str(error);raise ValueError(message if message.startswith(field.label+':') else f'{field.label}: {message}')
@@ -997,7 +1037,7 @@ class Window(QMainWindow):
         self.change_count.setText(f'{count} pending change'+('s' if count!=1 else '') if count else 'No pending changes')
         visible_edits=list(self.edits.items())
         for (index,key),text in visible_edits[:80]:
-            field=next(f for f in self.save.slots[index].fields if f.key==key)
+            field=self.field_index[index,key]
             item=QWidget();item.setObjectName('clearSurface');item_box=layout(item,True,0,3)
             heading=QHBoxLayout();heading.addWidget(label(field.label,'summaryName',True),1)
             undo=button('↶',lambda checked=False,k=(index,key):self.restore_field(k),'fieldReset');undo.setToolTip('Undo this change');undo.setAccessibleName('Undo '+field.label+' in '+self.save.slots[index].name);heading.addWidget(undo);item_box.addLayout(heading)
@@ -1017,7 +1057,7 @@ class Window(QMainWindow):
         can_repair=not self.save or not self.save.warnings or self.repair.isChecked()
         self.editor_has_error=not valid or not can_repair
         self.save_steps.setVisible(not self.preview_mode and (self.height()>=850 or self.editor_has_error))
-        self.review_button.setEnabled(bool(self.save and not self.preview_mode and has_work and valid and can_repair))
+        self.review_button.setEnabled(bool(self.save and not self.preview_mode and not self.runtime_error and has_work and valid and can_repair))
         self.changes_button.setEnabled(bool(self.save and not self.preview_mode and has_work))
         self.reset_button.setEnabled(has_work and not self.preview_mode)
         if self.save:
@@ -1025,6 +1065,7 @@ class Window(QMainWindow):
             self.setWindowTitle(f'UniversalSaveEditor — {BY_ID[self.save.game].title}{marker}')
             state=f'{count} pending change'+('s' if count!=1 else '') if count else 'No pending changes'
             if not valid:state+=' · Fix invalid values before applying'
+            elif self.runtime_error:state+=' · Reopen the save after the unexpected error'
             elif self.repair.isChecked():state+=' · Integrity repair selected'
             elif self.save.warnings:state+=' · Integrity repair required'
             self.save_steps.setText('Fix invalid values · Review changes for details' if not valid else
@@ -1247,6 +1288,17 @@ class Window(QMainWindow):
         else:event.ignore()
 
 def main():
+    def unexpected_error(report):
+        application=QApplication.instance()
+        if application is None:return
+        for widget in application.topLevelWidgets():
+            if isinstance(widget,Window):
+                widget.runtime_error=True
+                if hasattr(widget,'review_button'):widget.review_button.setEnabled(False)
+        message='An unexpected error stopped this operation. Reopen the application before trying again.'
+        if report:message+='\n\nA local error report was saved:\n'+str(report)+'\n\nIt contains code locations, without save contents or error messages. Nothing was sent automatically.'
+        QMessageBox.critical(None,'Unexpected application error',message)
+    install_error_reporting(unexpected_error)
     app=QApplication(sys.argv)
     # Offscreen checks may have no system font collection in restricted runners.
     if '--smoke-test' in sys.argv and sys.platform=='win32' and not QFontDatabase.families():

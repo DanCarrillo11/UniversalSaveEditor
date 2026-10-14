@@ -18,6 +18,39 @@ from editor_layout import organize_fields
 from editor_navigation import category_title
 
 class InterfaceTests(unittest.TestCase):
+    def test_paged_editors_keep_hidden_edits_and_can_reach_the_last_field(self):
+        from test_kh_extra import kh3_plain
+        save=Save(kh3_plain(),'kh3');w=self.window;path=self.root/'kh3-large.bin';path.write_bytes(save.raw)
+        w.display_save(save,path)
+        self.assertLess(len(w.inputs),300)
+        fields=[f for f in save.slots[0].fields if f.key.startswith('character:') and not f.readonly and not f.boolean]
+        first,last=fields[0],fields[-1]
+        w.inputs[0,first.key].setCurrentIndex(1) if first.choices else w.inputs[0,first.key].setText(str(first.value+1))
+        w.inputs[0,last.key].setCurrentIndex(1) if last.choices else w.inputs[0,last.key].setText(str(last.value+1))
+        self.assertIn((0,first.key),w.edits);self.assertIn((0,last.key),w.edits)
+        self.assertLess(len(w.inputs),300)
+        w.restore_field((0,first.key));self.assertNotIn((0,first.key),w.edits)
+        self.assertEqual(path.read_bytes(),save.raw)
+
+    def test_every_preview_section_can_reveal_its_last_field_without_creating_all_widgets(self):
+        w=self.window
+        for game in BY_ID:
+            with self.subTest(game=game):
+                w.open_preview(game)
+                sections=[s for i in range(w.tabs.count()) for s in w.tabs.widget(i).navigation.category.sections]
+                for section in sections:
+                    field=section.fields[-1]
+                    entry=w.inputs[0,field.key]
+                    self.assertEqual(entry.accessibleName(),field.label)
+                    self.assertTrue((0,field.key) in w.field_index)
+                self.assertEqual(w.edits,{})
+
+    def test_runtime_error_disables_saving_until_a_save_is_reopened(self):
+        w=self.window;w.load('webfishing',self.source);w.inputs[0,'money'].setText('1000')
+        w.runtime_error=True;w.update_summary();self.assertFalse(w.review_button.isEnabled())
+        with patch('app.QMessageBox.question',return_value=QMessageBox.StandardButton.Discard):w.load('webfishing',self.source)
+        w.inputs[0,'money'].setText('1000');self.assertFalse(w.runtime_error);self.assertTrue(w.review_button.isEnabled())
+
     def test_visible_navigation_changes_characters_without_losing_edits(self):
         w=self.window;self.assertTrue(w.load('kh1',self.kh));w.show();w.tabs.setCurrentIndex(1);self.app.processEvents()
         page=w.tabs.currentWidget();navigation=page.navigation
@@ -179,7 +212,8 @@ class InterfaceTests(unittest.TestCase):
                     self.assertIn('No save data found',w.warning.text())
                     self.assertIn('Not full support',w.coverage.text())
                     self.assertFalse(w.review_button.isEnabled());self.assertFalse(w.backup_button.isEnabled())
-                    self.assertEqual(len(w.inputs),len(w.save.slots[0].fields))
+                    self.assertEqual({key for index,key in w.field_index if index==0},{f.key for f in w.save.slots[0].fields})
+                    self.assertLessEqual(len(w.inputs),len(w.save.slots[0].fields))
                     self.assertTrue(all(control.isEnabled()==isinstance(control,QComboBox) for control in w.inputs.values()))
                     self.assertTrue(all(w.tabs.widget(i).navigation.list.count()>0 for i in range(w.tabs.count())))
                     self.assertTrue(all(w.tabs.widget(i).navigation.selector.isHidden() for i in range(w.tabs.count())))
@@ -888,7 +922,7 @@ class InterfaceTests(unittest.TestCase):
                 mapped=[field.key for category in organize_fields(game,original) for section in category.sections for field in section.fields]
                 self.assertCountEqual(mapped,[field.key for field in original])
                 self.assertEqual(len(mapped),len(set(mapped)))
-                self.assertEqual(set(w.inputs),{(0,field.key) for field in original})
+                self.assertEqual({key for key in w.field_index if key[0]==0},{(0,field.key) for field in original})
 
     def test_character_selector_and_slot_changes_keep_edits_and_view(self):
         w=self.window;w.load('kh1',self.kh)
@@ -931,7 +965,7 @@ class InterfaceTests(unittest.TestCase):
         tab=w.tabs.currentWidget();selector=tab.findChild(QComboBox,'sectionSelector')
         selector.setCurrentIndex(selector.findData('Skills'))
         block=next(b for b in tab.findChildren(QFrame,'editorSection') if not b.isHidden())
-        next(b for b in block.findChildren(QPushButton) if b.text()=='Unlock section').click()
+        next(b for b in block.findChildren(QPushButton) if b.text()=='Unlock section' and not b.isHidden()).click()
         self.assertTrue(w.edits)
         self.assertTrue(all(key.startswith('unlock:Skills.') for index,key in w.edits))
         w.inputs[(0,'coins')].setText('-1')
@@ -949,7 +983,7 @@ class InterfaceTests(unittest.TestCase):
                 path.write_bytes(inventory_fixture() if game=='maxpayne' else archive(game))
                 self.assertTrue(w.load(game,path))
                 self.assertLessEqual(w.tabs.count(),3)
-                self.assertEqual(len(w.inputs),len(w.save.slots[0].fields))
+                self.assertEqual({key for index,key in w.field_index if index==0},{f.key for f in w.save.slots[0].fields})
                 key='ammo:3' if game=='maxpayne' else 'moogle_points' if game=='recom' else 'munny'
                 w.inputs[0,key].setText('150')
                 updated=w.save.patched(w.validated_changes())
@@ -961,7 +995,7 @@ class InterfaceTests(unittest.TestCase):
         from item_art import item_pixmap
         raw=elden_ready(True);path=self.root/'ER0000.sl2';path.write_bytes(raw)
         w=self.window;self.assertTrue(w.load('eldenring',path))
-        sprites=w.findChildren(QLabel,'itemSprite');self.assertGreater(len(sprites),250)
+        sprites=w.findChildren(QLabel,'itemSprite');self.assertGreater(len(sprites),0)
         self.assertTrue(all(not s.pixmap().isNull() for s in sprites))
         self.assertEqual(item_pixmap('eldenring',1000000).size().width(),64)
         self.assertTrue(item_pixmap('eldenring',0x40000000|190).width()<=64)
@@ -1033,7 +1067,7 @@ class InterfaceTests(unittest.TestCase):
                 path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
                 self.assertTrue(self.window.load(game,path))
                 self.assertLessEqual(self.window.tabs.count(),3)
-                self.assertEqual(len(self.window.inputs),len(self.window.save.slots[0].fields))
+                self.assertEqual({key for index,key in self.window.field_index if index==0},{f.key for f in self.window.save.slots[0].fields})
                 field=next(f for f in self.window.save.slots[0].fields if not f.boolean and not f.choices)
                 self.window.inputs[(0,field.key)].setText('120')
                 output=self.window.save.patched(self.window.validated_changes())
@@ -1059,7 +1093,7 @@ class InterfaceTests(unittest.TestCase):
             self.assertTrue(w.load('kh3',path))
             self.assertEqual(prompt.call_count,1)
             self.assertEqual(w.tabs.count(),3)
-            self.assertEqual(len(w.inputs),len(w.save.slots[0].fields))
+            self.assertEqual({key for index,key in w.field_index if index==0},{f.key for f in w.save.slots[0].fields})
             self.assertTrue(w.load('kh3',path))
             self.assertEqual(prompt.call_count,1)
         w.inputs[0,'munny'].setText('200')

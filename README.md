@@ -17,6 +17,8 @@ executable included at its root. Startup can take a few seconds.
 
 ## Features
 
+- [Faster editor loading](docs/EDITOR_PERFORMANCE.md): large sections load on demand, with bounded pages and reused item-art archives. All saved fields remain searchable and editable where supported. Unexpected Python errors produce a local report without save contents.
+
 - Visible editor navigation: section lists, character buttons and one search across all categories. A fixed bottom bar keeps pending changes, review and saving within reach. [Navigation and saving](docs/EDITOR_NAVIGATION.md).
 
 - [Current completion work](docs/CURRENT_GAME_COMPLETION.md): additional KH systems, mapped Elden Ring world/capacity controls and Resident Evil records. All 21 existing games remain the priority; new games and icons are deferred.

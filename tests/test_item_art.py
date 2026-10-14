@@ -1,9 +1,9 @@
 """Original atlas mapping, conservative fallback and save-byte preservation."""
 from pathlib import Path
-import hashlib,json,struct,unittest
+import hashlib,json,struct,unittest,tempfile,zipfile
 from unittest.mock import patch
 from core import Save
-from item_art import item_art,catalogue,ROOT
+from item_art import item_art,catalogue,ROOT,_archive,close_archives
 from re_engine_container import ReEngineEnvelope
 from re_hashes import murmur32
 
@@ -17,6 +17,30 @@ def fixture():
     return wrap(bytes(w.data[32:]),'re2')
 
 class ItemArtTests(unittest.TestCase):
+    def test_archive_indexes_are_reused_and_eviction_closes_file_handles(self):
+        close_archives()
+        try:
+            with tempfile.TemporaryDirectory() as folder,patch('item_art.ROOT',Path(folder)):
+                for n in range(9):
+                    with zipfile.ZipFile(Path(folder)/f'{n}.zip','w') as z:z.writestr('item.png',b'original bytes')
+                first=_archive('0.zip');self.assertIs(first,_archive('0.zip'))
+                self.assertEqual(first.read('item.png'),b'original bytes')
+                for n in range(1,9):_archive(f'{n}.zip')
+                self.assertIsNone(first.fp)
+                last=_archive('8.zip');close_archives();self.assertIsNone(last.fp)
+        finally:close_archives()
+
+    def test_cached_path_validation_rejects_files_and_members_outside_assets(self):
+        catalogue.cache_clear()
+        try:
+            with tempfile.TemporaryDirectory() as folder,patch('item_art.ROOT',Path(folder)):
+                paths=[('../outside.png',''),('item.png','../outside.zip'),('../item.png','pack.zip'),
+                       ('C:/outside.png','pack.zip'),('images/item.png','pack.zip')]
+                entries={str(n+1):dict(name='Original item',category='Items',rect=[0,0,32,32],atlas=a,archive=z) for n,(a,z) in enumerate(paths)}
+                (Path(folder)/'manifest.json').write_text(json.dumps({'schema':1,'games':{'test':entries}}))
+                self.assertEqual(set(catalogue()),{('test',5)})
+        finally:catalogue.cache_clear()
+
     def test_manifest_provenance_and_item_rectangles(self):
         data=json.loads((ROOT/'manifest.json').read_text());source=data['sources'][0]
         self.assertEqual(sum(game=='re2' for game,identifier in catalogue()),27)

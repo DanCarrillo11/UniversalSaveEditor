@@ -3,6 +3,7 @@
 SPDX-License-Identifier: GPL-3.0-or-later
 """
 from collections import Counter
+import weakref
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
@@ -16,6 +17,21 @@ def category_title(game, name):
         return name
     return {'alice': 'Collectibles', 'recom': 'Cards', 'bbs': 'Commands',
             're5': 'Library', 're6': 'Equipment'}.get(game, 'Inventory')
+
+
+class FieldControls(dict):
+    """Materialize a requested field through the real section/page navigation."""
+    def __init__(self, reveal):
+        super().__init__()
+        self._reveal = weakref.WeakMethod(reveal)
+
+    def __missing__(self, key):
+        reveal = self._reveal()
+        if reveal is not None:
+            reveal(key)
+        if key not in self:
+            raise KeyError(key)
+        return dict.__getitem__(self, key)
 
 
 class AttributeGrid(QWidget):

@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.28.0-alpha — Faster editor loading
+
+- Build large sections on demand, with bounded pages; preserve all field access, pending edits and whole-section actions.
+- Index saved fields for validation/undo and reuse validated icon paths and bounded read-only archive indexes.
+- Preserve the visible navigation, responsive attribute grids and original artwork while reducing initially constructed controls.
+- Add a private local report for unexpected Python errors and disable saving until a save is reopened. Native crashes remain outside this reporter's coverage.
+- Configure future publication as a normal GitHub Release; alpha naming still describes the development stage.
+
 ## v0.27.0-alpha — Clearer editor navigation
 
 - Replace visible section dropdowns with a section list; choose party members with character buttons and remember each character's section.
