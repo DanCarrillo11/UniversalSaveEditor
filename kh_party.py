@@ -16,6 +16,7 @@ class PartyEditor:
         self.raw,self.game,self.field_type=raw,game,field_type
         self.encodings={}
         self.bits={}
+        self.shortcuts={}
 
     def shared(self,fields,slot,record):
         if self.game!='kh1':return
@@ -25,6 +26,28 @@ class PartyEditor:
         for index in range(4):
             self.choice(fields,slot,f'shared_ability:{index}',f'Shared entry {index+1}',record+0x599+index,'<B',options,'Shared abilities',
                 'Changes a known shared movement ability and its enabled state. Unknown identities, character-specific abilities and story flags are preserved.')
+        spells=('Fire','Blizzard','Thunder','Cure','Gravity','Stop','Aero')
+        options={i:n for i,n in enumerate(spells)};options[255]='Empty'
+        for index,button in enumerate(('Circle','Triangle','Square')):
+            key='magic_shortcut:'+str(index)
+            self.choice(fields,slot,key,button,record+0x844+index,'<B',options,'Magic shortcuts',
+                        'Choose a magic family available to Sora. Disabling its availability clears matching shortcuts. Spell tiers, inventory and story rewards are preserved.')
+            if (slot,key) in self.encodings:self.shortcuts[slot,key]=(record+0x74,record+0x844+index)
+
+    def game_settings(self,fields,slot,record):
+        if self.game!='kh2':return
+        for delta,bit,key,label in ((0x41a4,0,'vibration','Controller vibration'),
+                (0x41a4,3,'navigation_map','Navigation map'),
+                (0x41a4,4,'manual_camera','Manual field camera'),
+                (0x41a4,5,'stick_commands','Right stick controls command menu'),
+                (0x41a4,6,'classic_menu','Classic command menu'),
+                (0x41a4,7,'invert_horizontal','Reverse horizontal camera'),
+                (0x41a5,0,'invert_vertical','Reverse vertical camera')):
+            key='setting:'+key;offset=record+delta
+            fields.append(self.field_type(key,label,(self.raw[offset]>>bit)&1,offset,'',0,1,
+                'Game settings',boolean=True,
+                note='Changes this slot’s documented saved option only. Other option bits, controls configured outside this save, progression and equipment are preserved.'))
+            self.bits[slot,key]=(offset,bit)
 
     def companion_ai(self,fields,slot,record,character):
         if self.game!='kh2' or character not in (1,2):return
@@ -134,4 +157,12 @@ class PartyEditor:
             if key not in self.encodings:continue
             offset,fmt,values=self.encodings[key]
             struct.pack_into(fmt,result,offset,values[value])
+        for (slot,key),(availability,offset) in self.shortcuts.items():
+            command=result[offset]
+            if command==255:continue
+            available=bool(result[availability]&(1<<command))
+            if (slot,key) in changes and not available:
+                raise ValueError('A KH1 magic shortcut must reference a spell available to Sora.')
+            if (slot,f'0:magic:{command}') in changes and not available:
+                result[offset]=255
         return result

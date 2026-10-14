@@ -814,7 +814,8 @@ class Window(QMainWindow):
         count=label('','small');count.setObjectName('fieldCount');tools.addWidget(count)
         pages=QComboBox(page);pages.setObjectName('recordPage');pages.setAccessibleName('Saved record page');tools.addWidget(pages)
         box.addLayout(tools);scroll=QScrollArea();scroll.setObjectName('editorFieldsScroll');scroll.setWidgetResizable(True);content=QFrame();content.setObjectName('editorSection')
-        rows=layout(content,True,14,8);scroll.setWidget(content);box.addWidget(scroll,1)
+        rows=layout(content,True,14,8);rows.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
+        scroll.setWidget(content);box.addWidget(scroll,1)
         visible_keys=[];signature=None
         def refresh(reset=False):
             nonlocal signature,visible_keys
@@ -863,7 +864,7 @@ class Window(QMainWindow):
                     attribute_grid.add_row(field_row)
                 else:rows.addWidget(field_row)
             if not visible:rows.addWidget(label('No saved records match this search.','muted',True))
-            rows.addStretch();scroll.verticalScrollBar().setValue(0)
+            rows.addStretch();rows.activate();content.updateGeometry();scroll.verticalScrollBar().setValue(0)
         def select_page(index):
             state['page']=max(0,index);refresh()
         navigation.changed.connect(lambda:refresh(True));search.textChanged.connect(lambda:refresh(True))

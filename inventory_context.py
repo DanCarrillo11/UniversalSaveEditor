@@ -12,7 +12,10 @@ from re_hashes import murmur32
 class InventoryContext:
     def __init__(self,nodes,data):
         self.data=data;self.direct=defaultdict(list);self.remake=defaultdict(list);self.named=defaultdict(list)
+        self.capacities=defaultdict(list)
         for node in nodes:
+            if node.owner==0x004b7a76 and node.field==murmur32(b'VirtualStackableCountMax'):
+                self.capacities[node.path[:-1]].append(node)
             if node.owner==0x5e10ebe4 and node.field==murmur32(b'ItemDataID') and node.kind==15:
                 self.named[node.path[:-1]].append(node)
             if node.fmt not in ('<i','<I') or node.size!=4:continue
@@ -35,3 +38,15 @@ class InventoryContext:
         if len(candidates)!=1:return None
         candidate=candidates[0];value=struct.unpack_from(candidate.fmt,self.data,candidate.offset)[0]
         return value if 0<value<=0x7fffffff else None
+
+    def quantity_limit(self,game,node,value,maximum):
+        """A serialized virtual-stack cap belongs to this exact armoury item."""
+        if game!='re4_remake':return maximum,False,''
+        caps=self.capacities.get(node.path[:-1],[])
+        if not caps:return maximum,False,''
+        if len(caps)!=1 or (caps[0].kind,caps[0].fmt,caps[0].size)!=(7,'<i',4):
+            return maximum,True,'Ambiguous or unsupported saved stack capacity; quantity is preserved.'
+        cap=struct.unpack_from('<i',self.data,caps[0].offset)[0]
+        if not 1<=value<=cap<=2147483647:
+            return maximum,True,'Inconsistent saved stack capacity; quantity is preserved.'
+        return cap,cap==1,f'This record’s saved virtual-stack capacity is {cap}. Capacity, item state and equipment are preserved.'

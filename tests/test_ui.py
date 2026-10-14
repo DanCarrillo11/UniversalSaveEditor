@@ -18,6 +18,37 @@ from editor_layout import organize_fields
 from editor_navigation import category_title
 
 class InterfaceTests(unittest.TestCase):
+    def test_short_virtual_sections_do_not_compress_field_labels(self):
+        w=self.window;w.show();w.resize(1440,900);w.open_preview('kh3')
+        w.inputs[0,'character:Donald:ai:ability'];self.app.processEvents()
+        row=w.inputs[0,'character:Donald:ai:ability']._field_row
+        self.assertGreaterEqual(row.height(),row.minimumSizeHint().height())
+        for caption in row.findChildren(QLabel):
+            if not caption.isHidden() and caption.text():
+                self.assertGreaterEqual(caption.height(),caption.fontMetrics().height())
+
+    def test_owned_equipment_spell_and_companion_controls_stage_without_writing(self):
+        from test_requiem_equipment import fixture as requiem_equipment
+        from test_elden_spells import ready
+        from test_kh3_mode import fixture as kh3_mode
+        from test_re_engine import ACCOUNT
+        w=self.window
+        samples=(('re9',requiem_equipment(),ACCOUNT),('eldenring',ready()[0],None),('kh3',kh3_mode(),None))
+        for game,raw,account in samples:
+            with self.subTest(game=game):
+                path=self.root/(game+'-relationships.save');path.write_bytes(raw)
+                save=Save(raw,game,account_id=account);w.display_save(save,path)
+                if game=='re9':
+                    field=next(f for f in save.slots[0].fields if f.group=='Equipment' and f.label=='Primary')
+                    key=field.key;value=1
+                elif game=='eldenring':key,value='spell_slot:0',0
+                else:key,value='character:Donald:ai:ability',2
+                w.inputs[0,key].setCurrentIndex(value);self.app.processEvents()
+                self.assertEqual(w.validated_changes(),{(0,key):value})
+                output=save.patched(w.validated_changes())
+                self.assertNotEqual(output,raw);self.assertEqual(path.read_bytes(),raw)
+                self.assertTrue(w.review_button.isEnabled())
+
     def test_paged_editors_keep_hidden_edits_and_can_reach_the_last_field(self):
         from test_kh_extra import kh3_plain
         save=Save(kh3_plain(),'kh3');w=self.window;path=self.root/'kh3-large.bin';path.write_bytes(save.raw)
@@ -1075,6 +1106,36 @@ class InterfaceTests(unittest.TestCase):
                 self.assertEqual(next(f.value for f in check.slots[0].fields if f.key==field.key),120)
                 self.assertEqual(path.read_bytes(),raw)
                 self.window.edits={}
+
+    def test_new_gameplay_fields_navigate_stage_and_reparse_without_writing_files(self):
+        from test_expansion import kh_fixture
+        from test_ddd_spirits import fixture as spirits
+        from test_elden_spells import ready
+        from test_remake_context import fixture as remake
+        from test_remake_inventory_capacity import fixture as capacity
+        from test_re_engine import ACCOUNT
+        samples=[('ddd',spirits(),'spirit:0:experience',777),
+                 ('eldenring',ready()[0],'learn_spell:4010',1),
+                 ('re4_remake',remake(),'Pesetas',4321),
+                 ('re2',capacity('re2'),'Inventory capacity',3),
+                 ('re3',capacity('re3'),'Inventory capacity',3),
+                 ('kh2',kh_fixture('kh2')[0],'setting:vibration',1)]
+        for game,raw,selector,value in samples:
+            with self.subTest(game=game):
+                path=self.root/'userdata'/'1'/'remote'/(game+'.save')
+                path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
+                w=self.window;self.assertTrue(w.load(game,path))
+                field=next(f for f in w.save.slots[0].fields if selector in (f.key,f.label))
+                w.reveal_field((0,field.key));control=w.inputs[0,field.key]
+                if field.boolean:control.setChecked(bool(value))
+                elif field.choices:control.setCurrentIndex(value)
+                else:control.setText(str(value))
+                output=w.save.patched(w.validated_changes())
+                check=Save(output,game,path,ACCOUNT)
+                self.assertEqual(next(f.value for f in check.slots[0].fields if f.key==field.key),value)
+                self.assertFalse(check.warnings);self.assertEqual(path.read_bytes(),raw)
+                self.assertLessEqual(w.tabs.count(),3)
+                w.edits={}
 
     def test_copied_requiem_prompts_for_original_account_only_once(self):
         from test_re_engine import stream,wrap,ACCOUNT

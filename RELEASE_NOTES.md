@@ -1,42 +1,35 @@
-# v0.28.0-alpha — Faster editor loading
+# v0.29.0-alpha — Equipment, spells and character controls
 
-Large editor sections now load their visible controls on demand. Hidden
-characters, items and records remain in the save model and can be reached through
-navigation, search and pagination without constructing all widgets at opening.
-Pending edits and invalid-value checks remain independent of the current page.
+This release adds owned Requiem weapon equipment/shortcuts, owned
+Elden Ring memorized spells with memory costs and active selection, KH1 magic
+shortcuts and KH3 Critical-mode relationships/companion behavior. RE4 Remake
+uses consistent native virtual-stack capacities instead of a fixed 999 bound.
+Updated offline previews include these functions.
 
-Icon loading reuses validated paths and bounded read-only archive indexes.
-Validation and undo use a saved-field index. Local preview measurements showed
-substantially faster UI construction; actual save parsing and another computer's
-performance can differ. See docs/EDITOR_PERFORMANCE.md for the measured results.
+It also adds RE4 Remake Pesetas, player/partner health
+and increasing case capacity; learning 171 mapped base-game Elden Ring spells;
+and populated DDD spirits' stored level/XP, maximum HP, Link Points, link count,
+RGB tint and recognized normal/shiny appearance. Native reference edits verified
+spell acquisition in 19 characters and the new DDD fields in 13 spirits. RE4
+Remake additions have synthetic encrypted tests; native Steam checking remains
+pending. None of these checks certifies in-game loading or full game support.
+RE2/RE3 now also expose increasing supported main-survivor inventory capacity;
+existing slots/equipment and hip-pouch pickup events stay unchanged. RE3's
+shared console payload passed a capacity reparse check, which does not replace
+native Steam checking.
+KH2 also exposes seven documented saved camera/map/vibration/command-menu
+options. Native option edits were reparsed across 59 reference player records;
+reserved bits are retained and in-game effect remains unverified.
 
-Unexpected Python errors create a local report without exception messages,
-source lines, local values or save contents. Saving is disabled until the save is
-reopened. Native crashes and failures before Python starts are not covered.
+No new games or artwork are added. Complete support for all 21 games has not
+been achieved. Unknown structures, full item creation, rewards and gameplay
+validation remain documented work. See docs/FUNCTIONAL_RELATIONSHIPS.md and
+docs/CURRENT_GAME_COMPLETION.md for exact implemented rules and pending gates.
 
-The existing navigation remains:
+Automated and native-file reparse checks are separate from loading an edited
+save in its game. Existing game/profile variants expose different functions.
 
-The editor now shows sections directly in a sidebar instead of hiding them in
-an All sections dropdown. Party members share one Characters category with
-visible character buttons and remembered sections.
-
-- One header search reaches names, saved IDs and selected equipment across all
-  categories, sections and characters. Clearing search restores navigation.
-- A fixed bottom bar shows pending changes, Review changes, Reset and Save
-  changes. The pending-change dialog is read-only and supports individual undo.
-- Saving keeps the existing final review, related-state synchronization,
-  original-file checks and direct-file replacement. Canceling does not save.
-- The library sidebar gives way to the editor; a Library link returns to your
-  covers. Save details holds adapter notes, compatibility, diagnostic help and
-  existing-backup restoration. Integrity warnings remain visible.
-- Refined light/dark panels, selected states and responsive attribute columns.
-  Original game artwork, all 21 editors, offline previews and large-profile
-  pagination remain available.
-
-This is a performance and presentation update. It does not change save-format
-coverage or mean that all games are complete or gameplay-verified.
-
-Download UniversalSaveEditor.exe under Assets and double-click it. The application
-is portable, with no installer or command-line setup. The executable is also
-included in Code > Download ZIP. Changes apply to the opened file; no automatic
-backup is created.
+Download UniversalSaveEditor.exe under Assets and double-click it. The portable
+application requires no installer or terminal setup; Code > Download ZIP also
+includes the executable. Changes update the opened file directly, without
+automatic backups.

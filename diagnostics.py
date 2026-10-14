@@ -23,6 +23,20 @@ class Problem:
 # Fixed guidance only: never show an arbitrary exception, path, identifier or
 # save value. These are known editing conflicts, not unsupported-file errors.
 EDIT_CONFLICTS=(
+    ('a spell cannot appear twice in the memorized loadout', 'The same spell occupies more than one memory entry.',
+     ('Remove the duplicate or select a different owned spell.','Spell entries compact automatically when you apply changes.')),
+    ('the memorized spells exceed the available memory-slot capacity', 'The selected spells cost more memory slots than this character has available.',
+     ('Choose fewer spells or spells with a lower memory cost.','Memory Stones and equipped Moon of Nokstella determine the saved capacity.')),
+    ('the active spell position must point to the final memorized loadout', 'The active spell position does not match the final list.',
+     ('Select an occupied position in the final compact list.','Choose None only when every memory entry is empty.')),
+    ('critical-mode abilities cannot be removed while entering critical', 'An ability removal conflicts with entering Critical mode.',
+     ('Keep the Critical abilities learned or reset their changes.','Then review the difficulty change again.')),
+    ('critical-mode health conversion exceeds the supported range', 'Converting Critical-mode HP or MP would exceed the supported range.',
+     ('Set explicit supported HP/MP values for the affected character.','Explicit vital edits take precedence over the automatic conversion.')),
+    ('a kh1 magic shortcut must reference a spell available to sora', 'The selected magic family is unavailable to Sora.',
+     ('Choose an available family or Empty.','Availability flags and spell tiers are separate; shortcuts do not award story upgrades.')),
+    ('munny exceeds the available saved ledger range', 'The Munny balance would overflow the saved earned/spent ledger.',
+     ('Choose a smaller balance.','Spending history is preserved rather than silently reset.')),
     ('a single-object item cannot have a quantity above 1', 'The selected item represents one object and cannot be duplicated as a stack.',
      ('Use quantity 1, or select a stackable item.','Existing ammunition and weapon quantities have separate limits.')),
     ('a shortcut must reference an acquired spell or link', 'The shortcut points to an unacquired command or spell tier.',

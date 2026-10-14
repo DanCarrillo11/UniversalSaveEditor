@@ -559,6 +559,7 @@ class Save:
                 ):
                     fields.append(Field(f'character:{character}:{key_name}',f'{name} · {label}',self.raw[offset+delta],offset+delta,'<B',low,high,'Characters'))
                 self.party.character(fields,len(self.slots),record,character)
+            self.party.game_settings(fields,len(self.slots),record)
             for form,name in enumerate(form_names):
                 offset = record + 0x32f4 + form * 0x38
                 fields.extend((
@@ -716,6 +717,10 @@ class Save:
             else:
                 expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
             actual=next((f.value for f in check.slots[index].fields if f.key == key),None)
+            if self.game=='eldenring' and (key.startswith('spell_slot:') or key=='active_spell'):
+                requested={k:v for (slot,k),v in changes.items() if slot==index}
+                valid=self.elden_ring.spell_loadouts[index].verifies(check.elden_ring.spell_loadouts[index],requested)
+                actual=expected if valid else None
             if actual is None and self.game=='eldenring' and key.startswith('add_goods:'):
                 actual=check.elden_ring.added_amount(index,key)
             if actual is None and self.game=='re1_hd' and key.endswith(':identity') and value==0:

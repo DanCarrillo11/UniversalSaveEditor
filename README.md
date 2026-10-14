@@ -3,9 +3,14 @@
 A unified, offline Windows save editor. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
-**v0.26.0-alpha** is a pre-release. Editors use a few game-specific categories
-with section selectors and foldable blocks. All available editors save directly
-to the opened file, keeping its name and location. No automatic backups are created.
+Editors use visible categories and sections, with character selection where
+applicable. Changes save directly to the opened file, keeping its name and
+location. No automatic backups are created. Alpha versions describe the
+application's development stage; verified versions are published as GitHub Releases.
+
+Version **v0.29.0-alpha** expands known equipment, spell and companion
+relationships. **Complete support for all games has not been achieved.** New
+games and new icon work remain paused until the existing catalogue is complete.
 
 ## Download and run
 
@@ -16,6 +21,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [Equipment and spell relationships](docs/FUNCTIONAL_RELATIONSHIPS.md): owned Requiem weapon references/shortcuts, Elden Ring memorized spells with exact memory costs, KH1 magic shortcuts, KH2 saved camera/control options, KH3 Critical transitions/companion AI and native RE4 Remake stack capacities, Pesetas/health/case capacity, base-game Elden Ring spell learning, DDD spirit details and RE2/RE3 inventory capacity.
 
 - [Faster editor loading](docs/EDITOR_PERFORMANCE.md): large sections load on demand, with bounded pages and reused item-art archives. All saved fields remain searchable and editable where supported. Unexpected Python errors produce a local report without save contents.
 
@@ -70,12 +77,12 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 
 | Game | Editable fields | Status / save action |
 |---|---|---|
-| Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
+| Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, 171 base-game spell acquisitions, owned spell loadouts, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics, existing case quantities and known weapon tune-up tiers | Experimental; direct apply; new case objects and comprehensive unlocks pending |
 | Resident Evil HD Remaster, PC | Recognized gameplay records, difficulty, defensive supplies, known inventory/item-box identities and quantities, next empty box entry | Experimental; public PC fixture checked; recognized gameplay sections selectable |
 | Resident Evil 2 (2019), Steam | Difficulty, health, existing quantities, rewards/files, completion/challenge records and Ghost Survivors counters | Experimental; real Steam fixture validation pending |
 | Resident Evil 3 (2020), Steam | Health, existing quantities, shop/rewards, completion/challenge/combat records | Experimental; shared console payload checked; real Steam fixture validation pending |
-| Resident Evil 4 (2023), Steam | Points, Spinels, existing quantities, profile-scoped costume/accessory/extra-shop and challenge records | Experimental; real Steam fixture validation pending |
+| Resident Evil 4 (2023), Steam | Pesetas, points, Spinels, player/partner health, increasing case capacity, existing quantities, profile-scoped costume/accessory/extra-shop and challenge records | Experimental; real Steam fixture validation pending |
 | Resident Evil 5, Steamworks | Money, points, costumes, filters, infinite ammo, library files and 45 figures | Experimental; public Steamworks fixture checked |
 | Resident Evil 6, PC | Skill points, equipped campaign/extra-mode slots, Mercenaries flags and results, emblems and named existing reserve ammunition/herbs | Experimental; public Steam fixture checked |
 | Resident Evil 7, Steam | Difficulty, health, existing item-box quantities, restarts and existing DLC mode/completion flags | Experimental; shared console payload checked; real Steam fixture validation pending |
@@ -88,7 +95,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 | Alice: Madness Returns, Steam | Teeth, four weapon levels, abilities, health upgrades and paint pots, dress abilities, 89 memories, 83 bottles, 59 snouts, Radula rooms, chapters, difficulty, enemy journal, cinematics, and statistics | Experimental; direct apply |
 | Re:Chain of Memories, Steam | Moogle Points, XP, difficulty, 1,139 named card quantities, mapped acquisition/friend flags and monotonic completion flags | Experimental; native flag edits reparsed; in-game flag effects pending |
 | Birth by Sleep Final Mix, Steam | Currency, difficulty, character progression, commands/abilities, equipped Keyblade, finisher XP and existing command-deck references | Experimental; direct apply |
-| Dream Drop Distance HD, Steam | Currency/difficulty, Sora/Riku progression, Keyblades, inventory and existing recognized spirit Attack/Magic/Defense | Experimental; direct apply |
+| Dream Drop Distance HD, Steam | Currency/difficulty, Sora/Riku progression, Keyblades, inventory and existing populated spirits’ stats, level/XP, Link Points, link counts, RGB tint and normal/shiny appearance | Experimental; direct apply |
 | Kingdom Hearts III + Re Mind, Steam | Currency/difficulty, progression, party attributes/equipment/active weapon/abilities, magic, Links, shortcuts, minigame records, mapped acquisition and inventory/materials | Experimental; direct apply |
 | Max Payne 1, Steam | Original revision 48 weapon ownership, reserve ammunition and painkillers | Experimental; direct apply |
 

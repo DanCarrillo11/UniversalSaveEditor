@@ -49,7 +49,7 @@ def panel(identifier=0x12345678, count=20, ambiguous=False):
     return PANEL,fields
 
 
-def inventory(ambiguous=False,parts=False,bad_reference=False):
+def inventory(ambiguous=False,parts=False,bad_reference=False,equipment=False):
     fields=[('_UserName',15,'User01'),('_BoardTypeName',15,'Hand'),
         ('_PanelItems',-1,[panel(ambiguous=ambiguous),panel(0x11223344,1),panel(0,0)]),
         ('_ArchiveItems',-1,[(0x3b572458,[('_ItemIDHash',8,('<I',0x44556677)),('_Stock',7,('<i',50))])])]
@@ -62,13 +62,19 @@ def inventory(ambiguous=False,parts=False,bad_reference=False):
                 ('_AttachTargetItemIndex',7,('<i',99 if bad_reference else 3)),
                 ('_ItemIDName',15,code),('_Level',7,('<i',1)),('_AttachTargetSocketName',15,'SocketG')]))
         fields.append(('_PanelAttachments',-1,attachments))
+        if equipment:
+            fields[2][2].append((PANEL,[('_ItemIDHash',8,('<I',murmur32('it10_00_000'.encode('utf-16-le')))),('_Stock',7,('<i',1))]))
+            from test_requiem_equipment import reference
+            from requiem_equipment import EQUIP, SHORTCUT
+            fields.append(('_Equips',-1,[reference(EQUIP,'Primary',3,'it10_01_002')]))
+            fields.append(('_Shortcuts',-1,[reference(SHORTCUT,'Equip_Up',6,'it10_00_000')]))
     return INVENTORY,fields
 
 
-def fixture(ambiguous=False,mismatch=False,parts=False,bad_reference=False):
+def fixture(ambiguous=False,mismatch=False,parts=False,bad_reference=False,equipment=False):
     w=Writer();w.data.extend(stream('re9'))
     w.root(CHARACTERS,[('_CharacterSaves',-1,[character(False),character(mismatch=mismatch)])])
-    w.root(MANAGER,[('_InventoryData',-1,[inventory(ambiguous,parts,bad_reference)]),('_BackupInventoryData',-1,[inventory(parts=True)])])
+    w.root(MANAGER,[('_InventoryData',-1,[inventory(ambiguous,parts,bad_reference,equipment)]),('_BackupInventoryData',-1,[inventory(parts=True)])])
     w.root(*panel(0x77889900,99)) # misleading scene stock is not player inventory
     return wrap(bytes(w.data[16:]),'re9')
 

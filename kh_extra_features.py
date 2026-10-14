@@ -11,6 +11,7 @@ from kh_extra_tables import DDD_ITEMS
 class ExtraKhFeatures:
     def __init__(self,raw,game,record,slot,Field):
         self.fields=[];self.operations={};self.raw,self.record,self.game=raw,record,game
+        self.spirit_flags={}
         def choice(key,label,delta,options,group,note='',collection=''):
             value=struct.unpack_from('<H',raw,record+delta)[0]
             readonly=value not in options
@@ -72,8 +73,44 @@ class ExtraKhFeatures:
                 for offset,part in ((61,'Attack'),(62,'Magic'),(63,'Defense')):
                     self.fields.append(Field(f'spirit:{index}:{part.lower()}',part,raw[record+delta+offset],record+delta+offset,'<B',0,255,'Dream Eaters',
                         collection=f'{index+1} · {name}',note='Existing spirit only. Species, name, board, affinity, level/experience and party references are preserved.'))
+                self.spirit_details(Field,index,record+delta,name)
+
+    def spirit_details(self,Field,index,base,name):
+        # Additional PC spirit facts cross-checked with osdanova/KH_Editor's
+        # 256-byte model and the 13 populated spirits of a native PC archive.
+        # Require a populated record before exposing the newly resolved bytes.
+        level=self.raw[base+3]
+        xp=struct.unpack_from('<i',self.raw,base+36)[0]
+        hp=struct.unpack_from('<h',self.raw,base+48)[0]
+        if not 1<=level<=99 or xp<0 or hp<1:return
+        collection=f'{index+1} · {name}'
+        notes={'level':'Stored level only. XP and growth stats are separate; ability rewards are not recalculated.',
+               'experience':'Stored XP only. Level and growth stats are separate; ability rewards are not recalculated.',
+               'link_points':'Saved Link Points. Ability boards are not unlocked and no points are spent automatically.',
+               'max_hp':'Stored maximum health. Species, growth history, ability boards and party references are preserved.',
+               'links_used':'Saved link-use count. Does not replay links or grant their rewards.'}
+        for offset,key,label,fmt,low,high in ((3,'level','Level','<B',1,99),
+                (36,'experience','Experience','<i',0,2147483647),
+                (44,'link_points','Link Points','<h',0,32767),
+                (48,'max_hp','Maximum HP','<h',1,32767),
+                (74,'links_used','Links used','<B',0,255),
+                (32,'color_red','Color · Red','<B',0,255),
+                (33,'color_green','Color · Green','<B',0,255),
+                (34,'color_blue','Color · Blue','<B',0,255)):
+            value=struct.unpack_from(fmt,self.raw,base+offset)[0]
+            if not low<=value<=high:continue
+            appearance=key.startswith('color_')
+            group='Spirit appearance' if appearance else 'Dream Eaters' if key=='max_hp' else 'Spirit progression'
+            self.fields.append(Field(f'spirit:{index}:{key}',label,value,base+offset,fmt,low,high,group,collection=collection,
+                note=('Saved RGB tint only. Paint inventory, stats, rank and ability boards are preserved.' if appearance else notes[key])))
+        if self.raw[base+92] in (1,2):
+            key=f'spirit:{index}:shiny';self.spirit_flags[key]=base+92
+            self.fields.append(Field(key,'Shiny appearance',int(self.raw[base+92]==2),base+92,'',0,1,'Spirit appearance',
+                boolean=True,collection=collection,
+                note='Changes only the recognized appearance byte (normal/shiny). Unknown encodings, stats, rank, ability boards and party membership are preserved.'))
 
     def patch(self,result,changes):
         for key,value in changes.items():
             if key in self.operations:
                 offset,values=self.operations[key];struct.pack_into('<H',result,offset,values[value])
+            elif key in self.spirit_flags:result[self.spirit_flags[key]]=2 if value else 1

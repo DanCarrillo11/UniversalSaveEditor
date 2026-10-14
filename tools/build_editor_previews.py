@@ -74,6 +74,9 @@ def kh_extra(game):
         struct.pack_into('<H',raw,record+0xc004,identifier);raw[record+0xc009]=1
         struct.pack_into('<2H',raw,record+0xd2e8,512,528)
         raw[record+0x53a0]=1;raw[record+0x53a0+61:record+0x53a0+64]=bytes((10,10,10))
+        spirit=record+0x53a0;raw[spirit+3]=10;raw[spirit+32:spirit+35]=bytes((128,37,12))
+        struct.pack_into('<i',raw,spirit+36,1000);struct.pack_into('<h',raw,spirit+44,20)
+        struct.pack_into('<h',raw,spirit+48,100);raw[spirit+92]=1
     import zlib
     start,end=next((s,e) for n,s,e in png_chunks(raw,allow_sqex_crc=True) if n==b'sqEX')
     struct.pack_into('>I',raw,end,zlib.crc32(raw[start-4:end]))
@@ -81,7 +84,8 @@ def kh_extra(game):
 
 def elden_example():
     from test_functional_settings import elden_appearance
-    return elden_appearance()[0]
+    from test_elden_spells import ready
+    return ready(source=elden_appearance()[0])[0]
 
 def kh3_example():
     import zlib
@@ -92,7 +96,10 @@ def kh3_example():
 
 def re4_remake_example():
     from test_village import Writer
-    writer=Writer();writer.data=bytearray(16);writer.data.extend(stream('re4_remake'))
+    from test_remake_context import fixture as remake
+    from re_engine_container import ReEngineEnvelope
+    writer=Writer();writer.data=bytearray(16)
+    writer.data.extend(ReEngineEnvelope(remake(),'re4_remake',account_id=ACCOUNT).payload)
     writer.root(0x84db4327,[('saveAccessoryDatas',-1,[(0x3862c64c,[('_ID',7,('<i',1000)),('_IsUnlock',2,('<B',0))])]),
         ('saveCostumeDatas',-1,[(0xa4ad52ff,[('_ID',7,('<i',100)),('_IsUnlock',2,('<B',0))])])])
     writer.root(0x4d4f1555,[('SaveRecordExShopList',-1,[(0xb567676c,[('ElementData',17,(0x48d2099d,[('_BonusID',7,('<i',1)),
@@ -101,12 +108,14 @@ def re4_remake_example():
     return wrap(bytes(writer.data[16:]),'re4_remake')
 
 def generate():
+    from test_remake_inventory_capacity import fixture as remake_capacity
     result={}
     factories={'webfishing':fishing,'ror2':profile,'alice':alice,'kh1':lambda:populated_kh('kh1'),
         'kh2':lambda:populated_kh('kh2'),'recom':lambda:archive('recom',1),'bbs':lambda:kh_extra('bbs'),
         'ddd':lambda:kh_extra('ddd'),'kh3':kh3_example,'eldenring':elden_example,
         'maxpayne':inventory_fixture,'re1_hd':hd,'re4_2005':re4_ready,'re4_remake':re4_remake_example,
-        're5':re5,'re6':re6,'re8':village,'re9':lambda:requiem(parts=True)}
+        're5':re5,'re6':re6,'re8':village,'re9':lambda:requiem(parts=True,equipment=True),
+        're2':lambda:remake_capacity('re2'),'re3':lambda:remake_capacity('re3')}
     for game in GAMES:
         samples=[('Example save',factories[game.id]())] if game.id in factories else [('Gameplay and profile fields · example',wrap(stream(game.id),game.id))]
         if game.id=='alice':samples.append(('Game configuration · example',configuration()))

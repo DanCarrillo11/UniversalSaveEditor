@@ -13,6 +13,8 @@ from elden_weapons import WEAPONS
 from elden_registry import register_item, registry_records
 from elden_appearance import appearance_fields
 from elden_world_tables import MAPS
+from elden_spells import SpellLoadout
+from elden_spell_acquisition import SpellAcquisition
 
 SLOT_SIZE = 0x280000
 BLOCK_SIZE = SLOT_SIZE + 16
@@ -88,6 +90,8 @@ class EldenRingSave:
         self.raw, self.slots, self.characters, self.warnings = raw, [], [], []
         self.weapon_records=[]
         self.world_flags=[]
+        self.spell_loadouts=[]
+        self.spell_acquisition=[]
         self.blocks = [(0x300 + i * BLOCK_SIZE, BLOCK_SIZE) for i in range(10)]
         self.blocks += [(GLOBAL_START, 0x60010), (GLOBAL_START + 0x60010, 0x240020)]
         for index, (start, length) in enumerate(self.blocks):
@@ -172,6 +176,7 @@ class EldenRingSave:
                     note='Increases the saved available slots only. Existing equipment, talismans, quest rewards and item-acquisition flags are preserved. Capacity is not reduced.'))
             held=cursor.pos
             self._inventory(cursor, fields, field_type, 0xa80, 0x180, 'Inventory')
+            spells=cursor.pos
             cursor.skip(116+140+24)
             cursor.array(8, 4096)  # Acquired projectile records.
             armaments=cursor.pos
@@ -212,6 +217,9 @@ class EldenRingSave:
                 if number(raw, fingerprints+relative) != player_hash(data):
                     raise ValueError('Unsupported Elden Ring player fingerprint. The file will not be edited.')
             self.characters.append(Character(physical, start, player, profile, fingerprints,registry,held))
+            loadout=SpellLoadout(raw,spells,held,player,fingerprints,field_type)
+            self.spell_loadouts.append(loadout)
+            fields.extend(loadout.fields)
             records={}
             equipped=player+0x2f4
             owned=[]
@@ -242,6 +250,9 @@ class EldenRingSave:
                 if safe:records[key]=(id_offset,identifier,handle,maximum,tuple(mirrors))
             self.weapon_records.append(records)
             self._creation_fields(raw,held,registry,fields,field_type)
+            acquisition=SpellAcquisition(raw,held,registry,field_type)
+            fields.extend(acquisition.fields)
+            self.spell_acquisition.append(acquisition)
             self.slots.append(slot_type(f'Character {physical+1} · {name}', fields))
         if not self.slots:
             raise ValueError('No active Elden Ring characters were found. Save a character in the game first.')
@@ -339,6 +350,8 @@ class EldenRingSave:
         for index in touched:
             character = self.characters[index]
             player = character.player
+            self.spell_acquisition[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index},character,self._add_goods)
+            self.spell_loadouts[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index})
             for (slot,key),value in changes.items():
                 if slot==index and key in self.world_flags[index]:
                     offset,bit=self.world_flags[index][key]

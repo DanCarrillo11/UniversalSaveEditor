@@ -67,6 +67,16 @@ class Kh3CharacterFeatures:
                 self.fields.append(Field(key,title,value,offset,'',0,2,'Abilities',choices=choices,
                     note='Synchronizes learned/equipped bits and preserves unseen/reserved flags. AP costs, character-specific actions and story dependencies are not recalculated.'))
                 self.abilities[key]=offset
+            if character in (1,2):
+                for delta, suffix, title, options in (
+                    (0x158,'combat','Combat style',('Stick By Sora','Be Yourself','Hands Off','Finish the Job')),
+                    (0x159,'ability','Ability use',('Go Wild','Watch MP','Conserve')),
+                    (0x15a,'recovery','Recovery item use',('Use As Needed','Use in Emergencies','Use Like Crazy'))):
+                    value=plain[base+delta]
+                    if value>=len(options):continue
+                    self.fields.append(Field(f'character:{name}:ai:{suffix}',title,value,base+delta,'<B',
+                                             0,len(options)-1,'Companion AI',choices=options,
+                                             note='Saved companion behavior. MP, abilities, equipment and recovery targets are preserved.'))
 
     def patch(self,result,changes):
         changed_weapons=set()

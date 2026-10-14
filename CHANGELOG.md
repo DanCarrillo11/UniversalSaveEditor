@@ -1,5 +1,39 @@
 # Changelog
 
+## v0.29.0-alpha — Equipment, spells and character controls
+
+- KH2: seven documented saved camera/map/vibration/command-menu options;
+  reserved bits and unrelated player/system records are preserved.
+- RE2/RE3: increase supported main-survivor saved inventory capacities through
+  native even slot counts, preserving items, equipment, shortcuts and reward
+  events. Unknown/bonus-survivor and malformed contexts remain protected.
+- RE4 Remake: saved gameplay Pesetas, player/partner health with dependent
+  maximum/current checks, and increasing S–XXL case capacity. Enemies, take-over
+  inventories, merchant history and ambiguous records remain protected.
+- Elden Ring: learn 171 mapped base-game spells through one-copy goods,
+  registration and unique acquisition indices. Owned entries cannot be removed;
+  duplicated/malformed entries and unowned DLC spells stay protected.
+- DDD: existing populated Dream Eaters expose stored level/XP, maximum HP,
+  Link Points, link count, RGB tint and known normal/shiny appearance. Growth,
+  affinity, rank/disposition, boards and party/deck references are preserved.
+- Requiem: select known owned firearms/melee weapons for populated carried
+  equipment and weapon shortcut references. Names and indices update together;
+  empty, backup, storage, scene and unresolved references stay protected.
+- Elden Ring: edit owned memorized spells, compact entries, validate 213 mapped
+  memory costs and the active spell position, and update the spell fingerprint.
+- KH1: three magic-family shortcuts, availability validation and automatic
+  clearing when Sora's matching availability is disabled.
+- KH3: Donald/Goofy AI settings, recognized innate Critical abilities and saved
+  positive HP/MP transitions, plus consistent Munny ledger synchronization.
+- RE4 Remake: enforce this exact item's serialized virtual-stack cap; single
+  objects and malformed capacities are read-only. Valid native caps supersede
+  the previous arbitrary 999 limit.
+- Prevent transient clipped labels when rebuilding short paged sections.
+- Updated previews and fixed guidance for related-value conflicts. No new games,
+  icons or full-support certification. Native reparse checks remain separate
+  from gameplay verification. See docs/FUNCTIONAL_RELATIONSHIPS.md.
+
+
 ## v0.28.0-alpha — Faster editor loading
 
 - Build large sections on demand, with bounded pages; preserve all field access, pending edits and whole-section actions.

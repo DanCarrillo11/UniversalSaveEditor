@@ -152,7 +152,7 @@ class Kh3Tests(unittest.TestCase):
     def test_plain_record_edit_preserves_every_unrelated_byte(self):
         raw=kh3_plain();save=Save(raw,'kh3');output=save.patched({(0,'munny'):55})
         changed={i for i,(a,b) in enumerate(zip(raw,output)) if a!=b}
-        self.assertTrue(changed <= set(range(12,16))|set(range(0x28,0x2c)))
+        self.assertTrue(changed <= set(range(12,16))|set(range(0x28,0x2c))|set(range(0x840,0x844)))
         self.assertFalse(Save(output,'kh3').warnings)
 
     def test_console_layout_and_truncated_container_are_rejected(self):

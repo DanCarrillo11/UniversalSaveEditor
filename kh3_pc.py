@@ -16,6 +16,7 @@ from kh_extra_tables import KH3_ITEMS
 from collection_tables import KH3_MATERIALS
 from kh3_characters import Kh3CharacterFeatures
 from kh3_progress import Kh3Progress
+from kh3_mode import synchronize_mode, synchronize_munny
 
 
 class AccountIdRequired(ValueError):
@@ -71,8 +72,17 @@ class Kh3PcSave:
         self.fields = []
         def add(key, label, offset, fmt, maximum, group, minimum=0, **options):
             self.fields.append(Field(key, label, struct.unpack_from(fmt, plain, offset)[0], offset, fmt, minimum, maximum, group, **options))
-        add('difficulty', 'Difficulty', 0x14, '<B', 3, 'Difficulty', choices=('Beginner','Standard','Proud','Critical'))
-        add('munny', 'Munny', 0x28, '<i', 9999999, 'Currency')
+        add('difficulty', 'Difficulty', 0x14, '<B', 3, 'Difficulty', choices=('Beginner','Standard','Proud','Critical'),
+            note='Entering/leaving Critical scales positive saved party HP/MP and synchronizes the three recognized innate Critical abilities. Explicit HP/MP edits take precedence. Equipment-derived and unknown abilities, starting items and bonus stats are preserved.')
+        add('munny', 'Munny', 0x28, '<i', 9999999, 'Currency',
+            note='When the saved earned/spent ledger agrees with this balance, total earned Munny synchronizes automatically; spending history is preserved.')
+        earned,spent=struct.unpack_from('<2I',plain,0x840)
+        balance=struct.unpack_from('<i',plain,0x28)[0]
+        if earned>=spent and earned-spent==balance:
+            add('munny_earned','Total Munny earned',0x840,'<I',0xffffffff,'Currency',readonly=True,
+                note='Calculated with the consistent earned/spent ledger when Munny is edited.')
+            add('munny_spent','Total Munny spent',0x844,'<I',0xffffffff,'Currency',readonly=True,
+                note='Saved spending history; preserved when the balance changes.')
         add('experience', 'Experience', 0x24, '<i', 99999999, 'Level and experience')
         add('level', 'Sora level', 0x2c, '<B', 99, 'Level and experience', 1)
         for name, offset in (('HP',0xb49c),('MP',0xb4a0),('Strength',0xb4a4),('Magic',0xb4a8),('Defense',0xb4ac)):
@@ -110,6 +120,8 @@ class Kh3PcSave:
                 result[field.offset+1] |= 1  # Obtained; preserve all other flags.
         self.characters.patch(result,changes)
         self.progress.patch(result,changes)
+        synchronize_mode(self.plain,result,changes)
+        synchronize_munny(self.plain,result,changes)
         struct.pack_into('<I', result, 12, zlib.crc32(result[16:self.hash_end]))
         plain = bytes(result)
         if self.encrypted:

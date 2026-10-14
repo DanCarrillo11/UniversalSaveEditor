@@ -315,3 +315,62 @@ attributed lightningdotnet reference. Additional typed RE Engine record/property
 facts use pinned kvasszn metadata
 `4125e497f1ae84cc746bb4a99da612c48bea161e`. No upstream SDK or message database is
 bundled. See docs/CURRENT_GAME_COMPLETION.md for native checks and remaining gates.
+
+## Current equipment and spell relationships
+
+Requiem equipment/shortcut class IDs (`df233e4a`, `1be9729e`), the exact
+`_Equips`/`_Shortcuts` property contexts and RE4 Remake virtual-stack capacities
+use the already attributed kvasszn metadata at
+`4125e497f1ae84cc746bb4a99da612c48bea161e`. The independent implementation only
+reassigns resolved owned references; no upstream SDK or serializer is bundled.
+
+Elden Ring spell identities/names and the 213 memory-slot costs are adapted
+from GPL oisis/EldenRing-SaveForge at
+`ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5`,
+`backend/db/data/{sorceries,incantations,spell_memory_slots_generated}.go`.
+`backend/core/spell_writer.go`, `hash.go` and the application equipment code
+were compared for native sentinel pairs, compact-list rules and capacity.
+Only factual labels/costs are included; descriptions, original regulation
+assets, images and upstream runtime code are not redistributed.
+
+KH1 shortcut positions/family IDs use the previously attributed GPL Kingdom
+Save Editor FinalMix/CommandType models. KH3 observed Critical ability words,
+positive-vital transitions, Munny ledger positions and companion-AI enum facts
+were cross-checked with GPL
+[thirteenth-order/kh3-save-editor](https://github.com/thirteenth-order/kh3-save-editor/tree/0e09edce084c3a170dcfca404160669aced96713)
+at `0e09edce084c3a170dcfca404160669aced96713`. Implementations are independent;
+only recognized representations are changed. Native file reparsing and
+synthetic preservation tests do not imply game-load validation.
+
+## Following gameplay-field continuation
+
+RE4 Remake Pesetas, player/partner backup subclasses and S–XXL case enum facts
+are checked against the previously pinned kvasszn RE4 metadata. The new
+[RE4R-SaveForge](https://github.com/pptt0778-boop/RE4R-SaveForge/tree/7a8b53a2d559adb5e2f5d1194d567d89dbd20409)
+reference (MIT) at `7a8b53a2d559adb5e2f5d1194d567d89dbd20409` was inspected for
+field names. Its pattern-scanning patchers, blanket weapon/ammo cheats and
+item substitutions are not incorporated; this editor requires native object
+ancestry and typed unique properties. Native Steam validation remains pending.
+
+Base-game Elden Ring spell acquisition uses the already attributed GPL
+SaveForge spell goods identities (MaxInventory 1/MaxStorage 0) and bounded
+common-inventory/registry acquisition facts. 171 base-game IDs are eligible;
+the 42 unowned DLC spell IDs stay protected. No quest/reward logic is copied.
+
+Additional DDD primitive field positions are independently checked with
+[osdanova/KH_Editor](https://github.com/osdanova/KH_Editor/tree/a37a708462070eb45dba1ead387557a111dac8ae)
+at `a37a708462070eb45dba1ead387557a111dac8ae`,
+`Model/KH_DDD/DDD_spirit/DDD_spirit_Entry.cs`, plus a native PC HD archive.
+That repository has no declared license in the inspected tree. It is used
+only as a reference for factual positions/encodings; no source implementation,
+compiled program, assets, dictionaries or name-encoding code is redistributed.
+The application patches selected existing native bytes independently and
+preserves all unknown board, affinity and party/deck state.
+
+RE2/RE3 increasing inventory capacity uses the previously pinned kvasszn
+metadata for the exact gameplay section list, inventory array, survivor enum
+and `_CurrentSlotSize` S32 field. Only supported even capacities of the two
+primary survivors are changed. A public shared RE3 console payload from the
+already attributed save-decrypters references was reparsed in memory; no
+fixture or upstream SDK data is redistributed, and native Steam/gameplay
+validation is not claimed.

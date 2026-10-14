@@ -6,6 +6,30 @@ supported save format can represent them. New games and icon work are paused.
 This document records implemented work and the actual remaining gates. No editor
 is marked full support and no completion percentage is inferred from field count.
 
+## Current equipment/spell pass
+
+[Functional relationships](FUNCTIONAL_RELATIONSHIPS.md) adds owned Requiem
+equipment/weapon references, Elden Ring memorized spell lists, KH1 magic
+shortcuts, KH3 known Critical transitions/Munny ledger/companion AI and exact
+saved RE4 Remake virtual-stack capacities. These additions have bounded edits,
+related-state checks and explicit preservation rules. They do not remove the
+unknown-format or gameplay-verification gates below.
+
+The continuation adds RE4 Remake gameplay Pesetas, player/partner health
+and increasing native case sizes; one-copy acquisition of 171 base-game Elden
+Ring spells; and existing populated DDD spirits' stored level/XP, maximum HP,
+Link Points, link count, RGB tint and recognized normal/shiny appearance.
+Spell additions passed native reparse checks in 19 character records; DDD edits
+passed for 13 spirits. RE4 Remake native Steam and all gameplay checks remain
+pending. Unknown formats and dependencies have not been declared complete.
+
+RE2/RE3 expose increasing inventory capacity for recognized main-survivor
+records; they do not change hip-pouch events or create slots/items. RE3's shared
+console payload passed a capacity reparse check, separate from native Steam
+validation. KH2 also exposes seven saved camera/map/vibration/command-menu
+options, with other option bits preserved; 59 native PC records passed option
+edits and reparsing. In-game effects for these additions remain unverified.
+
 ## v0.26 functionality
 
 - KH3: identify the six magic families and five Links by their saved command IDs,
@@ -57,7 +81,7 @@ progression events, installed content or platform achievements.
 | --- | --- |
 | Requiem | Map active player variants, full named unlocks, item caps and complete inventory/weapon relationships. Difficulty value/hash pairs need named identity verification. |
 | Village | Name item/content hashes, establish stack caps, weapon upgrades and difficulty identity relationships; validate native Steam payloads. |
-| RE4 Remake | Locate actual money/player-health records; map inventory geometry, weapon parameters and complete named rewards. Chapter difficulty records are not gameplay difficulty. |
+| RE4 Remake | Validate the new money/player-health/case fields on native Steam files; map inventory geometry, weapon parameters and complete named rewards. Chapter difficulty records are not gameplay difficulty. |
 | RE2 Remake | Full item/equipment identities, inventory-slot state and dependent reward delivery; validate native Steam files. |
 | RE3 Remake | Difficulty and complete inventory/equipment/shop dependencies; validate native Steam files. |
 | RE7 | Inventory outside the box, exact upgrade and unlock dependencies; validate native Steam files. Use-statistic edits are not health-upgrade grants. |
@@ -69,9 +93,9 @@ progression events, installed content or platform achievements.
 | KH2 | AP/equipment/stock and character ability rules, full named puzzle/progression systems and actual spell-acquisition relationships. |
 | ReCoM | Native confirmation of acquisition/completion flags; locate HP/CP, sleights and deck/card-state dependencies in gameplay data. |
 | BBS | Resolve Hp1/Hp2 semantics, full command footprints/capacity, command acquisition flags, D-Link/finisher status and story dependencies. |
-| DDD | Resolve Dream Eater boards, XP/level, creation and full command decks. Source deck data still contains large unknown blocks. |
+| DDD | Resolve Dream Eater growth/XP relationships, affinity/rank/disposition, boards, creation and full command decks. Stored spirit level/XP/stats/colors are now editable independently; source deck data still contains large unknown blocks. |
 | KH3 | Full character/AP/equipment rules, consumable shortcut references, remaining records, minigame rewards and named progression dependencies. |
-| Elden Ring | Full weapon/armor/equipment creation, affinities/Ashes, Grace/quest/boss prerequisites, gesture/spell state, model/preset/mirror dependencies and version-specific DLC state. |
+| Elden Ring | Full weapon/armor/equipment creation, affinities/Ashes, Grace/quest/boss prerequisites, gestures, model/preset/mirror dependencies and version-specific DLC spell acquisition/state. Base-game spell acquisition and owned memorized loadouts are implemented; in-game loading remains pending. |
 | WEBFISHING | Missing quest/collection creation and reward rules, complete customization dependencies and gameplay verification beyond currency. |
 | Risk of Rain 2 | Remaining exact names/units/dependencies for profile records and unlocks. Live-run inventory is not represented by the profile editor. |
 | Alice | Remaining persistent/configuration rules and gameplay validation. Active outfit/checkpoint stay outside scope per the earlier user preference. |
