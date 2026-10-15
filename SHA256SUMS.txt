@@ -1,1 +1,1 @@
-1a88aa86f1ad6766d79104cd2ebf6e9a859a89de9753ba569a090e2abace9b96  UniversalSaveEditor.exe
+1d9c02e28ce7121d510dc302aa2a81e9ba9f25d6a20cc2f7ac40ae79feced3b9  UniversalSaveEditor.exe
