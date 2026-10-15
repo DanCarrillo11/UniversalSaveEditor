@@ -402,3 +402,17 @@ memory access, network service, Xbox identity or reference save is bundled.
 
 The bounded Python transactions, dependency checks and tests are new. Exact
 implemented relationships and verification limits: docs/KH2_INVENTORY_AP.md.
+
+## KH1 shared spell tiers and acquisitions
+
+Save-relative format facts were independently translated from
+[gaithern/KH1FM-RANDOMIZER](https://github.com/gaithern/KH1FM-RANDOMIZER/tree/57e701fccc71fc2220d83a86eace198a08136ff9),
+particularly `Static Files/scripts/1fmRandoHandleItems.lua` and its global address
+maps. Summon IDs and Trinity color order were cross-checked against
+[gaithernOrg/KH1FM-AP Items.py](https://github.com/gaithernOrg/KH1FM-AP/blob/ea84da1d90324ead8b14d550e202e01772c2b257/worlds/kh1/Items.py).
+The new Python reader/writer is independently written; no Lua implementation,
+randomizer-specific repurposed stock, CSV tables, client or reference saves are
+redistributed. Native-file checks across 39 records corroborated the shared
+tiers, compact summon IDs, Trinity mask and MSB-first puppy order. No in-game
+verification or automatic story/reward completion is claimed. See
+docs/KH1_PROGRESSION.md for implementation bounds and remaining gates.

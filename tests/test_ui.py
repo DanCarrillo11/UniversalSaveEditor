@@ -816,11 +816,13 @@ class InterfaceTests(unittest.TestCase):
         w=self.window;w.load('kh1',self.kh)
         inventory=next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)==category_title(w.save.game,'Collection'))
         w.tabs.setCurrentIndex(inventory);tab=w.tabs.currentWidget()
+        section=next(s for s in tab.navigation.category.sections if any(f.key=='inventory:1' for f in s.fields))
+        tab.navigation.list.setCurrentRow(next(i for i in range(tab.navigation.list.count()) if tab.navigation.list.item(i).data(Qt.ItemDataRole.UserRole)==tab.navigation.category.sections.index(section)))
         entry=w.inputs[(0,'inventory:1')];entry.setText('20')
         search=tab.findChild(QLineEdit,'fieldSearch');search.setText('Potion')
-        self.assertFalse(entry.parentWidget().isHidden())
-        search.setText('no-such-item');self.assertTrue(entry.parentWidget().isHidden())
-        search.clear();self.assertEqual(entry.text(),'20')
+        self.assertFalse(w.inputs[(0,'inventory:1')]._field_row.isHidden())
+        search.setText('no-such-item');self.assertNotIn((0,'inventory:1'),w.inputs)
+        search.clear();self.assertEqual(w.inputs[(0,'inventory:1')].text(),'20')
         w.focus_search();self.assertEqual(w.stack.currentIndex(),1)
 
     def test_alice_categories_use_selectors_toggles_and_restore(self):
@@ -1153,6 +1155,21 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(values['character:0:magic:fire'].value,2)
         self.assertEqual(values['character:0:magic_shortcut:0'].choices[values['character:0:magic_shortcut:0'].value],'Fire')
         self.assertEqual(path.read_bytes(),raw);self.assertFalse(parsed.warnings);self.assertLessEqual(w.tabs.count(),3)
+
+    def test_kh1_shared_spell_tiers_and_collection_edits_survive_category_navigation(self):
+        from test_expansion import kh_fixture
+        raw,*_=kh_fixture('kh1');path=self.root/'kh1-progression.png';path.write_bytes(raw)
+        w=self.window;self.assertTrue(w.load('kh1',path))
+        for key,value in (('0:magic:0',3),('0:summon:5',1),('trinity:0',1),('puppy:99',1),('torn_pages',5)):
+            field=w.field_index[0,key];w.reveal_field((0,key));control=w.inputs[0,key]
+            if field.boolean:control.setChecked(bool(value))
+            elif field.choices:control.setCurrentIndex(value)
+            else:control.setText(str(value))
+        out=w.save.patched(w.validated_changes());parsed=Save(out,'kh1');values={f.key:f.value for f in parsed.slots[0].fields}
+        for key,value in (('0:magic:0',3),('0:summon:5',1),('trinity:0',1),('puppy:99',1),('torn_pages',5)):
+            self.assertEqual(values[key],value)
+        self.assertEqual(values['puppies_rescued'],1);self.assertEqual(path.read_bytes(),raw)
+        self.assertFalse(parsed.warnings);self.assertLessEqual(w.tabs.count(),3)
 
     def test_copied_requiem_prompts_for_original_account_only_once(self):
         from test_re_engine import stream,wrap,ACCOUNT

@@ -7,6 +7,7 @@ import struct
 from kh_items import ITEMS
 from kh_party_tables import KH1_ABILITIES, KH2_ABILITIES, KH2_EQUIPMENT
 from kh2_relationships import Kh2Relationships
+from kh1_progression import Kh1Progression
 
 KH1_CHARACTERS=('Sora','Donald','Goofy','Tarzan','Pooh','Aladdin','Ariel','Jack Skellington','Peter Pan','Beast')
 KH2_CHARACTERS=('Sora','Donald','Goofy','Mickey','Auron','Mulan','Aladdin','Jack Sparrow','Beast','Jack Skellington','Simba','Tron','Riku')
@@ -19,9 +20,11 @@ class PartyEditor:
         self.bits={}
         self.shortcuts={}
         self.kh2=Kh2Relationships(raw,field_type,KH2_CHARACTERS) if game=='kh2' else None
+        self.kh1=Kh1Progression(raw,field_type) if game=='kh1' else None
 
     def shared(self,fields,slot,record):
         if self.game!='kh1':return
+        self.kh1.record(fields,slot,record)
         options={0:'Empty',0x80:'Empty (saved flag)'}
         for identifier,label in ((1,'High Jump'),(2,'Mermaid Kick'),(3,'Glide'),(4,'Superglide')):
             options[identifier]=label+' · Equipped';options[identifier|0x80]=label+' · Unequipped'
@@ -125,6 +128,9 @@ class PartyEditor:
                 for index in range(count):self.choice(fields,slot,f'{prefix}:{title.lower()}:{index}',f'{name} · {title} {index+1}',base+array_offset+index,'<B',options,'Equipment',
                     'Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.')
             self.abilities(fields,slot,prefix,name,base+0x40,48,'<B',KH1_ABILITIES,0x80)
+            if character==0:
+                self.kh1.magic(fields,slot,record)
+                return
             for bit,spell in enumerate(('Fire','Blizzard','Thunder','Cure','Gravity','Stop','Aero')):
                 key=prefix+':magic:'+str(bit);offset=base+0x70
                 fields.append(self.field_type(key,spell+' available',(self.raw[offset]>>bit)&1,offset,'',0,1,'Magic',boolean=True,
@@ -160,6 +166,7 @@ class PartyEditor:
             if key not in self.encodings:continue
             offset,fmt,values=self.encodings[key]
             struct.pack_into(fmt,result,offset,values[value])
+        if self.kh1:result=self.kh1.finish(result,changes)
         for (slot,key),(availability,offset) in self.shortcuts.items():
             command=result[offset]
             if command==255:continue

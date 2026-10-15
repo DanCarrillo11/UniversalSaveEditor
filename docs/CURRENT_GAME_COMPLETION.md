@@ -8,6 +8,12 @@ is marked full support and no completion percentage is inferred from field count
 
 ## Current equipment/spell pass
 
+The v0.31 continuation adds KH1 shared spell tiers, Donald acquisition
+synchronization, six summons, five learned Trinity colors, 99 puppy flags and
+unspent Torn Pages. [Exact rules and evidence](KH1_PROGRESSION.md) distinguish
+acquisition from story/reward completion. File-level checks passed on 39 native
+Steam records; gameplay, AP/equipment/growth and remaining progression gates stay open.
+
 The v0.30 continuation corrects KH2's distinct stock positions/item IDs and adds
 conserved equipment transfers, recognized standard-data AP checks, six learned
 spell tiers with shortcut synchronization, form/summon/report acquisition and

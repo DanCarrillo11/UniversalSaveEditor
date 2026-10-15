@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.31.0-alpha — KH1 spell tiers, summons and collections
+
+- Learn or upgrade all seven spell families using their real shared tier bytes.
+  New acquisitions enable Donald's matching spell unless explicitly overridden.
+  Removing Sora's spell preserves Donald's availability and clears matching
+  Sora shortcuts. Unknown tiers and reserved bits stay protected.
+- Acquire six summons while retaining the compact native order. Protect unknown
+  or duplicate acquisition lists and existing owned summons.
+- Add five learned Trinity colors and all 99 rescued puppy flags; show the
+  derived rescue count. Edit zero to five unspent Torn Pages. Keep story,
+  consumed-page history, activated marks, journal and claimed rewards unchanged.
+- Update offline previews and searchable collection navigation. Native-file
+  reparse and byte-preservation checks passed on 39 populated Steam records;
+  in-game effects and complete KH1 support remain unverified. See
+  [the implemented rules](docs/KH1_PROGRESSION.md).
+
 ## v0.30.0-alpha — KH2 inventory, AP, magic and acquisitions
 
 Corrects an important KH2 inventory-label problem: bag positions are different

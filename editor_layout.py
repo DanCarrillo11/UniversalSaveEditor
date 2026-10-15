@@ -117,7 +117,8 @@ def organize_fields(game, fields):
             elif group in ('Weapon upgrades','Ammunition','Consumables'):
                 category,section,selection='Collection',group,group
         if game in ('kh1', 'kh2'):
-            if game=='kh2' and group in ('Forms','Summons'):category,section,selection='Characters',group,'Sora'
+            if game=='kh1' and group=='Dalmatians':category,section,selection='Collection','Rescued puppies','Dalmatians'
+            elif game=='kh2' and group in ('Forms','Summons'):category,section,selection='Characters',group,'Sora'
             elif game=='kh2' and group=='Reports':category,section,selection='Collection',group,group
             elif group=='Shared abilities':category,section,selection='Characters',group,'Party'
             elif game=='kh1' and group=='Magic shortcuts':category,section,selection='Characters',group,'Sora'
@@ -134,7 +135,7 @@ def organize_fields(game, fields):
             elif item.key.startswith('character:') or item.key.split(':')[0] in tuple(str(i) for i in range(10)):
                 character = int(item.key.split(':')[1] if game == 'kh2' else item.key.split(':')[0])
                 selection = (KH2_CHARACTERS if game=='kh2' else KH1_CHARACTERS)[character]
-                category, section = 'Characters', group if group in ('Equipment','Abilities','Magic','Companion AI') else 'Attributes'
+                category, section = 'Characters', group if group in ('Equipment','Abilities','Magic','Summons','Companion AI') else 'Attributes'
             elif item.key.startswith('drive_'):
                 category, section, selection = 'Characters', 'Drive Gauge', 'Sora'
             else:

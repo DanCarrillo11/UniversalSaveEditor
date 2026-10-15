@@ -8,9 +8,9 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.30.0-alpha** corrects KH2 stock identities and expands its equipment,
-AP, spell and acquisition relationships. Earlier versions expanded companion
-relationships. **Complete support for all games has not been achieved.** New
+Version **v0.31.0-alpha** adds KH1 shared spell tiers, summons, learned Trinities,
+rescued puppies and unspent Torn Pages. The previous release corrected KH2 stock
+identities and expanded equipment/AP relationships. **Complete support for all games has not been achieved.** New
 games and new icon work remain paused until the existing catalogue is complete.
 
 ## Download and run
@@ -22,6 +22,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [KH1 spell tiers and acquisitions](docs/KH1_PROGRESSION.md): seven spell families, Donald acquisition synchronization, six summons, five Trinity colors, 99 rescued puppies and unspent Torn Pages. Existing rewards and story flags are preserved.
 
 - [KH2 inventory, AP and acquisition](docs/KH2_INVENTORY_AP.md): correct stock names/positions and artwork IDs, conserved equipment transfers/swaps, recognized standard AP budgets, six spell tiers, synchronized shortcuts, form/summon/report acquisition and current/maximum Drive checks. This corrects misleading bag labels in earlier versions.
 

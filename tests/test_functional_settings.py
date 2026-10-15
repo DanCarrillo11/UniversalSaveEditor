@@ -95,6 +95,13 @@ class SettingsTests(unittest.TestCase):
             raw,record,start,end=kh_fixture(game);save=Save(raw,game)
             f=next(f for f in save.slots[0].fields if f.key==key);output=save.patched({(0,key):value})
             allowed=set(range(f.offset,f.offset+(1 if game=='kh1' else 2)))|set(range(end,end+4))
+            if game=='kh1':
+                # A first learned Sora spell also grants Donald its availability;
+                # the shared native tier is stored separately from both flags.
+                allowed.update((record+0x74,record+0xe8))
+                self.assertEqual(output[record+0x74]&0x40,0x40)
+                self.assertEqual(output[record+0xe8]&0x40,0x40)
+                self.assertEqual(output[record+0x498],1)
             if game=='kh2':allowed.update(range(record+8,record+12))
             self.assertTrue(all(a==b or i in allowed for i,(a,b) in enumerate(zip(raw,output))))
 

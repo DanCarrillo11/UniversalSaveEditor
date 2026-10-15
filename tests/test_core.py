@@ -42,6 +42,8 @@ def kingdom():
         pos=base+i*0x16c40
         struct.pack_into('<I',payload,pos,5)
         payload[pos+4]=10+i
+        payload[pos+0x492:pos+0x499]=bytes([1])*7
+        payload[pos+0x7d0:pos+0x7d6]=bytes([255])*6
         struct.pack_into('<I',payload,pos+0x1641c,500+i)
     return b'\x89PNG\r\n\x1a\n'+pre+chunk(b'sqEX',payload)+chunk(b'IEND',b'')
 
