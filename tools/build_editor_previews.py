@@ -90,7 +90,8 @@ def elden_example():
     from test_functional_settings import elden_appearance
     from test_elden_spells import ready
     from test_elden_equipment_creation import ready as physical
-    return physical(source=ready(source=elden_appearance()[0])[0])
+    from test_elden_loadouts import fixture as equipment
+    return equipment(source=physical(source=ready(source=elden_appearance()[0])[0]))
 
 def kh3_example():
     import zlib

@@ -18,6 +18,20 @@ from editor_layout import organize_fields
 from editor_navigation import category_title
 
 class InterfaceTests(unittest.TestCase):
+    def test_elden_native_loadouts_are_categorized_reviewable_and_do_not_write_before_apply(self):
+        from test_elden_loadouts import fixture
+        raw=fixture();path=self.root/'ER0000.sl2';path.write_bytes(raw)
+        w=self.window;self.assertTrue(w.load('eldenring',path))
+        key=(0,'equipment_slot:0');w.reveal_field(key)
+        entry=w.inputs[key];self.assertIsInstance(entry,QComboBox)
+        selected=(entry.currentIndex()+1)%entry.count();entry.setCurrentIndex(selected)
+        self.assertEqual(w.validated_changes()[key],selected)
+        categories=organize_fields('eldenring',w.save.slots[0].fields)
+        self.assertTrue(any(c.name=='Character' and any(f.key==key[1] for s in c.sections for f in s.fields) for c in categories))
+        out=w.save.patched(w.validated_changes());check=Save(out,'eldenring')
+        self.assertTrue(w.save.elden_ring.equipment_loadouts[0].verifies(check.elden_ring.equipment_loadouts[0],key[1],selected))
+        self.assertEqual(path.read_bytes(),raw)
+
     def test_elden_equipment_creation_survives_search_category_and_review_without_writing(self):
         from test_elden_equipment_creation import ready,ARMOR_ID
         raw=ready();path=self.root/'ER0000.sl2';path.write_bytes(raw)

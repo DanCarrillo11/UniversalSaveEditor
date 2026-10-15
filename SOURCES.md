@@ -437,3 +437,17 @@ No source implementation, original game descriptions, images, regulation or
 reference saves are redistributed. Meteorite Staff's non-reinforceable status
 is explicit in its game-authored item text, correcting the reference catalogue's
 generic +25 limit. See docs/ELDEN_RING_EQUIPMENT.md for exact verification limits.
+
+
+## Elden Ring owned equipment assignments
+
+The independent `elden_loadouts.py` writer cross-checks factual inventory-index,
+bare-ID, exact-handle and dynamic-identity relationships against the previously
+pinned SaveForge `backend/core/equipment_writer.go` and ER-Save-Lib
+`src/save/user_data_x.rs` definitions. Each project's offset origin is translated
+independently; native files corroborate player-relative 0x280/0x2f4/0x34c and
+the projectile-count-dependent dynamic block. Existing bare-ID fingerprint
+orders are validated against those files; unrelated menu snapshots are not
+reinterpreted or overwritten. No upstream implementation, native save,
+regulation, game-load claim or unsupported placeholder provisioning is bundled.
+Exact scope and verification: docs/ELDEN_RING_LOADOUTS.md.

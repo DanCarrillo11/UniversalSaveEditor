@@ -8,6 +8,11 @@ is marked full support and no completion percentage is inferred from field count
 
 ## Current equipment/spell pass
 
+v0.34 adds ten owned Elden Ring hand/armor assignments, four synchronized native
+representations, exact category/ownership checks, atomic swaps and corresponding
+fingerprints. Native in-memory checks covered 53 assignments and 28 upgrades;
+game loading remains pending. [Scope and remaining gates](ELDEN_RING_LOADOUTS.md).
+
 The v0.32 continuation adds bounded base-game Elden Ring physical equipment
 creation: 377 armaments and 559 armor identities, separate copies, native
 handles, acquisition bookkeeping and variable record growth. See
@@ -116,7 +121,7 @@ progression events, installed content or platform achievements.
 | BBS | Resolve Hp1/Hp2 semantics, full command footprints/capacity, command acquisition flags, D-Link/finisher status and story dependencies. |
 | DDD | Resolve Dream Eater growth/XP relationships, affinity/rank/disposition, boards, creation and full command decks. Stored spirit level/XP/stats/colors are now editable independently; source deck data still contains large unknown blocks. |
 | KH3 | Full character/AP/equipment rules, consumable shortcut references, remaining records, minigame rewards and named progression dependencies. |
-| Elden Ring | Base-game weapon/armor creation is implemented for verified native layouts with enough zero padding. Owned equipment loadouts, affinities/Ashes, Grace/quest/boss prerequisites, gestures, model/preset/mirror dependencies and DLC acquisition/state remain. Base-game spell acquisition and owned memorized loadouts are implemented; in-game loading remains pending. |
+| Elden Ring | Base-game weapon/armor creation is implemented for verified native layouts with enough zero padding. Six hand and four armor assignments now synchronize native references/fingerprints. Talisman/ammo/quick-item loadouts, affinities/Ashes, Grace/quest/boss prerequisites, gestures, model/preset/mirror dependencies and DLC acquisition/state remain. Base-game spell acquisition and owned memorized loadouts are implemented; in-game loading remains pending. |
 | WEBFISHING | Missing quest/collection creation and reward rules, complete customization dependencies and gameplay verification beyond currency. |
 | Risk of Rain 2 | Remaining exact names/units/dependencies for profile records and unlocks. Live-run inventory is not represented by the profile editor. |
 | Alice | Remaining persistent/configuration rules and gameplay validation. Active outfit/checkpoint stay outside scope per the earlier user preference. |

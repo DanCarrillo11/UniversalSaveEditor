@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.34.0-alpha — Elden Ring owned equipment loadouts
+
+- Add six hand and four armor assignments under Character > Equipment loadout,
+  restricted to uniquely owned supported held copies and exact armor categories.
+- Synchronize native inventory indices, identities, handles, dynamic equipment
+  and checked fingerprints. Support atomic swaps; reject duplicate physical copies.
+- Recognize native equipped weapon upgrades without requiring physical handles
+  to match unrelated global menu snapshots. Preserve unknown snapshots.
+- Combine assignments with upgrades, structural creation and other character
+  edits. Reparse and verify selected handles rather than unstable choice indices.
+- Verify 53 native assignments and 28 upgrades across four overlapping reference
+  files, leaving originals unchanged. Game loading and complete support remain
+  unverified. See docs/ELDEN_RING_LOADOUTS.md for remaining gates.
+
 ## v0.33.0-alpha — Updates from the application
 
 - Add an Updates dialog with official release notes, progress, cancellation and

@@ -16,6 +16,7 @@ from elden_world_tables import MAPS
 from elden_spells import SpellLoadout
 from elden_spell_acquisition import SpellAcquisition
 from elden_equipment_creation import PhysicalEquipment
+from elden_loadouts import EquipmentLoadout
 
 SLOT_SIZE = 0x280000
 BLOCK_SIZE = SLOT_SIZE + 16
@@ -94,6 +95,7 @@ class EldenRingSave:
         self.spell_loadouts=[]
         self.spell_acquisition=[]
         self.physical_equipment=[]
+        self.equipment_loadouts=[]
         self.blocks = [(0x300 + i * BLOCK_SIZE, BLOCK_SIZE) for i in range(10)]
         self.blocks += [(GLOBAL_START, 0x60010), (GLOBAL_START + 0x60010, 0x240020)]
         for index, (start, length) in enumerate(self.blocks):
@@ -222,6 +224,8 @@ class EldenRingSave:
             loadout=SpellLoadout(raw,spells,held,player,fingerprints,field_type)
             self.spell_loadouts.append(loadout)
             fields.extend(loadout.fields)
+            equipment_loadout=EquipmentLoadout(raw,self.characters[-1],armaments,field_type)
+            self.equipment_loadouts.append(equipment_loadout);fields.extend(equipment_loadout.fields)
             records={}
             equipped=player+0x2f4
             owned=[]
@@ -249,10 +253,13 @@ class EldenRingSave:
                         safe=False;break
                     mirrors.extend((equipped+n*4,armaments+n*4,profile+466+n*4))
                 if mirrors and number(raw,fingerprints+28)!=self._weapon_hash(raw,equipped):safe=False
+                if not safe:
+                    native_mirrors=equipment_loadout.upgrade_mirrors(handle)
+                    if native_mirrors is not None:mirrors=list(native_mirrors);safe=True
                 key=f'weapon:{handle:08x}'
                 fields.append(field_type(key,title+' · Upgrade',upgrade,id_offset,'',0,maximum,location,readonly=not safe or not maximum,
-                    note=('This weapon cannot be reinforced. Its saved identity, parameters and Ash references are preserved.' if not maximum else f'Existing weapon · entry {entry+1} · affinity {affinity}. Preserves identity, affinity and Ash of War. Equipped copies and menu data synchronize automatically. The highest weapon level is never reduced.' if safe else
-                          'Read-only: equipped copies or the saved menu snapshot disagree. Unequip this weapon in the game and save again, or choose another verified weapon. No mismatched representation is overwritten.'),collection='Weapon upgrades',item_id=base_id))
+                    note=('This weapon cannot be reinforced. Its saved identity, parameters and Ash references are preserved.' if not maximum else f'Existing weapon · entry {entry+1} · affinity {affinity}. Preserves identity, affinity and Ash of War. Recognized equipped copies synchronize. Unrelated menu snapshots are preserved unless the older exact menu representation is verified. The highest weapon level is never reduced.' if safe else
+                          'Read-only: the equipped representations could not be verified. Unequip this weapon in the game and save again, or choose another verified weapon. No mismatched representation is overwritten.'),collection='Weapon upgrades',item_id=base_id))
                 if safe:records[key]=(id_offset,identifier,handle,maximum,tuple(mirrors))
             self.weapon_records.append(records)
             self._creation_fields(raw,held,registry,fields,field_type)
@@ -403,6 +410,7 @@ class EldenRingSave:
                 global_changed = True
             for relative, data in self._fingerprint_data(result, player):
                 struct.pack_into('<I', result, character.fingerprints+relative, player_hash(data))
+            self.equipment_loadouts[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index})
             # Structural equipment growth follows all edits at original offsets.
             self.physical_equipment[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index})
         blocks = set(range(12)) if repair_crc else {self.characters[i].physical for i in touched}

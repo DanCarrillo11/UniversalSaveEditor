@@ -6386,6 +6386,198 @@
             "art_choices": []
           },
           {
+            "key": "equipment_slot:0",
+            "label": "Left hand 1",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 1,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Dagger +0 \u00b7 copy 4",
+              "Longsword +0 \u00b7 copy 11"
+            ],
+            "note": "Select a copy already in held inventory. Inventory index, bare identity, physical handle, dynamic equipment and the corresponding fingerprint synchronize. Storage, active hand, menu snapshots and unknown state are preserved.",
+            "collection": "Weapons",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:1",
+            "label": "Right hand 1",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 2,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Current assignment (unresolved)",
+              "Dagger +0 \u00b7 copy 4",
+              "Longsword +0 \u00b7 copy 11"
+            ],
+            "note": "The current assignment is not a uniquely owned supported held item. It is preserved.",
+            "collection": "Weapons",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:2",
+            "label": "Left hand 2",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 2,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Current assignment (unresolved)",
+              "Dagger +0 \u00b7 copy 4",
+              "Longsword +0 \u00b7 copy 11"
+            ],
+            "note": "The current assignment is not a uniquely owned supported held item. It is preserved.",
+            "collection": "Weapons",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:3",
+            "label": "Right hand 2",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 2,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Current assignment (unresolved)",
+              "Dagger +0 \u00b7 copy 4",
+              "Longsword +0 \u00b7 copy 11"
+            ],
+            "note": "The current assignment is not a uniquely owned supported held item. It is preserved.",
+            "collection": "Weapons",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:4",
+            "label": "Left hand 3",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 2,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Current assignment (unresolved)",
+              "Dagger +0 \u00b7 copy 4",
+              "Longsword +0 \u00b7 copy 11"
+            ],
+            "note": "The current assignment is not a uniquely owned supported held item. It is preserved.",
+            "collection": "Weapons",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:5",
+            "label": "Right hand 3",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 2,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Current assignment (unresolved)",
+              "Dagger +0 \u00b7 copy 4",
+              "Longsword +0 \u00b7 copy 11"
+            ],
+            "note": "The current assignment is not a uniquely owned supported held item. It is preserved.",
+            "collection": "Weapons",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:12",
+            "label": "Head",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 1,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Iron Helmet \u00b7 copy 9",
+              "Iron Helmet \u00b7 copy 10"
+            ],
+            "note": "Select a copy already in held inventory. Inventory index, bare identity, physical handle, dynamic equipment and the corresponding fingerprint synchronize. Storage, active hand, menu snapshots and unknown state are preserved.",
+            "collection": "Head armor",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:13",
+            "label": "Chest",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 0,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Current assignment (unresolved)"
+            ],
+            "note": "The current assignment is not a uniquely owned supported held item. It is preserved.",
+            "collection": "Chest armor",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:14",
+            "label": "Arms",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 0,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Current assignment (unresolved)"
+            ],
+            "note": "The current assignment is not a uniquely owned supported held item. It is preserved.",
+            "collection": "Arm armor",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "equipment_slot:15",
+            "label": "Legs",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 0,
+            "group": "Equipment loadout",
+            "decimal": false,
+            "boolean": false,
+            "choices": [
+              "Current assignment (unresolved)"
+            ],
+            "note": "The current assignment is not a uniquely owned supported held item. It is preserved.",
+            "collection": "Leg armor",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "weapon:80800001",
             "label": "Dagger \u00b7 Upgrade",
             "value": 0,
@@ -6396,9 +6588,25 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "Existing weapon \u00b7 entry 4 \u00b7 affinity 0. Preserves identity, affinity and Ash of War. Equipped copies and menu data synchronize automatically. The highest weapon level is never reduced.",
+            "note": "Existing weapon \u00b7 entry 4 \u00b7 affinity 0. Preserves identity, affinity and Ash of War. Recognized equipped copies synchronize. Unrelated menu snapshots are preserved unless the older exact menu representation is verified. The highest weapon level is never reduced.",
             "collection": "Weapon upgrades",
             "item_id": 1000000,
+            "art_choices": []
+          },
+          {
+            "key": "weapon:80800004",
+            "label": "Longsword \u00b7 Upgrade",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 25,
+            "group": "Inventory",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Existing weapon \u00b7 entry 11 \u00b7 affinity 0. Preserves identity, affinity and Ash of War. Recognized equipped copies synchronize. Unrelated menu snapshots are preserved unless the older exact menu representation is verified. The highest weapon level is never reduced.",
+            "collection": "Weapon upgrades",
+            "item_id": 2000000,
             "art_choices": []
           },
           {
@@ -14036,7 +14244,7 @@
           {
             "key": "equipment_creation_status",
             "label": "Equipment creation",
-            "value": 5117,
+            "value": 5115,
             "fmt": "",
             "minimum": 0,
             "maximum": 5120,
@@ -14044,7 +14252,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "5117 free physical records; 439623 bytes of verified padding. New pieces enter held inventory unequipped. Existing equipment, story and DLC ownership stay unchanged.",
+            "note": "5115 free physical records; 439602 bytes of verified padding. New pieces enter held inventory unequipped. Existing equipment, story and DLC ownership stay unchanged.",
             "collection": "Equipment creation capacity",
             "item_id": null,
             "art_choices": []

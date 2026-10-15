@@ -8,8 +8,9 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.33.0-alpha** adds optional in-app update checks, verified downloads
-and portable Windows replacement through **Updates > Restart and update**.
+Version **v0.34.0-alpha** adds owned Elden Ring weapon/armor assignments and
+native equipped-weapon upgrades. In-app updates remain available through
+**Updates > Restart and update**.
 Earlier releases expanded Elden Ring and KH progression.
 **Complete support for all games has not been achieved.** New
 games and new icon work remain paused until the existing catalogue is complete.
@@ -23,6 +24,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [Elden Ring equipment loadouts](docs/ELDEN_RING_LOADOUTS.md): six hand and four armor assignments using uniquely owned held copies, synchronized native references/fingerprints, swaps and protected inconsistent layouts. Unknown menu snapshots stay unchanged; gameplay validation remains pending.
 
 - [Updates from the app](docs/UPDATES.md): check official releases, download with progress and SHA-256 verification, then restart to update the portable executable. Startup checks are optional and off by default. Editing saves works offline. Versions before v0.33 require one manual download first.
 
