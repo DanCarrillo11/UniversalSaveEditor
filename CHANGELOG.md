@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.33.0-alpha — Updates from the application
+
+- Add an Updates dialog with official release notes, progress, cancellation and
+  optional startup checks, disabled by default and limited to once per 24 hours.
+- Download only official HTTPS GitHub assets, bound response sizes, reject
+  incomplete downloads and verify SHA-256 before enabling installation.
+- Add Restart and update for portable Windows builds: resolve unsaved changes,
+  close the app, replace the executable in its existing folder and restart.
+  Preserve save files and preferences. Retain the old application temporarily
+  and restore it if replacement or process launch fails synchronously.
+- Keep connection errors nonblocking and offer official releases/manual replacement
+  when Windows denies folder access. Older versions need one manual download to
+  obtain this updater. See [update controls and limits](docs/UPDATES.md).
+
 ## v0.32.0-alpha — Elden Ring weapon and armor creation
 
 - Add separate copies of 377 identified base-game armaments and 559 armor

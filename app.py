@@ -28,6 +28,7 @@ from editor_preview import EditorPreview
 from diagnostics import explain_error, support_report
 from recent_files import read_history, remember, forget
 from runtime_errors import install_error_reporting
+from updates import UpdateClient
 
 ROOT=Path(__file__).resolve().parent
 
@@ -128,6 +129,9 @@ class Window(QMainWindow):
         self.setMinimumSize(1100,720)
         self.setAcceptDrops(True)
         self.settings=settings
+        self.updater=UpdateClient(VERSION,self);self._updates_dialog=None;self._installing_update=False
+        self.automatic_updates=settings.value('updates/checkOnStartup',False,type=bool) if settings is not None else False
+        self.updater.checked.connect(self.update_checked)
         self.recent_files=read_history(settings.value('files/recent','[]',type=str) if settings is not None else '[]')
         self.remember_recent=settings.value('files/rememberRecent',True,type=bool) if settings is not None else True
         if not self.remember_recent:self.recent_files=[]
@@ -154,7 +158,9 @@ class Window(QMainWindow):
         icon=QLabel();icon.setPixmap(QPixmap(str(ROOT/'assets/memory-card-icon.png')).scaled(42,42,Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation));icon.setFixedSize(48,48)
         head.addWidget(icon)
         brand=QVBoxLayout();brand.setSpacing(1);brand.addWidget(label('UniversalSaveEditor','brand'));brand.addWidget(label('Your games. Your progress. One editor.','muted'))
-        head.addLayout(brand);head.addStretch();head.addWidget(label('Offline · On your device','headerStatus'))
+        head.addLayout(brand);head.addStretch();head.addWidget(label('Local save editing','headerStatus'))
+        self.updates_button=button('Updates',self.open_updates);self.updates_button.setObjectName('updatesButton')
+        head.addWidget(self.updates_button)
         self.recent_button=button('Recent saves',self.open_recents)
         self.recent_button.setAccessibleName('Open recent saves');self.recent_button.setToolTip('Reopen a recent save (Ctrl+R)')
         head.addWidget(self.recent_button)
@@ -199,6 +205,49 @@ class Window(QMainWindow):
         self.scan();self.show_library()
         if settings is not None and settings.contains('window/geometry'):
             self.restoreGeometry(settings.value('window/geometry'))
+        self.startup_update_timer=QTimer(self);self.startup_update_timer.setSingleShot(True)
+        self.startup_update_timer.timeout.connect(self.check_updates_on_startup)
+        if self.automatic_updates:self.startup_update_timer.start(2500)
+
+    def set_automatic_updates(self,enabled):
+        self.automatic_updates=enabled
+        if self.settings is not None:self.settings.setValue('updates/checkOnStartup',enabled);self.settings.sync()
+
+    def check_updates_on_startup(self):
+        import time
+        if not self.automatic_updates or not self.isVisible():return
+        try:last=float(self.settings.value('updates/lastStartupCheck',0)) if self.settings is not None else 0
+        except (TypeError,ValueError):last=0
+        now=time.time()
+        if 0<=now-last<86400:return
+        if self.settings is not None:self.settings.setValue('updates/lastStartupCheck',now);self.settings.sync()
+        self.updater.check()
+
+    def update_checked(self,release):
+        self.updates_button.setText('Update available' if release else 'Updates')
+        self.updates_button.setToolTip('Version '+release.version+' is available' if release else 'Check the official release')
+
+    def open_updates(self):
+        from update_dialog import UpdatesDialog
+        if self._updates_dialog is None:
+            dialog=UpdatesDialog(self.updater,self.automatic_updates,self.set_automatic_updates,self.install_update,self)
+            self._updates_dialog=dialog
+            dialog.destroyed.connect(lambda:setattr(self,'_updates_dialog',None))
+        self._updates_dialog.show();self._updates_dialog.raise_();self._updates_dialog.activateWindow()
+        if self.updater.state=='idle':self.updater.check()
+
+    def install_update(self):
+        if not getattr(sys,'frozen',False) or sys.platform!='win32' or self.updater.state!='ready':return
+        if not self.may_discard():return
+        from update_install import prepare_install,launch_helper
+        try:
+            manifest=prepare_install(self.updater.downloaded,self.updater.checksum,Path(sys.executable),os.getpid())
+            launch_helper(self.updater.downloaded,manifest)
+        except (OSError,ValueError):
+            QMessageBox.warning(self,'Could not install update','The application cannot be replaced in this folder. Open the download folder, close the app and replace the old executable manually.');return
+        self._installing_update=True
+        if self._updates_dialog:self._updates_dialog.close()
+        self.close();QApplication.instance().quit()
 
     def update_appearance_button(self):
         target='dark' if self.theme=='light' else 'light'
@@ -1276,7 +1325,9 @@ class Window(QMainWindow):
         self.open_path(Path(urls[0].toLocalFile()));event.acceptProposedAction()
 
     def closeEvent(self,event):
-        if self.may_discard():
+        if self._installing_update or self.may_discard():
+            self.startup_update_timer.stop()
+            if not self._installing_update:self.updater.cancel()
             if self.settings is not None:
                 self.settings.setValue('window/geometry',self.saveGeometry())
                 self.settings.setValue('files/lastDirectory',self.last_directory)
@@ -1289,6 +1340,11 @@ class Window(QMainWindow):
         else:event.ignore()
 
 def main():
+    if '--apply-update' in sys.argv:
+        from update_install import helper_main
+        try:manifest=sys.argv[sys.argv.index('--apply-update')+1]
+        except IndexError:return 1
+        return helper_main(manifest)
     def unexpected_error(report):
         application=QApplication.instance()
         if application is None:return
@@ -1309,6 +1365,18 @@ def main():
     app.setWindowIcon(QIcon(str(ROOT/'assets/memory-card-icon.png')))
     app.setStyle('Fusion')
     window=Window(settings=None if '--smoke-test' in sys.argv else QSettings('UniversalSaveEditor','UniversalSaveEditor'));window.show()
+    if '--finish-update' in sys.argv:
+        from update_install import finish_install
+        try:manifest=sys.argv[sys.argv.index('--finish-update')+1]
+        except IndexError:manifest=''
+        remaining=[10]
+        def cleanup_update():
+            try:finish_install(manifest)
+            except OSError:
+                remaining[0]-=1
+                if remaining[0]>0:QTimer.singleShot(500,cleanup_update)
+            except (ValueError,KeyError,TypeError):pass
+        QTimer.singleShot(2000,cleanup_update)
     if '--smoke-test' in sys.argv:
         # Used by release validation; exercises the packaged resources and Qt.
         import json
@@ -1420,6 +1488,13 @@ def main():
                     for s in EditorPreview(g.id).slots for f in s.fields) for g in GAMES)
             except (OSError,ValueError,KeyError,TypeError):preview_ready=False
             crypto_ready=crypto_ready and preview_ready
+            try:
+                from PySide6.QtNetwork import QSslSocket
+                from update_install import apply_install,finish_install
+                from update_dialog import UpdatesDialog
+                updates_ready=QSslSocket.supportsSsl() and not window.updater.busy and window.updater.state=='idle'
+            except Exception:updates_ready=False
+            crypto_ready=crypto_ready and updates_ready
             covers={g.id:not Artwork._cache[g.id].isNull() for g in GAMES}
             report={'title':window.windowTitle(),'covers':covers,
                     'platformIcons':{p:not platform_pixmap(p).isNull() for p in PLATFORMS},
@@ -1435,6 +1510,7 @@ def main():
                     'functionalityReady':functionality_ready,
                     'itemIconsReady':item_icons_ready,
                     'previewReady':preview_ready,
+                    'updatesReady':updates_ready,
                     'itemIconCount':len(catalogue()) if item_icons_ready else 0,
                     'games':len(window.visible_games),'icon':not app.windowIcon().isNull(),
                     'ror2Unlocks':len(UNLOCK_IDS),
@@ -1445,4 +1521,4 @@ def main():
         QTimer.singleShot(1000,check_startup)
     sys.exit(app.exec())
 
-if __name__=='__main__':main()
+if __name__=='__main__':sys.exit(main())

@@ -1,6 +1,6 @@
 # UniversalSaveEditor
 
-A unified, offline Windows save editor. Browse your games, edit your progress,
+A unified Windows save editor with local editing. Browse your games, edit your progress,
 review changes, and update your saves directly in one application.
 
 Editors use visible categories and sections, with character selection where
@@ -8,9 +8,10 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.32.0-alpha** expands Elden Ring with base-game weapon and armor
-creation, native equipment records and acquisition bookkeeping. Earlier releases
-expanded KH1/KH2 progression. **Complete support for all games has not been achieved.** New
+Version **v0.33.0-alpha** adds optional in-app update checks, verified downloads
+and portable Windows replacement through **Updates > Restart and update**.
+Earlier releases expanded Elden Ring and KH progression.
+**Complete support for all games has not been achieved.** New
 games and new icon work remain paused until the existing catalogue is complete.
 
 ## Download and run
@@ -22,6 +23,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [Updates from the app](docs/UPDATES.md): check official releases, download with progress and SHA-256 verification, then restart to update the portable executable. Startup checks are optional and off by default. Editing saves works offline. Versions before v0.33 require one manual download first.
 
 - [Elden Ring equipment creation](docs/ELDEN_RING_EQUIPMENT.md): 377 base-game armaments and 559 armor pieces, separate copies with native handles, acquisition counters and bounded structural growth. Unknown layouts and insufficient padding remain protected.
 
