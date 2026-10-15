@@ -7,7 +7,7 @@ from update_install import prepare_install,apply_install,finish_install,wait_for
 
 class InstallTests(unittest.TestCase):
     def setUp(self):
-        self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name);self.cache=self.root/'updates';self.cache.mkdir()
+        self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name).resolve();self.cache=self.root/'updates';self.cache.mkdir()
         self.stage=Path(tempfile.mkdtemp(prefix='update-',dir=self.cache));self.source=self.stage/'UniversalSaveEditor.exe'
         self.target=self.root/'Installed app.exe';self.target.write_bytes(b'original application')
         self.source.write_bytes(b'MZ'+b'new application'*100);self.digest=hashlib.sha256(self.source.read_bytes()).hexdigest()
