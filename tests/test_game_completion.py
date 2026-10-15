@@ -103,10 +103,10 @@ class CompletionTests(unittest.TestCase):
         with self.assertRaises(ValueError):s.patched({(0,'magic:Fire'):1,(0,'shortcut:0:0'):fira})
         output=s.patched({(0,'magic:Fire'):3,(0,'shortcut:0:0'):fire})
         self.assertEqual(struct.unpack_from('<i',output,0xbf20)[0],29)
-        link=ops['shortcut:0:1'][1].index(65)
+        link=ops['shortcut:0:1'][1].index(70)
         with self.assertRaises(ValueError):s.patched({(0,'shortcut:0:1'):link})
-        output=s.patched({(0,'link:65'):1,(0,'shortcut:0:1'):link})
-        empty=Save(output,'kh3').patched({(0,'link:65'):0})
+        output=s.patched({(0,'link:70'):1,(0,'shortcut:0:1'):link})
+        empty=Save(output,'kh3').patched({(0,'link:70'):0})
         self.assertEqual(struct.unpack_from('<i',empty,0xbf24)[0],0)
     def test_kh3_new_fields_reencrypt_and_keep_original_account_and_padding(self):
         from hashlib import md5

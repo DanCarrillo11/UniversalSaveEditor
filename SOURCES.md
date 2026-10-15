@@ -451,3 +451,36 @@ orders are validated against those files; unrelated menu snapshots are not
 reinterpreted or overwritten. No upstream implementation, native save,
 regulation, game-load claim or unsupported placeholder provisioning is bundled.
 Exact scope and verification: docs/ELDEN_RING_LOADOUTS.md.
+
+## v0.35 owned tools, ammunition and Kingdom Hearts fields
+
+Elden Ring tool/pouch pair positions, dynamic identities, empty sentinels and
+Physick words were independently cross-checked against the pinned SaveForge
+`backend/core/equipment_writer.go` and ER-Save-Lib `src/save/user_data_x.rs`.
+The 16-entry quick-item fingerprint is corroborated by native records; a native
+mismatch is protected. Factual names/IDs in `elden_tool_tables.py` adapt GPL
+SaveForge `backend/db/data/{tools,ashes,key_items,arrows_and_bolts,item_aliases}.go`
+and `backend/db/item_identity.go`, including the filled Physick variant. Only
+names, identities and ammunition categories are bundled; no original item
+descriptions, locations, images, regulation or upstream writer is shipped.
+
+KH3 command and consumable enums are checked against the previously attributed
+KingdomSaveEditor `KHSave.Lib3/Types/{CommandType,ConsumableType}.cs` and its PC
+save layout. Link IDs are 70–74. Hi-Ether command 62 and consumable 11 illustrate
+why these enums must not be conflated. The Python dependency rules and tests are
+new. An encrypted public reference passed a combined Potion shortcut/equipment
+change; this does not certify gameplay or Link acquisition effects.
+
+DDD rank/disposition nibbles and affinity counter use factual offsets from the
+already pinned osdanova/KH_Editor `DDD_spirit_Entry.cs`. No implementation from
+that unlicensed project is copied. Native inspection corroborates the two
+nibbles and nonnegative counter in 13 populated spirits; species names, rank
+growth and displayed affinity levels are not inferred.
+
+Re:CoM's saved-level offset is independently translated from
+[gaithern/KH-RECOM-AP-LUA recomAPConnector.lua](https://github.com/gaithern/KH-RECOM-AP-LUA/blob/d5e5c06bb8dd803ee153d2ba47a862fc773c9901/recomAPConnector.lua).
+The common player origin is corroborated by existing card/XP/money fields;
+level is player-relative 0x1c, record-relative 0x2d54. No live-memory writer,
+randomizer, HP/CP/sleight assumptions or reference saves are redistributed.
+Native checks passed in two public Steam archives. See
+docs/COMPATIBILITY_V35.md for scope and game-load limitations.

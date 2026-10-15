@@ -17,6 +17,7 @@ from elden_spells import SpellLoadout
 from elden_spell_acquisition import SpellAcquisition
 from elden_equipment_creation import PhysicalEquipment
 from elden_loadouts import EquipmentLoadout
+from elden_tools import ToolLoadout
 
 SLOT_SIZE = 0x280000
 BLOCK_SIZE = SLOT_SIZE + 16
@@ -96,6 +97,7 @@ class EldenRingSave:
         self.spell_acquisition=[]
         self.physical_equipment=[]
         self.equipment_loadouts=[]
+        self.tool_loadouts=[]
         self.blocks = [(0x300 + i * BLOCK_SIZE, BLOCK_SIZE) for i in range(10)]
         self.blocks += [(GLOBAL_START, 0x60010), (GLOBAL_START + 0x60010, 0x240020)]
         for index, (start, length) in enumerate(self.blocks):
@@ -226,6 +228,8 @@ class EldenRingSave:
             fields.extend(loadout.fields)
             equipment_loadout=EquipmentLoadout(raw,self.characters[-1],armaments,field_type)
             self.equipment_loadouts.append(equipment_loadout);fields.extend(equipment_loadout.fields)
+            tools=ToolLoadout(raw,self.characters[-1],spells,armaments,field_type)
+            self.tool_loadouts.append(tools);fields.extend(tools.fields)
             records={}
             equipped=player+0x2f4
             owned=[]
@@ -411,6 +415,7 @@ class EldenRingSave:
             for relative, data in self._fingerprint_data(result, player):
                 struct.pack_into('<I', result, character.fingerprints+relative, player_hash(data))
             self.equipment_loadouts[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index})
+            self.tool_loadouts[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index})
             # Structural equipment growth follows all edits at original offsets.
             self.physical_equipment[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index})
         blocks = set(range(12)) if repair_crc else {self.characters[i].physical for i in touched}

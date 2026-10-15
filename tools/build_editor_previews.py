@@ -81,6 +81,10 @@ def kh_extra(game):
         spirit=record+0x53a0;raw[spirit+3]=10;raw[spirit+32:spirit+35]=bytes((128,37,12))
         struct.pack_into('<i',raw,spirit+36,1000);struct.pack_into('<h',raw,spirit+44,20)
         struct.pack_into('<h',raw,spirit+48,100);raw[spirit+92]=1
+    elif game=='recom':
+        from kh_pc import recom_checksum
+        struct.pack_into('<i',raw,record+0x2d54,1)
+        struct.pack_into('<I',raw,record+4,recom_checksum(raw[record+16:record+length]))
     import zlib
     start,end=next((s,e) for n,s,e in png_chunks(raw,allow_sqex_crc=True) if n==b'sqEX')
     struct.pack_into('>I',raw,end,zlib.crc32(raw[start-4:end]))
@@ -91,7 +95,8 @@ def elden_example():
     from test_elden_spells import ready
     from test_elden_equipment_creation import ready as physical
     from test_elden_loadouts import fixture as equipment
-    return equipment(source=physical(source=ready(source=elden_appearance()[0])[0]))
+    from test_elden_tools import fixture as tools
+    return tools(source=equipment(source=physical(source=ready(source=elden_appearance()[0])[0])))
 
 def kh3_example():
     import zlib
@@ -117,7 +122,7 @@ def generate():
     from test_remake_inventory_capacity import fixture as remake_capacity
     result={}
     factories={'webfishing':fishing,'ror2':profile,'alice':alice,'kh1':lambda:populated_kh('kh1'),
-        'kh2':lambda:populated_kh('kh2'),'recom':lambda:archive('recom',1),'bbs':lambda:kh_extra('bbs'),
+        'kh2':lambda:populated_kh('kh2'),'recom':lambda:kh_extra('recom'),'bbs':lambda:kh_extra('bbs'),
         'ddd':lambda:kh_extra('ddd'),'kh3':kh3_example,'eldenring':elden_example,
         'maxpayne':inventory_fixture,'re1_hd':hd,'re4_2005':re4_ready,'re4_remake':re4_remake_example,
         're5':re5,'re6':re6,'re8':village,'re9':lambda:requiem(parts=True,equipment=True),

@@ -31,8 +31,12 @@ cover exact changed bytes, swaps, duplicate rejection, inconsistent references,
 combined growth/upgrades and UI staging. Native tests are in-memory copies only.
 
 Game-load verification is still pending. Complete Elden Ring support is **not**
-claimed: talisman assignment/families, ammunition/quick items/pouch/Physick, Ash
+claimed: talisman assignment/families, Ash
 attachment/affinities, full DLC and progression dependencies remain open.
+
+v0.35 adds four ammunition slots plus ten quick items, six pouch assignments
+and two Physick tears. [Exact ownership, synchronization and verification
+rules](COMPATIBILITY_V35.md) are documented separately.
 
 The independent writer uses factual layout definitions cross-checked with the
 already attributed pinned SaveForge equipment writer and ER-Save-Lib structures.

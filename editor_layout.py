@@ -72,9 +72,10 @@ def organize_fields(game, fields):
         group = item.group or 'Economy'
         category, section, selection = 'Progress', group, group
         if game=='eldenring':
-            if group in ('Attributes','Vitals','Appearance','Equipment capacity','Spells','Equipment loadout'):
+            if group in ('Attributes','Vitals','Appearance','Equipment capacity','Spells','Equipment loadout','Tool loadout'):
                 category='Character'
                 if group=='Equipment loadout':section,selection=item.collection or group,'Equipment loadout'
+                if group=='Tool loadout':section,selection=item.collection or group,'Tools and Physick'
                 if group=='Appearance':section,selection=item.collection or group,'Appearance'
             elif group=='Spell collection':category,section,selection='Collection',item.collection or group,'Learned spells'
             elif group=='Add items':category,section,selection='Collection',item.collection or group,'Add items'

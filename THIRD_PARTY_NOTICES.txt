@@ -1,5 +1,13 @@
 Third-party notices: cryptography 50.0.2
 
+elden_tool_tables.py adapts factual tool, Spirit Ash, Crystal Tear and projectile
+names/identities/categories from oisis/EldenRing-SaveForge at
+ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5 under GPL-3.0-or-later.
+Upstream: https://github.com/oisis/EldenRing-SaveForge
+The independent transaction writers do not bundle the upstream implementation,
+game descriptions, original sprites, regulation or reference saves.
+The project's GPL-3.0-or-later license is included in LICENSE. See SOURCES.md.
+
 
 LICENSE
 

@@ -70,6 +70,10 @@ class ExtraKhArchive:
                     self.warnings.append(f'Slot {index+1}: internal checksum mismatch. Enable integrity repair.')
                 add('moogle_points', 'Moogle Points', 0x2d58, '<i', 9999999, 'Currency')
                 add('experience', 'Experience', 0x2d50, '<i', 99999999, 'Level and experience')
+                level=struct.unpack_from('<i',raw,record+0x2d54)[0]
+                if 1<=level<=99:
+                    add('level','Saved character level',0x2d54,'<i',99,'Level and experience',1,
+                        note='Stored level for the current gameplay record. XP, HP, CP, growth choices, acquired sleights and campaign state are independent and are not recalculated.')
                 difficulty = raw[record+0x481]
                 if difficulty not in (0, 1, 2):
                     raise ValueError('Unsupported Re:Chain of Memories difficulty.')

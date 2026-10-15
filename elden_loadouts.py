@@ -7,10 +7,13 @@ from collections import Counter
 import struct,zlib
 from elden_weapons import WEAPONS
 from elden_equipment_tables import ARMOR
+from elden_tool_tables import AMMUNITION
 
 SLOTS={0:('Left hand 1','Weapons'),1:('Right hand 1','Weapons'),
        2:('Left hand 2','Weapons'),3:('Right hand 2','Weapons'),
        4:('Left hand 3','Weapons'),5:('Right hand 3','Weapons'),
+       6:('Arrows 1','Arrows'),7:('Bolts 1','Bolts'),
+       8:('Arrows 2','Arrows'),9:('Bolts 2','Bolts'),
        12:('Head','Head armor'),13:('Chest','Chest armor'),
        14:('Arms','Arm armor'),15:('Legs','Leg armor')}
 BARE={0:110000,12:0x10002710,13:0x10002774,14:0x100027d8,15:0x1000283c}
@@ -38,7 +41,11 @@ class EquipmentLoadout:
         self.inventory_ok=u32(raw,character.held)==sum(h not in (0,0xffffffff) for h,q,a in rows)
         for row,(h,q,a) in enumerate(rows):
             item=physical.get(h)
-            if q!=1 or counts[h]!=1 or h in duplicates or item is None:continue
+            if q<1 or counts[h]!=1 or h in duplicates or item is None:continue
+            if h>>28==8 and item in AMMUNITION:
+                title,kind=AMMUNITION[item];self.owned[h]=(row,item,kind,title)
+                continue
+            if q!=1:continue
             base=item//10000*10000
             if h>>28==8 and (base in WEAPONS or item==BARE[0]) and item>>28==0:
                 maximum=0 if base==33250000 else WEAPONS.get(base,('',0))[1]
@@ -56,8 +63,9 @@ class EquipmentLoadout:
             h=u32(raw,character.player+0x34c+slot*4);self.current[slot]=h
             reason=self._reason(raw,slot,h)
             candidates=sorted((h for h,v in self.owned.items() if v[2]==kind),key=lambda h:(self.owned[h][3],h))
+            if slot in (6,7,8,9):candidates.insert(0,0)
             if h not in candidates:candidates.insert(0,h)
-            labels=tuple((self.owned[v][3]+f' · copy {self.owned[v][0]+1}') if v in self.owned else 'Current assignment (unresolved)' for v in candidates)
+            labels=tuple('Empty' if v==0 and slot in (6,7,8,9) else (self.owned[v][3]+f' · copy {self.owned[v][0]+1}') if v in self.owned else 'Current assignment (unresolved)' for v in candidates)
             key='equipment_slot:'+str(slot);self.options[key]=tuple(candidates);self.reasons[slot]=reason
             self.fields.append(Field(key,title,candidates.index(h),character.player+0x34c+slot*4,'',0,len(candidates)-1,
                 'Equipment loadout',choices=labels,readonly=bool(reason) or len(candidates)<2,collection=kind,
@@ -65,13 +73,15 @@ class EquipmentLoadout:
 
     def _reason(self,raw,slot,h):
         if not self.inventory_ok:return 'The held inventory count is inconsistent. Equipment is preserved.'
-        if h not in self.owned:return 'The current assignment is not a uniquely owned supported held item. It is preserved.'
-        row,item,kind,title=self.owned[h];p=self.c.player
+        empty=h==0 and slot in (6,7,8,9)
+        if not empty and h not in self.owned:return 'The current assignment is not a uniquely owned supported held item. It is preserved.'
+        row,item,kind,title=(-385,0xffffffff,SLOTS[slot][1],'Empty') if empty else self.owned[h]
+        p=self.c.player
         if kind!=SLOTS[slot][1]:return 'The current equipment category does not match this slot.'
-        if (u32(raw,p+0x280+slot*4),u32(raw,p+0x2f4+slot*4),u32(raw,self.armaments+slot*4))!=(row+0x180,item&0x0fffffff,item):
+        if (u32(raw,p+0x280+slot*4),u32(raw,p+0x2f4+slot*4),u32(raw,self.armaments+slot*4))!=((0xffffffff,)*3 if empty else (row+0x180,item&0x0fffffff,item)):
             return 'The native equipment representations disagree. Save again after equipping this slot in the game.'
-        indices=(0,2,4,1,3,5,6,8,7,9) if slot<6 else (12,13,14,15,17,18,19,20,21)
-        at=self.c.fingerprints+(28 if slot<6 else 32)
+        indices=(0,2,4,1,3,5,6,8,7,9) if slot<10 else (12,13,14,15,17,18,19,20,21)
+        at=self.c.fingerprints+(28 if slot<10 else 32)
         if u32(raw,at)!=fingerprint(raw,p+0x2f4,indices):return 'The equipment fingerprint does not match; its dependent state is protected.'
         return ''
 
@@ -89,6 +99,11 @@ class EquipmentLoadout:
             seen[h]=slot
         for slot,h in requested.items():
             if self.reasons[slot]:raise ValueError(self.reasons[slot])
+            if h==0 and slot in (6,7,8,9):
+                for at,value in ((self.c.player+0x280+slot*4,0xffffffff),(self.c.player+0x2f4+slot*4,0xffffffff),
+                                 (self.c.player+0x34c+slot*4,0),(self.armaments+slot*4,0xffffffff)):
+                    struct.pack_into('<I',result,at,value)
+                continue
             row,original,kind,title=self.owned[h]
             # Existing weapon upgrades are applied before assignments. Resolve
             # their resulting identity from the already synchronized old slot
@@ -103,7 +118,7 @@ class EquipmentLoadout:
                              (self.c.player+0x34c+slot*4,h),(self.armaments+slot*4,item)):
                 struct.pack_into('<I',result,at,value)
         for slots,offset in (((0,2,4,1,3,5,6,8,7,9),28),((12,13,14,15,17,18,19,20,21),32)):
-            if any((slot<6)==(offset==28) for slot in requested):
+            if any((slot<10)==(offset==28) for slot in requested):
                 struct.pack_into('<I',result,self.c.fingerprints+offset,fingerprint(result,self.c.player+0x2f4,slots))
         return True
 

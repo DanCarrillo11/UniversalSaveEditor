@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.35.0-alpha — Owned loadouts and Kingdom Hearts corrections
+
+- Elden Ring: assign existing held arrow/bolt stacks to four ammunition slots,
+  ten quick items, six pouch entries and two owned Crystal Tears. Synchronize
+  native references and checked fingerprints; preserve active selection,
+  ownership and unrelated state. Reject duplicates and inconsistent layouts.
+- KH3: correct the five Link command identities to 70–74 (65–69 were incorrect).
+  Offer eleven consumable shortcut commands with distinct command/item enums,
+  owned-stock and enabled Sora-equipment checks. Clear recognized shortcuts when
+  an explicit stock/equipment change makes their item unavailable.
+- DDD: edit existing recognized spirits' stored rank code, disposition index
+  and affinity counter. Preserve the other nibble and unknown encodings; no
+  growth, affinity levels, board rewards or species-specific names are inferred.
+- Re:CoM: expose recognized saved character levels 1–99 independently of XP,
+  HP, CP and level-up rewards. Preserve decks and story.
+- Verify 28 ammunition, 27 quick-item and 25 Physick edits/restorations across
+  overlapping public Elden Ring records; 39 edits across 13 DDD spirits; two
+  Re:CoM level records; and an encrypted KH3 item shortcut. Originals remained
+  unchanged. These are file-level checks, not proof of in-game loading.
+- Refresh no-save previews and document remaining compatibility gates. No new
+  games or icons; complete support is not claimed. See docs/COMPATIBILITY_V35.md.
+
 ## v0.34.0-alpha — Elden Ring owned equipment loadouts
 
 - Add six hand and four armor assignments under Character > Equipment loadout,

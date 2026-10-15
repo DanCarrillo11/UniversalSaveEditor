@@ -10,7 +10,12 @@ MAGICS=(('Fire',29),('Blizzard',33),('Thunder',37),('Water',41),('Aero',45),('Cu
 NAMES={29:'Fire',30:'Fira',31:'Firaga',33:'Blizzard',34:'Blizzara',35:'Blizzaga',
        37:'Thunder',38:'Thundara',39:'Thundaga',41:'Water',42:'Watera',43:'Waterga',
        45:'Aero',46:'Aerora',47:'Aeroga',49:'Cure',50:'Cura',51:'Curaga'}
-LINKS={65:'Meow Wow Balloon',66:'8-Bit Blast',67:"King's Flare",68:'Plasma Encounter',69:'Sea Spectacle'}
+LINKS={70:'Meow Wow Balloon',71:'8-Bit Blast',72:"King's Flare",73:'Plasma Encounter',74:'Sea Spectacle'}
+# CommandType and ConsumableType are distinct native enumerations. Hi-Ether
+# appears earlier in the command enum but last in the consumable inventory.
+CONSUMABLES={58:('Potion',1),59:('Hi-Potion',2),60:('Mega-Potion',3),61:('Ether',4),
+             62:('Hi-Ether',11),63:('Mega-Ether',5),64:('Elixir',6),65:('Megalixir',7),
+             66:('Refocuser',8),67:('Hi-Refocuser',9),68:('Panacea',10)}
 RECORDS=('Verum Rex high score','Verum Rex timer','Flash Tracer 1 high score','Flash Tracer 2 high score',
          'Flash Tracer 1 timer','Flash Tracer 2 timer','Frozen Slider high score','Frozen Slider timer',
          'Frozen Slider medals','Festival Dance high score','Festival Dance longest chain')
@@ -56,14 +61,13 @@ class Kh3Progress:
             choice(key,name,offset,{0:'Not acquired',identifier:'Acquired'},'Links',
                 'Changes this saved Link entry. Removing a Link clears its matching known shortcuts; story and installed content remain unchanged.')
             self.links[identifier]=offset
-        # Normal magic and Links only: form attacks, sea magic and unsupported
-        # commands are never silently converted to a regular shortcut.
-        options={0:'Empty',**NAMES,**LINKS}
+        # Form attacks, sea magic and unknown commands remain protected.
+        options={0:'Empty',**NAMES,**LINKS,**{i:name for i,(name,item) in CONSUMABLES.items()}}
         for group in range(3):
             for index,button in enumerate(('Circle','Triangle','Square','Cross')):
                 key=f'shortcut:{group}:{index}';offset=0xbf20+(group*4+index)*4
                 current=choice(key,f'Set {group+1} · {button}',offset,options,'Shortcuts',
-                    'Choose a learned spell tier or acquired Link. Existing unsupported commands are protected. Item shortcuts are not reassigned by this selector.')
+                    'Choose a learned spell, acquired Link or available consumable equipped by Sora. Items are not granted automatically. Known item shortcuts clear if their last available Sora item is explicitly removed; unknown commands remain protected.')
                 if key in self.operations:self.shortcuts[key]=(offset,current)
         for index,label in enumerate(RECORDS):
             offset=0x83cd8+index*4;value=struct.unpack_from('<i',raw,offset)[0]
@@ -95,11 +99,18 @@ class Kh3Progress:
                 struct.pack_into('<i',result,offset,struct.unpack_from('<i',result,self.magic[family][0])[0])
             if current in self.links and 'link:'+str(current) in changes and not struct.unpack_from('<i',result,self.links[current])[0]:
                 struct.pack_into('<i',result,offset,0)
+            if current in CONSUMABLES:
+                item=CONSUMABLES[current][1]
+                relevant=(f'inventory:{item}' in changes or any(k.startswith('character:Sora:equipment:consumable:') for k in changes))
+                if relevant and not self.item_available(result,item):struct.pack_into('<i',result,offset,0)
         for key in changes:
             if key not in self.shortcuts:continue
             offset,_=self.shortcuts[key];value=struct.unpack_from('<i',result,offset)[0]
             if not value:continue
-            if value in LINKS:
+            if value in CONSUMABLES:
+                if not self.item_available(result,CONSUMABLES[value][1]):
+                    raise ValueError('An item shortcut requires a positive acquired inventory quantity and an enabled matching Sora consumable slot. Equip the item first or include that equipment change.')
+            elif value in LINKS:
                 if value not in self.links or struct.unpack_from('<i',result,self.links[value])[0]!=value:
                     raise ValueError('A shortcut must reference an acquired spell or Link. Acquire it first or choose another command.')
             else:
@@ -107,3 +118,12 @@ class Kh3Progress:
                 learned=struct.unpack_from('<i',result,self.magic[name][0])[0] if name in self.magic else 0
                 if not base<=value<=learned<base+3:
                     raise ValueError('A shortcut must reference an acquired spell or Link. Acquire it first or choose another command.')
+
+    @staticmethod
+    def item_available(raw,item):
+        at=0x8f4+item*2
+        if not raw[at] or not raw[at+1]&1:return False
+        for i in range(8):
+            offset=0x1880+0x118+i*8
+            if raw[offset]==item and raw[offset+1] in (0,1) and raw[offset+4]==1:return True
+        return False

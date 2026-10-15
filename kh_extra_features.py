@@ -12,6 +12,7 @@ class ExtraKhFeatures:
     def __init__(self,raw,game,record,slot,Field):
         self.fields=[];self.operations={};self.raw,self.record,self.game=raw,record,game
         self.spirit_flags={}
+        self.spirit_nibbles={}
         def choice(key,label,delta,options,group,note='',collection=''):
             value=struct.unpack_from('<H',raw,record+delta)[0]
             readonly=value not in options
@@ -103,6 +104,18 @@ class ExtraKhFeatures:
             group='Spirit appearance' if appearance else 'Dream Eaters' if key=='max_hp' else 'Spirit progression'
             self.fields.append(Field(f'spirit:{index}:{key}',label,value,base+offset,fmt,low,high,group,collection=collection,
                 note=('Saved RGB tint only. Paint inventory, stats, rank and ability boards are preserved.' if appearance else notes[key])))
+        for shift,part,label,maximum in ((0,'rank','Stored rank code',6),(4,'disposition','Disposition index',3)):
+            value=(self.raw[base+2]>>shift)&15
+            key=f'spirit:{index}:{part}'
+            self.fields.append(Field(key,label,value,base+2,'',0,max(value,maximum),'Spirit progression',
+                collection=collection,readonly=value>maximum,
+                note='Changes only the recognized saved nibble. The other nibble, species, growth stats and ability-board bytes are preserved. Disposition indices are species-specific; rank changes do not recalculate prior growth.'))
+            if value<=maximum:self.spirit_nibbles[key]=(base+2,shift)
+        affinity=struct.unpack_from('<i',self.raw,base+40)[0]
+        if affinity>=0:
+            self.fields.append(Field(f'spirit:{index}:affinity','Stored affinity counter',affinity,base+40,'<i',0,2147483647,
+                'Spirit progression',collection=collection,
+                note='Raw persistent affinity counter. Affinity-level nibbles, rewards, growth, petting state and ability boards remain unchanged; no percentage or level conversion is assumed.'))
         if self.raw[base+92] in (1,2):
             key=f'spirit:{index}:shiny';self.spirit_flags[key]=base+92
             self.fields.append(Field(key,'Shiny appearance',int(self.raw[base+92]==2),base+92,'',0,1,'Spirit appearance',
@@ -114,3 +127,5 @@ class ExtraKhFeatures:
             if key in self.operations:
                 offset,values=self.operations[key];struct.pack_into('<H',result,offset,values[value])
             elif key in self.spirit_flags:result[self.spirit_flags[key]]=2 if value else 1
+            elif key in self.spirit_nibbles:
+                at,shift=self.spirit_nibbles[key];result[at]=(result[at]&~(15<<shift))|(value<<shift)
