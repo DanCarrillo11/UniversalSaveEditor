@@ -1327,7 +1327,9 @@ class Window(QMainWindow):
     def closeEvent(self,event):
         if self._installing_update or self.may_discard():
             self.startup_update_timer.stop()
-            if not self._installing_update:self.updater.cancel()
+            # Keep a verified download available for manual replacement after
+            # closing the app; interrupted downloads are always discarded.
+            if not self._installing_update and self.updater.state!='ready':self.updater.cancel()
             if self.settings is not None:
                 self.settings.setValue('window/geometry',self.saveGeometry())
                 self.settings.setValue('files/lastDirectory',self.last_directory)

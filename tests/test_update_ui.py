@@ -55,6 +55,11 @@ class UpdateUiTests(unittest.TestCase):
         w=self.window;w.updater.state='ready'
         with patch('sys.frozen',True,create=True),patch.object(w,'may_discard',return_value=False),patch('update_install.prepare_install') as prepare:
             w.install_update();prepare.assert_not_called();self.assertFalse(w._installing_update)
+    def test_normal_exit_keeps_verified_download_for_manual_replacement(self):
+        w=self.window;w.updater.state='ready'
+        with patch.object(w.updater,'cancel') as cancel:
+            w.close();cancel.assert_not_called()
+        w.updater.state='idle'
     def test_handoff_failure_keeps_window_and_verified_download(self):
         w=self.window;w.updater.state='ready';w.updater.downloaded=Path(self.temp.name)/'UniversalSaveEditor.exe'
         with patch('sys.frozen',True,create=True),patch.object(w,'may_discard',return_value=True),patch('update_install.prepare_install',side_effect=PermissionError),patch('app.QMessageBox.warning') as warning:

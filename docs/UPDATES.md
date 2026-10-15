@@ -34,6 +34,8 @@ known temporary update files. Subsequent startup crashes are not automatically d
   or use **Official releases**.
 - If Windows denies replacing the executable, use **Open download folder**, close
   the app and replace the old executable manually. Administrator elevation is not requested.
+  Verified downloads remain in that folder after closing; incomplete downloads
+  are removed. You may delete a retained download after manual replacement.
 - Source-code runs can check and download; automatic executable replacement is
   offered only by the packaged Windows app.
 
