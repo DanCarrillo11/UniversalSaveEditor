@@ -94,4 +94,9 @@ See [v0.18 held creation, armament mirrors and NG+ limits](EDITOR_EXPANSION.md).
 
 ## v0.25 expansion
 
+For v0.32 variable GaItem creation, see [equipment creation](ELDEN_RING_EQUIPMENT.md).
+It preserves existing records, bounds growth to verified padding, retains the
+anchored tail and verifies new held ownership after reparsing. This does not
+establish support for every padding/layout variant or game loading.
+
 See [functionality expansion](FUNCTIONAL_EXPANSION.md) for new mapped operations, context/type guards, native-file checks and explicit limits.

@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.32.0-alpha — Elden Ring weapon and armor creation
+
+- Add separate copies of 377 identified base-game armaments and 559 armor
+  pieces. Each new piece gets a native physical record, unique handle, held
+  inventory row and acquisition-order entry; registry and counters update together.
+- Rebuild variable-size equipment records in the verified native two-pass order,
+  preserve existing Ash references and unrelated bytes, and consume only proven
+  zero padding. Keep the final 178-byte block anchored. Unsupported layouts,
+  missing references and insufficient combined capacity are protected.
+- Combine creation with stats, existing upgrades, spell/goods edits and other
+  characters. Reparse the complete output and verify newly created ownership
+  before writing. Add searchable categorized controls and offline previews.
+- Correct Meteorite Staff's previous generic +25 limit: it cannot be reinforced.
+- Native-file creation checks passed on 18 character records across four public
+  files; ten other records lacked verified padding and stayed protected. Samples
+  overlap. In-game loading and complete Elden Ring support remain unverified.
+  See [equipment creation and its limits](docs/ELDEN_RING_EQUIPMENT.md).
+
 ## v0.31.0-alpha — KH1 spell tiers, summons and collections
 
 - Learn or upgrade all seven spell families using their real shared tier bytes.

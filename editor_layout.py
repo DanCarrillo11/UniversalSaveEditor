@@ -77,6 +77,7 @@ def organize_fields(game, fields):
                 if group=='Appearance':section,selection=item.collection or group,'Appearance'
             elif group=='Spell collection':category,section,selection='Collection',item.collection or group,'Learned spells'
             elif group=='Add items':category,section,selection='Collection',item.collection or group,'Add items'
+            elif group=='Add equipment':category,section,selection='Collection',item.collection or group,'Add equipment'
             elif group in ('Inventory','Storage'):
                 category,section,selection='Collection',item.collection or group,group
             elif group=='World map':category,section,selection='Collection',item.collection or group,'World map'

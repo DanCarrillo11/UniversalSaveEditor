@@ -416,3 +416,24 @@ redistributed. Native-file checks across 39 records corroborated the shared
 tiers, compact summon IDs, Trinity mask and MSB-first puppy order. No in-game
 verification or automatic story/reward completion is claimed. See
 docs/KH1_PROGRESSION.md for implementation bounds and remaining gates.
+
+## Elden Ring physical equipment creation
+
+Independent Python allocation/serialization uses format facts cross-checked with
+[oisis/EldenRing-SaveForge](https://github.com/oisis/EldenRing-SaveForge/tree/ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5)
+`backend/core/gaitem_native_layout.go`, `structures.go`, `writer.go`,
+`slot_rebuild.go` and their native allocation/counter/tail regression tests.
+The deprecated unchecked FlushGaItems truncation path is not used. Creation
+consumes only proven zero slack and preserves the final anchored 178 bytes.
+Existing native variable records, including Ash links, remain byte-exact.
+
+The factual catalogue (IDs/names/categories only) is cross-checked against
+SaveForge's base-game classification and `backend/db/data/{head,chest,arms,legs}.go`
+with flagged entries excluded, and
+[ClayAmore/ER-Save-Lib](https://github.com/ClayAmore/ER-Save-Lib/tree/664ff9e83b7022a6fdc5a8332e8b7b22dce34e0f)
+`src/api/text/{weapon_name,protector_name}.rs` (base-game, non-error identities).
+The Rust `src/save/user_data_x.rs` independently cross-checks record shapes.
+No source implementation, original game descriptions, images, regulation or
+reference saves are redistributed. Meteorite Staff's non-reinforceable status
+is explicit in its game-authored item text, correcting the reference catalogue's
+generic +25 limit. See docs/ELDEN_RING_EQUIPMENT.md for exact verification limits.

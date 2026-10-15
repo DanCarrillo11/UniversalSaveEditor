@@ -21,7 +21,7 @@ class Game:
     platforms: tuple[str, ...] = ('steam',)
 
 GAMES = (
-    Game('eldenring','ELDEN RING','Original game · Steam','ELDEN RING','#c9b580',True,'Runes · Attributes · Automatic level · Current vitals · Appearance · Map visibility · Talisman capacity · Learn base-game spells · Spell loadouts · Inventory and storage · Add goods · Weapon upgrades · NG+ scaling',True),
+    Game('eldenring','ELDEN RING','Original game · Steam','ELDEN RING','#c9b580',True,'Runes · Attributes · Automatic level · Current vitals · Appearance · Map visibility · Talisman capacity · Learn base-game spells · Spell loadouts · Inventory and storage · Add goods · Create weapons and armor · Weapon upgrades · NG+ scaling',True),
     Game('re1_hd','RESIDENT EVIL','HD Remaster · Steam','RESIDENT EVIL','#a3b5a3',True,'Multiple save records · Difficulty · Defensive supplies · Inventory and item box · 131 documented item identities · Item replacement and creation',True),
     Game('re2','RESIDENT EVIL 2','2019 Remake · Steam','RESIDENT EVIL','#98adc7',True,'Difficulty · Player health · Existing inventory quantities · Rewards · Completion and challenge records · Ghost Survivors',True),
     Game('re3','RESIDENT EVIL 3','2020 Remake · Steam','RESIDENT EVIL','#aebac9',True,'Player health · Existing inventory quantities · Shop points and flags · Rewards · Completion, challenge and combat records',True),

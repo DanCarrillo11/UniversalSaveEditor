@@ -18,6 +18,21 @@ from editor_layout import organize_fields
 from editor_navigation import category_title
 
 class InterfaceTests(unittest.TestCase):
+    def test_elden_equipment_creation_survives_search_category_and_review_without_writing(self):
+        from test_elden_equipment_creation import ready,ARMOR_ID
+        raw=ready();path=self.root/'ER0000.sl2';path.write_bytes(raw)
+        w=self.window;self.assertTrue(w.load('eldenring',path))
+        w.inputs[0,'create_weapon:1000000'].setText('2')
+        w.inputs[0,'create_armor:'+str(ARMOR_ID)].setText('1')
+        w.inputs[0,'runes'].setText('900')
+        self.assertEqual(w.validated_changes(),{(0,'create_weapon:1000000'):2,(0,'create_armor:'+str(ARMOR_ID)):1,(0,'runes'):900})
+        w.reveal_field((0,'create_weapon:1000000'))
+        self.assertEqual(w.inputs[0,'create_weapon:1000000'].text(),'2')
+        self.assertIn('Add weapons',w.tabs.currentWidget().navigation.heading.text())
+        out=w.save.patched(w.validated_changes());check=Save(out,'eldenring')
+        self.assertEqual(len(check.elden_ring.physical_equipment[0].handles)-len(w.save.elden_ring.physical_equipment[0].handles),3)
+        self.assertEqual(path.read_bytes(),raw);self.assertTrue(w.review_button.isEnabled())
+
     def test_short_virtual_sections_do_not_compress_field_labels(self):
         w=self.window;w.show();w.resize(1440,900);w.open_preview('kh3')
         w.inputs[0,'character:Donald:ai:ability'];self.app.processEvents()

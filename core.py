@@ -723,6 +723,8 @@ class Save:
                 actual=expected if valid else None
             if actual is None and self.game=='eldenring' and key.startswith('add_goods:'):
                 actual=check.elden_ring.added_amount(index,key)
+            if self.game=='eldenring' and key.startswith(('create_weapon:','create_armor:')):
+                actual=expected if self.elden_ring.physical_equipment[index].verifies(check.elden_ring.physical_equipment[index],key,value) else None
             if actual is None and self.game=='re1_hd' and key.endswith(':identity') and value==0:
                 identifier,quantity=struct.unpack_from('<2I',check.re_hd.plain,field.offset)
                 if (identifier,quantity)==(0,0):actual=0

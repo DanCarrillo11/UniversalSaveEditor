@@ -15,6 +15,7 @@ from elden_appearance import appearance_fields
 from elden_world_tables import MAPS
 from elden_spells import SpellLoadout
 from elden_spell_acquisition import SpellAcquisition
+from elden_equipment_creation import PhysicalEquipment
 
 SLOT_SIZE = 0x280000
 BLOCK_SIZE = SLOT_SIZE + 16
@@ -92,6 +93,7 @@ class EldenRingSave:
         self.world_flags=[]
         self.spell_loadouts=[]
         self.spell_acquisition=[]
+        self.physical_equipment=[]
         self.blocks = [(0x300 + i * BLOCK_SIZE, BLOCK_SIZE) for i in range(10)]
         self.blocks += [(GLOBAL_START, 0x60010), (GLOBAL_START + 0x60010, 0x240020)]
         for index, (start, length) in enumerate(self.blocks):
@@ -234,8 +236,12 @@ class EldenRingSave:
                 base_id=identifier//10000*10000
                 table=WEAPONS.get(base_id)
                 if table is None or identifier>>28:continue
-                title,maximum=table;affinity=(identifier-base_id)//100;upgrade=(identifier-base_id)%100
-                if not 0<=affinity<=12 or (maximum==10 and affinity) or upgrade>maximum:continue
+                title,maximum=table
+                # Meteorite Staff is explicitly non-reinforceable in the native
+                # item text; the reference catalogue's generic +25 was incorrect.
+                if base_id==33250000:maximum=0
+                affinity=(identifier-base_id)//100;upgrade=(identifier-base_id)%100
+                if not 0<=affinity<=12 or (maximum in (0,10) and affinity) or upgrade>maximum:continue
                 mirrors=[];safe=True
                 for n in range(6):
                     if number(raw,equipped+0x58+n*4)!=handle:continue
@@ -244,8 +250,8 @@ class EldenRingSave:
                     mirrors.extend((equipped+n*4,armaments+n*4,profile+466+n*4))
                 if mirrors and number(raw,fingerprints+28)!=self._weapon_hash(raw,equipped):safe=False
                 key=f'weapon:{handle:08x}'
-                fields.append(field_type(key,title+' · Upgrade',upgrade,id_offset,'',0,maximum,location,readonly=not safe,
-                    note=(f'Existing weapon · entry {entry+1} · affinity {affinity}. Preserves identity, affinity and Ash of War. Equipped copies and menu data synchronize automatically. The highest weapon level is never reduced.' if safe else
+                fields.append(field_type(key,title+' · Upgrade',upgrade,id_offset,'',0,maximum,location,readonly=not safe or not maximum,
+                    note=('This weapon cannot be reinforced. Its saved identity, parameters and Ash references are preserved.' if not maximum else f'Existing weapon · entry {entry+1} · affinity {affinity}. Preserves identity, affinity and Ash of War. Equipped copies and menu data synchronize automatically. The highest weapon level is never reduced.' if safe else
                           'Read-only: equipped copies or the saved menu snapshot disagree. Unequip this weapon in the game and save again, or choose another verified weapon. No mismatched representation is overwritten.'),collection='Weapon upgrades',item_id=base_id))
                 if safe:records[key]=(id_offset,identifier,handle,maximum,tuple(mirrors))
             self.weapon_records.append(records)
@@ -253,6 +259,8 @@ class EldenRingSave:
             acquisition=SpellAcquisition(raw,held,registry,field_type)
             fields.extend(acquisition.fields)
             self.spell_acquisition.append(acquisition)
+            creation=PhysicalEquipment(raw,self.characters[-1],storage,field_type)
+            fields.extend(creation.fields);self.physical_equipment.append(creation)
             self.slots.append(slot_type(f'Character {physical+1} · {name}', fields))
         if not self.slots:
             raise ValueError('No active Elden Ring characters were found. Save a character in the game first.')
@@ -395,6 +403,8 @@ class EldenRingSave:
                 global_changed = True
             for relative, data in self._fingerprint_data(result, player):
                 struct.pack_into('<I', result, character.fingerprints+relative, player_hash(data))
+            # Structural equipment growth follows all edits at original offsets.
+            self.physical_equipment[index].patch(result,{key:value for (slot,key),value in changes.items() if slot==index})
         blocks = set(range(12)) if repair_crc else {self.characters[i].physical for i in touched}
         if global_changed:
             blocks.add(10)

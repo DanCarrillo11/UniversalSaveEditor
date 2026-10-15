@@ -23,6 +23,12 @@ class Problem:
 # Fixed guidance only: never show an arbitrary exception, path, identifier or
 # save value. These are known editing conflicts, not unsupported-file errors.
 EDIT_CONFLICTS=(
+    ('the combined equipment additions exceed', 'The equipment additions exceed this character’s available capacity.',
+     ('Reduce the number of requested weapons or armor pieces.','Physical records, inventory capacity and verified padding must all fit together.')),
+    ('other additions used the available held-inventory capacity', 'The combined item additions fill the held inventory.',
+     ('Reduce the goods or equipment additions.','Existing inventory and storage entries are preserved.')),
+    ('equipment acquisition counters would overflow', 'The equipment acquisition counters cannot accommodate these additions.',
+     ('Reset the equipment additions.','The editor does not reset or overwrite existing acquisition history.')),
     ('kh2 magic shortcuts require', 'The selected KH2 shortcut needs a learned spell family.',
      ('Learn the spell in Sora’s Magic section or choose another shortcut.','The shortcut will use the selected learned tier.')),
     ('kh2 item shortcuts require', 'The selected KH2 shortcut needs an item equipped by Sora.',

@@ -8,9 +8,9 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.31.0-alpha** adds KH1 shared spell tiers, summons, learned Trinities,
-rescued puppies and unspent Torn Pages. The previous release corrected KH2 stock
-identities and expanded equipment/AP relationships. **Complete support for all games has not been achieved.** New
+Version **v0.32.0-alpha** expands Elden Ring with base-game weapon and armor
+creation, native equipment records and acquisition bookkeeping. Earlier releases
+expanded KH1/KH2 progression. **Complete support for all games has not been achieved.** New
 games and new icon work remain paused until the existing catalogue is complete.
 
 ## Download and run
@@ -22,6 +22,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [Elden Ring equipment creation](docs/ELDEN_RING_EQUIPMENT.md): 377 base-game armaments and 559 armor pieces, separate copies with native handles, acquisition counters and bounded structural growth. Unknown layouts and insufficient padding remain protected.
 
 - [KH1 spell tiers and acquisitions](docs/KH1_PROGRESSION.md): seven spell families, Donald acquisition synchronization, six summons, five Trinity colors, 99 rescued puppies and unspent Torn Pages. Existing rewards and story flags are preserved.
 
