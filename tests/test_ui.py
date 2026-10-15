@@ -1137,6 +1137,23 @@ class InterfaceTests(unittest.TestCase):
                 self.assertLessEqual(w.tabs.count(),3)
                 w.edits={}
 
+    def test_kh2_magic_and_ap_edits_survive_navigation_and_preserve_the_file_until_saved(self):
+        from test_kh2_relationships import fixture
+        raw,*_=fixture();path=self.root/'kh2-relationships.png';path.write_bytes(raw)
+        w=self.window;self.assertTrue(w.load('kh2',path))
+        for key,value in (('character:0:ap_boost',1),('character:0:ability:0','Guard · Equipped'),
+                          ('character:0:magic:fire',2),('character:0:magic_shortcut:0','Fire')):
+            field=w.field_index[0,key];w.reveal_field((0,key));control=w.inputs[0,key]
+            if field.choices:control.setCurrentIndex(field.choices.index(value) if isinstance(value,str) else value)
+            else:control.setText(str(value))
+        changes=w.validated_changes();out=w.save.patched(changes);parsed=Save(out,'kh2')
+        values={f.key:f for f in parsed.slots[0].fields}
+        self.assertEqual(values['character:0:ap_used'].value,2)
+        self.assertEqual(values['character:0:ap_capacity'].value,2)
+        self.assertEqual(values['character:0:magic:fire'].value,2)
+        self.assertEqual(values['character:0:magic_shortcut:0'].choices[values['character:0:magic_shortcut:0'].value],'Fire')
+        self.assertEqual(path.read_bytes(),raw);self.assertFalse(parsed.warnings);self.assertLessEqual(w.tabs.count(),3)
+
     def test_copied_requiem_prompts_for_original_account_only_once(self):
         from test_re_engine import stream,wrap,ACCOUNT
         path=self.root/'data00-1.bin';path.write_bytes(wrap(stream('re9'),'re9'))

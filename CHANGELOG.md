@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.30.0-alpha — KH2 inventory, AP, magic and acquisitions
+
+Corrects an important KH2 inventory-label problem: bag positions are different
+from equipment/item IDs. Potion is position 0; Kingdom Key is position 33.
+278 recognized stock positions now use their proper labels, categories and
+separate artwork IDs. Unmapped positions and unsupported quantities are protected.
+
+- Equipment changes transfer copies between the bag and equipped slots. Multiple
+  changes form one transaction, so swapping two slots needs no spare bag copy.
+  Missing stock, overflowing returns and new duplicate Keyblade assignments fail
+  with guidance. Valor, Master and Final expose their real offhand slots.
+- Recognized standard-data AP checks include level AP, saved boosts, equipment
+  bonuses and learned ability costs. Used/available AP appears under Abilities.
+  Existing deficits are retained but cannot be increased by a supported edit.
+- Edit all six spell families from absent to their third tier. Four shortcuts
+  follow tier changes and clear on removal. Item shortcuts check Sora's carried
+  supplies and follow their removal.
+- Add recognized acquisitions for six forms, four summons and 13 Secret Ansem
+  Reports. New playable forms initialize a zero level and reset the Anti-point
+  byte; new summons initialize a zero summon level. Existing acquisitions and
+  unknown bits stay protected. Anti points are no longer mislabeled as form XP.
+- Lowering only maximum Drive clamps current Drive; explicit conflicts fail.
+  Updated offline previews and related-edit guidance cover these functions.
+
+
 ## v0.29.0-alpha — Equipment, spells and character controls
 
 - KH2: seven documented saved camera/map/vibration/command-menu options;

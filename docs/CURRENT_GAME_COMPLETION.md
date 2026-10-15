@@ -8,6 +8,13 @@ is marked full support and no completion percentage is inferred from field count
 
 ## Current equipment/spell pass
 
+The v0.30 continuation corrects KH2's distinct stock positions/item IDs and adds
+conserved equipment transfers, recognized standard-data AP checks, six learned
+spell tiers with shortcut synchronization, form/summon/report acquisition and
+Drive dependencies. See [the exact rules and evidence](KH2_INVENTORY_AP.md).
+File-level checks passed on 59 populated Steam records. Gameplay validation,
+complete character behavior, growth/rewards and journal/puzzle/story work remain.
+
 [Functional relationships](FUNCTIONAL_RELATIONSHIPS.md) adds owned Requiem
 equipment/weapon references, Elden Ring memorized spell lists, KH1 magic
 shortcuts, KH3 known Critical transitions/Munny ledger/companion AI and exact
@@ -90,7 +97,7 @@ progression events, installed content or platform achievements.
 | RE5 | Locate Steamworks inventory/equipment/upgrade and campaign records. The inspected public reference editor only maps profile flags/currency/figures; older Xbox/GFWL offsets are not substituted. |
 | RE6 | Purchase/owned-skill state, weapon word decoding and campaign checkpoint dependencies. Last-selected settings are not checkpoint conversions. |
 | KH1 | AP/equipment/stock dependencies, full character rules, spell tiers and persistent progression. Shared movement abilities are separate from character abilities. |
-| KH2 | AP/equipment/stock and character ability rules, full named puzzle/progression systems and actual spell-acquisition relationships. |
+| KH2 | Standard AP checks, stock transfers, spell tiers/shortcuts and recognized acquisition are implemented. Complete character-specific behavior, growth/reward rules, named puzzles/journal/story systems and in-game verification remain. |
 | ReCoM | Native confirmation of acquisition/completion flags; locate HP/CP, sleights and deck/card-state dependencies in gameplay data. |
 | BBS | Resolve Hp1/Hp2 semantics, full command footprints/capacity, command acquisition flags, D-Link/finisher status and story dependencies. |
 | DDD | Resolve Dream Eater growth/XP relationships, affinity/rank/disposition, boards, creation and full command decks. Stored spirit level/XP/stats/colors are now editable independently; source deck data still contains large unknown blocks. |

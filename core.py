@@ -512,7 +512,7 @@ class Save:
             table[index] ^= key[index % 16]
         base = archive + table_size
         character_names = KH2_CHARACTERS
-        form_names = ('Valor','Wisdom','Limit','Master','Final','Antiform','Lion','Unused 7','Unused 8','Roxas')
+        form_names = ('Valor','Wisdom','Limit','Master','Final')
         for index in range(entry_count):
             descriptor = index * 0x158
             length = struct.unpack_from('<I',table,descriptor+0x50)[0]
@@ -546,6 +546,8 @@ class Save:
                 Field('summon_level','Summon level',self.raw[record+0x3526],record+0x3526,'<B',0,7,'Progress'),
                 Field('drive_current','Current Drive',self.raw[record+0x3529],record+0x3529,'<B',0,9,'Drive'),
                 Field('drive_max','Maximum Drive',self.raw[record+0x352a],record+0x352a,'<B',0,9,'Drive'),
+                Field('drive_anti_points','Anti points',self.raw[record+0x3410],record+0x3410,'<B',0,255,'Drive',
+                      note='Saved Anti-point counter. Acquiring a new playable Drive Form resets this counter; other Antiform record bytes are preserved.'),
             ]
             for character,name in enumerate(character_names):
                 offset = record + 0x24f0 + character * 0x114
@@ -566,18 +568,14 @@ class Save:
                     Field(f'form:{form}:level',f'{name} · Level',self.raw[offset+2],offset+2,'<B',0,7,'Drive Forms'),
                     Field(f'form:{form}:experience',f'{name} · Experience',struct.unpack_from('<I',self.raw,offset+4)[0],offset+4,'<I',0,99999999,'Drive Forms'),
                 ))
-                if form<5:
+                if form in (0,3,4):
                     weapons={i:title for i,(title,kind) in KH2_EQUIPMENT.items() if kind=='Keyblade'}
                     if not struct.unpack_from('<H',self.raw,offset)[0]:weapons[0]='Empty'
                     self.party.choice(fields,len(self.slots),f'form:{form}:weapon',name+' · Weapon',offset,'<H',weapons,'Equipment',
-                                      'Changes the saved form weapon only. Stock quantities and form-unlock records are preserved.')
+                                      'Transfers one Keyblade between this dual-wield form and the bag. Form-unlock records are preserved; Sora and his dual-wield forms need distinct Keyblades.')
                     self.party.abilities(fields,len(self.slots),f'form:{form}',name,offset+8,24,'<H',
                                          {i:title for i,(title,kind) in KH2_ABILITIES.items()},0x8000)
-            for item_id in range(320):
-                offset = record + 0x3580 + item_id
-                item_name = KH2_ITEM_NAMES.get(item_id,f'Unidentified item · ID {item_id:03d}')
-                note='' if item_id in KH2_ITEM_NAMES else 'Name mapping is pending. This is the saved item index; no item identity is changed.'
-                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,'Inventory',note=note,item_id=item_id))
+            self.party.kh2.record(fields,len(self.slots),record)
             name = bytes(table[descriptor:descriptor+0x40]).split(b'\0')[0].decode('ascii',errors='replace')
             level = self.raw[record+0x24ff]
             self.slots.append(Slot(f'{name or str(index+1)} · Sora level {level}',fields))
@@ -717,6 +715,8 @@ class Save:
             else:
                 expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
             actual=next((f.value for f in check.slots[index].fields if f.key == key),None)
+            if self.game=='kh2' and key.startswith('inventory:'):
+                expected=self.party.kh2.expected_stock(index,key,value,changes,self.party.encodings)
             if self.game=='eldenring' and (key.startswith('spell_slot:') or key=='active_spell'):
                 requested={k:v for (slot,k),v in changes.items() if slot==index}
                 valid=self.elden_ring.spell_loadouts[index].verifies(check.elden_ring.spell_loadouts[index],requested)

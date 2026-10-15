@@ -38,7 +38,11 @@ class MultiGameArtworkTests(unittest.TestCase):
             index=next(i for i,identifier in enumerate(equipment.art_choices) if item_art(game,identifier))
             key=field_art_key(equipment,index)
             self.assertEqual(key,equipment.art_choices[index])
-            output=save.patched({(0,equipment.key):index});parsed=Save(output,game)
+            changes={(0,equipment.key):index}
+            if game=='kh2':
+                from kh2_items import ITEM_TO_STOCK
+                changes[0,'inventory:'+str(ITEM_TO_STOCK[key])]=1
+            output=save.patched(changes);parsed=Save(output,game)
             updated=next(f for f in parsed.slots[0].fields if f.key==equipment.key)
             self.assertEqual(field_art_key(updated),key);self.assertEqual(save.patched({}),raw)
             self.assertTrue(all(not f.art_choices and f.item_id is None for f in save.slots[0].fields if f.group=='Abilities'))

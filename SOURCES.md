@@ -374,3 +374,31 @@ primary survivors are changed. A public shared RE3 console payload from the
 already attributed save-decrypters references was reparsed in memory; no
 fixture or upstream SDK data is redistributed, and native Steam/gameplay
 validation is not claimed.
+
+## KH2 stock, AP, magic and acquisitions
+
+`kh2_items.py` now adapts the stock-position names from
+[BFlorry/KingdomSaveEditor InventoryType.cs](https://github.com/BFlorry/KingdomSaveEditor/blob/e5eec7403f939d7a94a62d996130d84f59887dda/KHSave.Lib2/Types/InventoryType.cs),
+GPL-3.0-or-later, Copyright (C) 2020 Luciano Ciccariello. Stock positions are
+independent of the EquipmentType IDs used by character slots and artwork.
+
+Factual item/stock pairs, category/parameter links, standard AP costs,
+equipment AP bonuses and level AP values were independently read from
+[OpenKH/OpenKh](https://github.com/OpenKH/OpenKh/tree/7a3b945c538d32c6a285128c98aefba093f52ceb)
+`OpenKh.Tests/kh2/res/item.bin` and `lvup_fm.bin`. The Item and Lvup source models
+cross-check record bounds. OpenKH's Apache-2.0 license is reproduced in
+THIRD_PARTY_NOTICES.txt; the original binary fixtures are not shipped. AP cost
+uses entry byte +7, consistent with Scan 2 / Upper Slash 4 / Combo Plus 1 and
+[published game-guide examples](https://www.piggyback.com/en/kh2_e_samplepages/).
+Save-model files copied into OpenKH from KingdomSaveEditor carry their own GPL
+notices; their code is not copied by this continuation.
+
+Magic bytes and form/summon/report masks were cross-checked against
+[Archipelago's KH2 Items.py](https://github.com/ArchipelagoMW/Archipelago/blob/476b0a651224288ccf84e2b11b52a7b1512814d6/worlds/kh2/Items.py)
+and its `ClientStuff/RecieveItems.py`, including the one-byte Anti-point reset.
+Only format facts are used; Archipelago's randomizer-specific repurposed boost,
+map, stat-increase and visit-count changes are not imported. No client, live
+memory access, network service, Xbox identity or reference save is bundled.
+
+The bounded Python transactions, dependency checks and tests are new. Exact
+implemented relationships and verification limits: docs/KH2_INVENTORY_AP.md.

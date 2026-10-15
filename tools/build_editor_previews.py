@@ -45,7 +45,11 @@ def populated_kh(game):
         base=record+(4+c*0x74 if game=='kh1' else 0x24f0+c*0x114)
         raw[base if game=='kh1' else base+15]=20
     if game=='kh2':
-        struct.pack_into('<H',raw,record+0x24f0,41)
+        for c,weapon in enumerate((41,75,49)):
+            base=record+0x24f0+c*0x114
+            struct.pack_into('<H',raw,base,weapon)
+            struct.pack_into('<H',raw,base+20,67)
+            struct.pack_into('<3H',raw,base+84,0x52,0,0)
         struct.pack_into('<I',raw,record+8,Save._kh2_checksum(raw[record:record+0x10fc0]))
     # Update only the synthetic fixture's PNG checksum.
     import zlib

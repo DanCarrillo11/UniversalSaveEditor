@@ -33,19 +33,11 @@ DESCRIPTIONS = {
 
 
 def kh2_inventory_section(key):
-    """Group the named IDs already exposed by the KH II adapter."""
-    identifier = int(key.split(':')[1])
-    if identifier in (*range(1, 8), 126, *range(274, 280)):
-        return 'Items'
-    if identifier in (41, 42, 43):
-        return 'Weapons'
-    if identifier in (*range(285, 289), *range(290, 294), *range(295, 299), *range(300, 308)):
-        return 'Equipment'
-    if identifier in (*range(280, 284), *range(316, 320)):
-        return 'Materials'
-    if identifier in (*range(21, 28), *range(29, 33), 87, 88, 161, 162, *range(225, 238)):
-        return 'Special items'
-    return 'Other entries'
+    """Resolve the native stock position before choosing a category."""
+    from kh2_items import STOCK_ITEMS
+    from kh2_relationships import stock_section
+    item=STOCK_ITEMS.get(int(key.split(':')[1]))
+    return stock_section(item[2]) if item else 'Other entries'
 
 
 def organize_fields(game, fields):
@@ -125,12 +117,14 @@ def organize_fields(game, fields):
             elif group in ('Weapon upgrades','Ammunition','Consumables'):
                 category,section,selection='Collection',group,group
         if game in ('kh1', 'kh2'):
-            if group=='Shared abilities':category,section,selection='Characters',group,'Party'
+            if game=='kh2' and group in ('Forms','Summons'):category,section,selection='Characters',group,'Sora'
+            elif game=='kh2' and group=='Reports':category,section,selection='Collection',group,group
+            elif group=='Shared abilities':category,section,selection='Characters',group,'Party'
             elif game=='kh1' and group=='Magic shortcuts':category,section,selection='Characters',group,'Sora'
             elif item.key.startswith('inventory:'):
                 category = 'Collection'
                 if game == 'kh2':
-                    section = kh2_inventory_section(item.key)
+                    section = item.collection or kh2_inventory_section(item.key)
                 else:
                     section = group
                 selection = section

@@ -6,6 +6,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 import struct
 from kh_items import ITEMS
 from kh_party_tables import KH1_ABILITIES, KH2_ABILITIES, KH2_EQUIPMENT
+from kh2_relationships import Kh2Relationships
 
 KH1_CHARACTERS=('Sora','Donald','Goofy','Tarzan','Pooh','Aladdin','Ariel','Jack Skellington','Peter Pan','Beast')
 KH2_CHARACTERS=('Sora','Donald','Goofy','Mickey','Auron','Mulan','Aladdin','Jack Sparrow','Beast','Jack Skellington','Simba','Tron','Riku')
@@ -17,6 +18,7 @@ class PartyEditor:
         self.encodings={}
         self.bits={}
         self.shortcuts={}
+        self.kh2=Kh2Relationships(raw,field_type,KH2_CHARACTERS) if game=='kh2' else None
 
     def shared(self,fields,slot,record):
         if self.game!='kh1':return
@@ -92,7 +94,8 @@ class PartyEditor:
                 # 0x80 (KH1) / 0x8000 (KH2) empty flags are retained as a choice.
                 if original:options[original]='Empty (saved flag)'
             self.choice(fields,slot,f'{prefix}:ability:{index}',f'{label} · Ability entry {index+1}',offset,fmt,options,'Abilities',
-                'Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.')
+                ('Choose a known ability and its equipped state. Standard AP budgets are checked for recognized character data; duplicate entries and unknown data are preserved. Apply to expose the next empty entry.'
+                 if self.game=='kh2' else 'Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.'))
 
     def character(self,fields,slot,record,character):
         kh1=self.game=='kh1';names=KH1_CHARACTERS if kh1 else KH2_CHARACTERS
@@ -136,13 +139,13 @@ class PartyEditor:
             if character>=3:weapons={weapon:equipment[weapon][0]} if weapon in equipment else {}
             if not weapon:weapons[0]='Empty'
             self.choice(fields,slot,prefix+':weapon',name+' · Weapon',base,'<H',weapons,'Equipment',
-                'Changes equipped equipment only. Stock quantities and world-specific weapon variants are preserved.')
+                'Transfers one copy between this weapon slot and the bag. World-specific weapon variants and story records are preserved.')
             for count_offset,array_offset,kind,title in ((16,20,'Armor','Armor'),(17,36,'Accessory','Accessory'),(18,52,'Consumable','Item')):
                 count=self.raw[base+count_offset]
                 if count>8:continue
                 options={0:'Empty',**{i:t for i,(t,k) in equipment.items() if k==kind}}
                 for index in range(count):self.choice(fields,slot,f'{prefix}:{title.lower()}:{index}',f'{name} · {title} {index+1}',base+array_offset+index*2,'<H',options,'Equipment',
-                    'Edits an already unlocked slot. Item auto-reload, inventory quantities and slot counts are preserved.')
+                    'Transfers one copy between this unlocked slot and the bag. Item auto-reload, slot counts and story records are preserved.')
                 if kind=='Consumable':
                     for index in range(count):self.choice(fields,slot,f'{prefix}:auto_reload:{index}',f'{name} · Item {index+1} auto-reload',base+68+index*2,'<H',options,'Equipment',
                         'Changes the saved item auto-reload identity for an existing slot. Does not create stock; only available inventory can be reloaded in the game.')
@@ -165,4 +168,5 @@ class PartyEditor:
                 raise ValueError('A KH1 magic shortcut must reference a spell available to Sora.')
             if (slot,f'0:magic:{command}') in changes and not available:
                 result[offset]=255
+        if self.kh2:result=self.kh2.finish(result,changes)
         return result
