@@ -102,7 +102,7 @@ progression events, installed content or platform achievements.
 | RE4 (2005) | Obtain verified case footprints/placement, weapon-capacity tables, acquisition/equipment relationships and unlock state. Live-memory SDK structures alone do not establish save-array serialization. |
 | RE5 | Locate Steamworks inventory/equipment/upgrade and campaign records. The inspected public reference editor only maps profile flags/currency/figures; older Xbox/GFWL offsets are not substituted. |
 | RE6 | Purchase/owned-skill state, weapon word decoding and campaign checkpoint dependencies. Last-selected settings are not checkpoint conversions. |
-| KH1 | AP/equipment/stock dependencies, full character rules, spell tiers and persistent progression. Shared movement abilities are separate from character abilities. |
+| KH1 | Shared spell tiers, six summons, Trinity colors, puppy rescue flags and unspent pages are implemented. AP/equipment/stock dependencies, full growth/character rules, journal/story/reward relationships and in-game verification remain. Shared movement abilities are separate from character abilities. |
 | KH2 | Standard AP checks, stock transfers, spell tiers/shortcuts and recognized acquisition are implemented. Complete character-specific behavior, growth/reward rules, named puzzles/journal/story systems and in-game verification remain. |
 | ReCoM | Native confirmation of acquisition/completion flags; locate HP/CP, sleights and deck/card-state dependencies in gameplay data. |
 | BBS | Resolve Hp1/Hp2 semantics, full command footprints/capacity, command acquisition flags, D-Link/finisher status and story dependencies. |
