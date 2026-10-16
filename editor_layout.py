@@ -51,7 +51,7 @@ def organize_fields(game, fields):
         'kh3': ('Progress', 'Characters', 'Collection'),
         'maxpayne': ('Equipment',),
         'gtav': ('Characters',),
-        'rdr2': ('Progress',),
+        'rdr2': ('Progress','Character','Collection'),
         'eldenring': ('Progress', 'Character', 'Collection'),
         're4_2005': ('Progress', 'Characters', 'Collection'),
         're5': ('Progress', 'Unlocks', 'Collection'),
@@ -108,7 +108,12 @@ def organize_fields(game, fields):
                     section,selection=item.collection or 'Unidentified items',group.replace(' quantities','')
                     if game=='re9':section,selection='Existing items',item.collection or 'Inventory'
         if game=='gtav':category,section,selection='Characters',group,item.collection
-        if game=='rdr2':category,section,selection='Progress',group,group
+        if game=='rdr2':
+            if group in ('Player cores','Player progression','Honor'):category,section,selection='Character',group,'Player'
+            elif group in ('Weapon condition','Horses'):category,section,selection='Collection',item.collection or group,group
+            elif group=='Compendium':category,section,selection='Collection','Compendium: '+(item.collection or 'Records'),group
+            elif group=='Inventory':category,section,selection='Collection',item.collection or group,group
+            else:category,section,selection='Progress',group,group
         if game=='re5':
             if group=='Library files':category='Collection'
             elif group!='Currency':category='Unlocks'

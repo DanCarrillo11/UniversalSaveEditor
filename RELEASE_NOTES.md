@@ -1,38 +1,37 @@
-# v0.36.0-alpha — Initial Rockstar PC Story Mode editing
+# v0.37.0-alpha — Expanded Red Dead Redemption 2 editor
 
-Two new library entries, original cover art and offline previews:
+RDR2 PC Story Mode now offers more than carried cash:
 
-- **GTA V:** existing cash and eight saved skills for Michael, Franklin and
-  Trevor: Stamina, Shooting, Strength, Stealth, Flying, Driving, Lung capacity
-  and Special ability. The editor resolves an exact typed PSO statistic table;
-  absent/duplicate entries and unknown encodings are protected. Legacy and
-  Enhanced profile folders are detected. Legacy native files were checked;
-  **Enhanced-specific native-file verification is still pending**.
-- **Red Dead Redemption 2:** current carried cash in dollars and cents, with
-  strict two-decimal precision. This initial adapter edits cash only; honor,
-  camp funds, health, Dead Eye, weapons, horses and inventory remain unchanged.
+- **Character:** current honor and its persistent statistic change together;
+  Health/Stamina/Dead Eye cores, saved health, base XP and weight.
+- **Inventory:** quantities of existing named supplies and ammunition in the
+  active inventory. Reserve inventories remain separate.
+- **Weapons:** existing copies' degradation, permanent degradation, soot, rust
+  and dirt. No weapon identity or component changes.
+- **Horses:** existing horses' bonding XP, dirt and hunger.
+- **Compendium:** existing discovery, study and ownership records, grouped by
+  category. These flags do not grant items, purchases or challenge rewards.
+- **World:** saved hour, minute and second.
 
-PC story envelopes, AES encryption, header integrity, framed PSO boundaries and
-native signed-byte checksums are validated. Output is reparsed and requested
-values verified. File length, unknown bytes and encryption state are preserved.
-Extensionless SGTA5/SRDR files can be selected directly; existing backups are
-excluded from automatic discovery.
-The larger collection list scrolls independently to keep the sidebar footer
-and saving note visible in smaller windows.
+The reader checks embedded structure/member hashes, types and extended offsets;
+inventory pointer bounds, counts, alignment, record types and GUID uniqueness;
+and matching canonical/statistic honor values. Unrecognized structures and
+nonstandard original values remain protected. Float32 edits are verified at
+their stored precision. GUIDs, links, counts, unrelated bytes and file length
+are preserved; native integrity is recalculated and output reparsed.
 
-Two public Legacy files passed all 27 field edits per file and byte-identical
-restoration. Three local RDR2 files passed cash edits/restorations with all ten
-payload checks valid. Original reference/personal files remained unchanged.
-Automated tests cover exact changed bytes, encryption/no-op preservation,
-precision, malformed structures, duplicate identities, discovery and the UI.
-These are file-level checks, **not proof of successful in-game loading**.
+Three native encrypted PC saves passed all editable-field changes in memory,
+exact-span comparisons, all ten payload checks and byte-identical restoration.
+Original personal files were unchanged. Synthetic tests cover malformed graphs,
+duplicate references, mismatched schemas/honor, bounds, both inventory modes,
+encryption, previews and staged interface changes.
 
-Both new editors have Limited coverage. This is not full Rockstar support,
-a Legacy/Enhanced conversion tool or an online-profile editor. Exact scope,
-references and remaining gates are documented in docs/ROCKSTAR_PC.md.
+**RDR2 remains Limited coverage.** Edited-save game loading is unverified. New
+items, weapon/clothing acquisition, stable management, camp funds, bounties,
+complete unlocks and story/challenge/reward dependencies are still unsupported.
+Field availability depends on the save's schema. See docs/RDR2_FIELDS.md.
 
 Download UniversalSaveEditor.exe under Assets and double-click it, or use
-Updates > Restart and update from a recent version. The portable executable is
-also included in Code > Download ZIP. No installer or terminal is needed.
-Apply updates the opened save directly using the original name and location;
-no automatic save backup or `.edited` output is created.
+Updates > Restart and update. The portable executable is also included in
+Code > Download ZIP. Apply replaces the opened file directly; no automatic save
+backup or .edited output is created.

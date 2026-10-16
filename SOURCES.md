@@ -517,3 +517,34 @@ Three local RDR2 files were checked in memory without changing their originals.
 Enhanced save-location facts follow [GTASnP's own support page](https://gtasnp.com/help/games/gtav);
 Enhanced-specific native files and all edited-save game loading remain unverified.
 See docs/ROCKSTAR_PC.md for precise scope and test limits.
+
+### Expanded RDR2 fields (v0.37)
+
+[alexguirre/rage-parser-dumps](https://github.com/alexguirre/rage-parser-dumps/tree/28785b6e4d2f4fa257f98df925a48eaa4f6b4a93)
+`dumps/rdr3/b1491.50.json` and `dictionary.txt` (MIT, notice included) provide
+case-sensitive parser names, struct/member types, sizes and declared offsets.
+Only the small recognized structures are used by the independent writer;
+the complete parser dump and its executable are not distributed.
+
+[Halen84/RDR3-Decompiled-Scripts](https://github.com/Halen84/RDR3-Decompiled-Scripts/tree/f7cb7ef3fbd30b09da85c12bfe74cf6c64de1ca2)
+build 1491.50 `short_update.c` and `flow_controller.c` corroborate Global_40
+attribute indices, core/XP/weight semantics and synchronized HONOR_CURRENT.
+No game script implementation is copied or packaged. Integer/hash names used as
+lookup facts are separate from code, artwork and game binaries.
+[jonas-lundahl's player-attribute research](https://github.com/jonas-lundahl/rdr2-trainer/blob/main/docs/player-attributes.md)
+independently corroborates honor/weight semantics and the difference between
+runtime attribute APIs and authoritative saved globals.
+
+[femga/rdr3_discoveries](https://github.com/femga/rdr3_discoveries/tree/477aaaccadb7f0c042286611d9939009636cff12)
+weapon/ammunition/ped lists and inventory texture-name documentation, plus named
+hash facts in the script research above, supply the text-only identifier catalogue
+`assets/rdr2-labels.json`. No downloaded art, generated icons or executable mod is
+included. A label is not evidence of item ownership, acquisition or stack capacity.
+
+Three local PC files independently corroborate PSIN mapping origin, extended
+pointer packing, active/backup inventory membership, typed quantity/condition,
+horse, compendium and extended script-offset locations. The console-only honor
+quick-code in [bucanero/apollo-patches](https://github.com/bucanero/apollo-patches/blob/main/PS4/CUSA08519.savepatch)
+is a corroborating location clue, not a copied PC writer or sole source of field
+semantics. Full encrypted restoration and declared-span checks passed; no edited
+file has been loaded in-game. See docs/RDR2_FIELDS.md for exact remaining gates.

@@ -37,7 +37,8 @@ The PC `SRDR#####` story envelope has header version 4, AES body at 0x110 and
 RSAV magic. Every framed PSO checksum region is bounded and indexed; overlapping
 regions, malformed mapping/schema lengths and unsupported cipher envelopes fail.
 
-Only current carried cash is editable in this initial adapter. Its known
+The initial adapter exposed current carried cash. v0.37 adds the schema-gated
+fields documented in [RDR2_FIELDS.md](RDR2_FIELDS.md). Cash's known
 CE548CF5 identity must have one aligned occurrence in a bounded PSIN data section,
 with the referenced value at +16 fully inside that section. Duplicate or missing
 matches are refused. Cash is a nonnegative 32-bit stored cent value, limited here
@@ -45,9 +46,9 @@ to signed int32. The UI displays dollars, preserves cents and rejects more than
 two decimal places rather than silently rounding. This serialized bound is not
 a claim about the game's displayed money cap.
 
-Camp funds, historical earnings, honor, health, stamina, Dead Eye, weapons,
-horses/bonding, inventory, collectibles, missions, rewards and online state stay
-unchanged. Console quick-code addresses are not translated into guessed PC fields.
+Camp funds, historical earnings, item/weapon/clothing acquisition, stable slots,
+missions, challenge rewards and online state stay unchanged. Console quick-code
+addresses alone are not treated as PC field semantics.
 
 Three local PC story files (manual saves and autosave) passed all ten original
 payload checks, byte-identical no-op encoding, cash edits and byte-identical

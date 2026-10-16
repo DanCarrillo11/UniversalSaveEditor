@@ -1,4 +1,4 @@
-"""Initial PC story-mode GTA V/RDR2 fields; unrelated state is opaque.
+"""PC story-mode GTA V/RDR2 fields; unrelated state is opaque.
 
 SPDX-License-Identifier: GPL-3.0-or-later
 No game assets, online profiles or native samples are included. See SOURCES.md.
@@ -47,7 +47,9 @@ class RockstarSave:
             if len(matches)==1 and u32(plain,matches[0])<=2147483647:
                 at=matches[0];self.positions['cash']=at
                 self.fields.append(Field('cash','Cash ($)',u32(plain,at)/100,at,'',0,21474836.47,'Currency',decimal=True,
-                    note='Current carried cash, stored in cents. Use at most two decimal places. Camp funds, income statistics, inventory, honor, weapons, horses, story and rewards are preserved.'))
+                    note='Current carried cash, stored in cents. Use at most two decimal places. Camp funds, income statistics, story and rewards are preserved.'))
+            from rdr2_features import Rdr2Features
+            self.rdr2=Rdr2Features(self,Field)
         if not self.fields:raise ValueError('No uniquely identified supported Rockstar story fields were found. This save variant is protected.')
 
     def patch(self,changes):
@@ -57,5 +59,6 @@ class RockstarSave:
                 cents=Decimal(str(value))*100
                 if cents!=cents.to_integral_value():raise ValueError('Cash accepts at most two decimal places.')
                 struct.pack_into('>I',plain,self.positions[key],int(cents))
-            else:struct.pack_into('>i',plain,self.positions[key],value)
+            elif not hasattr(self,'rdr2'):struct.pack_into('>i',plain,self.positions[key],value)
+        if hasattr(self,'rdr2'):self.rdr2.patch(plain,changes)
         return self.container.encode(plain)

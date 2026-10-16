@@ -121,8 +121,9 @@ def re4_remake_example():
 
 def generate():
     from test_remake_inventory_capacity import fixture as remake_capacity
+    from test_rdr2_features import fixture as rdr2_example
     result={}
-    factories={'gtav':rockstar,'rdr2':lambda:rockstar('rdr2'),
+    factories={'gtav':rockstar,'rdr2':rdr2_example,
         'webfishing':fishing,'ror2':profile,'alice':alice,'kh1':lambda:populated_kh('kh1'),
         'kh2':lambda:populated_kh('kh2'),'recom':lambda:kh_extra('recom'),'bbs':lambda:kh_extra('bbs'),
         'ddd':lambda:kh_extra('ddd'),'kh3':kh3_example,'eldenring':elden_example,

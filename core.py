@@ -208,7 +208,7 @@ class Save:
             try:self.rockstar=RockstarSave(raw,game,Field)
             except (ValueError,struct.error) as error:raise FormatError(str(error)) from error
             self.slots=[Slot('Story Mode',self.rockstar.fields)];self.warnings=self.rockstar.warnings
-            self.notes=['PC Story Mode only. '+('Existing cash and eight saved skills for Michael, Franklin and Trevor. Legacy files were checked; an Enhanced-specific native-file check is still pending. Missing statistics and character/story availability are preserved.' if game=='gtav' else 'Current carried cash only, in dollars and cents. Camp funds, honor, weapons, horses, inventory and story remain unchanged.')+' Unknown formats are protected. File-level checks do not prove successful in-game loading. Close the game before applying changes.']
+            self.notes=['PC Story Mode only. '+('Existing cash and eight saved skills for Michael, Franklin and Trevor. Legacy files were checked; an Enhanced-specific native-file check is still pending. Missing statistics and character/story availability are preserved.' if game=='gtav' else 'Cash, synchronized honor, recognized player attributes, existing active-inventory supplies, weapon condition, horse care, compendium records and clock time. Fields depend on the embedded schema. Compendium flags do not grant items or rewards. Creating items, clothing/weapon unlocks, stable slots, story and challenges are not supported.')+' Unknown formats are protected. File-level checks do not prove successful in-game loading. Close the game before applying changes.']
         elif game == 'eldenring':
             from elden_ring import EldenRingSave
             try:self.elden_ring=EldenRingSave(raw,Field,Slot)
@@ -723,6 +723,7 @@ class Save:
             else:
                 expected=struct.unpack(field.fmt,struct.pack(field.fmt,value))[0] if field.fmt else value
             actual=next((f.value for f in check.slots[index].fields if f.key == key),None)
+            if self.game=='rdr2':expected=self.rockstar.rdr2.expected(key,value)
             if self.game=='kh2' and key.startswith('inventory:'):
                 expected=self.party.kh2.expected_stock(index,key,value,changes,self.party.encodings)
             if self.game=='eldenring' and (key.startswith('spell_slot:') or key=='active_spell'):

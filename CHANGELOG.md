@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.37.0-alpha
+
+- Expand RDR2 PC Story Mode with synchronized honor, player cores/health/base
+  XP/weight, active-inventory supply/ammunition quantities, existing weapon
+  condition, horse bonding/care, compendium records and clock time.
+- Resolve exact embedded member types and extended offsets; follow and validate
+  active/backup inventory pointers, row bounds, GUIDs and native record types.
+- Bundle factual item labels and synthetic offline previews; separate Progress,
+  Character and Inventory navigation. Preserve unknown data and acquisition state.
+- Verify all exposed editable fields on three native files using exact-span
+  comparisons and byte-identical encrypted restoration. Game loading, complete
+  acquisitions/unlocks and story/reward dependencies remain unverified/unsupported.
+
 ## v0.36.0-alpha — Initial Rockstar PC Story Mode editors
 
 - Add GTA V cash and eight saved skills for Michael, Franklin and Trevor.

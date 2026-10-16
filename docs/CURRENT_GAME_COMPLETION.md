@@ -9,6 +9,13 @@ is marked full support and no completion percentage is inferred from field count
 
 ## Current equipment/spell pass
 
+v0.37 expands RDR2 with schema-gated character attributes, synchronized honor,
+active-inventory stacks, weapon condition, horse care, compendium flags and clock
+time. Three native PC files passed exact-span edits and byte-identical restoration.
+This is substantial partial coverage, **not full support**. Acquisitions, clothing,
+stable management, camp funds, bounties, story/challenge dependencies and game-load
+validation remain open. [Field-level scope](RDR2_FIELDS.md).
+
 v0.36 adds initial Rockstar PC story editors: GTA V cash/eight skills for each
 of its three characters, and RDR2 carried cash. Both GTA V folders are detected;
 Legacy references were checked, while Enhanced-specific native validation is

@@ -50,3 +50,26 @@ class RockstarInterfaceTests(unittest.TestCase):
                 out=w.save.patched(w.validated_changes());self.assertEqual(Save(out,'rdr2').slots[0].fields[0].value,1234.56)
                 self.assertEqual(p.read_bytes(),fixture('rdr2'));w.reset()
             finally:w.close();w.deleteLater();self.app.processEvents();discard.stop()
+
+    def test_expanded_rdr2_navigation_and_staged_edits(self):
+        from test_rdr2_features import fixture as expanded
+        from PySide6.QtWidgets import QCheckBox
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=root/'SRDR30001';raw=expanded();p.write_bytes(raw)
+            settings=QSettings(str(root/'prefs.ini'),QSettings.Format.IniFormat)
+            with patch('app.discover',return_value=[]):w=Window(settings=settings)
+            with patch.object(w,'may_discard',return_value=True):
+                w.reduce_motion.setChecked(True);w.show();w.resize(1280,800)
+                try:
+                    w.load('rdr2',p);fields=w.save.slots[0].fields;expected={}
+                    for group in ('Honor','Player cores','Player progression','Inventory','Weapon condition','Horses','Compendium','World clock'):
+                        f=next(f for f in fields if f.group==group);w.reveal_field((0,f.key));entry=w.inputs[0,f.key]
+                        if isinstance(entry,QCheckBox):entry.setChecked(True);value=1
+                        else:value=0.5 if group=='Weapon condition' else f.value+1;entry.setText(str(value))
+                        expected[0,f.key]=value;self.app.processEvents()
+                        self.assertTrue(entry.isVisible())
+                    self.assertEqual(w.validated_changes(),expected);out=w.save.patched(expected)
+                    self.assertFalse(Save(out,'rdr2').warnings);self.assertEqual(p.read_bytes(),raw)
+                    self.assertLess(len(w.inputs),len(fields)+1)
+                    w.reset()
+                finally:w.close();w.deleteLater();self.app.processEvents()

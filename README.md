@@ -8,8 +8,9 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.36.0-alpha** adds initial Rockstar PC Story Mode editing: GTA V
-character cash and eight saved skills, and RDR2 carried cash in dollars/cents.
+Version **v0.37.0-alpha** expands RDR2 with synchronized honor, player cores,
+base XP and weight, existing supplies/ammunition, weapon condition, horse care,
+compendium records and clock time. GTA V exposes character cash and eight saved skills.
 Legacy native files were checked; an Enhanced-specific native-file check is
 still pending. Both GTA V save locations are detected; unknown formats are refused.
 In-app updates remain available through
@@ -98,7 +99,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 | Game | Editable fields | Status / save action |
 |---|---|---|
 | GTA V, PC Story Mode | Existing cash and eight saved skills for Michael, Franklin and Trevor | Limited; Legacy native files checked; Enhanced-specific file check and game loading pending |
-| Red Dead Redemption 2, PC Story Mode | Current carried cash in dollars and cents | Limited; three local files checked; other character/inventory functions and game loading pending |
+| Red Dead Redemption 2, PC Story Mode | Cash, synchronized honor, player cores/health/XP/weight, existing supplies/ammunition, weapon condition, horse bonding/care, compendium flags, clock time | Limited; three native files checked; acquisition/unlocks, story dependencies and game loading pending. See [exact scope](docs/RDR2_FIELDS.md). |
 | Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, 171 base-game spell acquisitions, owned spell loadouts, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics, existing case quantities and known weapon tune-up tiers | Experimental; direct apply; new case objects and comprehensive unlocks pending |
 | Resident Evil HD Remaster, PC | Recognized gameplay records, difficulty, defensive supplies, known inventory/item-box identities and quantities, next empty box entry | Experimental; public PC fixture checked; recognized gameplay sections selectable |
@@ -195,7 +196,7 @@ games, which are not advertised as compatible yet.
 | Resident Evil 4 (2005), Steam UHD | Progress, Characters, Records |
 | WEBFISHING | Progress, Equipment, Collection |
 | GTA V | Characters: Michael, Franklin and Trevor; Currency and Skills |
-| Red Dead Redemption 2 | Progress: Currency |
+| Red Dead Redemption 2 | Progress: Currency / World clock; Character: Honor / Player cores / Player progression; Inventory: Supplies / Ammunition / Weapon condition / Horses / Compendium |
 | Risk of Rain 2 | Progress, Unlocks, Records |
 | Alice persistent profile | Progress, Character, Collection |
 | Alice configuration | Progress |

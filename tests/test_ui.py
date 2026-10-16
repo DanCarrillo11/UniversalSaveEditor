@@ -373,7 +373,7 @@ class InterfaceTests(unittest.TestCase):
         self.assertIn('Experimental',w.game_cards['maxpayne'].toolTip())
         w.platform_filter.setCurrentIndex(0)
         w.set_filter('ready');self.assertEqual(set(w.visible_games),set(BY_ID))
-        w.search.setText('XP');self.assertEqual(set(w.visible_games),{'bbs','ddd','kh1','kh2','kh3','recom','webfishing'})
+        w.search.setText('XP');self.assertEqual(set(w.visible_games),{'bbs','ddd','kh1','kh2','kh3','recom','webfishing','rdr2'})
         w.search.clear()
         w.set_filter('pending');self.assertEqual(len(w.visible_games),0)
         w.collection('KINGDOM HEARTS');self.assertEqual(len(w.visible_games),6)

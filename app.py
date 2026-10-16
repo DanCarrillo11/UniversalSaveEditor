@@ -1398,8 +1398,11 @@ def main():
             try:
                 from rockstar_container import aes as rockstar_aes,name_hash
                 from rockstar_save import RockstarSave
+                from rdr2_features import labels as rdr2_labels,parser_hash
                 rockstar_ready=(rockstar_aes(rockstar_aes(bytes(16),False),True)==bytes(16)
-                    and name_hash('sp0_total_cash')==0x0324c31d)
+                    and name_hash('sp0_total_cash')==0x0324c31d
+                    and parser_hash('SavegameInventoryItem')==0x8ce2cf3f
+                    and rdr2_labels().get(f'{name_hash("AMMO_REVOLVER"):08x}')=='AMMO_REVOLVER')
             except Exception:rockstar_ready=False
             crypto_ready=crypto_ready and rockstar_ready
             try:
