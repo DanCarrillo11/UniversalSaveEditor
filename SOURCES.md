@@ -484,3 +484,36 @@ level is player-relative 0x1c, record-relative 0x2d54. No live-memory writer,
 randomizer, HP/CP/sleight assumptions or reference saves are redistributed.
 Native checks passed in two public Steam archives. See
 docs/COMPATIBILITY_V35.md for scope and game-load limitations.
+
+## Rockstar PC Story Mode containers and fields
+
+The independent bounded Python reader/writer cross-checks container facts against
+[hzhreal/HTOS](https://github.com/hzhreal/HTOS/tree/884e3b2975303d947b40efd5db9b8f63b2474083)
+`data/crypto/rstar_crypt.py` and `data/cheats/{gtav_cheats,rdr2_cheats}.py` (GPL-3.0).
+These provide the PC AES body origins, signed-byte Jenkins CHKS/header rules,
+three GTA cash identities, and RDR2's unique carried-cash identity and +16 field.
+The new implementation does not import its Discord UI, network/filesystem
+pipeline, first-match-only behavior, trailing-byte trimming or console offsets.
+GTA cash character order is independently corroborated by ScriptHookVDotNet's
+public `GTA/Player.cs` mapping of SP0/SP1/SP2 to Michael/Franklin/Trevor.
+
+Framed PSO, mapping variants and exact schema facts are cross-checked against
+[dexyfex/CodeWalker Pso.cs](https://github.com/dexyfex/CodeWalker/blob/485d56bec00262ed7fa472261cce7bbc6202b96e/CodeWalker.Core/GameFiles/MetaTypes/Pso.cs).
+GTA offsets include the PSIN header. Existing statistic-pair field types/offsets
+and all 27 named cash/skill hashes are corroborated in two native PC files. Only
+the small known statistic allowlist is exposed; no game metadata dump is shipped.
+The 0–100 editor skill range is bounded independently; rewards are not inferred.
+
+[JuliPodie/rdr2-savegame-reader](https://github.com/JuliPodie/rdr2-savegame-reader/tree/6595bfa9a8db76a00e4af4c54f06abb0b1ce7e0b)
+`Rdr2PcSaveCodec.cs` (MIT) independently corroborates the PC envelope and checked
+regions. Its research-only experimental campaign writers are not incorporated.
+PSO names or differing bytes alone are not treated as proven gameplay semantics.
+
+Public Legacy test saves were inspected from
+[Tatsanai/GTA-V-Save](https://github.com/Tatsanai/GTA-V-Save/tree/a425b0f03fcd3ce46c4ce5dfc42541fe11497239)
+and [lucazpf/gtav-savegame-lucazpf](https://github.com/lucazpf/gtav-savegame-lucazpf/tree/89874c99ad3e8b3c7370373ab0b92d6eafa833ed).
+No reference save, decrypted data or personal/account information is redistributed.
+Three local RDR2 files were checked in memory without changing their originals.
+Enhanced save-location facts follow [GTASnP's own support page](https://gtasnp.com/help/games/gtav);
+Enhanced-specific native files and all edited-save game loading remain unverified.
+See docs/ROCKSTAR_PC.md for precise scope and test limits.

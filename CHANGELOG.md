@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.36.0-alpha — Initial Rockstar PC Story Mode editors
+
+- Add GTA V cash and eight saved skills for Michael, Franklin and Trevor.
+  Resolve exact typed PSO statistic records; preserve duplicate/unknown entries,
+  missing character state, story, inventory and unrelated records.
+- Add RDR2 current carried cash, displayed in dollars with at most two decimals.
+  Require a unique bounded known cash entry; preserve camp funds, honor, horses,
+  weapons, inventory, story and reward state. This is initial limited support.
+- Recognize encrypted/decrypted PC story envelopes, framed PSO tables, signed
+  Rockstar checksums and header integrity. Preserve file length, padding,
+  encryption state, names and unedited bytes; no automatic save backups.
+- Detect Legacy, Enhanced and RDR2 profile locations, and extensionless story
+  filenames. Add original Steam covers and offline previews. Enhanced-specific
+  native-file verification is pending; unknown formats are rejected.
+- Scroll the expanded collection list independently so the sidebar's saving
+  note and footer controls remain visible in smaller windows.
+- Two public Legacy files passed 54 field edits/restorations; three local RDR2
+  files passed cash edits/restorations with all ten payload checks valid.
+  Originals were unchanged. File checks do not prove in-game loading.
+
 ## v0.35.0-alpha — Owned loadouts and Kingdom Hearts corrections
 
 - Elden Ring: assign existing held arrow/bolt stacks to four ammunition slots,

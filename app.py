@@ -180,9 +180,16 @@ class Window(QMainWindow):
         self.favorites_nav.setAccessibleName('Show favorite games');nav.addWidget(self.favorites_nav)
         nav.addSpacing(18)
         nav.addWidget(label('Collections','eyebrow'))
+        collections=QWidget();collection_rows=layout(collections,True,0,8)
+        collection_rows.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         for name in dict.fromkeys(game.family for game in GAMES):
-            nav.addWidget(button(name.title(),lambda checked=False,n=name:self.collection(n),'nav'))
-        nav.addStretch()
+            collection_rows.addWidget(button(name.title(),lambda checked=False,n=name:self.collection(n),'nav'))
+        collection_rows.addStretch()
+        self.collection_scroll=QScrollArea();self.collection_scroll.setObjectName('collectionScroll')
+        self.collection_scroll.setWidgetResizable(True);self.collection_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        self.collection_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.collection_scroll.setMinimumHeight(80);self.collection_scroll.viewport().setAutoFillBackground(False)
+        self.collection_scroll.setWidget(collections);nav.addWidget(self.collection_scroll,1)
         self.saving_heading=label('Saving','eyebrow');nav.addWidget(self.saving_heading)
         self.saving_note=label('Apply updates the opened save directly. No automatic backups.','muted',True);nav.addWidget(self.saving_note)
         nav.addSpacing(8)
@@ -613,7 +620,7 @@ class Window(QMainWindow):
     def open_file(self,game=None):
         if not isinstance(game,str):game=None
         folder=str(self.path.parent) if self.path else self.last_directory
-        filename,_=QFileDialog.getOpenFileName(self,'Open a save',folder, 'Save files (*.sav *.sl2 *.SL2 *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
+        filename,_=QFileDialog.getOpenFileName(self,'Open a save',folder, 'Save files (SGTA5* SRDR3* *.sav *.sl2 *.SL2 *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
         if filename:self.open_path(Path(filename),game)
 
     def open_path(self,path,game=None):
@@ -1293,7 +1300,7 @@ class Window(QMainWindow):
                     if self.reopen_recent(e):dialog.accept()
                 line.addWidget(button('Open',open_entry))
                 def locate_entry(checked=False,e=entry):
-                    filename,_=QFileDialog.getOpenFileName(dialog,'Locate this save',self.last_directory,'Save files (*.sav *.sl2 *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
+                    filename,_=QFileDialog.getOpenFileName(dialog,'Locate this save',self.last_directory,'Save files (SGTA5* SRDR3* *.sav *.sl2 *.png *.mps *.bin *.xml *.psd *.PSD *.cfg *.CFG);;All files (*)')
                     if filename and self.reopen_recent(e,filename):dialog.accept()
                 line.addWidget(button('Locate…',locate_entry))
                 def remove_entry(checked=False,e=entry):
@@ -1388,6 +1395,13 @@ def main():
             import re
             cipher = transform(bytes(16),'smoke-test',True)
             crypto_ready = len(derive_key('smoke-test')) == 32 and transform(cipher,'smoke-test') == bytes(16)
+            try:
+                from rockstar_container import aes as rockstar_aes,name_hash
+                from rockstar_save import RockstarSave
+                rockstar_ready=(rockstar_aes(rockstar_aes(bytes(16),False),True)==bytes(16)
+                    and name_hash('sp0_total_cash')==0x0324c31d)
+            except Exception:rockstar_ready=False
+            crypto_ready=crypto_ready and rockstar_ready
             try:
                 from re_engine_container import blowfish_cbc,KEYS,_aes
                 from re_hashes import city64
@@ -1505,6 +1519,7 @@ def main():
                     'appearanceReady':all(not re.search(r'@[A-Za-z]+@',stylesheet(theme)) for theme in PALETTES) and QSvgRenderer(str(ROOT/'assets/ui/check.svg')).isValid(),
                     'cryptoReady':crypto_ready,
                     'residentEvilReady':resident_evil_ready,
+                    'rockstarReady':rockstar_ready,
                     'eldenRingReady':elden_ring_ready,
                     'usabilityReady':usability_ready,
                     'expansionReady':expansion_ready,

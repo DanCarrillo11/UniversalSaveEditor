@@ -134,5 +134,19 @@
     "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1196590/library_600x900_2x.jpg",
     "bytes": 172779,
     "note": "Official Steam portrait artwork for Resident Evil Village; original asset without a platform header"
+  },
+  {
+    "game": "gtav",
+    "page": "https://store.steampowered.com/app/271590/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/271590/library_600x900_2x.jpg",
+    "bytes": 242131,
+    "note": "Original Steam portrait artwork; no generated imagery or platform banner added"
+  },
+  {
+    "game": "rdr2",
+    "page": "https://store.steampowered.com/app/1174180/",
+    "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1174180/library_600x900_2x.jpg",
+    "bytes": 240179,
+    "note": "Original Steam portrait artwork; no generated imagery or platform banner added"
   }
 ]

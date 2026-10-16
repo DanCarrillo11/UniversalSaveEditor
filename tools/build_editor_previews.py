@@ -21,6 +21,7 @@ from test_re6 import fixture as re6
 from test_re_engine import stream,wrap,ACCOUNT
 from test_village import fixture as village
 from test_requiem import fixture as requiem
+from test_rockstar import fixture as rockstar
 
 def fishing():
     payload=variant({'inventory':[{'id':'fish_lake_salmon','quality':1,'size':1.0,'ref':42,'tags':[]}],
@@ -121,7 +122,8 @@ def re4_remake_example():
 def generate():
     from test_remake_inventory_capacity import fixture as remake_capacity
     result={}
-    factories={'webfishing':fishing,'ror2':profile,'alice':alice,'kh1':lambda:populated_kh('kh1'),
+    factories={'gtav':rockstar,'rdr2':lambda:rockstar('rdr2'),
+        'webfishing':fishing,'ror2':profile,'alice':alice,'kh1':lambda:populated_kh('kh1'),
         'kh2':lambda:populated_kh('kh2'),'recom':lambda:kh_extra('recom'),'bbs':lambda:kh_extra('bbs'),
         'ddd':lambda:kh_extra('ddd'),'kh3':kh3_example,'eldenring':elden_example,
         'maxpayne':inventory_fixture,'re1_hd':hd,'re4_2005':re4_ready,'re4_remake':re4_remake_example,

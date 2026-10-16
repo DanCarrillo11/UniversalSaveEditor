@@ -1,0 +1,61 @@
+"""Initial PC story-mode GTA V/RDR2 fields; unrelated state is opaque.
+
+SPDX-License-Identifier: GPL-3.0-or-later
+No game assets, online profiles or native samples are included. See SOURCES.md.
+"""
+from collections import defaultdict
+from decimal import Decimal
+import struct
+from rockstar_container import RockstarContainer,name_hash,u32
+
+CHARACTERS=('Michael','Franklin','Trevor')
+SKILLS=(('STAMINA','Stamina'),('SHOOTING_ABILITY','Shooting'),('STRENGTH','Strength'),
+        ('STEALTH_ABILITY','Stealth'),('FLYING_ABILITY','Flying'),('WHEELIE_ABILITY','Driving'),
+        ('LUNG_CAPACITY','Lung capacity'),('SPECIAL_ABILITY','Special ability'))
+
+
+class RockstarSave:
+    def __init__(self,raw,game,Field):
+        self.container=RockstarContainer(raw,game);self.fields=[];self.positions={}
+        self.warnings=self.container.warnings;plain=self.container.plain
+        if game=='gtav':
+            found=defaultdict(list)
+            # Native signed-int statistic pairs: exact structure, field names,
+            # types and offsets, not a first-match search across opaque bytes.
+            schema=(8,((3742647683,5,0,0,0),(3021077118,5,0,4,0)))
+            for frame in self.container.frames:
+                if frame.structures.get(2199017832)!=schema:continue
+                for identity,start,length in frame.blocks:
+                    if identity!=2199017832 or length%8:continue
+                    for at in range(start,start+length,8):found[u32(plain,at)].append(at+4)
+            for n,name in enumerate(CHARACTERS):
+                for stat,title in (('TOTAL_CASH','Cash ($)'),)+SKILLS:
+                    matches=found[name_hash(f'sp{n}_{stat}')]
+                    if len(matches)!=1:continue
+                    at=matches[0];value=struct.unpack_from('>i',plain,at)[0];maximum=2147483647 if stat=='TOTAL_CASH' else 100
+                    key=f'character:{n}:{stat.lower()}';self.positions[key]=at
+                    self.fields.append(Field(key,title,value,at,'',0,max(maximum,value),
+                        'Currency' if stat=='TOTAL_CASH' else 'Skills',collection=name,readonly=not 0<=value<=maximum,
+                        note='Existing saved story-mode statistic only. Character availability, missions, rewards, inventory and unrelated statistics are preserved. Values outside the recognized range remain read-only.'))
+        else:
+            matches=[]
+            for frame in self.container.frames:
+                at=frame.data_start
+                while (at:=plain.find(bytes.fromhex('ce548cf5'),at,frame.data_end))>=0:
+                    if at%4==0 and at+20<=frame.data_end:matches.append(at+16)
+                    at+=4
+            if len(matches)==1 and u32(plain,matches[0])<=2147483647:
+                at=matches[0];self.positions['cash']=at
+                self.fields.append(Field('cash','Cash ($)',u32(plain,at)/100,at,'',0,21474836.47,'Currency',decimal=True,
+                    note='Current carried cash, stored in cents. Use at most two decimal places. Camp funds, income statistics, inventory, honor, weapons, horses, story and rewards are preserved.'))
+        if not self.fields:raise ValueError('No uniquely identified supported Rockstar story fields were found. This save variant is protected.')
+
+    def patch(self,changes):
+        plain=bytearray(self.container.plain)
+        for key,value in changes.items():
+            if key=='cash':
+                cents=Decimal(str(value))*100
+                if cents!=cents.to_integral_value():raise ValueError('Cash accepts at most two decimal places.')
+                struct.pack_into('>I',plain,self.positions[key],int(cents))
+            else:struct.pack_into('>i',plain,self.positions[key],value)
+        return self.container.encode(plain)

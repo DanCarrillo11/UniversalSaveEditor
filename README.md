@@ -8,14 +8,15 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.35.0-alpha** adds Elden Ring ammunition, quick items, pouch and
-Physick loadouts, additional DDD spirit fields and Re:CoM saved level. It fixes
-KH3 Link command identities and adds owned/equipped consumable shortcuts.
+Version **v0.36.0-alpha** adds initial Rockstar PC Story Mode editing: GTA V
+character cash and eight saved skills, and RDR2 carried cash in dollars/cents.
+Legacy native files were checked; an Enhanced-specific native-file check is
+still pending. Both GTA V save locations are detected; unknown formats are refused.
 In-app updates remain available through
 **Updates > Restart and update**.
 Earlier releases expanded Elden Ring and KH progression.
-**Complete support for all games has not been achieved.** New
-games and new icon work remain paused until the existing catalogue is complete.
+**Complete support for all games has not been achieved.** The catalogue now
+contains 23 games. Each editor documents its actual scope and verification limits.
 
 ## Download and run
 
@@ -26,6 +27,8 @@ You can also select **Code > Download ZIP**, extract the folder, and open the
 executable included at its root. Startup can take a few seconds.
 
 ## Features
+
+- [Rockstar PC Story Mode](docs/ROCKSTAR_PC.md): existing GTA V cash and eight skills for Michael, Franklin and Trevor, and RDR2 carried cash. Bounded format recognition, native checksums, offline previews and direct same-name saving. Enhanced native-file validation, game loading, weapons/vehicles/horses and complete progression remain pending.
 
 - [Latest compatibility improvements](docs/COMPATIBILITY_V35.md): bounded owned loadouts in Elden Ring, stored Dream Eater rank/disposition/affinity, Re:CoM saved level and corrected KH3 Links/item shortcuts. Native-file reparsing passes; gameplay verification and full catalogue support remain pending.
 
@@ -94,6 +97,8 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 
 | Game | Editable fields | Status / save action |
 |---|---|---|
+| GTA V, PC Story Mode | Existing cash and eight saved skills for Michael, Franklin and Trevor | Limited; Legacy native files checked; Enhanced-specific file check and game loading pending |
+| Red Dead Redemption 2, PC Story Mode | Current carried cash in dollars and cents | Limited; three local files checked; other character/inventory functions and game loading pending |
 | Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, 171 base-game spell acquisitions, owned spell loadouts, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics, existing case quantities and known weapon tune-up tiers | Experimental; direct apply; new case objects and comprehensive unlocks pending |
 | Resident Evil HD Remaster, PC | Recognized gameplay records, difficulty, defensive supplies, known inventory/item-box identities and quantities, next empty box entry | Experimental; public PC fixture checked; recognized gameplay sections selectable |
@@ -189,6 +194,8 @@ games, which are not advertised as compatible yet.
 | Max Payne | Equipment |
 | Resident Evil 4 (2005), Steam UHD | Progress, Characters, Records |
 | WEBFISHING | Progress, Equipment, Collection |
+| GTA V | Characters: Michael, Franklin and Trevor; Currency and Skills |
+| Red Dead Redemption 2 | Progress: Currency |
 | Risk of Rain 2 | Progress, Unlocks, Records |
 | Alice persistent profile | Progress, Character, Collection |
 | Alice configuration | Progress |

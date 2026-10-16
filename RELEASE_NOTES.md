@@ -1,36 +1,38 @@
-# v0.35.0-alpha — Owned loadouts and Kingdom Hearts corrections
+# v0.36.0-alpha — Initial Rockstar PC Story Mode editing
 
-This release expands four existing editors. No new games or icons are added.
+Two new library entries, original cover art and offline previews:
 
-- **Elden Ring:** four ammunition slots, ten quick items, six pouch entries and
-  two Physick tears. Choose existing owned items; native references and checked
-  fingerprints synchronize. Empty slots, categories, duplicates and inconsistent
-  data are handled explicitly. No item, upgrade, quest or reward is granted by
-  these selectors; active selection and unrelated state are preserved.
-- **Kingdom Hearts III:** fix five Link command identities (70–74). Add eleven
-  consumable shortcut commands with separate item/command IDs, positive owned
-  stock and enabled matching Sora equipment checks. Recognized shortcuts clear
-  when an explicit inventory/equipment change makes the item unavailable.
-- **Dream Drop Distance:** edit existing recognized spirits' stored rank code,
-  disposition index and affinity counter, preserving the other nibble and
-  unknown encodings. Growth, boards and displayed affinity levels are separate.
-- **Re:Chain of Memories:** edit recognized saved character level 1–99,
-  independently of XP, HP, CP, sleights and level-up rewards.
-- Update offline previews, source attribution and the compatibility/gap records.
+- **GTA V:** existing cash and eight saved skills for Michael, Franklin and
+  Trevor: Stamina, Shooting, Strength, Stealth, Flying, Driving, Lung capacity
+  and Special ability. The editor resolves an exact typed PSO statistic table;
+  absent/duplicate entries and unknown encodings are protected. Legacy and
+  Enhanced profile folders are detected. Legacy native files were checked;
+  **Enhanced-specific native-file verification is still pending**.
+- **Red Dead Redemption 2:** current carried cash in dollars and cents, with
+  strict two-decimal precision. This initial adapter edits cash only; honor,
+  camp funds, health, Dead Eye, weapons, horses and inventory remain unchanged.
 
-408 local automated tests passed. Public native-reference checks passed for
-28 ammunition, 27 quick-item and 25 Physick edits/restorations across overlapping
-Elden Ring records, 39 edits across 13 DDD spirits, two Re:CoM level records,
-and an encrypted KH3 item shortcut. All original reference files were unchanged.
-These are file-level checks, not proof of successful in-game loading.
+PC story envelopes, AES encryption, header integrity, framed PSO boundaries and
+native signed-byte checksums are validated. Output is reparsed and requested
+values verified. File length, unknown bytes and encryption state are preserved.
+Extensionless SGTA5/SRDR files can be selected directly; existing backups are
+excluded from automatic discovery.
+The larger collection list scrolls independently to keep the sidebar footer
+and saving note visible in smaller windows.
 
-**Full support for the 21-game catalogue has not been achieved.** Remaining
-unmapped formats, character/equipment rules, reward/progression relationships
-and game-load checks are documented in docs/CURRENT_GAME_COMPLETION.md and
-docs/COMPATIBILITY_V35.md. Unknown saved state remains protected.
+Two public Legacy files passed all 27 field edits per file and byte-identical
+restoration. Three local RDR2 files passed cash edits/restorations with all ten
+payload checks valid. Original reference/personal files remained unchanged.
+Automated tests cover exact changed bytes, encryption/no-op preservation,
+precision, malformed structures, duplicate identities, discovery and the UI.
+These are file-level checks, **not proof of successful in-game loading**.
+
+Both new editors have Limited coverage. This is not full Rockstar support,
+a Legacy/Enhanced conversion tool or an online-profile editor. Exact scope,
+references and remaining gates are documented in docs/ROCKSTAR_PC.md.
 
 Download UniversalSaveEditor.exe under Assets and double-click it, or use
-Updates > Restart and update from v0.33 or newer. The portable executable is
+Updates > Restart and update from a recent version. The portable executable is
 also included in Code > Download ZIP. No installer or terminal is needed.
-Apply updates the opened save directly, keeping its name and location;
-no automatic save backup is created.
+Apply updates the opened save directly using the original name and location;
+no automatic save backup or `.edited` output is created.

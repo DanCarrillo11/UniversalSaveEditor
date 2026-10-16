@@ -1,5 +1,11 @@
 Third-party notices: cryptography 50.0.2
 
+Rockstar PC format facts are cross-checked against hzhreal/HTOS (GPL-3.0),
+JuliPodie/rdr2-savegame-reader (MIT) and dexyfex/CodeWalker. The independent
+bounded Python implementation includes no upstream UI, campaign writer,
+game executable, proprietary metadata dump, decrypted save or native fixture.
+Pinned versions and exact factual references are listed in SOURCES.md.
+
 elden_tool_tables.py adapts factual tool, Spirit Ash, Crystal Tear and projectile
 names/identities/categories from oisis/EldenRing-SaveForge at
 ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5 under GPL-3.0-or-later.

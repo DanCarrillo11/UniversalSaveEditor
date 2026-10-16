@@ -203,6 +203,12 @@ class Save:
                 raise FormatError(str(error)) from error
             self.slots = [Slot(self.maxpayne.description, self.maxpayne.fields)]
             self.notes = ['Original PC revision 48 inventory. Weapons, reserve ammunition and painkillers can be edited. Loaded rounds, health, Bullet Time and checkpoint state are preserved. Close Max Payne before applying changes. Experimental: game-load verification is still pending.']
+        elif game in ('gtav','rdr2'):
+            from rockstar_save import RockstarSave
+            try:self.rockstar=RockstarSave(raw,game,Field)
+            except (ValueError,struct.error) as error:raise FormatError(str(error)) from error
+            self.slots=[Slot('Story Mode',self.rockstar.fields)];self.warnings=self.rockstar.warnings
+            self.notes=['PC Story Mode only. '+('Existing cash and eight saved skills for Michael, Franklin and Trevor. Legacy files were checked; an Enhanced-specific native-file check is still pending. Missing statistics and character/story availability are preserved.' if game=='gtav' else 'Current carried cash only, in dollars and cents. Camp funds, honor, weapons, horses, inventory and story remain unchanged.')+' Unknown formats are protected. File-level checks do not prove successful in-game loading. Close the game before applying changes.']
         elif game == 'eldenring':
             from elden_ring import EldenRingSave
             try:self.elden_ring=EldenRingSave(raw,Field,Slot)
@@ -614,6 +620,8 @@ class Save:
             result = self.kh3.patch({key:value for (index,key),value in changes.items()})
         elif self.game == 'maxpayne':
             result = self.maxpayne.patch({key:value for (index,key),value in changes.items()})
+        elif self.game in ('gtav','rdr2'):
+            result=self.rockstar.patch({key:value for (index,key),value in changes.items()})
         elif self.game == 'eldenring':
             result = self.elden_ring.finish(result,changes,repair_crc)
         elif self.game == 're4_2005':
@@ -783,6 +791,11 @@ def discover():
             for p in steam.glob('*/'+app_id+'/remote/win64_save/*.bin'):
                 if p.name.casefold().startswith('data'):found.append((game,p))
     docs = documents_folder()
+    for folder,game,pattern in (('GTA V','gtav','SGTA5[0-9][0-9][0-9][0-9]'),
+            ('GTAV Enhanced','gtav','SGTA5[0-9][0-9][0-9][0-9]'),
+            ('Red Dead Redemption 2','rdr2','SRDR[0-9][0-9][0-9][0-9][0-9]')):
+        for p in (docs/'Rockstar Games'/folder/'Profiles').glob('*/'+pattern):
+            if p.is_file():found.append((game,p))
     base = docs/'My Games/KINGDOM HEARTS HD 1.5+2.5 ReMIX/Steam'
     for name,game in [('KHFM_WW.png','kh1'),('KHReCoM_WW.png','recom'),('KHIIFM_WW.png','kh2'),('KHBbS_WW.png','bbs')]:
         for p in base.glob('*/'+name):
@@ -803,6 +816,8 @@ def identify_game(path):
     """Identify supported file names before choosing an extension fallback."""
     path = Path(path)
     name = path.name.casefold()
+    if re.fullmatch(r'sgta5\d{4}',name):return 'gtav'
+    if re.fullmatch(r'srdr\d{5}',name):return 'rdr2'
     known = {'khfm_ww.png':'kh1', 'khiifm_ww.png':'kh2',
              'kh2fm_ww.png':'kh2', 'khrecom_ww.png':'recom',
              'khbbs_ww.png':'bbs', 'khbbsfm.png':'bbs', 'kh3dhd.png':'ddd',

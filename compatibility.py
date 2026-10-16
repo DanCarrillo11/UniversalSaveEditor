@@ -15,6 +15,10 @@ class Evidence:
     gameplay: str = 'Edited saves have not been confirmed by loading them in the game.'
 
 EVIDENCE = {
+ 'gtav': Evidence('Recognized PC SGTA5 story saves; Legacy / Enhanced', 'Two public Legacy files passed container checks and identical decode/encode. Enhanced checks are documented separately in docs/ROCKSTAR_PC.md.',
+   'Existing cash and eight saved skills for Michael, Franklin and Trevor. Only exact typed statistic pairs in the embedded PSO schema are editable; duplicate/missing entries and unknown encodings are protected. Story, weapons, vehicles, properties, clothing, missions and online profiles are unchanged.'),
+ 'rdr2': Evidence('Recognized encrypted PC SRDR Story Mode files', 'Three local PC story saves passed all ten payload checks and identical decode/encode; originals are preserved during validation.',
+   'Current carried cash in dollars and cents only. A unique bounded known cash entry is required. Camp funds, honor, health, Dead Eye, weapons, horses, inventory, story, challenges and online state are preserved.'),
  'webfishing': Evidence('Steam player .sav files', 'A local player save was inspected; currency changes were reported working in-game.',
    'Known item creation/replacement/removal, hotbar and item locks, original cosmetics/appearance/lures, existing quest progress and journal qualities. Selecting equipment grants mapped cosmetic/lure ownership; adding bait synchronizes acquisition. Missing quest records, rewards and unknown dependencies are preserved.', gameplay='Money changes confirmed in-game. Other editing features still need gameplay checks.'),
  'ror2': Evidence('Steam UserProfiles .xml files', 'A local Steam profile was inspected and automated edits are checked.',
@@ -61,7 +65,7 @@ EVIDENCE = {
 
 # Scope describes exposed features; it is independent of file/gameplay evidence.
 BROAD = frozenset(('webfishing','ror2','kh1','kh2'))
-LIMITED = frozenset(('maxpayne','re2','re3','re4_remake','re7','re8'))
+LIMITED = frozenset(('maxpayne','re2','re3','re4_remake','re7','re8','gtav','rdr2'))
 
 def coverage_label(game):
     if game in BROAD:return 'Broad coverage'

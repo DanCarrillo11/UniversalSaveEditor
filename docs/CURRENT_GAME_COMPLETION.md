@@ -1,12 +1,19 @@
 # Complete the current catalogue before adding games
 
-The target is all 21 existing Steam editors, with useful character, inventory,
+The target is all 23 current PC editors, with useful character, inventory,
 equipment, customization, unlock and persistent progression tools wherever the
-supported save format can represent them. New games and icon work are paused.
+supported save format can represent them. The latest user request adds GTA V
+and RDR2 to this catalogue; it does not imply that the earlier editors are complete.
 This document records implemented work and the actual remaining gates. No editor
 is marked full support and no completion percentage is inferred from field count.
 
 ## Current equipment/spell pass
+
+v0.36 adds initial Rockstar PC story editors: GTA V cash/eight skills for each
+of its three characters, and RDR2 carried cash. Both GTA V folders are detected;
+Legacy references were checked, while Enhanced-specific native validation is
+pending. [Exact scope and evidence](ROCKSTAR_PC.md). No complete Rockstar support
+or successful edited-save loading is claimed.
 
 v0.35 adds four owned ammunition assignments, ten quick items, six pouch entries
 and two owned Physick tears in Elden Ring; corrects KH3 Link IDs and supports
@@ -113,6 +120,8 @@ progression events, installed content or platform achievements.
 
 | Game | Principal remaining gate |
 | --- | --- |
+| GTA V | Enhanced-specific native-file verification and in-game loading; character availability, weapons/ammunition, vehicles/garages, properties, cosmetics, missions and rewards. Current scope is cash/eight existing skills, not online or character creation. |
+| RDR2 | Honor, health/stamina/Dead Eye, weapons, horses/bonding, inventory, camp funds, challenges and full progression dependencies. Only carried cash is currently mapped and editable; game-load checks remain pending. |
 | Requiem | Map active player variants, full named unlocks, item caps and complete inventory/weapon relationships. Difficulty value/hash pairs need named identity verification. |
 | Village | Name item/content hashes, establish stack caps, weapon upgrades and difficulty identity relationships; validate native Steam payloads. |
 | RE4 Remake | Validate the new money/player-health/case fields on native Steam files; map inventory geometry, weapon parameters and complete named rewards. Chapter difficulty records are not gameplay difficulty. |
