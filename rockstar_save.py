@@ -38,16 +38,6 @@ class RockstarSave:
                         'Currency' if stat=='TOTAL_CASH' else 'Skills',collection=name,readonly=not 0<=value<=maximum,
                         note='Existing saved story-mode statistic only. Character availability, missions, rewards, inventory and unrelated statistics are preserved. Values outside the recognized range remain read-only.'))
         else:
-            matches=[]
-            for frame in self.container.frames:
-                at=frame.data_start
-                while (at:=plain.find(bytes.fromhex('ce548cf5'),at,frame.data_end))>=0:
-                    if at%4==0 and at+20<=frame.data_end:matches.append(at+16)
-                    at+=4
-            if len(matches)==1 and u32(plain,matches[0])<=2147483647:
-                at=matches[0];self.positions['cash']=at
-                self.fields.append(Field('cash','Cash ($)',u32(plain,at)/100,at,'',0,21474836.47,'Currency',decimal=True,
-                    note='Current carried cash, stored in cents. Use at most two decimal places. Camp funds, income statistics, story and rewards are preserved.'))
             from rdr2_features import Rdr2Features
             self.rdr2=Rdr2Features(self,Field)
         if not self.fields:raise ValueError('No uniquely identified supported Rockstar story fields were found. This save variant is protected.')
@@ -61,4 +51,5 @@ class RockstarSave:
                 struct.pack_into('>I',plain,self.positions[key],int(cents))
             elif not hasattr(self,'rdr2'):struct.pack_into('>i',plain,self.positions[key],value)
         if hasattr(self,'rdr2'):self.rdr2.patch(plain,changes)
-        return self.container.encode(plain)
+        result=self.container.encode(plain)
+        return self.rdr2.supplies.finish(result,changes) if hasattr(self,'rdr2') else result

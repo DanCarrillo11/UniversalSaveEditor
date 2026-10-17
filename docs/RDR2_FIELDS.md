@@ -70,7 +70,7 @@ arrays are not resized. Compendium counts do not acquire bait, fish or horses.
 
 ## Native-file verification
 
-Three local encrypted PC saves (755712, 686160 and 702880 bytes) expose 1632,
+In v0.38, three local encrypted PC saves (755712, 686160 and 702880 bytes) expose 1632,
 1100 and 1116 fields respectively; counts include compendium records and separate
 weapon copies, and are **not a completion percentage**. Their active inventories
 contain 834, 233 and 302 records. Two saves have nonstandard original values
@@ -91,16 +91,74 @@ state, undo-by-restoration, bounds, preview navigation and staged UI edits.
 No personal sample is packaged.
 
 **Successful game loading and persistence have not been verified.** Full support
-still needs item/weapon/clothing acquisition and dependencies, stable management,
-camp upgrades, regional bounties, challenge/story/reward dependencies, unlock-bit
-semantics, broader revisions and in-game checks. Unidentified bytes are retained;
-the interface does not expose guessed unlock switches.
+still needs weapon/clothing acquisition and dependencies, stable management,
+camp upgrades, challenge/story/reward dependencies, broader revisions and in-game
+checks. Unidentified bytes are retained. The additions below are limited to
+recognized structures and do not establish full compatibility.
 
-Specific unresolved dependencies: creating inventory entries needs a verified
-GUID allocator, parent/container ownership, owned-weapon records, components,
-unlock flags and consistent PSO/RSAV directory growth. Knowing an item's name
-hash does not establish those rules. Regional bounties have both script values
-and a native current bounty, regional wanted bits and mission-temporary state;
-the current region has not been identified reliably in an offline save. These
-fields remain protected instead of changing only one related value. Successful
-parse, checksum repair and byte-identical restoration do not prove gameplay.
+Specific unresolved dependencies: weapon acquisition needs owned-weapon records,
+components and appropriate relationships; horse creation needs stable/script
+state. Knowing an item's name hash does not establish those rules. The current
+bounty region has not been identified reliably in an offline save, so edits
+which require choosing between inconsistent candidate regions are refused.
+Successful parse and checksum repair do not prove gameplay.
+
+## v0.39 monetary bounties
+
+Six build-1491 region records begin at Global_40.f_358: amounts are cells
+359 + region*12, flags are five cells later. Amounts store cents. Both the
+inline scalar schema and the six-element array header are required. A unique
+CBountySaveStructure.CurrentBounty supplies the native current amount.
+Mission-temporary Global_40.f_11957 must be zero. Individual edits synchronize
+the native amount only when all matching current-region candidates have the
+same final amount. Otherwise the edit is refused. The clear action zeros all
+six amounts and the native amount and clears only monetary flag bit 2 (mask 4).
+Story/dead-or-alive bit 1, pursuit state, timers and all other flags are retained.
+The game can apply its own chapter-specific 300/500/1500-dollar cap.
+
+## v0.39 existing catalog unlocks
+
+Only the CODE frame's unique CUnlockSaveStructureSP.UnlockItemList is followed,
+with observed data/XML versions zero, bounded counts/capacity, extended-pointer
+validation and aligned eight-byte SUnlockInfo rows. Hash must be the declared
+ATNSHASHSTRING member at zero; PackedData is the UCHAR at four. Duplicate hashes,
+unknown names and story-document entries do not receive controls.
+
+Apply sets only PackedData bits 0, 1 and 2 (mask 7), matching the reference
+editor's existing-weapon catalog action. Bits 1/2 are its custom-unlock pair;
+visibility is bit 0. This action does not clear any other bit, acquire inventory,
+buy/equip a component or create a horse. Applied actions are read-only, not a
+reversible toggle or a claim about the game's current derived availability.
+Seven collections separate weapons, ammunition, clothing, satchels, weapon
+components, horse equipment and horse breeds. Text names are primary script/hash
+facts; no reference editor code, resources or images are distributed.
+
+## v0.39 experimental ordinary-supply acquisition
+
+An explicit 26-item allowlist offers one unit of a missing ordinary satchel
+supply. Existing items remain under quantity controls. This requires a checked
+RSAV version-3 directory, a valid active inventory, a typed cash record and its
+unique active CharacterItem parent. Online profiles, weapons, clothing, quest
+objects and arbitrary hashes cannot use this path.
+
+New 48-byte SavegameInventoryItem records retain the same typed-record header
+and character parent, set SLOTID_SATCHEL, Equipped=false and Quantity=1. Their
+opaque GUID retains the cash record's namespace and uses a random unique low
+word. Collisions are checked against all mapped item GUIDs and parent GUIDs,
+including inactive/backup records; allocation has a bounded retry limit. This
+is an independently implemented allocation strategy, **not a verified replica
+of the game's runtime allocator**. Its successful in-game persistence is pending.
+
+The writer appends new records and a new active pointer array, preserves all
+old records and backup references, and updates only the active descriptor.
+Mapped CODE blocks relocate with stable block IDs and checked types/strides.
+PSIN length, PMAP entries, CODE length, later RSAV offsets and the CODE checksum
+are rebuilt; PSCH, PSIG, old opaque bytes, encryption state and every script chunk
+are preserved. Growth is bounded to 64 MiB. No-op output remains identical.
+
+Current native checks expose 4369/3834/3853 fields including catalog actions,
+not a completion percentage. Applying all available catalog actions retained
+all ten checks and could be restored exactly at the byte level. Adding missing
+allowlisted supplies created 19/13/13 records while preserving the 834/233/302
+original records, all existing field values and all nine script chunks. Original
+personal files were read only. These are structural checks, **not game validation**.

@@ -566,5 +566,37 @@ Fishing-history arrays use the independently verified PC pointer layout and
 bounded typed targets. Native files corroborate horse inventory/script XP,
 camp/statistic agreement and exact-span history edits. Public script hash/name
 facts add gang labels; unresolved compendium IDs are not assigned guessed names.
-Regional bounty and inventory acquisition dependencies remain unmapped; no
-successful game load is claimed by these structural checks.
+No successful game load is claimed by these structural checks.
+
+### RDR2 bounties, catalog actions and supply growth (v0.39)
+
+The same pinned build-1491 scripts provide monetary-bounty facts:
+`short_update.c` func_790 and func_2107 (regional amount, native mirror and
+chapter cap), func_783/784/2101/2102 (monetary flag mask 4), func_3274
+(separate story wanted bit), `flow_controller.c` func_174/175 (mission temporary
+amount), and `startup_sp.c` func_234/601 (region mapping and initialization).
+The embedded scalar schemas and native arrays corroborate these locations.
+
+The user supplied version 0.4.1.0 of
+[XB36Hazard's reference editor](https://x3t-infinity.com/rdr_se).
+It was inspected statically, never executed or loaded as an assembly. Its
+existing-weapon action sets SUnlockInfo PackedData bits 0/1/2; its other catalog
+controls corroborate the custom-unlock pair at 1/2. The pinned parser dump and
+three native files corroborate the eight-byte row and typed Hash/PackedData
+members. Only these format facts informed the independent masked writer.
+No proprietary implementation, resource database, binary or decoded resource
+is bundled. Additional component/horse labels are hash/name facts from the
+same pinned primary scripts, not the reference editor's resources.
+
+Native generic satchel records corroborate 48-byte typed records, character
+parent links, SLOTID_SATCHEL and unique eight-byte identifiers. Reference static
+inspection corroborates retaining the existing character namespace/parent when
+creating ordinary supplies. The new allocator uses its own bounded collision
+checks and random low word; matching the game's runtime allocator and in-game
+persistence are **not established**. The allowlist uses independently named
+ordinary supply identifiers; weapon/stable acquisition is excluded.
+
+RSAV directory offsets, CODE/script markers, payload lengths, PMAP relocation,
+extended pointers, AES alignment and checks were independently verified on three
+local files and synthetic directories. Structural verification cannot establish
+item behavior, shop availability, reward delivery or successful game loading.

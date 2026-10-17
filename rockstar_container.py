@@ -116,3 +116,8 @@ class RockstarContainer:
             struct.pack_into('>I',result,at+12,checksum(sample))
         if self.encrypted:result[self.start:]=aes(result[self.start:],False)
         return bytes(result)
+
+    def replace_root_blocks(self,replacements):
+        """Internal structural growth; callers must verify acquisition semantics."""
+        from rdr2_pso import replace_root_blocks
+        return replace_root_blocks(self,replacements)

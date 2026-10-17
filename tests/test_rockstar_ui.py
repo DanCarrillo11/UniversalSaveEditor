@@ -14,6 +14,30 @@ class RockstarInterfaceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):cls.app=QApplication.instance() or QApplication([])
 
+    def test_rdr2_catalog_and_acquisition_actions_stage_in_distinct_sections(self):
+        from test_rdr2_features import fixture as expanded
+        from test_rdr2_pso import rsav
+        from PySide6.QtWidgets import QCheckBox
+        from editor_layout import organize_fields
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=root/'SRDR30001'
+            raw=rsav(True,expanded(False,records=True,bounties=True,unlocks=True,supplies=True));p.write_bytes(raw)
+            with patch('app.discover',return_value=[]):w=Window(settings=QSettings(str(root/'prefs.ini'),QSettings.Format.IniFormat))
+            with patch.object(w,'may_discard',return_value=True):
+                w.reduce_motion.setChecked(True);w.show();w.resize(1280,800)
+                try:
+                    self.assertTrue(w.load('rdr2',p));expected={}
+                    for group in ('Unlocks','Add supplies','Bounties'):
+                        f=next(f for f in w.save.slots[0].fields if f.group==group and f.boolean and not f.readonly)
+                        w.reveal_field((0,f.key));self.app.processEvents();control=w.inputs[0,f.key]
+                        self.assertIsInstance(control,QCheckBox);control.setChecked(True);expected[0,f.key]=1
+                    self.assertEqual(w.validated_changes(),expected)
+                    after=Save(w.save.patched(expected),'rdr2');self.assertFalse(after.warnings)
+                    sections=[s.name for c in organize_fields('rdr2',after.slots[0].fields) for s in c.sections]
+                    self.assertIn('Unlocks: Weapons',sections);self.assertIn('Add supplies: Tonics',sections)
+                    self.assertEqual(p.read_bytes(),raw);w.reset();self.assertFalse(w.validated_changes())
+                finally:w.close();w.deleteLater();self.app.processEvents()
+
     def test_collection_growth_scrolls_without_clipping_the_sidebar_footer(self):
         with tempfile.TemporaryDirectory() as directory:
             settings=QSettings(str(Path(directory)/'prefs.ini'),QSettings.Format.IniFormat)

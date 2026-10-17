@@ -36,6 +36,8 @@ class CampaignFields:
         roots=[(frame,at,length) for frame in features.c.frames for h,at,length in frame.blocks if h==ROOT]
         self.root=roots[0] if len(roots)==1 else None
         self.camp_money();self.horse_mirrors();self.statistics()
+        from rdr2_bounties import BountyFields
+        self.bounties=BountyFields(self)
 
     def scalar(self,index,kind):
         if not self.root:return None
@@ -120,6 +122,7 @@ class CampaignFields:
             field.note='Synchronizes the existing horse’s inventory XP and saved script XP, matched by its unique horse slot. Breed, stable ownership and reward flags are preserved. The game determines rank from the horse’s own progression rules.'
 
     def patch(self,plain,changes):
+        self.bounties.patch(plain,changes)
         for key,value in changes.items():
             if key in self.money:
                 cents=Decimal(str(value))*100

@@ -112,6 +112,8 @@ def organize_fields(game, fields):
             if group in ('Player cores','Player progression','Honor'):category,section,selection='Character',group,'Player'
             elif group in ('Weapon condition','Horses'):category,section,selection='Collection',item.collection or group,group
             elif group=='Compendium':category,section,selection='Collection','Compendium: '+(item.collection or 'Records'),group
+            elif group=='Unlocks':category,section,selection='Collection','Unlocks: '+(item.collection or 'Catalog'),group
+            elif group=='Add supplies':category,section,selection='Collection','Add supplies: '+(item.collection or 'Supplies'),group
             elif group=='Inventory':category,section,selection='Collection',item.collection or group,group
             else:category,section,selection='Progress',group,group
         if game=='re5':

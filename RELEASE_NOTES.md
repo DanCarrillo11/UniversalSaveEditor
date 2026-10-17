@@ -1,33 +1,35 @@
-# v0.38.0-alpha — RDR2 camp, horses and saved history
+# v0.39.0-alpha — RDR2 catalog unlocks, supplies and bounties
 
-This update expands the existing RDR2 PC Story Mode editor:
+This update expands RDR2 PC Story Mode while keeping its compatibility status
+**Limited**:
 
-- **Camp funds:** edit dollars and cents; the ledger balance and its saved
-  statistic change together when both are unique and agree.
-- **Horses:** health and stamina cores for recognized existing horse slots.
-  Bonding XP now updates both inventory and script copies, matched by SlotId.
-  Unknown slots, absent models and disagreeing XP values are protected.
-- **Statistics:** 17 existing history counters, including kills, headshots,
-  deaths, horse sales, stable visits, baths and item use.
-- **Compendium history:** horse breaking/highest recorded bonding, gang
-  encounter counters and fish caught per existing bait/lure record.
+- **Catalog unlocks:** apply existing saved unlocks for named weapons, clothing,
+  satchels, ammunition, components, horse equipment and breeds. These controls
+  are separate from ownership: they do not add, buy or equip the object.
+- **Add supplies:** experimental one-unit acquisition of 26 ordinary satchel
+  items, including medicine, food, horse supplies and ammunition. The writer
+  validates the active character graph, creates unique record IDs and expands
+  the native blocks with checked directory relocation. Existing item quantities
+  remain in their usual sections.
+- **Bounties:** edit recognized regional monetary amounts or clear them together.
+  The current native bounty is synchronized. Mission-temporary state and edits
+  requiring an ambiguous current region are protected; story wanted flags stay.
+- **Cash and loading:** resolve cash through typed active-inventory membership
+  and reuse the validated inventory graph across editor sections.
+- **Offline previews:** browse the new sections without owning the game or
+  opening a personal save. Preview controls remain read-only.
 
-History and compendium records do not deliver items, rewards, challenge
-completion or platform achievements. Recorded bonding history is separate from
-an existing horse's actual progression. Many compendium species/breed names
-remain unidentified and display their hashes rather than guessed labels.
+Three native files passed in-memory catalog edits, all ten payload checks and
+exact-span preservation. Supply acquisition retained all 834/233/302 original
+inventory records and all nine script chunks. Original personal files were not
+modified. Tests also cover malformed pointers/schemas, GUID collisions, separate
+backup inventory, action staging and previews.
 
-Three native encrypted PC files passed all editable-field changes in memory,
-all ten payload checks, exact-span comparisons and byte-identical restoration.
-Personal originals were unchanged. Synthetic cases cover camp/horse mismatch,
-unknown slots, malformed schemas/counts, duplicate statistics, foreign
-namespaces, fishing-array bounds/aliasing, previews and staged UI edits.
-
-**RDR2 remains Limited coverage.** Edited-save loading/persistence in the game
-has not been verified. Item/weapon/clothing acquisition, components, stable
-management, full named compendium identities, regional bounty dependencies and
-story/challenge/reward delivery still need mapping. No full-support claim is
-made. See docs/RDR2_FIELDS.md for exact scope and unresolved dependencies.
+**Successful in-game loading and persistence remain unverified.** Supply
+acquisition is experimental; its allocator has not been confirmed against the
+game's runtime allocator. Weapon/clothing acquisition, stable management, camp
+upgrades and complete story/challenge/reward dependencies are still pending.
+This release does not claim full RDR2 support. See docs/RDR2_FIELDS.md for details.
 
 Download UniversalSaveEditor.exe under Assets and double-click it, or use
 Updates > Restart and update. The portable executable is also included in

@@ -18,9 +18,15 @@ def fixture(game='gtav',encrypted=True,duplicate=False,bad_type=False):
         data=b''.join(struct.pack('>2I',*p) for p in pairs);identity=2199017832
         definition=struct.pack('>3I',2,8,0)+struct.pack('>IBBHI',3742647683,5,0,0,0)+struct.pack('>IBBHI',3021077118,9 if bad_type else 5,0,4,0)
     else:
-        data=bytearray(96 if duplicate else 64);data[16:20]=bytes.fromhex('ce548cf5');struct.pack_into('>I',data,32,12345)
-        if duplicate:data[64:68]=bytes.fromhex('ce548cf5');struct.pack_into('>I',data,80,12000)
-        identity=2363674431;definition=struct.pack('>3I',0,48,0)
+        from rdr2_features import parser_hash
+        data=bytearray(96 if duplicate else 48)
+        for i in range(2 if duplicate else 1):
+            struct.pack_into('>Q',data,i*48+8,i+1)
+            struct.pack_into('>II',data,i*48+24,name_hash('CURRENCY_CASH'),name_hash('SLOTID_CURRENCY'))
+            struct.pack_into('>q',data,i*48+40,12345)
+        identity=parser_hash('SavegameInventoryItem')
+        fields=[('Guid',31,0,8,0),('ParentGuid',31,0,16,0),('ItemId',11,7,24,0),('SlotId',6,0,28,0),('Quantity',31,0,40,0)]
+        definition=struct.pack('>3I',len(fields),48,0)+b''.join(struct.pack('>IBBHI',parser_hash(k),9 if bad_type and k=='Quantity' else t,sub,off,ref) for k,t,sub,off,ref in fields)
     mapping=struct.pack('>IHH',1,1,0x7070) if game=='gtav' else struct.pack('>IIHHI',1,0,1,0,0)
     mapping+=struct.pack('>4I',identity,8,0,len(data))
     schema=struct.pack('>3I',1,identity,20)+definition

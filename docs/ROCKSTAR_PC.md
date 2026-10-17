@@ -39,15 +39,17 @@ regions, malformed mapping/schema lengths and unsupported cipher envelopes fail.
 
 The initial adapter exposed current carried cash. v0.37 adds the schema-gated
 fields documented in [RDR2_FIELDS.md](RDR2_FIELDS.md); v0.38 adds camp funds,
-synchronized horse XP, horse cores and recorded history. Cash's known
-CE548CF5 identity must have one aligned occurrence in a bounded PSIN data section,
-with the referenced value at +16 fully inside that section. Duplicate or missing
-matches are refused. Cash is a nonnegative 32-bit stored cent value, limited here
-to signed int32. The UI displays dollars, preserves cents and rejects more than
+synchronized horse XP, horse cores and recorded history. v0.39 adds guarded
+monetary bounties, existing catalog unlock actions and experimental ordinary
+satchel-supply acquisition. Cash resolves a unique typed CURRENCY_CASH record
+in SLOTID_CURRENCY (CE548CF5), following only active inventory membership when
+that graph exists. Orphan bytes and malformed graphs cannot supply a fallback
+cash match. The signed 64-bit Quantity must be within 0..2147483647 cents;
+the zero high word is preserved. The UI displays dollars and rejects more than
 two decimal places rather than silently rounding. This serialized bound is not
 a claim about the game's displayed money cap.
 
-Historical earnings, item/weapon/clothing acquisition, stable slots,
+Historical earnings, weapon/clothing acquisition, stable slots,
 missions, challenge rewards and online state stay unchanged. Console quick-code
 addresses alone are not treated as PC field semantics.
 
@@ -62,7 +64,10 @@ AES-256 ECB is limited to the recognized body; its length/alignment is checked.
 Rockstar CHKS uses signed-byte Jenkins arithmetic, unlike ordinary name hashes.
 Each region includes its CHKS record with its length/checksum words zeroed for
 calculation. GTA V title and RDR2 date header checks are separate. Unknown
-headers, gaps, padding, schema bytes, signatures and length remain preserved.
+headers, gaps, padding, schema bytes and signatures remain preserved. Ordinary
+field edits preserve length. Experimental supply acquisition uses bounded CODE
+block growth, checked RSAV directory offsets and unchanged script chunks; see
+the allocation assumptions in [RDR2_FIELDS.md](RDR2_FIELDS.md).
 Original integrity mismatches require explicit repair; repair is not proof of
 intact game state. The finished output is reparsed and requested values verified.
 

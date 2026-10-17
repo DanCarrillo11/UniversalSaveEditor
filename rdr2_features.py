@@ -1,4 +1,4 @@
-"""Schema-gated RDR2 PC story fields; never resize or invent native records.
+"""Schema-gated RDR2 PC story fields and separately gated acquisition actions.
 
 SPDX-License-Identifier: GPL-3.0-or-later
 Format evidence and limitations: docs/RDR2_FIELDS.md and SOURCES.md.
@@ -7,9 +7,10 @@ from collections import Counter
 from functools import lru_cache
 from pathlib import Path
 import json, math, struct, sys
-from rockstar_container import checksum,u32
+from rockstar_container import checksum,u32,name_hash
 
 
+@lru_cache(maxsize=4096)
 def parser_hash(text):
     """Parser member names are case-sensitive, unlike game item/stat names."""
     return checksum(text.encode('ascii'),0)
@@ -44,7 +45,11 @@ class Rdr2Features:
     def __init__(self,owner,Field):
         self.owner,self.Field=owner,Field;self.c=owner.container;self.raw=self.c.plain
         self.formats={};self.related={};self.fields=owner.fields;self.positions=owner.positions
-        self.character();self.inventory();self.compendium();self.compendium_records();self.world()
+        self.cash();self.character();self.inventory();self.compendium();self.compendium_records();self.world()
+        from rdr2_unlocks import UnlockFields
+        self.unlocks=UnlockFields(self)
+        from rdr2_supplies import SupplyFields
+        self.supplies=SupplyFields(self)
         from rdr2_campaign import CampaignFields
         self.campaign=CampaignFields(self)
 
@@ -71,6 +76,26 @@ class Rdr2Features:
         self.positions[key]=at;self.formats[key]=fmt
         self.fields.append(self.Field(key,title,value,at,'',low,high,group,
             decimal=fmt.endswith('f'),boolean=boolean,collection=collection,readonly=readonly,note=note))
+
+    def cash(self):
+        # CE548CF5 is SLOTID_CURRENCY, not an item identity. Resolve the
+        # CURRENCY_CASH item through the typed graph; never scan orphan bytes.
+        root=parser_hash('CPedInventorySaveStructure')
+        has_graph=any(h==root for frame in self.c.frames for h,b,length in frame.blocks)
+        if has_graph:
+            rows=[(frame,b,m) for frame,h,b,m in self.active_items() if h==parser_hash('SavegameInventoryItem')]
+        else:
+            rows=self.rows('SavegameInventoryItem',(('ItemId',11,7),('Quantity',31,0),('Guid',31,0),('ParentGuid',31,0)))
+        matches=[]
+        for frame,b,m in rows:
+            slot=member(frame,parser_hash('SavegameInventoryItem'),'SlotId',6)
+            if slot and u32(self.raw,m['ItemId'])==name_hash('CURRENCY_CASH') and u32(self.raw,b+slot[0])==name_hash('SLOTID_CURRENCY'):
+                value=struct.unpack_from('>q',self.raw,m['Quantity'])[0]
+                if 0<=value<=2147483647:matches.append((m['Quantity']+4,value))
+        if len(matches)!=1:return
+        at,value=matches[0];self.positions['cash']=at
+        self.fields.append(self.Field('cash','Cash ($)',value/100,at,'',0,21474836.47,'Currency',decimal=True,
+            note='Current carried cash, stored in cents. Requires a unique typed CURRENCY_CASH item in SLOTID_CURRENCY. When an inventory graph exists, only its active membership is used. Two decimal places maximum. Camp funds, historical income and rewards remain separate.'))
 
     def character(self):
         # Build 1491 script save root and attribute member are identified by
@@ -130,6 +155,13 @@ class Rdr2Features:
         return h,start+offset,length-offset
 
     def active_items(self):
+        # A parsed save is immutable. Reuse the validated graph for cash,
+        # quantity controls, horse mirrors and acquisition instead of walking
+        # the same hundreds of pointers separately for each feature.
+        if not hasattr(self,'_inventory_rows'):self._inventory_rows=self._read_active_items()
+        return self._inventory_rows
+
+    def _read_active_items(self):
         rows=self.rows('CPedInventorySaveStructure',(('playerInventory',12,0),('backupInventory',12,0),('usingBackupInventory',0,0)))
         if len(rows)!=1:return []
         f,b,m=rows[0];flag=self.raw[m['usingBackupInventory']]
@@ -257,3 +289,4 @@ class Rdr2Features:
             struct.pack_into(fmt,plain,self.positions[key],value)
             for at in self.related.get(key,()):struct.pack_into(fmt,plain,at,value)
         self.campaign.patch(plain,changes)
+        self.unlocks.patch(plain,changes)

@@ -8,10 +8,12 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.38.0-alpha** adds synchronized RDR2 camp funds and horse bonding XP,
-horse health/stamina cores, 17 saved history statistics and more compendium
-records. Existing honor, player attributes, supplies/ammunition, weapon condition,
-horse care and clock controls remain available. GTA V exposes character cash and eight saved skills.
+Version **v0.39.0-alpha** adds guarded RDR2 monetary bounties, existing catalog
+unlock actions and experimental acquisition of 26 ordinary satchel supplies.
+Unlocks and owned items have separate sections. Adding supplies expands the native
+inventory while preserving existing records and script chunks. Successful game
+loading remains unverified; this is not complete RDR2 support. Existing camp,
+horse, character and compendium controls remain available. GTA V exposes character cash and eight saved skills.
 Legacy native files were checked; an Enhanced-specific native-file check is
 still pending. Both GTA V save locations are detected; unknown formats are refused.
 In-app updates remain available through
@@ -100,7 +102,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 | Game | Editable fields | Status / save action |
 |---|---|---|
 | GTA V, PC Story Mode | Existing cash and eight saved skills for Michael, Franklin and Trevor | Limited; Legacy native files checked; Enhanced-specific file check and game loading pending |
-| Red Dead Redemption 2, PC Story Mode | Cash, synchronized honor, player cores/health/XP/weight, existing supplies/ammunition, weapon condition, horse bonding/care, compendium flags, clock time | Limited; three native files checked; acquisition/unlocks, story dependencies and game loading pending. See [exact scope](docs/RDR2_FIELDS.md). |
+| Red Dead Redemption 2, PC Story Mode | Cash/camp, honor, player attributes, supplies/ammunition, weapon condition, horses, compendium/history, bounties, catalog unlocks and experimental common-supply acquisition | Limited; three native files checked. Weapon/clothing acquisition, stable management, story/reward dependencies and game loading pending. See [exact scope](docs/RDR2_FIELDS.md). |
 | Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, 171 base-game spell acquisitions, owned spell loadouts, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics, existing case quantities and known weapon tune-up tiers | Experimental; direct apply; new case objects and comprehensive unlocks pending |
 | Resident Evil HD Remaster, PC | Recognized gameplay records, difficulty, defensive supplies, known inventory/item-box identities and quantities, next empty box entry | Experimental; public PC fixture checked; recognized gameplay sections selectable |
@@ -197,7 +199,7 @@ games, which are not advertised as compatible yet.
 | Resident Evil 4 (2005), Steam UHD | Progress, Characters, Records |
 | WEBFISHING | Progress, Equipment, Collection |
 | GTA V | Characters: Michael, Franklin and Trevor; Currency and Skills |
-| Red Dead Redemption 2 | Progress: Currency / World clock; Character: Honor / Player cores / Player progression; Inventory: Supplies / Ammunition / Weapon condition / Horses / Compendium |
+| Red Dead Redemption 2 | Progress: Currency / Camp / Bounties / Statistics / World clock; Character: Honor / Cores / XP; Inventory: Supplies / Ammunition / Weapons / Horses / Compendium / Catalog unlocks / Add supplies |
 | Risk of Rain 2 | Progress, Unlocks, Records |
 | Alice persistent profile | Progress, Character, Collection |
 | Alice configuration | Progress |

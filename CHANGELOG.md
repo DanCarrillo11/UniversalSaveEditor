@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.39.0-alpha
+
+- Add build-1491 regional monetary bounties and a clear action. Synchronize the
+  native current amount; protect mission-temporary state, ambiguous regions and
+  story wanted flags.
+- Add existing catalog unlock actions for named weapons, clothing, satchels,
+  ammunition, components, horse gear and breeds. Preserve all other flags and
+  distinguish catalog unlocks from item ownership.
+- Add experimental acquisition of 26 ordinary satchel supplies, one unit each.
+  Validate the active character graph, allocate unique namespaced item IDs and
+  grow typed PSO blocks with checked RSAV directory relocation. Existing items,
+  backup inventory and script chunks remain intact. Game loading is unverified.
+- Resolve cash through its typed active-inventory record instead of a byte marker.
+  Add synthetic previews, navigation and regression tests for the new actions.
+- Keep RDR2 compatibility Limited: weapon/clothing acquisition, stable management,
+  camp upgrades and complete story/challenge/reward dependencies remain pending.
+
+## v0.38.0-alpha
+
+- Add synchronized RDR2 camp funds and horse inventory/script bonding XP.
+- Add horse health/stamina cores, 17 recorded history counters and additional
+  compendium horse/gang/fishing records, with schema and dependency guards.
+- Verify edits and byte-identical restoration on three native files. No successful
+  in-game loading claim is made.
+
 ## v0.37.0-alpha
 
 - Expand RDR2 PC Story Mode with synchronized honor, player cores/health/base

@@ -9,7 +9,10 @@ from test_rockstar import fixture as minimal,section
 
 def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_schema=False,honor_disagrees=False,wide_pointer=False,
             camp_disagrees=False,horse_disagrees=False,unknown_horse_slot=False,missing_horse_model=False,
-            records=False,fish_alias=False,fish_bad_pointer=False,stat_duplicate=False,stat_namespace=False,bad_horse_counts=False):
+            records=False,fish_alias=False,fish_bad_pointer=False,stat_duplicate=False,stat_namespace=False,bad_horse_counts=False,
+            bounties=False,bounty_zero=False,bounty_temporary=False,bounty_mismatch=False,bounty_bad_count=False,
+            unlocks=False,unlock_duplicate=False,unlock_bad_pointer=False,unlock_bad_schema=False,unlock_version=False,unlock_short_count=False,
+            supplies=False):
     blocks=[];schemas={}
     def block(name,size,fields,data):
         h=parser_hash(name) if isinstance(name,str) else name
@@ -20,16 +23,16 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
     schemas[parser_hash(base)]=(48,[(0x100,12,3,0,0),(parser_hash('items'),13,0,8,0)])
     root=bytearray(112);root[108]=int(backup)
     prefix=4096 if wide_pointer else 0
-    root[16:32]=pointer(2,prefix)+struct.pack('>HHI',4,4,0)
-    root[64:80]=pointer(2,prefix+32)+struct.pack('>HHI',1,1,0)
+    root[16:32]=pointer(2,prefix)+struct.pack('>HHI',5,5,0)
+    root[64:80]=pointer(2,prefix+40)+struct.pack('>HHI',1,1,0)
     block('CPedInventorySaveStructure',112,[('playerInventory',12,0,8,base),('backupInventory',12,0,56,base),('usingBackupInventory',0,0,108,0)],root)
-    refs=pointer(3)+pointer(4)+pointer(5)+pointer(6)+pointer(3,48)
+    refs=pointer(3)+pointer(4)+pointer(5)+pointer(6)+bytes(8)+pointer(3,48)
     if duplicate:refs=pointer(3)*2+refs[16:]
     if bad_pointer:refs=pointer(4095)+refs[8:]
     blocks.append((12,bytes(prefix)+refs))
-    common=[('Guid',31,0,8,0),('ParentGuid',31,0,16,0),('ItemId',11,7,24,0),('SlotId',6,0,28,0),('Quantity',31,0,40,0)]
+    common=[('Guid',31,0,8,0),('ParentGuid',31,0,16,0),('ItemId',11,7,24,0),('SlotId',6,0,28,0),('Quantity',31,0,40,0),('Equipped',0,0,32,0)]
     def record(size,guid,name,quantity):
-        data=bytearray(size);struct.pack_into('>Q',data,8,guid);struct.pack_into('>I',data,24,name_hash(name));struct.pack_into('>q',data,40,quantity);return data
+        data=bytearray(size);struct.pack_into('>Q',data,8,guid);struct.pack_into('>Q',data,16,42 if supplies else 0);struct.pack_into('>I',data,24,name_hash(name));struct.pack_into('>q',data,40,quantity);return data
     data=record(48,1,'CONSUMABLE_MEDICINE',3)+record(48,9,'CONSUMABLE_MEDICINE',7)
     block('SavegameInventoryItem',48,common,data)
     gun=record(88,2,'WEAPON_REVOLVER_CATTLEMAN',1)
@@ -46,7 +49,7 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
         stats+=struct.pack('>2Ii',name_hash('HEADSHOTS'),1 if stat_namespace else 0,37)+struct.pack('>2Ii',name_hash('DEATHS'),0,2)
         if stat_duplicate:stats+=struct.pack('>2Ii',name_hash('HEADSHOTS'),0,37)
     block('CBaseStatsSaveStructure__CIntStatStruct',12,[('statId',12,0,0,'StatId'),('Data',5,0,8,0)],stats)
-    attrs=bytearray(88760+568);attrs[88760]=3;attrs[88760+88]=23
+    attrs=bytearray(96528 if bounties else 88760+568);attrs[88760]=3;attrs[88760+88]=23
     struct.pack_into('>i',attrs,88760+280,10)
     for n in range(3):struct.pack_into('>f',attrs,88760+8+n*8,50);struct.pack_into('>f',attrs,88760+96+n*8,100)
     schemas[0x41d6f933]=(568,[(0xa53cde40,5,0,280,0),(0xc3364edc,12,0,0,0x41d6f934),(0x18d8e817,12,0,88,0x41d6f938)])
@@ -64,13 +67,42 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
     schemas[0x41d6f8a4]=(3488,[(3,5,0,72,0),(4,7,0,373*8,0),(5,12,0,398*8,0x41d6f8af)])
     schemas[0x41d6f8af]=(72,[(6,12,0,8,0x41d6f8b0),(7,12,0,40,0x41d6f8b0)])
     schemas[0x41d6f8b0]=(32,[(8,5,0,0,0)])
-    block(0x41d6f894,len(attrs),[(0xb5d75947,12,64,23224,0x41d6f933),(0xa08031a2,12,0,34264,0x41d6f8bf),(0x454e4c92,12,0,8760,0x41d6f8a2)],attrs)
+    root_fields=[(0xb5d75947,12,64,23224,0x41d6f933),(0xa08031a2,12,0,34264,0x41d6f8bf),(0x454e4c92,12,0,8760,0x41d6f8a2)]
+    if bounties:
+        attrs[358*8]=5 if bounty_bad_count else 6
+        struct.pack_into('>i',attrs,(359+2*12)*8,0 if bounty_zero else 2000)
+        struct.pack_into('>I',attrs,(359+2*12+5)*8,0x82 if bounty_zero else 0x86)
+        struct.pack_into('>i',attrs,11957*8,500 if bounty_temporary else 0)
+        schemas[0x41d6f8e8]=(584,[(10+n,12,0,8+n*96,0x41d6f8e9) for n in range(6)])
+        schemas[0x41d6f8e9]=(96,[(0xee983f03,5,0,0,0),(11,5,0,40,0)])
+        root_fields.extend(((0x6d563153,12,0,2864,0x41d6f8e8),(0x9cafc185,5,64,30120,0)))
+        bounty=bytearray(48);struct.pack_into('>I',bounty,8,777 if bounty_mismatch else 0 if bounty_zero else 2000)
+        block('CBountySaveStructure',48,[('CurrentBounty',6,0,8,0)],bounty)
+    block(0x41d6f894,len(attrs),root_fields,attrs)
     block('CSaveCompendium__ItemWeapon',8,[('name',11,7,0,0),('hasOwned',0,0,4,0)],struct.pack('>IB3x',name_hash('WEAPON_REVOLVER_CATTLEMAN'),0))
     clock=bytearray(64);struct.pack_into('>3I',clock,44,9,25,30)
     block('CSimpleVariablesSaveStructure',64,[('GameClockHour',6,0,44,0),('GameClockMinute',6,0,48,0),('GameClockSecond',6,0,52,0)],clock)
     health=bytearray(64);struct.pack_into('>f',health,48,250)
     block('CPlayerPedSaveStructure',64,[('fHealth',7,0,48,0)],health)
-    cash=record(48,8,'CURRENCY_CASH',12345);cash[24:28]=bytes.fromhex('ce548cf5');block('SavegameInventoryItem',48,common,cash)
+    cash=record(48,8,'CURRENCY_CASH',12345);struct.pack_into('>I',cash,28,name_hash('SLOTID_CURRENCY'))
+    cash_id=block('SavegameInventoryItem',48,common,cash)
+    refs=refs[:32]+pointer(cash_id)+refs[40:];blocks[1]=(12,bytes(prefix)+refs)
+    if supplies:
+        character=record(112,42,'CHARACTER_PLAYER',1);struct.pack_into('>Q',character,16,0)
+        character_id=block('CPedInventorySaveStructure__CharacterItem',112,common,character)
+        refs=refs[:40]+pointer(character_id)+refs[40:];blocks[1]=(12,bytes(prefix)+refs)
+        root[16:32]=pointer(2,prefix)+struct.pack('>HHI',6,6,0)
+        root[64:80]=pointer(2,prefix+48)+struct.pack('>HHI',1,1,0)
+        blocks[0]=(blocks[0][0],bytes(root))
+    if unlocks:
+        catalog=[('WEAPON_REVOLVER_CATTLEMAN',0x89),('CLOTHING_SP_OUTFIT_LGD_GATOR_PANTHER',9),
+            ('CLOTHING_HL_PLAYER_SATCHEL_004_1',7),('DOCUMENT_NEWSPAPER_ED_10',0),('NOT_A_KNOWN_ITEM',0)]
+        if unlock_duplicate:catalog.append(catalog[0])
+        data=b''.join(struct.pack('>IB3s',name_hash(n),v,b'\x12\x34\x56') for n,v in catalog)
+        items=block('SUnlockInfo',8,[('Hash',11,7 if unlock_bad_schema else 11,0,6),('PackedData',2,0,4,0)],data)
+        unlock=bytearray(32);struct.pack_into('>I',unlock,8,int(unlock_version))
+        unlock[16:32]=pointer(4095 if unlock_bad_pointer else items)+struct.pack('>HHI',1 if unlock_short_count else len(catalog),len(catalog),0)
+        block('CUnlockSaveStructureSP',32,[('UnlockSaveDataVersion',6,0,8,0),('UnlockXmlVersion',6,0,12,0),('UnlockItemList',13,0,16,0)],unlock)
     if records:
         history=bytearray(56);struct.pack_into('>I',history,0,name_hash('A_C_HORSE_ARABIAN_WHITE'));struct.pack_into('>II',history,44,3,2)
         block('CSaveCompendium__ItemHorse',56,[('name',11,7,0,0),('numBroken',6,0,44,0),('highestBondingLevel',6,0,48,0)],history)
@@ -174,7 +206,7 @@ class Rdr2FeatureTests(unittest.TestCase):
         fish=[f for f in fields.values() if ':lure:' in f.key];self.assertEqual([f.value for f in fish],[3,5,2])
         self.assertEqual(fields['stat:HEADSHOTS'].value,37);self.assertEqual(fields['stat:DEATHS'].value,2)
         changes={(0,f.key):9 for f in fish};changes[0,'stat:HEADSHOTS']=40
-        out=Save(s.patched(changes),'rdr2');self.assertEqual(len(out.rockstar.rdr2.active_items()),4)
+        out=Save(s.patched(changes),'rdr2');self.assertEqual(len(out.rockstar.rdr2.active_items()),5)
         self.assertTrue(all(f.value==9 for f in out.slots[0].fields if ':lure:' in f.key))
         for args in ({'stat_duplicate':True},{'stat_namespace':True}):
             protected=Save(fixture(records=True,**args),'rdr2');self.assertNotIn('stat:HEADSHOTS',{f.key for f in protected.slots[0].fields})

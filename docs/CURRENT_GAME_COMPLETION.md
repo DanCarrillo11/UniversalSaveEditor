@@ -130,7 +130,7 @@ progression events, installed content or platform achievements.
 | Game | Principal remaining gate |
 | --- | --- |
 | GTA V | Enhanced-specific native-file verification and in-game loading; character availability, weapons/ammunition, vehicles/garages, properties, cosmetics, missions and rewards. Current scope is cash/eight existing skills, not online or character creation. |
-| RDR2 | Item/weapon/clothing acquisition and components, stable/appearance management, named compendium identities, regional bounty dependencies, story/challenge/reward delivery and broader revisions. Camp funds, honor, player/horse attributes, existing stacks/weapon condition and history records are now mapped; game-load checks remain pending. |
+| RDR2 | Weapon/clothing acquisition and component installation, stable/appearance management, camp upgrades, story/challenge/reward delivery and broader revisions. Bounties and existing catalog unlock actions are now mapped; 26 ordinary supplies have experimental acquisition with checked growth and unique record IDs. Runtime GUID allocation, game loading and persistence still require validation. |
 | Requiem | Map active player variants, full named unlocks, item caps and complete inventory/weapon relationships. Difficulty value/hash pairs need named identity verification. |
 | Village | Name item/content hashes, establish stack caps, weapon upgrades and difficulty identity relationships; validate native Steam payloads. |
 | RE4 Remake | Validate the new money/player-health/case fields on native Steam files; map inventory geometry, weapon parameters and complete named rewards. Chapter difficulty records are not gameplay difficulty. |
