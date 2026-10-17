@@ -44,7 +44,9 @@ class Rdr2Features:
     def __init__(self,owner,Field):
         self.owner,self.Field=owner,Field;self.c=owner.container;self.raw=self.c.plain
         self.formats={};self.related={};self.fields=owner.fields;self.positions=owner.positions
-        self.character();self.inventory();self.compendium();self.world()
+        self.character();self.inventory();self.compendium();self.compendium_records();self.world()
+        from rdr2_campaign import CampaignFields
+        self.campaign=CampaignFields(self)
 
     def rows(self,name,required):
         identity=parser_hash(name);result=[]
@@ -207,6 +209,43 @@ class Rdr2Features:
             for key,maximum in (('GameClockHour',23),('GameClockMinute',59),('GameClockSecond',59)):
                 self.add('clock:'+key,key.replace('GameClock',''),m[key],'>I',0,maximum,'World clock',note='Saved clock time only. Calendar dates, story timers, schedules and active missions are preserved.')
 
+    def compendium_records(self):
+        note='Recorded compendium history only. Does not perform the action, grant items, change a living horse’s bonding, complete challenges or deliver rewards.'
+        for suffix,category,specs in (
+            ('ItemHorse','Horses',(('numBroken','Horses broken',4294967295),('highestBondingLevel','Highest recorded bonding level',4))),
+            ('ItemGang','Gangs',(('ambushesSurvived','Ambushes survived',4294967295),('uniqueEncounters','Unique encounters',4294967295),
+                ('bountiesCaptured','Bounties captured',4294967295),('gangMembersKilled','Gang members killed',4294967295))),
+        ):
+            rows=self.rows('CSaveCompendium__'+suffix,(('name',11,7),))
+            counts=Counter(u32(self.raw,m['name']) for f,b,m in rows)
+            for frame,base,m in rows:
+                identity=u32(self.raw,m['name'])
+                if counts[identity]!=1:continue
+                for key,title,maximum in specs:
+                    off=member(frame,parser_hash('CSaveCompendium__'+suffix),key,6)
+                    if off:self.add(f'compendium:{suffix}:{identity:08x}:{key}',item_name(identity)+' · '+title,base+off[0],'>I',0,maximum,'Compendium',category,note)
+        rows=self.rows('CSaveCompendium__ItemFish',(('name',11,7),('lures',13,0)))
+        counts=Counter(u32(self.raw,m['name']) for f,b,m in rows);candidates=[]
+        for frame,base,m in rows:
+            identity=u32(self.raw,m['name']);count,capacity=struct.unpack_from('>HH',self.raw,m['lures']+8)
+            if counts[identity]!=1 or not 0<count<=capacity<=64:continue
+            h=parser_hash('CSaveCompendium__ItemFishLure');schema=frame.structures.get(h)
+            label=member(frame,h,'lureName',11,7);number=member(frame,h,'numCaught',6)
+            if not schema or not label or not number:continue
+            size=schema[0]
+            try:
+                target,at,left=self.pointer(frame,m['lures'],count*size)
+            except (ValueError,struct.error):continue
+            word=u32(self.raw,m['lures']);block=frame.blocks[(word&0xfff)-1]
+            if target!=h or not 1<=size<=4096 or block[2]%size or (at-block[1])%size:continue
+            entries=[(u32(self.raw,at+i*size+label[0]),at+i*size+number[0]) for i in range(count)]
+            if len({k for k,v in entries})!=len(entries):continue
+            candidates.extend((identity,lure,off) for lure,off in entries)
+        owners=Counter(off for identity,lure,off in candidates)
+        for identity,lure,off in candidates:
+            if owners[off]==1:
+                self.add(f'compendium:ItemFish:{identity:08x}:lure:{lure:08x}',item_name(identity)+' · '+item_name(lure)+' · Caught',off,'>I',0,4294967295,'Compendium','Fish',note)
+
     def expected(self,key,value):
         fmt=self.formats.get(key)
         return struct.unpack(fmt,struct.pack(fmt,value))[0] if fmt else value
@@ -217,3 +256,4 @@ class Rdr2Features:
             if not fmt:continue
             struct.pack_into(fmt,plain,self.positions[key],value)
             for at in self.related.get(key,()):struct.pack_into(fmt,plain,at,value)
+        self.campaign.patch(plain,changes)

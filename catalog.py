@@ -22,7 +22,7 @@ class Game:
 
 GAMES = (
     Game('gtav','GRAND THEFT AUTO V','Legacy / Enhanced · PC Story Mode','GRAND THEFT AUTO','#80b78d',True,'Michael, Franklin and Trevor · Cash · Stamina · Shooting · Strength · Stealth · Flying · Driving · Lung capacity · Special ability',True),
-    Game('rdr2','RED DEAD REDEMPTION 2','PC Story Mode','RED DEAD REDEMPTION','#c85d5d',True,'Cash · Honor · Cores and XP · Existing supplies · Weapon condition · Horses · Compendium',True),
+    Game('rdr2','RED DEAD REDEMPTION 2','PC Story Mode','RED DEAD REDEMPTION','#c85d5d',True,'Cash and camp funds · Honor · Cores and XP · Existing supplies · Weapon condition · Horses · Compendium · Statistics',True),
     Game('eldenring','ELDEN RING','Original game · Steam','ELDEN RING','#c9b580',True,'Runes · Attributes · Automatic level · Current vitals · Appearance · Map visibility · Talisman capacity · Learn base-game spells · Spell loadouts · Inventory and storage · Add goods · Create weapons and armor · Weapon upgrades · NG+ scaling',True),
     Game('re1_hd','RESIDENT EVIL','HD Remaster · Steam','RESIDENT EVIL','#a3b5a3',True,'Multiple save records · Difficulty · Defensive supplies · Inventory and item box · 131 documented item identities · Item replacement and creation',True),
     Game('re2','RESIDENT EVIL 2','2019 Remake · Steam','RESIDENT EVIL','#98adc7',True,'Difficulty · Player health · Existing inventory quantities · Rewards · Completion and challenge records · Ghost Survivors',True),

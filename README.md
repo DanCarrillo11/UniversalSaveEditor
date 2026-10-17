@@ -8,9 +8,10 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.37.0-alpha** expands RDR2 with synchronized honor, player cores,
-base XP and weight, existing supplies/ammunition, weapon condition, horse care,
-compendium records and clock time. GTA V exposes character cash and eight saved skills.
+Version **v0.38.0-alpha** adds synchronized RDR2 camp funds and horse bonding XP,
+horse health/stamina cores, 17 saved history statistics and more compendium
+records. Existing honor, player attributes, supplies/ammunition, weapon condition,
+horse care and clock controls remain available. GTA V exposes character cash and eight saved skills.
 Legacy native files were checked; an Enhanced-specific native-file check is
 still pending. Both GTA V save locations are detected; unknown formats are refused.
 In-app updates remain available through
@@ -29,7 +30,7 @@ executable included at its root. Startup can take a few seconds.
 
 ## Features
 
-- [Rockstar PC Story Mode](docs/ROCKSTAR_PC.md): existing GTA V cash and eight skills for Michael, Franklin and Trevor, and RDR2 carried cash. Bounded format recognition, native checksums, offline previews and direct same-name saving. Enhanced native-file validation, game loading, weapons/vehicles/horses and complete progression remain pending.
+- [Rockstar PC Story Mode](docs/ROCKSTAR_PC.md): GTA V cash and eight skills for Michael, Franklin and Trevor, plus RDR2 character, inventory, horse, camp and recorded-history fields. [Exact RDR2 scope](docs/RDR2_FIELDS.md) separates records from acquisition and rewards. Enhanced native-file validation, game loading and complete progression remain pending.
 
 - [Latest compatibility improvements](docs/COMPATIBILITY_V35.md): bounded owned loadouts in Elden Ring, stored Dream Eater rank/disposition/affinity, Re:CoM saved level and corrected KH3 Links/item shortcuts. Native-file reparsing passes; gameplay verification and full catalogue support remain pending.
 

@@ -38,7 +38,8 @@ RSAV magic. Every framed PSO checksum region is bounded and indexed; overlapping
 regions, malformed mapping/schema lengths and unsupported cipher envelopes fail.
 
 The initial adapter exposed current carried cash. v0.37 adds the schema-gated
-fields documented in [RDR2_FIELDS.md](RDR2_FIELDS.md). Cash's known
+fields documented in [RDR2_FIELDS.md](RDR2_FIELDS.md); v0.38 adds camp funds,
+synchronized horse XP, horse cores and recorded history. Cash's known
 CE548CF5 identity must have one aligned occurrence in a bounded PSIN data section,
 with the referenced value at +16 fully inside that section. Duplicate or missing
 matches are refused. Cash is a nonnegative 32-bit stored cent value, limited here
@@ -46,7 +47,7 @@ to signed int32. The UI displays dollars, preserves cents and rejects more than
 two decimal places rather than silently rounding. This serialized bound is not
 a claim about the game's displayed money cap.
 
-Camp funds, historical earnings, item/weapon/clothing acquisition, stable slots,
+Historical earnings, item/weapon/clothing acquisition, stable slots,
 missions, challenge rewards and online state stay unchanged. Console quick-code
 addresses alone are not treated as PC field semantics.
 

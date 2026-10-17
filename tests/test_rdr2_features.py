@@ -7,7 +7,9 @@ from rdr2_features import parser_hash
 from test_rockstar import fixture as minimal,section
 
 
-def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_schema=False,honor_disagrees=False,wide_pointer=False):
+def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_schema=False,honor_disagrees=False,wide_pointer=False,
+            camp_disagrees=False,horse_disagrees=False,unknown_horse_slot=False,missing_horse_model=False,
+            records=False,fish_alias=False,fish_bad_pointer=False,stat_duplicate=False,stat_namespace=False,bad_horse_counts=False):
     blocks=[];schemas={}
     def block(name,size,fields,data):
         h=parser_hash(name) if isinstance(name,str) else name
@@ -34,9 +36,16 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
     for off in (56,60,64,68,72):struct.pack_into('>f',gun,off,0.25)
     block('CPedInventorySaveStructure__WeaponItem',88,common+[(k,7,0,o,0) for k,o in zip(('Degradation','PermanentDegradation','Soot','Rust','Dirt'),(56,60,64,68,72))],gun)
     horse=record(232,3,'A_C_HORSE_ARABIAN_WHITE',1);struct.pack_into('>3i',horse,116,400,20,30)
+    struct.pack_into('>I',horse,28,123 if unknown_horse_slot else name_hash('SLOTID_ACTIVE_HORSE'))
     block('CPedInventorySaveStructure__HorseItem',232,common+[(k,5,0,o,0) for k,o in (('BondingXp',116),('Dirty',120),('Hungry',124))],horse)
     ammo=record(48,4,'AMMO_REVOLVER',50);block('SavegameInventoryItem',48,common,ammo)
-    block('CBaseStatsSaveStructure__CIntStatStruct',12,[('statId',12,0,0,'StatId'),('Data',5,0,8,0)],struct.pack('>2Ii',0x89587b4e,0,11 if honor_disagrees else 10))
+    schemas[parser_hash('StatId')]=(8,[])
+    stats=struct.pack('>2Ii',0x89587b4e,0,11 if honor_disagrees else 10)
+    stats+=struct.pack('>2Ii',name_hash('GANG_SAVINGS_CASH'),0,999 if camp_disagrees else 12345)
+    if records:
+        stats+=struct.pack('>2Ii',name_hash('HEADSHOTS'),1 if stat_namespace else 0,37)+struct.pack('>2Ii',name_hash('DEATHS'),0,2)
+        if stat_duplicate:stats+=struct.pack('>2Ii',name_hash('HEADSHOTS'),0,37)
+    block('CBaseStatsSaveStructure__CIntStatStruct',12,[('statId',12,0,0,'StatId'),('Data',5,0,8,0)],stats)
     attrs=bytearray(88760+568);attrs[88760]=3;attrs[88760+88]=23
     struct.pack_into('>i',attrs,88760+280,10)
     for n in range(3):struct.pack_into('>f',attrs,88760+8+n*8,50);struct.pack_into('>f',attrs,88760+96+n*8,100)
@@ -44,13 +53,36 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
     schemas[0x41d6f934]=(32,[(10+n,12,0,8+n*8,0x41d6f935) for n in range(3)])
     schemas[0x41d6f935]=(8,[(1,7,0,0,0)])
     schemas[0x41d6f938]=(192,[(20+n,7,0,8+n*8,0) for n in range(23)])
-    block(0x41d6f894,len(attrs),[(0xb5d75947,12,64,23224,0x41d6f933)],attrs)
+    struct.pack_into('>i',attrs,(4283+325)*8,12345)
+    schemas[0x41d6f8bf]=(2616,[(0xe1ff2c39,5,0,2600,0)])
+    struct.pack_into('>I',attrs,(1097+9)*8,0 if missing_horse_model else name_hash('A_C_HORSE_ARABIAN_WHITE'))
+    attrs[1096*8]=7;attrs[(1097+398)*8]=1 if bad_horse_counts else 2
+    struct.pack_into('>f',attrs,(1097+373)*8,399 if horse_disagrees else 400)
+    struct.pack_into('>i',attrs,(1097+399)*8,45);struct.pack_into('>i',attrs,(1097+403)*8,55)
+    schemas[0x41d6f8a2]=(3504,[(1,12,0,8,0x41d6f8a3)])
+    schemas[0x41d6f8a3]=(3496,[(2,12,0,8,0x41d6f8a4)])
+    schemas[0x41d6f8a4]=(3488,[(3,5,0,72,0),(4,7,0,373*8,0),(5,12,0,398*8,0x41d6f8af)])
+    schemas[0x41d6f8af]=(72,[(6,12,0,8,0x41d6f8b0),(7,12,0,40,0x41d6f8b0)])
+    schemas[0x41d6f8b0]=(32,[(8,5,0,0,0)])
+    block(0x41d6f894,len(attrs),[(0xb5d75947,12,64,23224,0x41d6f933),(0xa08031a2,12,0,34264,0x41d6f8bf),(0x454e4c92,12,0,8760,0x41d6f8a2)],attrs)
     block('CSaveCompendium__ItemWeapon',8,[('name',11,7,0,0),('hasOwned',0,0,4,0)],struct.pack('>IB3x',name_hash('WEAPON_REVOLVER_CATTLEMAN'),0))
     clock=bytearray(64);struct.pack_into('>3I',clock,44,9,25,30)
     block('CSimpleVariablesSaveStructure',64,[('GameClockHour',6,0,44,0),('GameClockMinute',6,0,48,0),('GameClockSecond',6,0,52,0)],clock)
     health=bytearray(64);struct.pack_into('>f',health,48,250)
     block('CPlayerPedSaveStructure',64,[('fHealth',7,0,48,0)],health)
     cash=record(48,8,'CURRENCY_CASH',12345);cash[24:28]=bytes.fromhex('ce548cf5');block('SavegameInventoryItem',48,common,cash)
+    if records:
+        history=bytearray(56);struct.pack_into('>I',history,0,name_hash('A_C_HORSE_ARABIAN_WHITE'));struct.pack_into('>II',history,44,3,2)
+        block('CSaveCompendium__ItemHorse',56,[('name',11,7,0,0),('numBroken',6,0,44,0),('highestBondingLevel',6,0,48,0)],history)
+        history=bytearray(56);struct.pack_into('>I',history,0,name_hash('GANG_ODRISCOLL'));struct.pack_into('>4I',history,40,1,2,3,4)
+        block('CSaveCompendium__ItemGang',56,[('name',11,7,0,0)]+[(n,6,0,o,0) for n,o in zip(('ambushesSurvived','uniqueEncounters','bountiesCaptured','gangMembersKilled'),(40,44,48,52))],history)
+        fish=bytearray(64);lure_block=len(blocks)+2
+        for i,name in enumerate(('PROVISION_FISH_BLUEGILL','PROVISION_FISH_PERCH')):
+            struct.pack_into('>I',fish,i*32,name_hash(name))
+            fish[i*32+8:i*32+24]=pointer(4095 if fish_bad_pointer else lure_block,0 if i==0 or fish_alias else 16)+struct.pack('>HHI',2 if i==0 else 1,2,0)
+        block('CSaveCompendium__ItemFish',32,[('name',11,7,0,0),('lures',13,0,8,0),('wasObserved',0,0,24,0)],fish)
+        lure=struct.pack('>6I',name_hash('UPGRADE_FSH_BAIT_CRICKET'),3,name_hash('UPGRADE_FSH_BAIT_WORM'),5,name_hash('UPGRADE_FSH_BAIT_CRICKET'),2)
+        block('CSaveCompendium__ItemFishLure',8,[('lureName',11,7,0,0),('numCaught',6,0,4,0)],lure)
     if bad_schema:
         h=parser_hash('CPedInventorySaveStructure__WeaponItem');size,fields=schemas[h]
         schemas[h]=(size,[(k,6 if k==parser_hash('Dirt') else t,sub,o,ref) for k,t,sub,o,ref in fields])
@@ -72,19 +104,21 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
 class Rdr2FeatureTests(unittest.TestCase):
     def test_all_supported_sections_and_both_active_inventory_modes(self):
         s=Save(fixture(),'rdr2');groups=Counter(f.group for f in s.slots[0].fields)
-        self.assertEqual(groups,{'Currency':1,'Honor':1,'Player cores':4,'Player progression':4,'Inventory':2,'Weapon condition':5,'Horses':3,'Compendium':1,'World clock':3})
+        self.assertEqual(groups,{'Currency':1,'Honor':1,'Player cores':4,'Player progression':4,'Inventory':2,'Weapon condition':5,'Horses':5,'Camp':1,'Compendium':1,'World clock':3})
         inv=[f for f in s.slots[0].fields if f.group=='Inventory'];self.assertEqual([f.value for f in inv],[3,50])
         archive=Save(fixture(backup=True),'rdr2');self.assertEqual([f.value for f in archive.slots[0].fields if f.group=='Inventory'],[7])
 
     def test_every_feature_roundtrips_exactly_and_only_declared_spans_change(self):
         for encrypted in (True,False):
-            raw=fixture(encrypted);s=Save(raw,'rdr2');self.assertFalse(s.warnings);self.assertEqual(s.rockstar.patch({}),raw)
+            raw=fixture(encrypted,records=True);s=Save(raw,'rdr2');self.assertFalse(s.warnings);self.assertEqual(s.rockstar.patch({}),raw)
             changes={};allowed=set()
             for f in s.slots[0].fields:
                 changes[0,f.key]=0.1234567 if f.decimal and f.maximum==1 else f.value+1
                 fmt=s.rockstar.rdr2.formats.get(f.key,'>I')
                 allowed.update(range(f.offset,f.offset+struct.calcsize(fmt)))
                 for at in s.rockstar.rdr2.related.get(f.key,()):allowed.update(range(at,at+4))
+                for at in s.rockstar.rdr2.campaign.money.get(f.key,()):allowed.update(range(at,at+4))
+                for at,fmt in s.rockstar.rdr2.campaign.mirrors.get(f.key,()):allowed.update(range(at,at+struct.calcsize(fmt)))
             out=s.patched(changes);after=Save(out,'rdr2');self.assertFalse(after.warnings)
             for begin,at in s.rockstar.container.checks:allowed.update(range(at+12,at+16))
             self.assertTrue(all(a==b or i in allowed for i,(a,b) in enumerate(zip(s.rockstar.container.plain,after.rockstar.container.plain))))
@@ -116,3 +150,47 @@ class Rdr2FeatureTests(unittest.TestCase):
         flat=[f for c in categories for section in c.sections for f in section.fields]
         self.assertEqual(Counter(f.key for f in flat),Counter(f.key for f in s.slots[0].fields))
         self.assertFalse(any('Unidentified' in f.collection for f in s.slots[0].fields))
+
+    def test_campaign_copies_stay_synchronized_and_cents_are_exact(self):
+        s=Save(fixture(),'rdr2');xp='item:0000000000000003:bondingxp'
+        out=s.patched({(0,'camp:cash'):765.43,(0,xp):1234});after=Save(out,'rdr2')
+        campaign=after.rockstar.rdr2.campaign;plain=after.rockstar.container.plain
+        self.assertEqual([struct.unpack_from('>i',plain,at)[0] for at in campaign.money['camp:cash']],[76543,76543])
+        self.assertEqual(struct.unpack_from('>f',plain,campaign.mirrors[xp][0][0])[0],1234)
+        self.assertEqual(next(f.value for f in after.slots[0].fields if f.key==xp),1234)
+        with self.assertRaises(ValueError):s.patched({(0,'camp:cash'):1.001})
+
+    def test_disagreement_and_unmapped_horse_slots_are_protected(self):
+        s=Save(fixture(camp_disagrees=True),'rdr2');self.assertNotIn('camp:cash',{f.key for f in s.slots[0].fields})
+        for args in ({'horse_disagrees':True},{'unknown_horse_slot':True},{'missing_horse_model':True}):
+            s=Save(fixture(**args),'rdr2');f=next(f for f in s.slots[0].fields if f.key.endswith(':bondingxp'))
+            self.assertTrue(f.readonly)
+            with self.assertRaises(ValueError):s.patched({(0,f.key):500})
+            if not args.get('horse_disagrees'):
+                self.assertFalse(any(f.group=='Horses' and f.key.endswith(':health_core') for f in s.slots[0].fields))
+
+    def test_compendium_histories_are_distinct_from_inventory_and_statistics_are_unique(self):
+        s=Save(fixture(records=True),'rdr2');fields={f.key:f for f in s.slots[0].fields}
+        fish=[f for f in fields.values() if ':lure:' in f.key];self.assertEqual([f.value for f in fish],[3,5,2])
+        self.assertEqual(fields['stat:HEADSHOTS'].value,37);self.assertEqual(fields['stat:DEATHS'].value,2)
+        changes={(0,f.key):9 for f in fish};changes[0,'stat:HEADSHOTS']=40
+        out=Save(s.patched(changes),'rdr2');self.assertEqual(len(out.rockstar.rdr2.active_items()),4)
+        self.assertTrue(all(f.value==9 for f in out.slots[0].fields if ':lure:' in f.key))
+        for args in ({'stat_duplicate':True},{'stat_namespace':True}):
+            protected=Save(fixture(records=True,**args),'rdr2');self.assertNotIn('stat:HEADSHOTS',{f.key for f in protected.slots[0].fields})
+
+    def test_shared_or_invalid_fishing_arrays_do_not_offer_overlapping_fields(self):
+        s=Save(fixture(records=True,fish_alias=True),'rdr2')
+        self.assertEqual([f.value for f in s.slots[0].fields if ':lure:' in f.key],[5])
+        s=Save(fixture(records=True,fish_bad_pointer=True),'rdr2');self.assertFalse(any(':lure:' in f.key for f in s.slots[0].fields))
+
+    def test_invalid_horse_core_count_and_scalar_schema_aliases_are_protected(self):
+        from types import SimpleNamespace
+        from rdr2_campaign import scalar_paths,ROOT
+        s=Save(fixture(bad_horse_counts=True),'rdr2')
+        self.assertFalse(any(f.group=='Horses' and f.key.endswith(':health_core') for f in s.slots[0].fields))
+        frame=SimpleNamespace(structures={ROOT:(32,[(1,5,0,8,0),(2,7,0,16,0),(3,5,128,24,0)])})
+        self.assertEqual(len(scalar_paths(frame,ROOT,8,5)),1)
+        self.assertFalse(scalar_paths(frame,ROOT,16,5));self.assertFalse(scalar_paths(frame,ROOT,24,5))
+        frame.structures[ROOT][1].append((4,5,0,8,0))
+        self.assertEqual(len(scalar_paths(frame,ROOT,8,5)),2)

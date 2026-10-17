@@ -9,11 +9,13 @@ is marked full support and no completion percentage is inferred from field count
 
 ## Current equipment/spell pass
 
-v0.37 expands RDR2 with schema-gated character attributes, synchronized honor,
+v0.38 adds synchronized camp funds and horse XP, horse cores, 17 history
+statistics and horse/gang/fishing compendium counters. Named compendium identity
+coverage is incomplete. v0.37 added schema-gated character attributes, synchronized honor,
 active-inventory stacks, weapon condition, horse care, compendium flags and clock
 time. Three native PC files passed exact-span edits and byte-identical restoration.
 This is substantial partial coverage, **not full support**. Acquisitions, clothing,
-stable management, camp funds, bounties, story/challenge dependencies and game-load
+stable management, bounties, story/challenge dependencies and game-load
 validation remain open. [Field-level scope](RDR2_FIELDS.md).
 
 v0.36 adds initial Rockstar PC story editors: GTA V cash/eight skills for each
@@ -128,7 +130,7 @@ progression events, installed content or platform achievements.
 | Game | Principal remaining gate |
 | --- | --- |
 | GTA V | Enhanced-specific native-file verification and in-game loading; character availability, weapons/ammunition, vehicles/garages, properties, cosmetics, missions and rewards. Current scope is cash/eight existing skills, not online or character creation. |
-| RDR2 | Honor, health/stamina/Dead Eye, weapons, horses/bonding, inventory, camp funds, challenges and full progression dependencies. Only carried cash is currently mapped and editable; game-load checks remain pending. |
+| RDR2 | Item/weapon/clothing acquisition and components, stable/appearance management, named compendium identities, regional bounty dependencies, story/challenge/reward delivery and broader revisions. Camp funds, honor, player/horse attributes, existing stacks/weapon condition and history records are now mapped; game-load checks remain pending. |
 | Requiem | Map active player variants, full named unlocks, item caps and complete inventory/weapon relationships. Difficulty value/hash pairs need named identity verification. |
 | Village | Name item/content hashes, establish stack caps, weapon upgrades and difficulty identity relationships; validate native Steam payloads. |
 | RE4 Remake | Validate the new money/player-health/case fields on native Steam files; map inventory geometry, weapon parameters and complete named rewards. Chapter difficulty records are not gameplay difficulty. |

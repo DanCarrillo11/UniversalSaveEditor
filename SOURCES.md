@@ -548,3 +548,23 @@ quick-code in [bucanero/apollo-patches](https://github.com/bucanero/apollo-patch
 is a corroborating location clue, not a copied PC writer or sole source of field
 semantics. Full encrypted restoration and declared-span checks passed; no edited
 file has been loaded in-game. See docs/RDR2_FIELDS.md for exact remaining gates.
+
+### RDR2 camp, horses and history (v0.38)
+
+The same pinned build-1491 scripts corroborate camp funds in
+`camp_clemenspoint.c` func_1828 (Global_40.f_4283.f_325 and
+GANG_SAVINGS_CASH); horse SlotId mapping in `player_horse.c` func_720,
+bonding XP in func_804, and health/stamina core indices and updates in
+func_578/641/644/888. The independently written schema resolver follows only
+inline typed PSCH members; it does not inject or distribute game scripts.
+Existing history counter names are scalar lookup facts in the pinned scripts;
+the writer requires unique namespace-zero CIntStatStruct/StatId records.
+
+The pinned parser dump explicitly names CSaveCompendium__ItemHorse,
+ItemGang, ItemFish and ItemFishLure members and their integer types.
+Fishing-history arrays use the independently verified PC pointer layout and
+bounded typed targets. Native files corroborate horse inventory/script XP,
+camp/statistic agreement and exact-span history edits. Public script hash/name
+facts add gang labels; unresolved compendium IDs are not assigned guessed names.
+Regional bounty and inventory acquisition dependencies remain unmapped; no
+successful game load is claimed by these structural checks.
