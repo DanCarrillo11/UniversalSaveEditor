@@ -725,7 +725,7 @@ binary fixtures are not bundled. OpenKH project license follows.
 
    END OF TERMS AND CONDITIONS
 
-RDR2 parser naming/type references: rage-parser-dumps (alexguirre)
+GTA V and RDR2 parser naming/type references: rage-parser-dumps (alexguirre)
 MIT License
 
 Copyright (c) 2020 alexguirre

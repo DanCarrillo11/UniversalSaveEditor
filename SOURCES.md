@@ -518,6 +518,18 @@ Enhanced save-location facts follow [GTASnP's own support page](https://gtasnp.c
 Enhanced-specific native files and all edited-save game loading remain unverified.
 See docs/ROCKSTAR_PC.md for precise scope and test limits.
 
+### GTA V saved-player and garage expansion (v0.42)
+
+Scalar member names/types/offsets and 96/112-byte saved-vehicle revisions are
+cross-checked against the native embedded schemas and
+[alexguirre/rage-parser-dumps](https://github.com/alexguirre/rage-parser-dumps/tree/28785b6e4d2f4fa257f98df925a48eaa4f6b4a93)
+GTA V dumps (MIT; existing notice retained). The implementation ships only small
+format facts, not the metadata dump. GTA PSO array pointer low-12-bit block ID
+and upper-20-bit item offset follow CodeWalker's PsoPOINTER; the second opaque
+word is never rewritten. Membership is checked from the typed garage root rather
+than scanning vehicle-like bytes. No scripts, proprietary editor code, private
+saves or game assets are distributed. See docs/ROCKSTAR_PC.md for exact limits.
+
 ### Expanded RDR2 fields (v0.37)
 
 [alexguirre/rage-parser-dumps](https://github.com/alexguirre/rage-parser-dumps/tree/28785b6e4d2f4fa257f98df925a48eaa4f6b4a93)

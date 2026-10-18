@@ -37,6 +37,8 @@ class RockstarSave:
                     self.fields.append(Field(key,title,value,at,'',0,max(maximum,value),
                         'Currency' if stat=='TOTAL_CASH' else 'Skills',collection=name,readonly=not 0<=value<=maximum,
                         note='Existing saved story-mode statistic only. Character availability, missions, rewards, inventory and unrelated statistics are preserved. Values outside the recognized range remain read-only.'))
+            from gtav_features import GtavFeatures
+            self.gtav=GtavFeatures(self,Field)
         else:
             from rdr2_features import Rdr2Features
             self.rdr2=Rdr2Features(self,Field)
@@ -49,7 +51,8 @@ class RockstarSave:
                 cents=Decimal(str(value))*100
                 if cents!=cents.to_integral_value():raise ValueError('Cash accepts at most two decimal places.')
                 struct.pack_into('>I',plain,self.positions[key],int(cents))
-            elif not hasattr(self,'rdr2'):struct.pack_into('>i',plain,self.positions[key],value)
+            elif not hasattr(self,'rdr2') and key in self.positions:struct.pack_into('>i',plain,self.positions[key],value)
+        if hasattr(self,'gtav'):self.gtav.patch(plain,changes)
         if hasattr(self,'rdr2'):self.rdr2.patch(plain,changes)
         result=self.container.encode(plain)
         return self.rdr2.supplies.finish(result,changes) if hasattr(self,'rdr2') else result

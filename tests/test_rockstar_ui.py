@@ -14,6 +14,31 @@ class RockstarInterfaceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):cls.app=QApplication.instance() or QApplication([])
 
+    def test_gta_player_clock_and_vehicle_fields_stage_and_preview(self):
+        from test_gtav_features import fixture as expanded
+        from PySide6.QtWidgets import QLineEdit, QCheckBox
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=root/'SGTA50000';raw=expanded(True);p.write_bytes(raw)
+            with patch('app.discover',return_value=[]):w=Window(settings=QSettings(str(root/'prefs.ini'),QSettings.Format.IniFormat))
+            with patch.object(w,'may_discard',return_value=True):
+                w.reduce_motion.setChecked(True);w.show();w.resize(1280,800)
+                try:
+                    self.assertTrue(w.load('gtav',p))
+                    changes={(0,'player:health'):150,(0,'world:hour'):18,(0,'vehicle:0:0:tires'):1,(0,'vehicle:0:0:plate'):'MY CAR'}
+                    for key,value in changes.items():
+                        w.reveal_field(key);self.app.processEvents();control=w.inputs[key]
+                        if isinstance(control,QCheckBox):control.setChecked(bool(value))
+                        else:self.assertIsInstance(control,QLineEdit);control.setText(str(value))
+                    self.assertEqual(w.validated_changes(),changes)
+                    self.assertFalse(Save(w.save.patched(changes),'gtav').warnings)
+                    self.assertEqual(p.read_bytes(),raw)
+                    w.reset();self.assertFalse(w.validated_changes())
+                    w.open_preview('gtav');self.app.processEvents()
+                    w.reveal_field((0,'vehicle:0:0:plate'));self.app.processEvents()
+                    self.assertFalse(w.inputs[0,'vehicle:0:0:plate'].isEnabled())
+                    self.assertFalse(w.review_button.isEnabled())
+                finally:w.close();w.deleteLater();self.app.processEvents()
+
     def test_rdr2_catalog_and_acquisition_actions_stage_in_distinct_sections(self):
         from test_rdr2_features import fixture as expanded
         from test_rdr2_pso import rsav

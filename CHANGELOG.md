@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.42.0-alpha
+
+- Expand GTA V with saved active-player health, armor, maxima and recognized
+  stamina/reload/fire/drive-by/gang flags. Lower maxima clamp current values;
+  contradictory explicit edits are rejected.
+- Add clock and saved garage respray options, six protection flags and license
+  plates for existing occupied garage vehicles. Validate typed root membership,
+  both known vehicle layouts and eight-character printable ASCII plate limits.
+- Separate Characters, Progress and Equipment navigation; add read-only previews.
+- Verify new fields in two native Legacy files with encrypted/plaintext exact
+  edits and restoration. No gameplay or Enhanced-native verification is claimed.
+  Weapons, ownership acquisition, missions and full support remain pending.
+
 ## v0.41.0-alpha
 
 - Expand experimental RDR2 ordinary-supply acquisition from 26 to 159 explicit

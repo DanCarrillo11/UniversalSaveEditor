@@ -22,6 +22,7 @@ from test_re_engine import stream,wrap,ACCOUNT
 from test_village import fixture as village
 from test_requiem import fixture as requiem
 from test_rockstar import fixture as rockstar
+from test_gtav_features import fixture as gta_expanded
 
 def fishing():
     payload=variant({'inventory':[{'id':'fish_lake_salmon','quality':1,'size':1.0,'ref':42,'tags':[]}],
@@ -124,7 +125,7 @@ def generate():
     from test_rdr2_features import fixture as rdr2_example
     from test_rdr2_pso import rsav as rdr2_archive
     result={}
-    factories={'gtav':rockstar,'rdr2':lambda:rdr2_archive(False,rdr2_example(False,records=True,bounties=True,unlocks=True,supplies=True,components=True,horse_names=True)),
+    factories={'gtav':gta_expanded,'rdr2':lambda:rdr2_archive(False,rdr2_example(False,records=True,bounties=True,unlocks=True,supplies=True,components=True,horse_names=True)),
         'webfishing':fishing,'ror2':profile,'alice':alice,'kh1':lambda:populated_kh('kh1'),
         'kh2':lambda:populated_kh('kh2'),'recom':lambda:kh_extra('recom'),'bbs':lambda:kh_extra('bbs'),
         'ddd':lambda:kh_extra('ddd'),'kh3':kh3_example,'eldenring':elden_example,

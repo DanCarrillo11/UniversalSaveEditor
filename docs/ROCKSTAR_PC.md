@@ -31,6 +31,39 @@ originals remained unchanged. An Enhanced-specific native file was unavailable;
 that verification remains pending and is explicit in Help & details. Discovery
 of the Enhanced folder does not certify every Enhanced save revision.
 
+### Expanded GTA V fields (v0.42)
+
+Exact singleton schemas now expose the saved active protagonist's health, armor,
+their maxima, and saved stamina/reload/fire/drive-by/gang flags. Only recognized
+Michael/Franklin/Trevor model hashes qualify. This record is separate from the
+three protagonists' statistics. Reducing a maximum clamps its current value;
+explicit contradictory current/maximum edits are rejected. Editor maxima are
+bounded to 1000, not advertised as engine limits. Unknown/nonfinite/out-of-range
+states are protected. Scripts may reset saved flags or values after loading or
+switching characters; no lasting cheat or achievement behavior is guaranteed.
+
+World controls expose hour/minute/second and garage free/disabled respray flags.
+Calendar, weather interpolation, wanted-level encoding, script globals, account
+identifiers and unknown fields are preserved. In particular, the saved maximum
+wanted-level encoding is not interpreted as a 0–5 star count.
+
+Existing occupied garage vehicles expose six saved damage/tire protection flags
+and up to eight printable ASCII license-plate characters. Root SafeHouses and
+each VehiclesSavedInThisSafeHouse array must resolve bounded, correctly aligned
+typed records with unique membership, valid counts and known 96/112-byte schemas.
+Only bUsed=1 records with nonzero models qualify. Empty slots, orphan records,
+invalid arrays and unknown encodings are untouched. Plate padding is checked;
+the opaque pointer word is preserved. These controls do not create vehicles,
+swap models, repair mechanical health, grant ownership, or edit tuning/liveries.
+
+Two native Legacy references expose 48 and 69 total controls, depending on their
+occupied vehicles. New fields pass individual exact-span edits, checksum
+verification, combined edits and byte-identical restoration in plaintext and
+encrypted copies. Originals remain unchanged. These are file-level checks;
+game loading/persistence and Enhanced-specific native files remain unverified.
+Weapon/ammunition inventory, property/clothing acquisition, collectibles and
+mission/reward dependencies are still unsupported. **GTA V is not full support.**
+
 ## RDR2
 
 The PC `SRDR#####` story envelope has header version 4, AES body at 0x110 and

@@ -1,26 +1,26 @@
-# v0.41.0-alpha — RDR2 supplies and horse names
+# v0.42.0-alpha — GTA V player and garage tools
 
-- Add custom amounts of 159 ordinary supplies: tonics, herbs, food, cooked food,
-  horse supplies and Story Mode cartridge/arrow variants. Enter an amount for a
-  missing item under Add supplies and apply once. Existing stacks remain editable
-  under Inventory. Game capacity limits still apply.
-- Rename an existing horse when its inventory and saved horse-slot names agree.
-  Both copies update together; ambiguous names stay read-only. Names accept up to
-  63 UTF-8 bytes, preserve numeric-looking text and can be reset before applying.
-- Browse the same fields in read-only previews. No personal saves are packaged.
+- Edit recognized saved-player health, armor and their maxima. Lowering a maximum
+  also lowers the current value when needed. Explicit conflicting edits are rejected.
+- Adjust saved stamina, fast-reload, fire-protection, drive-by and gang flags.
+  These describe stored state; scripts may reset them after loading/switching.
+- Set clock time and saved garage respray options.
+- Edit six saved damage/tire protection flags and license plates for existing
+  occupied garage vehicles. Plates accept up to eight printable ASCII characters.
+  Vehicle models, upgrades, ownership and empty slots are preserved.
+- Browse Characters, Progress and Equipment, including read-only offline previews.
 
-Native checks exercised 146/129/125 missing supply additions with custom amounts
-and preserved existing records in three files. Two matched horse-name pairs
-passed exact-span edits and byte-identical restoration; two differing pairs
-stayed protected. All ten payload checks remained valid and originals were not
-modified. Tests cover UTF-8 boundaries, invalid/control text, mismatches, unknown
-slots, combined inventory growth, staging, reset and read-only preview behavior.
+New fields were checked in two native Legacy references, including both known
+vehicle layouts, encrypted/plaintext exact-span edits, combined edits and
+byte-identical restoration. Originals were not modified. Tests cover malformed
+arrays, duplicate roots, unknown models, health/armor consistency, plate limits,
+navigation, staging, reset and read-only previews.
 
-**RDR2 remains Limited coverage.** Acquisition is experimental; successful
-in-game loading and persistence have not been verified. Full weapon/clothing
-acquisition, new component slots, stable creation, camp upgrades and complete
-story/challenge/reward dependencies remain pending. Earlier weapon customization,
-bounty, camp, character, compendium and catalog tools remain available.
+**GTA V remains Limited coverage.** Weapon/ammunition inventory, vehicle creation,
+model swaps/tuning, property/clothing acquisition and complete collectible/story/
+reward dependencies remain unsupported. Enhanced-specific native validation and
+successful in-game loading/persistence are still pending. Existing money and
+eight skills for Michael, Franklin and Trevor remain available. Story Mode only.
 
 Download UniversalSaveEditor.exe under Assets and double-click it, or use
 Updates > Restart and update. Code > Download ZIP contains the portable exe too.

@@ -50,7 +50,7 @@ def organize_fields(game, fields):
         'ddd': ('Progress', 'Characters', 'Collection'),
         'kh3': ('Progress', 'Characters', 'Collection'),
         'maxpayne': ('Equipment',),
-        'gtav': ('Characters',),
+        'gtav': ('Characters', 'Progress', 'Equipment'),
         'rdr2': ('Progress','Character','Collection'),
         'eldenring': ('Progress', 'Character', 'Collection'),
         're4_2005': ('Progress', 'Characters', 'Collection'),
@@ -107,7 +107,11 @@ def organize_fields(game, fields):
                 if 'quantities' in group:
                     section,selection=item.collection or 'Unidentified items',group.replace(' quantities','')
                     if game=='re9':section,selection='Existing items',item.collection or 'Inventory'
-        if game=='gtav':category,section,selection='Characters',group,item.collection
+        if game=='gtav':
+            category = 'Progress' if item.collection == 'World' else 'Equipment' if item.collection == 'Vehicles' or item.key.startswith('vehicle:') else 'Characters'
+            section,selection=group,item.collection
+            if item.key.startswith('vehicle:'):
+                section=item.collection
         if game=='rdr2':
             if group in ('Player cores','Player progression','Honor'):category,section,selection='Character',group,'Player'
             elif group in ('Weapon condition','Horses'):category,section,selection='Collection',item.collection or group,group

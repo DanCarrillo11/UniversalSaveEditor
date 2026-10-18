@@ -7,6 +7,20 @@ and RDR2 to this catalogue; it does not imply that the earlier editors are compl
 This document records implemented work and the actual remaining gates. No editor
 is marked full support and no completion percentage is inferred from field count.
 
+## Current GTA V pass
+
+v0.42 adds recognized saved-player health/armor/maxima and saved flags, clock,
+garage respray services, and existing occupied vehicle protections/license plates.
+Native Legacy references expose 48/69 fields; new individual and combined edits
+pass checksum, exact-span and restoration checks in encrypted/plaintext copies.
+Unknown player models, duplicate roots, malformed membership and unknown schemas
+remain protected. Preview and UI include the new categories.
+
+This is partial coverage. Weapon/ammunition inventory, vehicle creation/model
+changes/tuning, property/clothing acquisition and complete collectible/story/
+reward dependencies remain unsupported. Enhanced-specific native files and
+game-load/persistence validation are still unavailable; no full-support claim.
+
 ## Current RDR2 pass
 
 v0.41 expands experimental acquisition to 159 explicit ordinary supplies with
