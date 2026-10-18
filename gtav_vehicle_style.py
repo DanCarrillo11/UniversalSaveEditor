@@ -133,13 +133,14 @@ class VehicleStyleFields:
             for kind,name,title in PERFORMANCE:
                 at=nodes.get(name_hash(name))
                 count=kit['stats'].get(str(kind),0)
-                if at is None or not 1<=count<=16:
+                saved=kit.get('saved',{}).get(str(kind),())
+                if at is None or not 1<=count<=16 or len(saved)!=count:
                     continue
                 current=raw[at+4]
-                if current!=255 and not 0<=current<count:
+                if current!=255 and current not in saved:
                     continue
                 key=prefix+':mod_'+str(kind)
-                options=(255,)+tuple(range(count))
+                options=(255,)+tuple(saved)
                 self.modifications[key]=(at+4,b+26,kit['id'],options)
                 feature.owner.fields.append(Field(key,title,options.index(current),at+4,'',0,len(options)-1,
                     'Vehicle performance',choices=('Stock',)+tuple(f'Stage {i+1}' for i in range(count)),

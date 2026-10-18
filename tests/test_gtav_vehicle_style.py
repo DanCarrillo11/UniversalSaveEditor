@@ -33,6 +33,20 @@ def fields(save):return {f.key:f for f in save.slots[0].fields}
 
 
 class VehicleStyleTests(unittest.TestCase):
+    def test_saved_stat_array_positions_are_distinct_from_local_upgrade_numbers(self):
+        save=Save(fixture(styles=True),'gtav')
+        key='vehicle:0:0:mod_12';at=fields(save)[key].offset
+        raw=bytearray(save.rockstar.container.plain);raw[at]=4
+        current=Save(save.rockstar.container.encode(raw),'gtav')
+        self.assertEqual(fields(current)[key].value,1)
+        upgraded=Save(current.patched({(0,key):3}),'gtav')
+        self.assertEqual(upgraded.rockstar.container.plain[at],6)
+        self.assertEqual(fields(upgraded)[key].value,3)
+        # An engine-table position cannot masquerade as a brake stage.
+        raw[at]=0
+        unknown=Save(save.rockstar.container.encode(raw),'gtav')
+        self.assertNotIn(key,fields(unknown))
+
     def test_known_layouts_colors_performance_exact_spans_and_restoration(self):
         for size in (96,112):
             for encrypted in (False,True):
