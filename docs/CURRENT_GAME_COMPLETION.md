@@ -7,7 +7,22 @@ and RDR2 to this catalogue; it does not imply that the earlier editors are compl
 This document records implemented work and the actual remaining gates. No editor
 is marked full support and no completion percentage is inferred from field count.
 
-## Current equipment/spell pass
+## Current RDR2 pass
+
+v0.41 expands experimental acquisition to 159 explicit ordinary supplies with
+custom quantities, and adds synchronized existing-horse names. Native checks
+preserve all 834/233/302 original inventory records except explicitly requested
+name spans; 146/129/125 missing supplies were added in memory with exact requested
+amounts and all ten payload checks. Two matched names passed exact restoration;
+two differing inventory/script names stayed read-only. Original files were not
+modified. In-game loading and persistence remain unverified.
+
+v0.40 added existing weapon-part selection and compatible leaf finishes. v0.39
+added guarded bounties, existing catalog actions and experimental acquisition.
+These implementations do not complete weapon/clothing acquisition, new part
+slots, stable creation, camp upgrades or story/challenge/reward dependencies.
+
+## Earlier equipment/spell passes
 
 v0.38 adds synchronized camp funds and horse XP, horse cores, 17 history
 statistics and horse/gang/fishing compendium counters. Named compendium identity
@@ -130,7 +145,7 @@ progression events, installed content or platform achievements.
 | Game | Principal remaining gate |
 | --- | --- |
 | GTA V | Enhanced-specific native-file verification and in-game loading; character availability, weapons/ammunition, vehicles/garages, properties, cosmetics, missions and rewards. Current scope is cash/eight existing skills, not online or character creation. |
-| RDR2 | Weapon/clothing acquisition, missing component-slot creation, stable/appearance management, camp upgrades, story/challenge/reward delivery and broader revisions. Existing weapon parts and compatible leaf finishes now have checked selectors. Bounties/catalog unlocks are mapped; 26 supplies have experimental acquisition. Runtime GUID allocation, game loading and persistence still need validation. |
+| RDR2 | Weapon/clothing acquisition, missing component-slot creation, stable/appearance management, camp upgrades, story/challenge/reward delivery and broader revisions. Existing weapon parts and compatible leaf finishes now have checked selectors. Bounties/catalog unlocks are mapped; 159 ordinary supplies have experimental acquisition with custom amounts. Matched existing horse names can be changed together. Runtime GUID allocation, game loading and persistence still need validation. |
 | Requiem | Map active player variants, full named unlocks, item caps and complete inventory/weapon relationships. Difficulty value/hash pairs need named identity verification. |
 | Village | Name item/content hashes, establish stack caps, weapon upgrades and difficulty identity relationships; validate native Steam payloads. |
 | RE4 Remake | Validate the new money/player-health/case fields on native Steam files; map inventory geometry, weapon parameters and complete named rewards. Chapter difficulty records are not gameplay difficulty. |

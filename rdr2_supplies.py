@@ -25,6 +25,57 @@ SUPPLIES=(
     ('AMMO_SHOTGUN','Ammunition'),('AMMO_ARROW','Ammunition'),
 )
 
+# Explicit Story Mode consumables, not a prefix-wide grant of online, mission,
+# meal-service or unknown catalog objects. All names must resolve in the
+# attributed primary hash facts before controls are exposed.
+EXTRA_SUPPLIES=(
+    *[(f'CONSUMABLE_{n}','Tonics') for n in (
+        'ANTIDOTE','POTENT_ANTIDOTE','POTENT_MEDICINE','POTENT_SNAKE_OIL',
+        'RESTORATIVE','RESTORATIVE_USED','POTENT_RESTORATIVE','TONIC','TONIC_USED',
+        'POTENT_TONIC','SPECIAL_MEDICINE_CRAFTED','SPECIAL_SNAKE_OIL_CRAFTED',
+        'SPECIAL_RESTORATIVE_CRAFTED','SPECIAL_TONIC_CRAFTED','VALERIAN_ROOT',
+        'GINSENG_ELIXIER','AGED_PIRATE_RUM','CHEWING_TOBACCO','COCAINE_CHEWING_GUM')],
+    *[(f'CONSUMABLE_{n}','Horse supplies') for n in (
+        'HORSE_MEDICINE_USED','HORSE_STIMULANT_USED','POTENT_HORSE_MEDICINE',
+        'POTENT_HORSE_STIMULANT','SPECIAL_HORSE_MEDICINE',
+        'SPECIAL_HORSE_STIMULANT_CRAFTED','HORSE_OINTMENT_CRAFTED','HAYCUBE')],
+    *[(f'CONSUMABLE_{n}','Supplies') for n in (
+        'COVER_SCENT','COVER_SCENT_USED','HERBIVORE_BAIT','PREDATOR_BAIT',
+        'POTENT_HERBIVORE_BAIT','POTENT_PREDATOR_BAIT','HAIR_GREASE')],
+    *[(f'CONSUMABLE_{n}','Food') for n in (
+        'JERKY','JERKY_VENISON','APPLE','APRICOTS_CAN','BEETS','BREAD_CHUNK',
+        'BREAD_ROLL','CANDY_BAG','CARROT','CELERY','CHEESE_WEDGE','CORN',
+        'CORNEDBEEF_CAN','CRACKERS','KIDNEYBEANS_CAN','PEACH','PEAS_CAN',
+        'PEPPERMINT','COFFEE_GNDS_REG','CIGAR','CIGARETTE_BOX_CHEAP',
+        'BRANDY','GIN','RUM','WHISKEY','MOONSHINE')],
+    *[(f'CONSUMABLE_HERB_{n}','Herbs') for n in (
+        'ALASKAN_GINSENG','AMERICAN_GINSENG','BAY_BOLETE','BLACK_BERRY',
+        'BLACK_CURRANT','BURDOCK_ROOT','CHANTERELLES','COMMON_BULRUSH',
+        'CREEPING_THYME','DESERT_SAGE','ENGLISH_MACE','EVERGREEN_HUCKLEBERRY',
+        'GOLDEN_CURRANT','HUMMINGBIRD_SAGE','INDIAN_TOBACCO','MILKWEED',
+        'OLEANDER_SAGE','OREGANO','PARASOL_MUSHROOM','PRAIRIE_POPPY','RAMS_HEAD',
+        'RED_RASPBERRY','RED_SAGE','VANILLA_FLOWER','VIOLET_SNOWDROP',
+        'WILD_CARROTS','WILD_FEVERFEW','WILD_MINT','WINTERGREEN_BERRY','YARROW')],
+    *[(f'CONSUMABLE_{n}','Cooked food') for n in (
+        'BIG_GAME_MEAT_COOKED','BIG_GAME_MEAT_OREGANO_COOKED',
+        'BIG_GAME_MEAT_THYME_COOKED','BIG_GAME_MEAT_WILD_MINT_COOKED',
+        'CRUSTACEAN_MEAT_COOKED','EXOTIC_BIRD_COOKED','FLAKEY_FISH_COOKED',
+        'GAMEY_BIRD_COOKED','GAME_MEAT_COOKED','GRISTLY_MUTTON_COOKED',
+        'GRITTY_FISH_MEAT_COOKED','HERPTILE_MEAT_COOKED',
+        'MATURE_VENISON_COOKED','PLUMP_BIRD_COOKED','PRIME_BEEF_COOKED',
+        'STRING_MEAT_COOKED','SUCCULENT_FISH_COOKED','TENDER_PORK_COOKED')],
+    *[(f'AMMO_{n}','Ammunition') for n in (
+        '22','REVOLVER_EXPRESS','REVOLVER_HIGH_VELOCITY','REVOLVER_SPLIT_POINT',
+        'REVOLVER_EXPRESS_EXPLOSIVE','PISTOL_EXPRESS','PISTOL_HIGH_VELOCITY',
+        'PISTOL_SPLIT_POINT','PISTOL_EXPRESS_EXPLOSIVE',
+        'REPEATER_EXPRESS','REPEATER_HIGH_VELOCITY','REPEATER_SPLIT_POINT',
+        'REPEATER_EXPRESS_EXPLOSIVE','RIFLE_EXPRESS','RIFLE_HIGH_VELOCITY',
+        'RIFLE_SPLIT_POINT','RIFLE_EXPRESS_EXPLOSIVE','SHOTGUN_SLUG',
+        'SHOTGUN_BUCKSHOT_INCENDIARY','SHOTGUN_SLUG_EXPLOSIVE',
+        'ARROW_IMPROVED','ARROW_SMALL_GAME','ARROW_POISON','ARROW_FIRE','ARROW_DYNAMITE')],
+)
+SUPPLIES=SUPPLIES+EXTRA_SUPPLIES
+
 
 class SupplyFields:
     def __init__(self,features):
@@ -64,18 +115,21 @@ class SupplyFields:
                 used.add(raw[record+guid[0]:record+guid[0]+8])
                 if owner:used.add(raw[record+owner[0]:record+owner[0]+8])
         self.graph=(frame,source,source_blocks[0],root_blocks[0],array_at,ref_id,ref_offset,count,used)
-        owned={u32(raw,r['ItemId']) for fr,h,b,r in rows}
+        owned={}
+        for fr,h,b,r in rows:owned.setdefault(u32(raw,r['ItemId']),[]).append(struct.unpack_from('>q',raw,r['Quantity'])[0])
         for name,category in SUPPLIES:
             h=name_hash(name)
             if labels().get(f'{h:08x}')!=name:continue
-            key=f'supply:{h:08x}:add';done=int(h in owned);self.actions[key]=h
-            features.fields.append(features.Field(key,item_name(h),done,0,'',0,1,'Add supplies',
-                boolean=True,readonly=bool(done),collection=category,
-                note='Add one unit of a missing satchel item. For items you already own, change their amounts under Inventory. Does not increase satchel capacity or unlock story content. Experimental: in-game loading has not been verified.'))
+            existing=owned.get(h,[]);limit=9999 if name.startswith('AMMO_') else 99
+            value=existing[0] if len(existing)==1 and 1<=existing[0]<=limit else int(bool(existing))
+            key=f'supply:{h:08x}:add';self.actions[key]=h
+            features.fields.append(features.Field(key,item_name(h),value,0,'',0,limit,'Add supplies',
+                readonly=bool(existing),collection=category,
+                note='Set an amount to add this missing satchel item in one apply. Leave 0 to skip it. For items you already own, change their amounts under Inventory. Does not increase capacity, teach recipes or unlock story content. Experimental: in-game loading has not been verified.'))
 
     def finish(self,raw,changes):
-        requests=[self.actions[k] for k,v in changes.items() if k in self.actions and v==1]
-        if any(v!=1 for k,v in changes.items() if k in self.actions):raise ValueError('Add supply is an apply action, not item removal.')
+        requests=[(self.actions[k],v) for k,v in changes.items() if k in self.actions]
+        if any(type(v) is not int or not 1<=v<=(9999 if labels()[f'{h:08x}'].startswith('AMMO_') else 99) for h,v in requests):raise ValueError('Add supply is an apply action with a positive amount, not item removal.')
         if not requests:return raw
         if not self.graph:raise ValueError('RDR2 supply acquisition requires a recognized inventory graph.')
         frame,source,item_id,root_id,array_at,ref_id,ref_offset,count,used=self.graph
@@ -86,14 +140,14 @@ class SupplyFields:
         inventory=replacements[item_id];refs=replacements[ref_id]
         new_ref_offset=len(refs);refs.extend(plain[frame.blocks[ref_id-1][1]+ref_offset:frame.blocks[ref_id-1][1]+ref_offset+count*8])
         used=set(used);namespace=plain[source+8:source+12]
-        for h in requests:
+        for h,quantity in requests:
             for attempt in range(128):
                 guid=namespace+secrets.randbits(32).to_bytes(4,'big')
                 if guid!=bytes(8) and guid not in used:break
             else:raise ValueError('Could not allocate a unique RDR2 inventory record ID.')
             used.add(guid);record=bytearray(plain[source:source+48]);record[8:16]=guid
             struct.pack_into('>I',record,24,h);struct.pack_into('>I',record,28,name_hash('SLOTID_SATCHEL'))
-            record[32]=0;struct.pack_into('>q',record,40,1)
+            record[32]=0;struct.pack_into('>q',record,40,quantity)
             refs.extend(pointer(item_id,len(inventory)));inventory.extend(record)
         root=replacements[root_id];relative=array_at-frame.blocks[root_id-1][1]
         root[relative:relative+8]=pointer(ref_id,new_ref_offset)

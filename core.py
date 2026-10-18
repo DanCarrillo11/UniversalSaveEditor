@@ -13,6 +13,7 @@ import os
 import re
 import struct
 import uuid
+import unicodedata
 import xml.etree.ElementTree as ET
 import zlib
 from kh_items import ITEMS
@@ -32,7 +33,7 @@ class FormatError(ValueError):
 class Field:
     key: str
     label: str
-    value: int
+    value: int | float | str
     offset: int
     fmt: str
     minimum: int = 0
@@ -46,8 +47,12 @@ class Field:
     collection: str = ''
     item_id: int | str | None = None
     art_choices: tuple = ()
+    text: bool = False
 
     def parse(self, text):
+        if self.text:
+            self.validate(text)
+            return text
         try:
             value = float(text) if self.decimal else int(text)
         except (ValueError, TypeError):
@@ -56,6 +61,12 @@ class Field:
         return value
 
     def validate(self, value):
+        if self.text:
+            if type(value) is not str or any(unicodedata.category(c).startswith('C') for c in value):
+                raise ValueError(f'{self.label}: enter text without control or invisible characters.')
+            if not self.minimum <= len(value.encode('utf-8')) <= self.maximum:
+                raise ValueError(f'{self.label}: use at most {self.maximum} UTF-8 bytes.')
+            return
         if type(value) not in ((int, float) if self.decimal else (int,)) or (type(value) is float and not math.isfinite(value)) or not self.minimum <= value <= self.maximum:
             raise ValueError(f'{self.label}: use a value between {self.minimum} and {self.maximum}.')
 
@@ -208,7 +219,7 @@ class Save:
             try:self.rockstar=RockstarSave(raw,game,Field)
             except (ValueError,struct.error) as error:raise FormatError(str(error)) from error
             self.slots=[Slot('Story Mode',self.rockstar.fields)];self.warnings=self.rockstar.warnings
-            self.notes=['PC Story Mode only. '+('Existing cash and eight saved skills for Michael, Franklin and Trevor. Legacy files were checked; an Enhanced-specific native-file check is still pending. Missing statistics and character/story availability are preserved.' if game=='gtav' else 'Recognized currency, character/horse attributes, supplies, compendium, bounties, catalog unlocks and weapon customization. Available controls depend on the file. Catalog unlocks do not grant ownership. Experimental acquisition adds ordinary satchel supplies only. Full weapon/clothing acquisition, stable management and story/reward dependencies remain unsupported.')+' Unknown formats are protected. File-level checks do not prove successful in-game loading. Close the game before applying changes.']
+            self.notes=['PC Story Mode only. '+('Existing cash and eight saved skills for Michael, Franklin and Trevor. Legacy files were checked; an Enhanced-specific native-file check is still pending. Missing statistics and character/story availability are preserved.' if game=='gtav' else 'Recognized currency, character/horse attributes and matched horse names, supplies, compendium, bounties, catalog unlocks and weapon customization. Available controls depend on the file. Catalog unlocks do not grant ownership. Experimental acquisition adds ordinary satchel supplies only. Full weapon/clothing acquisition, stable management and story/reward dependencies remain unsupported.')+' Unknown formats are protected. File-level checks do not prove successful in-game loading. Close the game before applying changes.']
         elif game == 'eldenring':
             from elden_ring import EldenRingSave
             try:self.elden_ring=EldenRingSave(raw,Field,Slot)

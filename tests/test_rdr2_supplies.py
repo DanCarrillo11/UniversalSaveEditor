@@ -14,6 +14,23 @@ class SupplyTests(unittest.TestCase):
         from rdr2_features import labels
         self.assertEqual(len(SUPPLIES),len({n for n,c in SUPPLIES}))
         self.assertTrue(all(labels().get(f'{name_hash(n):08x}')==n for n,c in SUPPLIES))
+        self.assertEqual(len(SUPPLIES),159)
+        self.assertNotIn('CONSUMABLE_ROLE_NATURALIST_LEGENDARY_ANIMAL_PHEROMONE',{n for n,c in SUPPLIES})
+        self.assertFalse(any(n.startswith(('WEAPON_','CLOTHING_','DOCUMENT_','PROVISION_TRINKET_')) for n,c in SUPPLIES))
+
+    def test_requested_food_herb_and_ammo_amounts_are_written_in_one_apply(self):
+        before=self.save();fields={f.label:f for f in before.slots[0].fields if f.group=='Add supplies'}
+        requests={'Potent Medicine':7,'Herb Yarrow':25,'Rifle Express':750}
+        changes={(0,fields[label].key):value for label,value in requests.items()}
+        after=Save(before.patched(changes),'rdr2');self.assertFalse(after.warnings)
+        for label,amount in requests.items():
+            key=fields[label].key
+            self.assertEqual(next(f.value for f in after.slots[0].fields if f.key==key),amount)
+            self.assertTrue(next(f for f in after.slots[0].fields if f.key==key).readonly)
+            self.assertEqual(next(f.value for f in after.slots[0].fields if f.group=='Inventory' and f.label==label),amount)
+        for amount in (-1,0,100):
+            with self.assertRaises(ValueError):before.patched({(0,fields['Herb Yarrow'].key):amount})
+        with self.assertRaises(ValueError):before.patched({(0,fields['Rifle Express'].key):10000})
 
     def save(self,encrypted=True,**kwargs):
         return Save(rsav(encrypted,fixture(False,supplies=True,**kwargs)),'rdr2')

@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.41.0-alpha
+
+- Expand experimental RDR2 ordinary-supply acquisition from 26 to 159 explicit
+  items, including tonics, herbs, cooked food and Story Mode ammunition variants.
+  Set a missing item's amount in one apply; existing stacks stay under Inventory.
+- Add existing horse names with synchronized inventory/script strings, checked
+  UTF-8 bounds and protected mismatches, padding and unknown slots.
+- Support validated text fields in staging, reset, review and read-only previews.
+  Preserve numeric-looking names such as 007 exactly.
+- Check all additions in three native files without changing originals: custom
+  amounts, preserved old records, exact name spans/restoration and all ten payload
+  checks. In-game loading/persistence and full RDR2 support remain pending.
+
 ## v0.40.0-alpha
 
 - Add RDR2 owned weapon-component selection with one active part per parent/slot.

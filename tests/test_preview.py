@@ -18,7 +18,7 @@ class PreviewTests(unittest.TestCase):
                     self.assertTrue(slot.fields)
                     self.assertEqual(len({f.key for f in slot.fields}),len(slot.fields))
                     self.assertTrue(all(f.readonly and f.offset==-1 for f in slot.fields))
-                    self.assertTrue(all(f.minimum<=f.value<=f.maximum for f in slot.fields))
+                    for field in slot.fields:field.validate(field.value)
                     categories=organize_fields(game,slot.fields)
                     self.assertGreaterEqual(len(categories),1);self.assertLessEqual(len(categories),3)
                     total=sum(len(s.fields) for c in categories for s in c.sections)

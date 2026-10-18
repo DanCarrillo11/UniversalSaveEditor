@@ -1,4 +1,4 @@
-# RDR2 PC Story Mode — v0.38 field expansion
+# RDR2 PC Story Mode — implemented fields and verification
 
 This editor is still Limited coverage. It does not claim to expose everything
 RDR2 can store. New controls appear only when their structures are recognized;
@@ -190,3 +190,34 @@ requested choice reparsed correctly, differences stayed inside declared part,
 flag and checksum spans, and restoring these bytes reproduced each original
 encrypted file exactly. Supply acquisition and customization also share a
 tested checked output. Successful in-game loading remains unverified.
+
+## v0.41 custom supply amounts and existing horse names
+
+The explicit ordinary-supply allowlist now contains 159 identities. Categories
+separate tonics, horse supplies, ordinary supplies, food, herbs, cooked food and
+Story Mode cartridge/arrow variants. This is not a prefix-wide grant of every
+catalog hash: online-role items, shop meals, documents, weapons, clothing,
+trinkets and unknown identifiers are excluded. All 159 identities resolve in the
+attributed primary script/hash facts. A missing item accepts a requested positive
+amount (1–99, or 1–9999 for ammunition) in a single apply. Zero leaves it unchanged;
+explicit zero/removal requests are rejected. Existing items are read-only in
+Add supplies and keep their normal quantity controls under Inventory. The game
+can enforce lower capacity limits; acquisition remains experimental.
+
+Horse names require a typed HorseItem.Name fixed 64-byte string, a unique known
+inventory horse slot, a nonzero saved model, the seven-entry script array and a
+unique matching inline 64-byte string in the build-1491 root. Both strings must
+be valid, NUL-terminated UTF-8 with zero padding and have identical original
+values. Different inventory/script names are visible read-only. Missing/unknown
+slots, unknown string capacity, invalid UTF-8 or noncanonical padding expose no
+name writer. Names accept up to 63 UTF-8 bytes without control/invisible characters;
+an empty string clears the custom name. Only both name spans and checksums change.
+Horse ownership, breed, equipment, events and bonding are preserved.
+
+Three native files exposed 1/1/2 name controls, of which 1/0/1 were writable.
+Each writable name passed exact-span comparisons and byte-identical restoration.
+Combined custom-amount acquisition added 146/129/125 missing supplies while
+preserving the 834/233/302 original active records except requested horse-name
+spans. All requested values reparsed and all ten payload checks remained valid.
+Personal originals were read only. These checks do not establish in-game loading,
+name rendering, item persistence, capacity behavior or complete RDR2 support.

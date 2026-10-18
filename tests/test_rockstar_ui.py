@@ -17,7 +17,7 @@ class RockstarInterfaceTests(unittest.TestCase):
     def test_rdr2_catalog_and_acquisition_actions_stage_in_distinct_sections(self):
         from test_rdr2_features import fixture as expanded
         from test_rdr2_pso import rsav
-        from PySide6.QtWidgets import QCheckBox
+        from PySide6.QtWidgets import QCheckBox,QLineEdit
         from editor_layout import organize_fields
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);p=root/'SRDR30001'
@@ -28,14 +28,41 @@ class RockstarInterfaceTests(unittest.TestCase):
                 try:
                     self.assertTrue(w.load('rdr2',p));expected={}
                     for group in ('Unlocks','Add supplies','Bounties'):
-                        f=next(f for f in w.save.slots[0].fields if f.group==group and f.boolean and not f.readonly)
+                        f=next(f for f in w.save.slots[0].fields if f.group==group and not f.readonly and (group=='Add supplies' or f.boolean))
                         w.reveal_field((0,f.key));self.app.processEvents();control=w.inputs[0,f.key]
-                        self.assertIsInstance(control,QCheckBox);control.setChecked(True);expected[0,f.key]=1
+                        if group=='Add supplies':
+                            self.assertIsInstance(control,QLineEdit);control.setText('12');expected[0,f.key]=12
+                        else:
+                            self.assertIsInstance(control,QCheckBox);control.setChecked(True);expected[0,f.key]=1
                     self.assertEqual(w.validated_changes(),expected)
                     after=Save(w.save.patched(expected),'rdr2');self.assertFalse(after.warnings)
                     sections=[s.name for c in organize_fields('rdr2',after.slots[0].fields) for s in c.sections]
                     self.assertIn('Unlocks: Weapons',sections);self.assertIn('Add supplies: Tonics',sections)
                     self.assertEqual(p.read_bytes(),raw);w.reset();self.assertFalse(w.validated_changes())
+                finally:w.close();w.deleteLater();self.app.processEvents()
+
+    def test_horse_name_text_validation_navigation_reset_and_preview_are_safe(self):
+        from test_rdr2_features import fixture as expanded
+        from PySide6.QtWidgets import QLineEdit
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=root/'SRDR30001';raw=expanded(horse_names=True);p.write_bytes(raw)
+            with patch('app.discover',return_value=[]):w=Window(settings=QSettings(str(root/'prefs.ini'),QSettings.Format.IniFormat))
+            with patch.object(w,'may_discard',return_value=True):
+                w.reduce_motion.setChecked(True);w.show();w.resize(1280,800)
+                try:
+                    self.assertTrue(w.load('rdr2',p));field=next(x for x in w.save.slots[0].fields if x.text)
+                    key=(0,field.key);w.reveal_field(key);self.app.processEvents();entry=w.inputs[key]
+                    self.assertIsInstance(entry,QLineEdit);entry.setText('007')
+                    self.assertEqual(w.validated_changes(),{key:'007'})
+                    entry.setText('é'*32);self.assertTrue(entry.property('invalid'))
+                    with self.assertRaises(ValueError):w.validated_changes()
+                    entry.setText('Éclair');self.assertFalse(entry.property('invalid'))
+                    self.assertEqual(w.validated_changes(),{key:'Éclair'})
+                    w.restore_field(key);self.assertEqual(w.inputs[key].text(),field.value)
+                    self.assertFalse(w.validated_changes());self.assertEqual(p.read_bytes(),raw)
+                    w.open_preview('rdr2');self.app.processEvents()
+                    preview=next(x for x in w.save.slots[0].fields if x.text);w.reveal_field((0,preview.key));self.app.processEvents()
+                    self.assertFalse(w.inputs[0,preview.key].isEnabled());self.assertFalse(w.review_button.isEnabled())
                 finally:w.close();w.deleteLater();self.app.processEvents()
 
     def test_rdr2_weapon_parts_use_named_choices_and_preserve_pending_edits(self):

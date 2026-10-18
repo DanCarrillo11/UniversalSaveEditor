@@ -12,7 +12,8 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
             records=False,fish_alias=False,fish_bad_pointer=False,stat_duplicate=False,stat_namespace=False,bad_horse_counts=False,
             bounties=False,bounty_zero=False,bounty_temporary=False,bounty_mismatch=False,bounty_bad_count=False,
             unlocks=False,unlock_duplicate=False,unlock_bad_pointer=False,unlock_bad_schema=False,unlock_version=False,unlock_short_count=False,
-            supplies=False,components=False,component_duplicate=False,component_flags=False,component_cycle=False,component_quantity=False):
+            supplies=False,components=False,component_duplicate=False,component_flags=False,component_cycle=False,component_quantity=False,
+            horse_names=False,horse_name_capacity=64):
     blocks=[];schemas={}
     def block(name,size,fields,data):
         h=parser_hash(name) if isinstance(name,str) else name
@@ -41,6 +42,10 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
     horse=record(232,3,'A_C_HORSE_ARABIAN_WHITE',1);struct.pack_into('>3i',horse,116,400,20,30)
     struct.pack_into('>I',horse,28,123 if unknown_horse_slot else name_hash('SLOTID_ACTIVE_HORSE'))
     block('CPedInventorySaveStructure__HorseItem',232,common+[(k,5,0,o,0) for k,o in (('BondingXp',116),('Dirty',120),('Hungry',124))],horse)
+    if horse_names:
+        horse[48:112]=b'Example'.ljust(64,b'\0');blocks[-1]=(blocks[-1][0],bytes(horse))
+        kind=parser_hash('CPedInventorySaveStructure__HorseItem');size,fields=schemas[kind]
+        schemas[kind]=(size,fields+[(parser_hash('Name'),11,0,48,horse_name_capacity<<16)])
     ammo=record(48,4,'AMMO_REVOLVER',50);block('SavegameInventoryItem',48,common,ammo)
     schemas[parser_hash('StatId')]=(8,[])
     stats=struct.pack('>2Ii',0x89587b4e,0,11 if honor_disagrees else 10)
@@ -65,6 +70,9 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
     schemas[0x41d6f8a2]=(3504,[(1,12,0,8,0x41d6f8a3)])
     schemas[0x41d6f8a3]=(3496,[(2,12,0,8,0x41d6f8a4)])
     schemas[0x41d6f8a4]=(3488,[(3,5,0,72,0),(4,7,0,373*8,0),(5,12,0,398*8,0x41d6f8af)])
+    if horse_names:
+        attrs[1097*8:1097*8+64]=b'Example'.ljust(64,b'\0')
+        size,fields=schemas[0x41d6f8a4];schemas[0x41d6f8a4]=(size,[(0x15b19450,11,0,0,64<<16)]+fields)
     schemas[0x41d6f8af]=(72,[(6,12,0,8,0x41d6f8b0),(7,12,0,40,0x41d6f8b0)])
     schemas[0x41d6f8b0]=(32,[(8,5,0,0,0)])
     root_fields=[(0xb5d75947,12,64,23224,0x41d6f933),(0xa08031a2,12,0,34264,0x41d6f8bf),(0x454e4c92,12,0,8760,0x41d6f8a2)]

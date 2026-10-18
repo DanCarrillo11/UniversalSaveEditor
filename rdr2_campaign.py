@@ -38,6 +38,8 @@ class CampaignFields:
         self.camp_money();self.horse_mirrors();self.statistics()
         from rdr2_bounties import BountyFields
         self.bounties=BountyFields(self)
+        from rdr2_horse_names import HorseNames
+        self.horse_names=HorseNames(self)
 
     def scalar(self,index,kind):
         if not self.root:return None
@@ -123,6 +125,7 @@ class CampaignFields:
 
     def patch(self,plain,changes):
         self.bounties.patch(plain,changes)
+        self.horse_names.patch(plain,changes)
         for key,value in changes.items():
             if key in self.money:
                 cents=Decimal(str(value))*100

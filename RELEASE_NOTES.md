@@ -1,33 +1,28 @@
-# v0.40.0-alpha — RDR2 weapon parts and finishes
+# v0.41.0-alpha — RDR2 supplies and horse names
 
-RDR2 PC Story Mode now includes checked weapon customization:
+- Add custom amounts of 159 ordinary supplies: tonics, herbs, food, cooked food,
+  horse supplies and Story Mode cartridge/arrow variants. Enter an amount for a
+  missing item under Add supplies and apply once. Existing stacks remain editable
+  under Inventory. Game capacity limits still apply.
+- Rename an existing horse when its inventory and saved horse-slot names agree.
+  Both copies update together; ambiguous names stay read-only. Names accept up to
+  63 UTF-8 bytes, preserve numeric-looking text and can be reset before applying.
+- Browse the same fields in read-only previews. No personal saves are packaged.
 
-- Switch between owned components in the same weapon slot, keeping exactly
-  one installed part.
-- Replace compatible existing leaf finishes, barrel lengths and sights with
-  named variants recognized in the save's catalog. New variants synchronize
-  their existing catalog unlock.
-- Keep weapon copies and stored finishes for nested grips separate. Weapon
-  identity, ownership GUIDs, part slots and unrelated components are preserved.
-- Browse the new controls in read-only previews without a personal save.
+Native checks exercised 146/129/125 missing supply additions with custom amounts
+and preserved existing records in three files. Two matched horse-name pairs
+passed exact-span edits and byte-identical restoration; two differing pairs
+stayed protected. All ten payload checks remained valid and originals were not
+modified. Tests cover UTF-8 boundaries, invalid/control text, mismatches, unknown
+slots, combined inventory growth, staging, reset and read-only preview behavior.
 
-Unknown names, duplicate choices, invalid quantities/flags, parent cycles,
-components with dependent children and unsafe vertex-data parts are protected.
-This does not spawn weapons, create missing component slots or install arbitrary
-hashes. The earlier bounty, catalog and experimental satchel-supply tools remain.
-
-Three native files passed all 350/41/65 component-selector changes in memory,
-all ten payload checks, exact-span comparisons and byte-identical restoration.
-Original personal files were not changed. Tests cover owned-part selection,
-new-finish catalog synchronization, nested grips, malformed relationships,
-combined supply acquisition, navigation and staged edits.
-
-**RDR2 remains Limited coverage.** Successful in-game loading/persistence,
-weapon/clothing acquisition, stable management, camp upgrades and complete
-story/challenge/reward relationships remain pending. Structural checks do not
-establish full support. See docs/RDR2_FIELDS.md for the precise scope.
+**RDR2 remains Limited coverage.** Acquisition is experimental; successful
+in-game loading and persistence have not been verified. Full weapon/clothing
+acquisition, new component slots, stable creation, camp upgrades and complete
+story/challenge/reward dependencies remain pending. Earlier weapon customization,
+bounty, camp, character, compendium and catalog tools remain available.
 
 Download UniversalSaveEditor.exe under Assets and double-click it, or use
-Updates > Restart and update. Code > Download ZIP also contains the portable
-executable. Apply replaces the opened file directly, without automatic save
-backups or .edited output.
+Updates > Restart and update. Code > Download ZIP contains the portable exe too.
+Apply replaces the opened file directly, without automatic save backups or
+.edited output.

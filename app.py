@@ -89,6 +89,7 @@ def clear(box):
         elif item.layout():clear(item.layout())
 
 def number_text(value):
+    if isinstance(value,str):return value
     return str(int(value)) if float(value).is_integer() else str(value)
 
 def value_text(field,value):
@@ -976,11 +977,13 @@ class Window(QMainWindow):
             if artwork is not None and field.art_choices:entry.currentIndexChanged.connect(refresh_art)
         else:
             entry=QLineEdit(self.edits.get(key,number_text(field.value)))
-            entry.setFixedWidth(130);entry.setAlignment(Qt.AlignmentFlag.AlignRight)
+            entry.setFixedWidth(230 if field.text else 130)
+            entry.setAlignment(Qt.AlignmentFlag.AlignLeft if field.text else Qt.AlignmentFlag.AlignRight)
+            if field.text:entry.setMaxLength(field.maximum)
             entry.setReadOnly(field.readonly)
             if not field.readonly:entry.textChanged.connect(lambda text,k=key,f=field,e=entry:self.edit_changed(k,f,e,text))
         entry.setAccessibleName(field.label)
-        entry.setToolTip(f'{field.label}\nRange: {field.minimum:,}–{field.maximum:,}\nSaved field: {field.key}')
+        entry.setToolTip(f'{field.label}\n'+(f'Up to {field.maximum} UTF-8 bytes' if field.text else f'Range: {field.minimum:,}–{field.maximum:,}')+f'\nSaved field: {field.key}')
         if self.preview_mode:
             # Drop-downs remain browsable; preview callbacks never create edits.
             entry.setEnabled(isinstance(entry,QComboBox))
@@ -1064,7 +1067,7 @@ class Window(QMainWindow):
         entry.setProperty('invalid',changed and not valid);entry.setProperty('changed',changed)
         entry._reset_button.setEnabled(changed)
         entry._error_label.setText(error);entry._error_label.setVisible(not valid)
-        entry.setToolTip(error if not valid else f'Allowed range: {field.minimum:,}–{field.maximum:,}')
+        entry.setToolTip(error if not valid else f'Up to {field.maximum} UTF-8 bytes' if field.text else f'Allowed range: {field.minimum:,}–{field.maximum:,}')
         entry.style().unpolish(entry);entry.style().polish(entry)
 
     def edit_changed(self,key,field,entry,text):
@@ -1083,7 +1086,6 @@ class Window(QMainWindow):
             try:value=field.parse(text)
             except ValueError as error:
                 message=str(error);raise ValueError(message if message.startswith(field.label+':') else f'{field.label}: {message}')
-            if not field.minimum<=value<=field.maximum:raise ValueError(f'{field.label}: use a value between {field.minimum} and {field.maximum}.')
             changes[(index,key)]=value
         return changes
 

@@ -616,3 +616,20 @@ named leaf identities found in the save's catalog, preserving GUIDs and slots.
 No game parameter table, reference-editor resource database, proprietary code
 or private inventory record is packaged. Native exact-span/restoration checks
 do not establish in-game compatibility or reward/stat recalculation.
+
+### RDR2 horse names and expanded ordinary supplies (v0.41)
+
+The pinned build-1491 parser schema declares HorseItem.Name as a fixed 64-byte
+string. The pinned Halen84 player_horse.c functions 311/313 read and write the
+64-byte name at the start of Global_40.f_1095.f_1[slot]; function 314 uses that
+saved name for the horse prompt. Existing slot mapping and script-model checks
+come from the earlier horse-mirror work. Three local files corroborate two equal
+name pairs and two differing pairs; only equal canonical pairs are editable.
+No reference-editor strings, databases, art or implementation are distributed.
+
+The additional supply allowlist uses 133 explicit identifiers from the same
+attributed primary script/hash facts already packaged as rdr2-labels.json.
+There is no new external dataset or runtime dependency. Online/mission items and
+unrecognized acquisition types are not inferred from a shared name prefix.
+Native tests verify structural growth and requested quantities, not successful
+game loading, capacity enforcement, acquisition rewards or runtime GUID behavior.
