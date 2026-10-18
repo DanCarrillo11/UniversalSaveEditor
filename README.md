@@ -8,8 +8,10 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.39.0-alpha** adds guarded RDR2 monetary bounties, existing catalog
-unlock actions and experimental acquisition of 26 ordinary satchel supplies.
+Version **v0.40.0-alpha** adds RDR2 weapon customization: switch owned parts and
+replace compatible existing finishes, barrel lengths and sights. Other component
+slots and weapon identity are preserved. v0.39 added guarded monetary bounties,
+existing catalog unlock actions and experimental acquisition of 26 ordinary satchel supplies.
 Unlocks and owned items have separate sections. Adding supplies expands the native
 inventory while preserving existing records and script chunks. Successful game
 loading remains unverified; this is not complete RDR2 support. Existing camp,
@@ -102,7 +104,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 | Game | Editable fields | Status / save action |
 |---|---|---|
 | GTA V, PC Story Mode | Existing cash and eight saved skills for Michael, Franklin and Trevor | Limited; Legacy native files checked; Enhanced-specific file check and game loading pending |
-| Red Dead Redemption 2, PC Story Mode | Cash/camp, honor, player attributes, supplies/ammunition, weapon condition, horses, compendium/history, bounties, catalog unlocks and experimental common-supply acquisition | Limited; three native files checked. Weapon/clothing acquisition, stable management, story/reward dependencies and game loading pending. See [exact scope](docs/RDR2_FIELDS.md). |
+| Red Dead Redemption 2, PC Story Mode | Cash/camp, honor, player attributes, supplies/ammunition, weapon condition/parts/finishes, horses, compendium/history, bounties, catalog unlocks and experimental common-supply acquisition | Limited; three native files checked. Weapon/clothing acquisition, stable management, story/reward dependencies and game loading pending. See [exact scope](docs/RDR2_FIELDS.md). |
 | Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, 171 base-game spell acquisitions, owned spell loadouts, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics, existing case quantities and known weapon tune-up tiers | Experimental; direct apply; new case objects and comprehensive unlocks pending |
 | Resident Evil HD Remaster, PC | Recognized gameplay records, difficulty, defensive supplies, known inventory/item-box identities and quantities, next empty box entry | Experimental; public PC fixture checked; recognized gameplay sections selectable |

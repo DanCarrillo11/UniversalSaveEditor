@@ -38,6 +38,24 @@ class RockstarInterfaceTests(unittest.TestCase):
                     self.assertEqual(p.read_bytes(),raw);w.reset();self.assertFalse(w.validated_changes())
                 finally:w.close();w.deleteLater();self.app.processEvents()
 
+    def test_rdr2_weapon_parts_use_named_choices_and_preserve_pending_edits(self):
+        from test_rdr2_features import fixture as expanded
+        from PySide6.QtWidgets import QComboBox
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=root/'SRDR30001';raw=expanded(components=True,unlocks=True);p.write_bytes(raw)
+            with patch('app.discover',return_value=[]):w=Window(settings=QSettings(str(root/'prefs.ini'),QSettings.Format.IniFormat))
+            with patch.object(w,'may_discard',return_value=True):
+                w.reduce_motion.setChecked(True);w.show();w.resize(1280,800)
+                try:
+                    self.assertTrue(w.load('rdr2',p));keys=('component:0000000000000002:0f43dcc6','component:0000000000000002:ebe563e3','component:0000000000000035:7fe38573')
+                    for key in keys:
+                        w.reveal_field((0,key));self.app.processEvents();control=w.inputs[0,key]
+                        self.assertIsInstance(control,QComboBox);control.setCurrentIndex(1)
+                    changes=w.validated_changes();self.assertEqual(changes,{(0,k):1 for k in keys})
+                    after=Save(w.save.patched(changes),'rdr2');self.assertFalse(after.warnings)
+                    self.assertEqual(p.read_bytes(),raw);w.reset();self.assertFalse(w.validated_changes())
+                finally:w.close();w.deleteLater();self.app.processEvents()
+
     def test_collection_growth_scrolls_without_clipping_the_sidebar_footer(self):
         with tempfile.TemporaryDirectory() as directory:
             settings=QSettings(str(Path(directory)/'prefs.ini'),QSettings.Format.IniFormat)

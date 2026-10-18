@@ -162,3 +162,31 @@ all ten checks and could be restored exactly at the byte level. Adding missing
 allowlisted supplies created 19/13/13 records while preserving the 834/233/302
 original records, all existing field values and all nine script chunks. Original
 personal files were read only. These are structural checks, **not game validation**.
+
+## v0.40 weapon customization
+
+Active generic inventory components are grouped by their exact ParentGuid and
+SlotId. A bounded, acyclic parent walk must reach an existing typed WeaponItem;
+other parents and unknown names are rejected. Each group needs unique known
+component identities, Quantity=1, valid Equipped booleans and exactly one active
+entry. Selecting an owned component changes only that slot's Equipped bytes.
+Weapon copies and nested grips retain separate stored-finish controls.
+
+An existing leaf part may be replaced by a named compatible family variant:
+numeric material/tint/engraving/rifling variants, barrel length or sight width.
+Every original family member and new target must exist in the checked catalog.
+No component with child records can use identity replacement. Existing owned
+alternatives are selected instead of duplicated. Vertex-data parts, duplicate
+identities, invalid quantities/flags and cyclic/missing parents are protected.
+
+Replacement changes the active part's ItemId and sets only its target catalog
+unlock mask. GUID, ParentGuid, SlotId, Quantity, other components and weapon
+identity are preserved. This does not create missing slots, spawn a weapon,
+install an arbitrary hash or assert recalculated gameplay statistics. Family
+names derive from primary component-name facts; color names are not guessed.
+
+Native checks exercised all 350/41/65 selectors across the three files. Every
+requested choice reparsed correctly, differences stayed inside declared part,
+flag and checksum spans, and restoring these bytes reproduced each original
+encrypted file exactly. Supply acquisition and customization also share a
+tested checked output. Successful in-game loading remains unverified.

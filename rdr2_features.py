@@ -48,6 +48,8 @@ class Rdr2Features:
         self.cash();self.character();self.inventory();self.compendium();self.compendium_records();self.world()
         from rdr2_unlocks import UnlockFields
         self.unlocks=UnlockFields(self)
+        from rdr2_components import ComponentFields
+        self.components=ComponentFields(self)
         from rdr2_supplies import SupplyFields
         self.supplies=SupplyFields(self)
         from rdr2_campaign import CampaignFields
@@ -290,3 +292,4 @@ class Rdr2Features:
             for at in self.related.get(key,()):struct.pack_into(fmt,plain,at,value)
         self.campaign.patch(plain,changes)
         self.unlocks.patch(plain,changes)
+        self.components.patch(plain,changes)

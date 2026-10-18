@@ -114,6 +114,7 @@ def organize_fields(game, fields):
             elif group=='Compendium':category,section,selection='Collection','Compendium: '+(item.collection or 'Records'),group
             elif group=='Unlocks':category,section,selection='Collection','Unlocks: '+(item.collection or 'Catalog'),group
             elif group=='Add supplies':category,section,selection='Collection','Add supplies: '+(item.collection or 'Supplies'),group
+            elif group=='Weapon customization':category,section,selection='Collection','Customize: '+(item.collection or 'Weapons'),group
             elif group=='Inventory':category,section,selection='Collection',item.collection or group,group
             else:category,section,selection='Progress',group,group
         if game=='re5':

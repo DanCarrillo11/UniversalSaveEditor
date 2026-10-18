@@ -600,3 +600,19 @@ RSAV directory offsets, CODE/script markers, payload lengths, PMAP relocation,
 extended pointers, AES alignment and checks were independently verified on three
 local files and synthetic directories. Structural verification cannot establish
 item behavior, shop availability, reward delivery or successful game loading.
+
+### RDR2 existing weapon customization (v0.40)
+
+The same pinned parser dump declares inherited ItemId, ParentGuid, SlotId,
+Equipped and Quantity members. Three native files corroborate generic component
+records below WeaponItem and nested grips, and one active record per parent/slot.
+The pinned `femga/rdr3_discoveries/weapons/weapon_components.lua` documents
+model-specific/shared families, named material/tint/engraving/rifling, barrel
+and sight variants, and the unsafe FRAME_VERTDATA behavior. Only identifier and
+relationship facts are used; no Lua implementation or artwork is distributed.
+
+The independent writer selects existing owned records or replaces compatible
+named leaf identities found in the save's catalog, preserving GUIDs and slots.
+No game parameter table, reference-editor resource database, proprietary code
+or private inventory record is packaged. Native exact-span/restoration checks
+do not establish in-game compatibility or reward/stat recalculation.

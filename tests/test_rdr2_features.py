@@ -12,7 +12,7 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
             records=False,fish_alias=False,fish_bad_pointer=False,stat_duplicate=False,stat_namespace=False,bad_horse_counts=False,
             bounties=False,bounty_zero=False,bounty_temporary=False,bounty_mismatch=False,bounty_bad_count=False,
             unlocks=False,unlock_duplicate=False,unlock_bad_pointer=False,unlock_bad_schema=False,unlock_version=False,unlock_short_count=False,
-            supplies=False):
+            supplies=False,components=False,component_duplicate=False,component_flags=False,component_cycle=False,component_quantity=False):
     blocks=[];schemas={}
     def block(name,size,fields,data):
         h=parser_hash(name) if isinstance(name,str) else name
@@ -97,12 +97,34 @@ def fixture(encrypted=True,backup=False,duplicate=False,bad_pointer=False,bad_sc
     if unlocks:
         catalog=[('WEAPON_REVOLVER_CATTLEMAN',0x89),('CLOTHING_SP_OUTFIT_LGD_GATOR_PANTHER',9),
             ('CLOTHING_HL_PLAYER_SATCHEL_004_1',7),('DOCUMENT_NEWSPAPER_ED_10',0),('NOT_A_KNOWN_ITEM',0)]
+        if components:catalog.extend((n,9) for n in ('COMPONENT_SHORTARM_FRAME_MATERIAL_1','COMPONENT_SHORTARM_FRAME_MATERIAL_2',
+            'COMPONENT_REVOLVER_CATTLEMAN_BARREL_SHORT','COMPONENT_REVOLVER_CATTLEMAN_BARREL_LONG',
+            'COMPONENT_SHORTARM_GRIPSTOCK_TINT_A_5','COMPONENT_SHORTARM_GRIPSTOCK_TINT_A_6'))
         if unlock_duplicate:catalog.append(catalog[0])
         data=b''.join(struct.pack('>IB3s',name_hash(n),v,b'\x12\x34\x56') for n,v in catalog)
         items=block('SUnlockInfo',8,[('Hash',11,7 if unlock_bad_schema else 11,0,6),('PackedData',2,0,4,0)],data)
         unlock=bytearray(32);struct.pack_into('>I',unlock,8,int(unlock_version))
         unlock[16:32]=pointer(4095 if unlock_bad_pointer else items)+struct.pack('>HHI',1 if unlock_short_count else len(catalog),len(catalog),0)
         block('CUnlockSaveStructureSP',32,[('UnlockSaveDataVersion',6,0,8,0),('UnlockXmlVersion',6,0,12,0),('UnlockItemList',13,0,16,0)],unlock)
+    if components:
+        entries=[]
+        for n,parent,name,slot,enabled in (
+            (50,2,'COMPONENT_REVOLVER_CATTLEMAN_BARREL_SHORT',0x3d0d02db,0),
+            (51,2,'COMPONENT_REVOLVER_CATTLEMAN_BARREL_SHORT' if component_duplicate else 'COMPONENT_REVOLVER_CATTLEMAN_BARREL_LONG',0x3d0d02db,2 if component_flags else 1),
+            (52,2,'COMPONENT_SHORTARM_FRAME_MATERIAL_1',0x0f43dcc6,1),
+            (53,53 if component_cycle else 2,'COMPONENT_REVOLVER_CATTLEMAN_GRIP',0xebe563e3,1),
+            (54,2,'COMPONENT_REVOLVER_CATTLEMAN_GRIP_PEARL',0xebe563e3,0),
+            (55,53,'COMPONENT_SHORTARM_GRIPSTOCK_TINT_A_5',0x7fe38573,1),
+        ):
+            data=record(48,n,name,2 if component_quantity and n==52 else 1)
+            struct.pack_into('>Q',data,16,parent);struct.pack_into('>I',data,28,slot);data[32]=enabled
+            entries.append(data)
+        id=block('SavegameInventoryItem',48,common,b''.join(entries))
+        count=struct.unpack_from('>H',root,24)[0]
+        refs=refs[:count*8]+b''.join(pointer(id,n*48) for n in range(len(entries)))+refs[count*8:]
+        blocks[1]=(12,bytes(prefix)+refs);count+=len(entries)
+        root[16:32]=pointer(2,prefix)+struct.pack('>HHI',count,count,0)
+        root[64:80]=pointer(2,prefix+count*8)+struct.pack('>HHI',1,1,0);blocks[0]=(blocks[0][0],bytes(root))
     if records:
         history=bytearray(56);struct.pack_into('>I',history,0,name_hash('A_C_HORSE_ARABIAN_WHITE'));struct.pack_into('>II',history,44,3,2)
         block('CSaveCompendium__ItemHorse',56,[('name',11,7,0,0),('numBroken',6,0,44,0),('highestBondingLevel',6,0,48,0)],history)

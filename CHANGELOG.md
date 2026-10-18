@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.40.0-alpha
+
+- Add RDR2 owned weapon-component selection with one active part per parent/slot.
+  Keep weapon copies and stored finishes for nested grips separate.
+- Replace compatible existing leaf parts with named material/tint/engraving,
+  rifling, barrel-length and sight variants recognized in the save catalog.
+  New variants synchronize their existing catalog unlock, without creating a
+  weapon, inventing component slots or changing ownership GUIDs.
+- Protect unknown identities, duplicate choices, invalid quantities/flags,
+  parent cycles and unsafe vertex-data parts. Preview and UI controls use the
+  same checked fields. Update the in-app RDR2 scope description.
+- Verify all 350/41/65 component selectors in three native files, including
+  exact-span changes, all ten payload checks and byte-identical restoration.
+  Successful in-game loading remains unverified; RDR2 is still Limited.
+
 ## v0.39.0-alpha
 
 - Add build-1491 regional monetary bounties and a clear action. Synchronize the

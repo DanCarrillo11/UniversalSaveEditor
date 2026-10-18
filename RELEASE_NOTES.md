@@ -1,37 +1,33 @@
-# v0.39.0-alpha — RDR2 catalog unlocks, supplies and bounties
+# v0.40.0-alpha — RDR2 weapon parts and finishes
 
-This update expands RDR2 PC Story Mode while keeping its compatibility status
-**Limited**:
+RDR2 PC Story Mode now includes checked weapon customization:
 
-- **Catalog unlocks:** apply existing saved unlocks for named weapons, clothing,
-  satchels, ammunition, components, horse equipment and breeds. These controls
-  are separate from ownership: they do not add, buy or equip the object.
-- **Add supplies:** experimental one-unit acquisition of 26 ordinary satchel
-  items, including medicine, food, horse supplies and ammunition. The writer
-  validates the active character graph, creates unique record IDs and expands
-  the native blocks with checked directory relocation. Existing item quantities
-  remain in their usual sections.
-- **Bounties:** edit recognized regional monetary amounts or clear them together.
-  The current native bounty is synchronized. Mission-temporary state and edits
-  requiring an ambiguous current region are protected; story wanted flags stay.
-- **Cash and loading:** resolve cash through typed active-inventory membership
-  and reuse the validated inventory graph across editor sections.
-- **Offline previews:** browse the new sections without owning the game or
-  opening a personal save. Preview controls remain read-only.
+- Switch between owned components in the same weapon slot, keeping exactly
+  one installed part.
+- Replace compatible existing leaf finishes, barrel lengths and sights with
+  named variants recognized in the save's catalog. New variants synchronize
+  their existing catalog unlock.
+- Keep weapon copies and stored finishes for nested grips separate. Weapon
+  identity, ownership GUIDs, part slots and unrelated components are preserved.
+- Browse the new controls in read-only previews without a personal save.
 
-Three native files passed in-memory catalog edits, all ten payload checks and
-exact-span preservation. Supply acquisition retained all 834/233/302 original
-inventory records and all nine script chunks. Original personal files were not
-modified. Tests also cover malformed pointers/schemas, GUID collisions, separate
-backup inventory, action staging and previews.
+Unknown names, duplicate choices, invalid quantities/flags, parent cycles,
+components with dependent children and unsafe vertex-data parts are protected.
+This does not spawn weapons, create missing component slots or install arbitrary
+hashes. The earlier bounty, catalog and experimental satchel-supply tools remain.
 
-**Successful in-game loading and persistence remain unverified.** Supply
-acquisition is experimental; its allocator has not been confirmed against the
-game's runtime allocator. Weapon/clothing acquisition, stable management, camp
-upgrades and complete story/challenge/reward dependencies are still pending.
-This release does not claim full RDR2 support. See docs/RDR2_FIELDS.md for details.
+Three native files passed all 350/41/65 component-selector changes in memory,
+all ten payload checks, exact-span comparisons and byte-identical restoration.
+Original personal files were not changed. Tests cover owned-part selection,
+new-finish catalog synchronization, nested grips, malformed relationships,
+combined supply acquisition, navigation and staged edits.
+
+**RDR2 remains Limited coverage.** Successful in-game loading/persistence,
+weapon/clothing acquisition, stable management, camp upgrades and complete
+story/challenge/reward relationships remain pending. Structural checks do not
+establish full support. See docs/RDR2_FIELDS.md for the precise scope.
 
 Download UniversalSaveEditor.exe under Assets and double-click it, or use
-Updates > Restart and update. The portable executable is also included in
-Code > Download ZIP. Apply replaces the opened file directly; no automatic save
-backup or .edited output is created.
+Updates > Restart and update. Code > Download ZIP also contains the portable
+executable. Apply replaces the opened file directly, without automatic save
+backups or .edited output.
