@@ -1,28 +1,29 @@
-# v0.42.0-alpha — GTA V player and garage tools
+# v0.43.0-alpha — GTA V story weapon tools
 
-- Edit recognized saved-player health, armor and their maxima. Lowering a maximum
-  also lowers the current value when needed. Explicit conflicting edits are rejected.
-- Adjust saved stamina, fast-reload, fire-protection, drive-by and gang flags.
-  These describe stored state; scripts may reset them after loading/switching.
-- Set clock time and saved garage respray options.
-- Edit six saved damage/tire protection flags and license plates for existing
-  occupied garage vehicles. Plates accept up to eight printable ASCII characters.
-  Vehicle models, upgrades, ownership and empty slots are preserved.
-- Browse Characters, Progress and Equipment, including read-only offline previews.
+- Add/remove 35 identified base-slot weapons for Michael, Franklin and Trevor.
+  Set ammunition for a missing base-slot weapon to add it in the same apply.
+- Synchronize ammunition across carried weapons sharing its type. Conflicting
+  totals are rejected; other characters retain their own ammunition pools.
+- Equip mapped components and colors. Choosing a component replaces conflicting
+  parts on the same attachment point. Acquisition applies recognized shop flags
+  without deducting cash. Unknown component bits and other script state stay intact.
+- Manage Ammu-Nation unlocks, purchases, mapped attachments and colors for 40
+  weapons. Choose a protagonist and a weapon to find its inventory and shop options together.
+- Distinguish old three-cell inventories with one-hot packed colors from the
+  five-cell revision with separate tint/livery fields and different component bits.
+- Browse all weapon tools in the offline preview; previews cannot save changes.
 
-New fields were checked in two native Legacy references, including both known
-vehicle layouts, encrypted/plaintext exact-span edits, combined edits and
-byte-identical restoration. Originals were not modified. Tests cover malformed
-arrays, duplicate roots, unknown models, health/armor consistency, plate limits,
-navigation, staging, reset and read-only previews.
+Native-file checks cover three references, plaintext/encrypted copies, 1,191
+individual masked shop edits per reference, combined acquisition/customization,
+requested-value reparsing, checksums and exact allowed spans. Original files
+were unchanged. Synthetic and interface tests cover unknown layouts, duplicates,
+shared-ammunition conflicts, component exclusivity, staging/reset and previews.
 
-**GTA V remains Limited coverage.** Weapon/ammunition inventory, vehicle creation,
-model swaps/tuning, property/clothing acquisition and complete collectible/story/
-reward dependencies remain unsupported. Enhanced-specific native validation and
-successful in-game loading/persistence are still pending. Existing money and
-eight skills for Michael, Franklin and Trevor remain available. Story Mode only.
+**GTA V remains Limited coverage.** New DLC inventory slots, vehicle creation/model
+swaps/tuning, properties/clothing, collectibles and full mission/reward dependencies
+remain unsupported. An Enhanced-specific native file and successful in-game loading
+are still required for verification. No complete-support claim is made.
 
 Download UniversalSaveEditor.exe under Assets and double-click it, or use
-Updates > Restart and update. Code > Download ZIP contains the portable exe too.
-Apply replaces the opened file directly, without automatic save backups or
-.edited output.
+Updates > Restart and update. Code > Download ZIP includes the portable exe.
+Apply replaces the opened file directly, without automatic backups or .edited files.

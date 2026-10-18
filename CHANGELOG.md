@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.43.0-alpha
+
+- Add/remove 35 identified base-slot weapons for Michael, Franklin and Trevor.
+  Set ammunition for a missing base-slot weapon to add it in the same apply.
+- Synchronize ammunition across carried weapons sharing its type. Conflicting
+  totals are rejected; other characters retain their own ammunition pools.
+- Equip mapped components and colors. Choosing a component replaces conflicting
+  parts on the same attachment point. Acquisition applies recognized shop flags
+  without deducting cash. Unknown component bits and other script state stay intact.
+- Manage Ammu-Nation unlocks, purchases, mapped attachments and colors for 40
+  weapons. Choose a protagonist and a weapon to find its inventory and shop options together.
+- Distinguish old three-cell inventories with one-hot packed colors from the
+  five-cell revision with separate tint/livery fields and different component bits.
+- Browse all weapon tools in the offline preview; previews cannot save changes.
+
+
+Native tests pass; game loading and full GTA V coverage remain pending.
+
 ## v0.42.0-alpha
 
 - Expand GTA V with saved active-player health, armor, maxima and recognized

@@ -109,9 +109,13 @@ def organize_fields(game, fields):
                     if game=='re9':section,selection='Existing items',item.collection or 'Inventory'
         if game=='gtav':
             category = 'Progress' if item.collection == 'World' else 'Equipment' if item.collection == 'Vehicles' or item.key.startswith('vehicle:') else 'Characters'
+            if item.key.startswith(('weapon_shop:', 'weapon_ammo:', 'weapon_inventory:')):
+                category = 'Equipment'
             section,selection=group,item.collection
+            if item.key.startswith(('weapon_shop:', 'weapon_ammo:', 'weapon_inventory:')):
+                section=group.split(' · ',1)[-1]
             if item.key.startswith('vehicle:'):
-                section=item.collection
+                section,selection=item.collection,'Vehicles'
         if game=='rdr2':
             if group in ('Player cores','Player progression','Honor'):category,section,selection='Character',group,'Player'
             elif group in ('Weapon condition','Horses'):category,section,selection='Collection',item.collection or group,group
@@ -240,4 +244,10 @@ def organize_fields(game, fields):
         category.sections.sort(key=lambda section: (
             (('Sora', 'Donald', 'Goofy', 'Riku').index(section.selection) if section.selection in ('Sora', 'Donald', 'Goofy', 'Riku') else 4) if category.name == 'Characters' else 0,
             section_order.index(section.name) if section.name in section_order else len(section_order)))
+    if game == 'gtav':
+        equipment=categories.get('Equipment')
+        if equipment and equipment.sections:
+            equipment.selector_label='Character'
+            names=('Michael','Franklin','Trevor','Vehicles')
+            equipment.sections.sort(key=lambda s:(names.index(s.selection) if s.selection in names else 4,s.name.casefold()))
     return [category for category in categories.values() if category.sections]

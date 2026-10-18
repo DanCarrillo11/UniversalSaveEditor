@@ -8,11 +8,12 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.42.0-alpha** expands GTA V with saved-player health/armor and maxima,
-recognized player flags, clock, garage services and existing occupied vehicles'
-saved protections and license plates. Characters, Progress and Equipment have
-separate navigation. New fields were checked in two Legacy files; game loading
-and Enhanced-native verification remain pending. This is partial support.
+Version **v0.43.0-alpha** expands GTA V story weapons: add/remove 35 recognized
+base-slot weapons per character, synchronize shared ammunition, select mapped
+attachments and equipped colors, and manage shop acquisition for 40 weapons.
+Adding/equipping also updates recognized shop ownership without spending cash.
+Three native files cover two distinct inventory revisions; game loading and
+Enhanced-specific verification remain pending. This is partial support.
 
 v0.41 expanded RDR2 acquisition to 159 ordinary supplies,
 including tonics, herbs, cooked food and Story Mode ammunition variants. Enter
@@ -116,7 +117,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 
 | Game | Editable fields | Status / save action |
 |---|---|---|
-| GTA V, PC Story Mode | Character cash/skills; saved-player health/armor/flags; clock/resprays; existing garage vehicle protections/plates | Limited; Legacy native files checked; Enhanced-specific file check and game loading pending |
+| GTA V, PC Story Mode | Character cash/skills; saved-player health/armor/flags; clock/resprays; vehicle protections/plates; base-slot weapon acquisition, shared ammo, components/colors and weapon-shop flags | Limited; Legacy native files checked; Enhanced-specific file check and game loading pending |
 | Red Dead Redemption 2, PC Story Mode | Cash/camp, honor, player attributes, supplies/ammunition, weapon condition/parts/finishes, horse care/names, compendium/history, bounties, catalog unlocks and experimental common-supply acquisition | Limited; three native files checked. Weapon/clothing acquisition, stable management, story/reward dependencies and game loading pending. See [exact scope](docs/RDR2_FIELDS.md). |
 | Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, 171 base-game spell acquisitions, owned spell loadouts, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics, existing case quantities and known weapon tune-up tiers | Experimental; direct apply; new case objects and comprehensive unlocks pending |
@@ -213,7 +214,7 @@ games, which are not advertised as compatible yet.
 | Max Payne | Equipment |
 | Resident Evil 4 (2005), Steam UHD | Progress, Characters, Records |
 | WEBFISHING | Progress, Equipment, Collection |
-| GTA V | Characters: cash/skills and saved player; Progress: clock; Equipment: garage services and existing saved vehicles |
+| GTA V | Characters: cash/skills and saved player; Progress: clock; Equipment: choose a protagonist and weapon for inventory/shop options, or Vehicles for garage controls |
 | Red Dead Redemption 2 | Progress: Currency / Camp / Bounties / Statistics / World clock; Character: Honor / Cores / XP; Inventory: Supplies / Ammunition / Weapons / Horses / Compendium / Catalog unlocks / Add supplies |
 | Risk of Rain 2 | Progress, Unlocks, Records |
 | Alice persistent profile | Progress, Character, Collection |

@@ -9,17 +9,17 @@ is marked full support and no completion percentage is inferred from field count
 
 ## Current GTA V pass
 
-v0.42 adds recognized saved-player health/armor/maxima and saved flags, clock,
-garage respray services, and existing occupied vehicle protections/license plates.
-Native Legacy references expose 48/69 fields; new individual and combined edits
-pass checksum, exact-span and restoration checks in encrypted/plaintext copies.
-Unknown player models, duplicate roots, malformed membership and unknown schemas
-remain protected. Preview and UI include the new categories.
+v0.43 adds/removes 35 recognized GTA V base-slot weapons per character,
+synchronizes carried ammo, equips mapped components/colors and manages shop
+acquisition for 40 weapons. Both three/five-cell inventories are gated by their
+schemas, with independent color/component encodings. Three native references pass
+masked shop edits and combined acquisition/customization with requested-value
+reparsing, checksums and unchanged original files. UI staging/reset and previews
+include the new tools. This is partial coverage, not a completion percentage.
 
-This is partial coverage. Weapon/ammunition inventory, vehicle creation/model
-changes/tuning, property/clothing acquisition and complete collectible/story/
-reward dependencies remain unsupported. Enhanced-specific native files and
-game-load/persistence validation are still unavailable; no full-support claim.
+Full DLC slot acquisition, vehicles/models/tuning, property/clothing acquisition,
+collectible/story/reward dependencies, Enhanced-native validation and in-game
+loading remain open. Earlier player, clock and occupied-vehicle tools are retained.
 
 ## Current RDR2 pass
 
@@ -158,7 +158,7 @@ progression events, installed content or platform achievements.
 
 | Game | Principal remaining gate |
 | --- | --- |
-| GTA V | Enhanced-specific native-file verification and in-game loading; character availability, weapons/ammunition, vehicles/garages, properties, cosmetics, missions and rewards. Current scope is cash/eight existing skills, not online or character creation. |
+| GTA V | Enhanced-specific native-file verification and in-game loading; character availability, weapons/ammunition, vehicles/garages, properties, cosmetics, missions and rewards. Current scope includes player/world/garage fields plus guarded base-slot weapon acquisition, shared ammo, mapped components/colors and shop flags; not online or character creation. |
 | RDR2 | Weapon/clothing acquisition, missing component-slot creation, stable/appearance management, camp upgrades, story/challenge/reward delivery and broader revisions. Existing weapon parts and compatible leaf finishes now have checked selectors. Bounties/catalog unlocks are mapped; 159 ordinary supplies have experimental acquisition with custom amounts. Matched existing horse names can be changed together. Runtime GUID allocation, game loading and persistence still need validation. |
 | Requiem | Map active player variants, full named unlocks, item caps and complete inventory/weapon relationships. Difficulty value/hash pairs need named identity verification. |
 | Village | Name item/content hashes, establish stack caps, weapon upgrades and difficulty identity relationships; validate native Steam payloads. |

@@ -21,7 +21,7 @@ class Game:
     platforms: tuple[str, ...] = ('steam',)
 
 GAMES = (
-    Game('gtav','GRAND THEFT AUTO V','Legacy / Enhanced · PC Story Mode','GRAND THEFT AUTO','#80b78d',True,'Character cash and skills · Saved player health and armor · Player flags · Clock · Garage services · Existing vehicle protections and license plates',True),
+    Game('gtav','GRAND THEFT AUTO V','Legacy / Enhanced · PC Story Mode','GRAND THEFT AUTO','#80b78d',True,'Character cash and skills · Saved player health and armor · Player flags · Clock · Garage services · Vehicle protections and plates · Weapon inventory · Ammunition · Components and colors · Ammu-Nation unlocks',True),
     Game('rdr2','RED DEAD REDEMPTION 2','PC Story Mode','RED DEAD REDEMPTION','#c85d5d',True,'Cash and camp funds · Honor · Cores and XP · Supplies · Catalog unlocks · Bounties · Weapon parts and finishes · Horse care and names',True),
     Game('eldenring','ELDEN RING','Original game · Steam','ELDEN RING','#c9b580',True,'Runes · Attributes · Automatic level · Current vitals · Appearance · Map visibility · Talisman capacity · Learn base-game spells · Spell loadouts · Inventory and storage · Add goods · Create weapons and armor · Weapon upgrades · NG+ scaling',True),
     Game('re1_hd','RESIDENT EVIL','HD Remaster · Steam','RESIDENT EVIL','#a3b5a3',True,'Multiple save records · Difficulty · Defensive supplies · Inventory and item box · 131 documented item identities · Item replacement and creation',True),

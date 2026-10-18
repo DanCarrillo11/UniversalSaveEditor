@@ -85,6 +85,8 @@ class GtavFeatures:
                     readonly=not low <= value <= high, collection=collection, note=NOTE))
         from gtav_vehicles import VehicleFields
         self.vehicles = VehicleFields(self, Field)
+        from gtav_weapons import WeaponFields
+        self.weapons = WeaponFields(self, Field)
 
     def patch(self, plain, changes):
         changes = dict(changes)
@@ -106,3 +108,4 @@ class GtavFeatures:
                 fmt, at = self.formats[key]
                 struct.pack_into(fmt, plain, at, value)
         self.vehicles.patch(plain, changes)
+        self.weapons.patch(plain, changes)

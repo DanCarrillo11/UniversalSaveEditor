@@ -14,6 +14,45 @@ class RockstarInterfaceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):cls.app=QApplication.instance() or QApplication([])
 
+    def test_gta_weapon_inventory_shop_and_color_choices_stage_across_sections(self):
+        from test_gtav_features import fixture as expanded
+        from PySide6.QtWidgets import QCheckBox,QComboBox,QLineEdit
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=root/'SGTA50000';raw=expanded(True,weapons=True);p.write_bytes(raw)
+            with patch('app.discover',return_value=[]):w=Window(settings=QSettings(str(root/'prefs.ini'),QSettings.Format.IniFormat))
+            with patch.object(w,'may_discard',return_value=True):
+                w.reduce_motion.setChecked(True);w.show();w.resize(1280,800)
+                try:
+                    self.assertTrue(w.load('gtav',p))
+                    changes={(0,'weapon_inventory:1:22d8fe39:present'):1,
+                             (0,'weapon_inventory:1:22d8fe39:tint'):7,
+                             (0,'weapon_ammo:1:22d8fe39'):75,
+                             (0,'weapon_shop:2:13532244:purch_0:31'):1}
+                    for key,value in changes.items():
+                        w.reveal_field(key);self.app.processEvents();control=w.inputs[key]
+                        if isinstance(control,QComboBox):control.setCurrentIndex(value)
+                        elif isinstance(control,QCheckBox):control.setChecked(bool(value))
+                        else:self.assertIsInstance(control,QLineEdit);control.setText(str(value))
+                    self.assertEqual(w.validated_changes(),changes)
+                    after=Save(w.save.patched(changes),'gtav');self.assertFalse(after.warnings)
+                    self.assertEqual(p.read_bytes(),raw);w.reset();self.assertFalse(w.validated_changes())
+                    w.reveal_field((0,'weapon_shop:1:1b06d571:purch_0:25'));self.app.processEvents()
+                    from PySide6.QtWidgets import QPushButton
+                    action=next(b for b in w.findChildren(QPushButton) if b.text()=='Unlock shop options' and b.isVisible())
+                    action.click();self.app.processEvents()
+                    self.assertTrue(w.validated_changes())
+                    self.assertTrue(all(key.startswith('weapon_shop:') for slot,key in w.validated_changes()))
+                    w.reset()
+                    w.open_preview('gtav');self.app.processEvents()
+                    for key in changes:
+                        w.reveal_field(key);self.app.processEvents()
+                        if isinstance(w.inputs[key],QComboBox):
+                            w.inputs[key].setCurrentIndex(3)
+                        else:self.assertFalse(w.inputs[key].isEnabled())
+                    self.assertFalse(w.validated_changes())
+                    self.assertFalse(w.review_button.isEnabled())
+                finally:w.close();w.deleteLater();self.app.processEvents()
+
     def test_gta_player_clock_and_vehicle_fields_stage_and_preview(self):
         from test_gtav_features import fixture as expanded
         from PySide6.QtWidgets import QLineEdit, QCheckBox

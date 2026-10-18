@@ -64,6 +64,53 @@ game loading/persistence and Enhanced-specific native files remain unverified.
 Weapon/ammunition inventory, property/clothing acquisition, collectibles and
 mission/reward dependencies are still unsupported. **GTA V is not full support.**
 
+
+### GTA V story weapon inventories and shop acquisition (v0.43)
+
+The typed ScriptGlobals root and its embedded character-inventory path must match
+the declared member hashes and bounded sizes. Both high PSCH offset bits are
+resolved. Known three-cell (44 + 50 records) and five-cell (44 + 51 records)
+shapes are distinguished; the count is a byte in an eight-byte VM cell, not u32.
+All scalar types, offsets, first-row member names and unique slot membership are
+checked. A separate unidentified fourth inventory snapshot is preserved.
+
+Thirty-five named base slots can be added/removed for each protagonist. Slots
+occupied by unexpected identities and duplicate identities are protected. Existing
+named extra weapons expose supported ammunition/customization but new DLC slot
+placement is not inferred. Ammunition updates synchronize carried weapons of the
+same type and character; inconsistent pools stay read-only. Simultaneous conflicting
+totals are rejected. The cap uses highest story shooting-skill capacity; runtime
+skills may apply a lower cap. Non-ammo weapons do not get meaningless ammo controls.
+
+The older color encoding is one bit in positions 20–27; modern records have a
+separate tint field. Component bit positions also differ between revisions.
+Only mapped components are exposed; unknown bits, cell padding and modern livery
+color are preserved. Selecting competing components in one attachment point is
+rejected. Installing one part replaces its recognized peers in that point.
+
+Shop controls cover 40 weapons and mapped component/color acquisition. Each
+SP0/SP1/SP2_WEAP_* bank must have exactly one correctly typed stat row. Masked
+uint32 operations preserve unrelated flags, including signed bit 31. Purchasing
+requires availability; attachment purchases unlock that attachment. Turning off
+weapon availability also clears its shop purchase flag. Contradictory explicit
+requests are rejected. Inventory additions/components/colors synchronize recognized
+shop ownership without spending cash. Shop ownership alone does not put a weapon
+in the carried inventory or bypass game-edition restrictions.
+
+Three native references cover both inventory shapes. The first two are the public
+Legacy references above; the third is a built-in PC template inspected statically
+from the user-supplied reference editor. No template/resource is packaged. Checks
+pass 1,191 individual masked shop edits per file, combined changes, requested-value
+reparsing and all container checks in encrypted/plain copies. The originals remain
+unchanged. Synthetic fixtures additionally exercise the extended 131072-byte
+schema offset, invalid counts, duplicates, ammo consistency, acquisition dependencies,
+one-hot/direct tints, component conflicts and opaque padding/livery preservation.
+
+This remains partial coverage. Full DLC acquisition, vehicles/models/tuning,
+properties, clothing, collectibles and complete mission/reward dependencies are
+not implemented. Enhanced-native validation and edited-save game loading remain
+unverified. File-level checks are not evidence of successful game loading.
+
 ## RDR2
 
 The PC `SRDR#####` story envelope has header version 4, AES body at 0x110 and

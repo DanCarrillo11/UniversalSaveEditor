@@ -1,0 +1,6935 @@
+{
+  "shop": [
+    {
+      "id": "WEAPON_ADVANCEDRIFLE",
+      "hash": 2937143193,
+      "label": "Advanced Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 19
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 19
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_1",
+          "bit": 20
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_1",
+          "bit": 21
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_1",
+          "bit": 23
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_1",
+          "bit": 8
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_1",
+          "bit": 9
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 14
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 18
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 6
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 10
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 30
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 22
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 26
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_DAGGER",
+      "hash": 2460120199,
+      "label": "Antique Cavalry Dagger",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 11
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 11
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_APPISTOL",
+      "hash": 584646201,
+      "label": "AP Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 27
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 27
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_0",
+          "bit": 19
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_0",
+          "bit": 20
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_0",
+          "bit": 21
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_0",
+          "bit": 22
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 9
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 29
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 1
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 21
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 25
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 17
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_0",
+          "bit": 5
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_ASSAULTRIFLE",
+      "hash": 3220176749,
+      "label": "Assault Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 16
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 16
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_0",
+          "bit": 3
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_0",
+          "bit": 4
+        },
+        {
+          "label": "Grip",
+          "bank": "addon_purch_0",
+          "bit": 5
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_0",
+          "bit": 6
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_0",
+          "bit": 7
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_1",
+          "bit": 24
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 12
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 16
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 4
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 8
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 28
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 20
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 24
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_ASSAULTSHOTGUN",
+      "hash": 3800352039,
+      "label": "Assault Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 0
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 0
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_2",
+          "bit": 24
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_2",
+          "bit": 25
+        },
+        {
+          "label": "Grip",
+          "bank": "addon_purch_2",
+          "bit": 26
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_2",
+          "bit": 27
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_2",
+          "bit": 28
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 3
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 23
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 27
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 15
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 19
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 11
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 31
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_ASSAULTSMG",
+      "hash": 4024951519,
+      "label": "Assault SMG",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 30
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 30
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_2",
+          "bit": 11
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_2",
+          "bit": 12
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_2",
+          "bit": 13
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_2",
+          "bit": 14
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_2",
+          "bit": 15
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_5",
+          "bit": 22
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_5",
+          "bit": 1
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_5",
+          "bit": 8
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_5",
+          "bit": 23
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_5",
+          "bit": 21
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_5",
+          "bit": 20
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_5",
+          "bit": 9
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_BOTTLE",
+      "hash": 4192643659,
+      "label": "Bottle",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 21
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 21
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_BULLPUPRIFLE",
+      "hash": 2132975508,
+      "label": "Bullpup Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 8
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 8
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_4",
+          "bit": 27
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_4",
+          "bit": 28
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_3",
+          "bit": 7
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_4",
+          "bit": 25
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_4",
+          "bit": 24
+        },
+        {
+          "label": "Grip",
+          "bank": "addon_purch_4",
+          "bit": 26
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_6",
+          "bit": 21
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_6",
+          "bit": 9
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_6",
+          "bit": 23
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_6",
+          "bit": 22
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_6",
+          "bit": 20
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_6",
+          "bit": 19
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_6",
+          "bit": 8
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_BULLPUPSHOTGUN",
+      "hash": 2640438543,
+      "label": "Bullpup Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 15
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 15
+        },
+        {
+          "label": "Grip",
+          "bank": "addon_purch_2",
+          "bit": 0
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_2",
+          "bit": 1
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_2",
+          "bit": 2
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_6",
+          "bit": 30
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_6",
+          "bit": 18
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_6",
+          "bit": 16
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_6",
+          "bit": 31
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_6",
+          "bit": 29
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_6",
+          "bit": 28
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_6",
+          "bit": 17
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_CARBINERIFLE",
+      "hash": 2210333304,
+      "label": "Carbine Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 17
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 17
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_1",
+          "bit": 25
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_1",
+          "bit": 26
+        },
+        {
+          "label": "Grip",
+          "bank": "addon_purch_1",
+          "bit": 28
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_1",
+          "bit": 29
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_1",
+          "bit": 30
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_1",
+          "bit": 31
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 13
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 17
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 5
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 9
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 29
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 21
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 25
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_COMBATMG",
+      "hash": 2144741730,
+      "label": "Combat MG",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 21
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 21
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_1",
+          "bit": 13
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_1",
+          "bit": 14
+        },
+        {
+          "label": "Grip",
+          "bank": "addon_purch_1",
+          "bit": 15
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_1",
+          "bit": 0
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 0
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 20
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 24
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 12
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 16
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 8
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 28
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_COMBATPISTOL",
+      "hash": 1593441988,
+      "label": "Combat Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 26
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 26
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_0",
+          "bit": 29
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_0",
+          "bit": 30
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_0",
+          "bit": 31
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_0",
+          "bit": 16
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 8
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 28
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 0
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 20
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 24
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 16
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_0",
+          "bit": 4
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_FIREWORK",
+      "hash": 2138347493,
+      "label": "Firework Launcher",
+      "ammo": "AMMO_FIREWORK",
+      "max_ammo": 20,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 15
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 15
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_0",
+          "bit": 24
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_8",
+          "bit": 20
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_8",
+          "bit": 8
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_8",
+          "bit": 22
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_8",
+          "bit": 21
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_8",
+          "bit": 19
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_8",
+          "bit": 18
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_8",
+          "bit": 23
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_GRENADELAUNCHER",
+      "hash": 2726580491,
+      "label": "Grenade Launcher",
+      "ammo": "AMMO_GRENADELAUNCHER",
+      "max_ammo": 20,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 2
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 2
+        },
+        {
+          "label": "Grip",
+          "bank": "addon_purch_2",
+          "bit": 22
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_2",
+          "bit": 23
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_2",
+          "bit": 8
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_2",
+          "bit": 24
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 12
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 16
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 4
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 8
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 0
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 20
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_GRENADE",
+      "hash": 2481070269,
+      "label": "Grenade",
+      "ammo": "AMMO_GRENADE",
+      "max_ammo": 25,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 8
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 8
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_GUSENBERG",
+      "hash": 1627465347,
+      "label": "Gusenberg Sweeper",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 10
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 10
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_3",
+          "bit": 5
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_3",
+          "bit": 6
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_7",
+          "bit": 17
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_7",
+          "bit": 21
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_7",
+          "bit": 19
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_7",
+          "bit": 18
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_7",
+          "bit": 16
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_7",
+          "bit": 31
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_7",
+          "bit": 20
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_HAMMER",
+      "hash": 1317494643,
+      "label": "Hammer",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 28
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 28
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_HEAVYPISTOL",
+      "hash": 3523564046,
+      "label": "Heavy Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 9
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 9
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_3",
+          "bit": 1
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_3",
+          "bit": 2
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_3",
+          "bit": 3
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_3",
+          "bit": 4
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_6",
+          "bit": 12
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_6",
+          "bit": 0
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_6",
+          "bit": 14
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_6",
+          "bit": 13
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_6",
+          "bit": 11
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_6",
+          "bit": 10
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_6",
+          "bit": 15
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_HEAVYSNIPER",
+      "hash": 205991906,
+      "label": "Heavy Sniper",
+      "ammo": "AMMO_SNIPER",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 13
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 13
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_2",
+          "bit": 20
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_2",
+          "bit": 10
+        },
+        {
+          "label": "Advanced Scope",
+          "bank": "addon_purch_2",
+          "bit": 21
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 7
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 11
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 31
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 3
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 23
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 15
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 19
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_PETROLCAN",
+      "hash": 883325847,
+      "label": "Jerry Can",
+      "ammo": "AMMO_PETROLCAN",
+      "max_ammo": 4500,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 19
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 19
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_KNIFE",
+      "hash": 2578778090,
+      "label": "Knife",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 26
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 26
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_MG",
+      "hash": 2634544996,
+      "label": "MG",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 20
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 20
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_1",
+          "bit": 10
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_1",
+          "bit": 11
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_1",
+          "bit": 12
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 15
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 19
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 7
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 11
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 31
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 23
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 27
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_MICROSMG",
+      "hash": 324215364,
+      "label": "Micro SMG",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 31
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 31
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_0",
+          "bit": 23
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_0",
+          "bit": 8
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_0",
+          "bit": 9
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_0",
+          "bit": 10
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_0",
+          "bit": 11
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 10
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 30
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 2
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 22
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 26
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 18
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_0",
+          "bit": 6
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_MINIGUN",
+      "hash": 1119849093,
+      "label": "Minigun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 4
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 4
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_2",
+          "bit": 9
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_2",
+          "bit": 26
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 14
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 18
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 6
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 10
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 2
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 22
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_MUSKET",
+      "hash": 2828843422,
+      "label": "Musket",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 14
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 14
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_0",
+          "bit": 24
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_7",
+          "bit": 8
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_7",
+          "bit": 12
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_7",
+          "bit": 10
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_7",
+          "bit": 9
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_7",
+          "bit": 23
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_7",
+          "bit": 22
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_7",
+          "bit": 11
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_NIGHTSTICK",
+      "hash": 1737195953,
+      "label": "Nightstick",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 27
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 27
+        }
+      ]
+    },
+    {
+      "id": "GADGET_PARACHUTE",
+      "hash": 4222310262,
+      "label": "Parachute",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 25
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 25
+        },
+        {
+          "label": "Blue Chute",
+          "bank": "tint_purch_4",
+          "bit": 5
+        },
+        {
+          "label": "Red Chute",
+          "bank": "tint_purch_4",
+          "bit": 1
+        },
+        {
+          "label": "Seaside Stripes Chute",
+          "bank": "tint_purch_4",
+          "bit": 2
+        },
+        {
+          "label": "Hornet Chute",
+          "bank": "tint_purch_4",
+          "bit": 7
+        },
+        {
+          "label": "Patriot Chute",
+          "bank": "tint_purch_4",
+          "bit": 4
+        },
+        {
+          "label": "Widowmaker Chute",
+          "bank": "tint_purch_4",
+          "bit": 3
+        },
+        {
+          "label": "Rainbow Chute",
+          "bank": "tint_purch_4",
+          "bit": 0
+        },
+        {
+          "label": "Black Chute",
+          "bank": "tint_purch_4",
+          "bit": 6
+        },
+        {
+          "label": "Red Smoke Trail",
+          "bank": "tint_purch_0",
+          "bit": 25
+        },
+        {
+          "label": "Orange Smoke Trail",
+          "bank": "tint_purch_0",
+          "bit": 26
+        },
+        {
+          "label": "Yellow Smoke Trail",
+          "bank": "tint_purch_0",
+          "bit": 27
+        },
+        {
+          "label": "Blue Smoke Trail",
+          "bank": "tint_purch_0",
+          "bit": 30
+        },
+        {
+          "label": "Black Smoke Trail",
+          "bank": "tint_purch_0",
+          "bit": 29
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_PISTOL50",
+      "hash": 2578377531,
+      "label": "Pistol .50",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 28
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 28
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_2",
+          "bit": 3
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_2",
+          "bit": 4
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_2",
+          "bit": 5
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_2",
+          "bit": 6
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_5",
+          "bit": 26
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_5",
+          "bit": 3
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_5",
+          "bit": 28
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_5",
+          "bit": 27
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_5",
+          "bit": 25
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_5",
+          "bit": 24
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_5",
+          "bit": 29
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_PISTOL",
+      "hash": 453432689,
+      "label": "Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 25
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 25
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_0",
+          "bit": 25
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_0",
+          "bit": 26
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_0",
+          "bit": 27
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_0",
+          "bit": 28
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 23
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 27
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 15
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 19
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_3",
+          "bit": 7
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 31
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_0",
+          "bit": 3
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_PUMPSHOTGUN",
+      "hash": 487013001,
+      "label": "Pump Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 14
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 14
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_1",
+          "bit": 4
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_1",
+          "bit": 3
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 1
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 21
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 25
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 13
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 17
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 9
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 29
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_RPG",
+      "hash": 2982836145,
+      "label": "RPG",
+      "ammo": "AMMO_RPG",
+      "max_ammo": 20,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 3
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 3
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_2",
+          "bit": 25
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 13
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 17
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 5
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 9
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 1
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 21
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_SAWNOFFSHOTGUN",
+      "hash": 2017895192,
+      "label": "Sawed-Off Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 1
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 1
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 2
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 22
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 26
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 14
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 18
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 10
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 30
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_SMG",
+      "hash": 736523883,
+      "label": "SMG",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 29
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 29
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_0",
+          "bit": 14
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_0",
+          "bit": 15
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_0",
+          "bit": 0
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_0",
+          "bit": 1
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_0",
+          "bit": 2
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 11
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 31
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_2",
+          "bit": 3
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 23
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 27
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 19
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_0",
+          "bit": 7
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_SNIPERRIFLE",
+      "hash": 100416529,
+      "label": "Sniper Rifle",
+      "ammo": "AMMO_SNIPER",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 12
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 12
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_2",
+          "bit": 29
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_2",
+          "bit": 16
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_2",
+          "bit": 30
+        },
+        {
+          "label": "Advanced Scope",
+          "bank": "addon_purch_2",
+          "bit": 31
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_1",
+          "bit": 6
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_2",
+          "bit": 10
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_3",
+          "bit": 30
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_3",
+          "bit": 2
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_4",
+          "bit": 22
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_0",
+          "bit": 14
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_1",
+          "bit": 18
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_SNSPISTOL",
+      "hash": 3218215474,
+      "label": "SNS Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 23
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 23
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_3",
+          "bit": 13
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_3",
+          "bit": 14
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_6",
+          "bit": 3
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_6",
+          "bit": 7
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_6",
+          "bit": 5
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_6",
+          "bit": 4
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_6",
+          "bit": 2
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_6",
+          "bit": 1
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_6",
+          "bit": 6
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_SPECIALCARBINE",
+      "hash": 3231910285,
+      "label": "Special Carbine",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 22
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 22
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_3",
+          "bit": 23
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_3",
+          "bit": 8
+        },
+        {
+          "label": "Flashlight",
+          "bank": "addon_purch_3",
+          "bit": 10
+        },
+        {
+          "label": "Scope",
+          "bank": "addon_purch_3",
+          "bit": 11
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_3",
+          "bit": 12
+        },
+        {
+          "label": "Grip",
+          "bank": "addon_purch_3",
+          "bit": 9
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_5",
+          "bit": 7
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_6",
+          "bit": 27
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_6",
+          "bit": 25
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_6",
+          "bit": 24
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_5",
+          "bit": 6
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_5",
+          "bit": 5
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_6",
+          "bit": 26
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_STICKYBOMB",
+      "hash": 741814745,
+      "label": "Sticky Bomb",
+      "ammo": "AMMO_STICKYBOMB",
+      "max_ammo": 25,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 23
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 23
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_STUNGUN",
+      "hash": 911657153,
+      "label": "Stun Gun",
+      "ammo": "AMMO_STUNGUN",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 7
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 7
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_SMOKEGRENADE",
+      "hash": 4256991824,
+      "label": "Tear Gas",
+      "ammo": "AMMO_SMOKEGRENADE",
+      "max_ammo": 25,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_0",
+          "bit": 9
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_0",
+          "bit": 9
+        }
+      ]
+    },
+    {
+      "id": "WEAPON_VINTAGEPISTOL",
+      "hash": 137902532,
+      "label": "Vintage Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "shop": [
+        {
+          "label": "Unlocked",
+          "bank": "unlock_1",
+          "bit": 12
+        },
+        {
+          "label": "Purchased",
+          "bank": "purch_1",
+          "bit": 12
+        },
+        {
+          "label": "Default Clip",
+          "bank": "addon_purch_4",
+          "bit": 29
+        },
+        {
+          "label": "Extended Clip",
+          "bank": "addon_purch_4",
+          "bit": 30
+        },
+        {
+          "label": "Suppressor",
+          "bank": "addon_purch_4",
+          "bit": 16
+        },
+        {
+          "label": "Army Tint",
+          "bank": "tint_purch_7",
+          "bit": 26
+        },
+        {
+          "label": "Green Tint",
+          "bank": "tint_purch_7",
+          "bit": 30
+        },
+        {
+          "label": "Orange Tint",
+          "bank": "tint_purch_7",
+          "bit": 28
+        },
+        {
+          "label": "LSPD Tint",
+          "bank": "tint_purch_7",
+          "bit": 27
+        },
+        {
+          "label": "Pink Tint",
+          "bank": "tint_purch_7",
+          "bit": 25
+        },
+        {
+          "label": "Gold Tint",
+          "bank": "tint_purch_7",
+          "bit": 24
+        },
+        {
+          "label": "Platinum Tint",
+          "bank": "tint_purch_7",
+          "bit": 29
+        }
+      ]
+    }
+  ],
+  "inventory": [
+    {
+      "hash": 2725352035,
+      "id": "WEAPON_UNARMED",
+      "label": "Unarmed",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4194021054,
+      "id": "WEAPON_ANIMAL",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 148160082,
+      "id": "WEAPON_COUGAR",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2578778090,
+      "id": "WEAPON_KNIFE",
+      "label": "Knife",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "slot": 1,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1737195953,
+      "id": "WEAPON_NIGHTSTICK",
+      "label": "Nightstick",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "slot": 2,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1317494643,
+      "id": "WEAPON_HAMMER",
+      "label": "Hammer",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "slot": 3,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2508868239,
+      "id": "WEAPON_BAT",
+      "label": "Baseball Bat",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "slot": 4,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1141786504,
+      "id": "WEAPON_GOLFCLUB",
+      "label": "Golf Club",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "slot": 6,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2227010557,
+      "id": "WEAPON_CROWBAR",
+      "label": "Crowbar",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "slot": 5,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 453432689,
+      "id": "WEAPON_PISTOL",
+      "label": "Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "slot": 8,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_PISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_PISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_PI_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_PISTOL_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_GUNRUN_MK2_UPGRADE",
+          "label": "Mk II",
+          "slot": "gun_gripr",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_PISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_PISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_PI_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_PISTOL_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1593441988,
+      "id": "WEAPON_COMBATPISTOL",
+      "label": "Combat Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "slot": 9,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_COMBATPISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_COMBATPISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_PI_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_COMBATPISTOL_VARMOD_LOWRIDER",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_COMBATPISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_COMBATPISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_PI_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_COMBATPISTOL_VARMOD_LOWRIDER",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 584646201,
+      "id": "WEAPON_APPISTOL",
+      "label": "AP Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "slot": 10,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_APPISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_APPISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_PI_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_APPISTOL_VARMOD_LUXE",
+          "label": "Gilded Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_APPISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_APPISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_PI_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_APPISTOL_VARMOD_LUXE",
+          "label": "Gilded Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_APPISTOL_VARMOD_SECURITY",
+          "label": "Record A Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2578377531,
+      "id": "WEAPON_PISTOL50",
+      "label": "Pistol .50",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "slot": 38,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_PISTOL50_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_PISTOL50_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_PISTOL50_VARMOD_LUXE",
+          "label": "Platinum Pearl Deluxe Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_PISTOL50_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_PISTOL50_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_PISTOL50_VARMOD_LUXE",
+          "label": "Platinum Pearl Deluxe Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 324215364,
+      "id": "WEAPON_MICROSMG",
+      "label": "Micro SMG",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "slot": 11,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MICROSMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_MICROSMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_MACRO",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_MICROSMG_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MICROSMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_MICROSMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_PI_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_MACRO",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_MICROSMG_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_MICROSMG_VARMOD_SECURITY",
+          "label": "Organics Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 736523883,
+      "id": "WEAPON_SMG",
+      "label": "SMG",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "slot": 12,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_SMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_SMG_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_PI_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_SCOPE_MACRO_02",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_SMG_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_GUNRUN_MK2_UPGRADE",
+          "label": "Mk II",
+          "slot": "gun_gripr",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_SMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_SMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_SMG_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_PI_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_AT_SCOPE_MACRO_02",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 8,
+          "id": "COMPONENT_SMG_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 4024951519,
+      "id": "WEAPON_ASSAULTSMG",
+      "label": "Assault SMG",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "slot": 36,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_ASSAULTSMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_ASSAULTSMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_MACRO",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_ASSAULTSMG_VARMOD_LOWRIDER",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_ASSAULTSMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_ASSAULTSMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_MACRO",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_ASSAULTSMG_VARMOD_LOWRIDER",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3220176749,
+      "id": "WEAPON_ASSAULTRIFLE",
+      "label": "Assault Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "slot": 13,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_ASSAULTRIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_ASSAULTRIFLE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_ASSAULTRIFLE_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_SCOPE_MACRO",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_ASSAULTRIFLE_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_GUNRUN_MK2_UPGRADE",
+          "label": "Mk II",
+          "slot": "gun_gripr",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_ASSAULTRIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_ASSAULTRIFLE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_ASSAULTRIFLE_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_AT_SCOPE_MACRO",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 8,
+          "id": "COMPONENT_ASSAULTRIFLE_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2210333304,
+      "id": "WEAPON_CARBINERIFLE",
+      "label": "Carbine Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "slot": 14,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_CARBINERIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_CARBINERIFLE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_CARBINERIFLE_CLIP_03",
+          "label": "Box Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_RAILCOVER_01",
+          "label": "At Railcover 01",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_AT_SCOPE_MEDIUM",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_AT_AR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 8,
+          "id": "COMPONENT_CARBINERIFLE_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_GUNRUN_MK2_UPGRADE",
+          "label": "Mk II",
+          "slot": "gun_gripr",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_CARBINERIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_CARBINERIFLE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_CARBINERIFLE_CLIP_03",
+          "label": "Box Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_RAILCOVER_01",
+          "label": "At Railcover 01",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_AT_SCOPE_MEDIUM",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 8,
+          "id": "COMPONENT_AT_AR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 9,
+          "id": "COMPONENT_CARBINERIFLE_VARMOD_LUXE",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2937143193,
+      "id": "WEAPON_ADVANCEDRIFLE",
+      "label": "Advanced Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "slot": 15,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_ADVANCEDRIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_ADVANCEDRIFLE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_SMALL",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_ADVANCEDRIFLE_VARMOD_LUXE",
+          "label": "Gilded Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_ADVANCEDRIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_ADVANCEDRIFLE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_SMALL",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_ADVANCEDRIFLE_VARMOD_LUXE",
+          "label": "Gilded Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2634544996,
+      "id": "WEAPON_MG",
+      "label": "MG",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "slot": 16,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_MG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_SCOPE_SMALL_02",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_MG_VARMOD_LOWRIDER",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_MG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_SCOPE_SMALL_02",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_MG_VARMOD_LOWRIDER",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2144741730,
+      "id": "WEAPON_COMBATMG",
+      "label": "Combat MG",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "slot": 17,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_COMBATMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_COMBATMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_MEDIUM",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_COMBATMG_VARMOD_LOWRIDER",
+          "label": "Etched Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_GUNRUN_MK2_UPGRADE",
+          "label": "Mk II",
+          "slot": "gun_gripr",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_COMBATMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_COMBATMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_SCOPE_MEDIUM",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_COMBATMG_VARMOD_LOWRIDER",
+          "label": "Etched Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 487013001,
+      "id": "WEAPON_PUMPSHOTGUN",
+      "label": "Pump Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "slot": 18,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_AT_SR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_PUMPSHOTGUN_VARMOD_LOWRIDER",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_AT_SR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_PUMPSHOTGUN_VARMOD_LOWRIDER",
+          "label": "Yusuf Amir Luxury Finish",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_PUMPSHOTGUN_VARMOD_SECURITY",
+          "label": "Bone Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2017895192,
+      "id": "WEAPON_SAWNOFFSHOTGUN",
+      "label": "Sawed-Off Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "slot": 19,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SAWNOFFSHOTGUN_VARMOD_LUXE",
+          "label": "Gilded Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SAWNOFFSHOTGUN_VARMOD_LUXE",
+          "label": "Gilded Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3800352039,
+      "id": "WEAPON_ASSAULTSHOTGUN",
+      "label": "Assault Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "slot": 20,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_ASSAULTSHOTGUN_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_ASSAULTSHOTGUN_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_ASSAULTSHOTGUN_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_ASSAULTSHOTGUN_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2640438543,
+      "id": "WEAPON_BULLPUPSHOTGUN",
+      "label": "Bullpup Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "slot": 37,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 911657153,
+      "id": "WEAPON_STUNGUN",
+      "label": "Stun Gun",
+      "ammo": "AMMO_STUNGUN",
+      "max_ammo": 9999,
+      "slot": 7,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 100416529,
+      "id": "WEAPON_SNIPERRIFLE",
+      "label": "Sniper Rifle",
+      "ammo": "AMMO_SNIPER",
+      "max_ammo": 9999,
+      "slot": 21,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SNIPERRIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_SCOPE_LARGE",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": true
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_SCOPE_MAX",
+          "label": "Advanced Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_SNIPERRIFLE_VARMOD_LUXE",
+          "label": "Etched Wood Grip Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SNIPERRIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_SCOPE_LARGE",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": true
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_SCOPE_MAX",
+          "label": "Advanced Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_SNIPERRIFLE_VARMOD_LUXE",
+          "label": "Etched Wood Grip Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 205991906,
+      "id": "WEAPON_HEAVYSNIPER",
+      "label": "Heavy Sniper",
+      "ammo": "AMMO_SNIPER",
+      "max_ammo": 9999,
+      "slot": 22,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_HEAVYSNIPER_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_SCOPE_LARGE",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_SCOPE_MAX",
+          "label": "Advanced Scope",
+          "slot": "WAPScop",
+          "default": true
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_GUNRUN_MK2_UPGRADE",
+          "label": "Mk II",
+          "slot": "gun_gripr",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_HEAVYSNIPER_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_SCOPE_LARGE",
+          "label": "Scope",
+          "slot": "WAPScop",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_MAX",
+          "label": "Advanced Scope",
+          "slot": "WAPScop",
+          "default": true
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 856002082,
+      "id": "WEAPON_REMOTESNIPER",
+      "label": "Remote Sniper",
+      "ammo": "AMMO_SNIPER_REMOTE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2726580491,
+      "id": "WEAPON_GRENADELAUNCHER",
+      "label": "Grenade Launcher",
+      "ammo": "AMMO_GRENADELAUNCHER",
+      "max_ammo": 20,
+      "slot": 23,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_SCOPE_SMALL",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_SCOPE_SMALL",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1305664598,
+      "id": "WEAPON_GRENADELAUNCHER_SMOKE",
+      "label": "Tear Gas Launcher",
+      "ammo": "AMMO_GRENADELAUNCHER_SMOKE",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2982836145,
+      "id": "WEAPON_RPG",
+      "label": "RPG",
+      "ammo": "AMMO_RPG",
+      "max_ammo": 20,
+      "slot": 24,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 375527679,
+      "id": "WEAPON_PASSENGER_ROCKET",
+      "label": "Invalid",
+      "ammo": "AMMO_RPG",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 324506233,
+      "id": "WEAPON_AIRSTRIKE_ROCKET",
+      "label": "Invalid",
+      "ammo": "AMMO_RPG",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1752584910,
+      "id": "WEAPON_STINGER",
+      "label": "RPG",
+      "ammo": "AMMO_STINGER",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1119849093,
+      "id": "WEAPON_MINIGUN",
+      "label": "Minigun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "slot": 25,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MINIGUN_CLIP_01",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": true
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MINIGUN_CLIP_01",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": true
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2481070269,
+      "id": "WEAPON_GRENADE",
+      "label": "Grenade",
+      "ammo": "AMMO_GRENADE",
+      "max_ammo": 25,
+      "slot": 26,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 741814745,
+      "id": "WEAPON_STICKYBOMB",
+      "label": "Sticky Bomb",
+      "ammo": "AMMO_STICKYBOMB",
+      "max_ammo": 25,
+      "slot": 27,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4256991824,
+      "id": "WEAPON_SMOKEGRENADE",
+      "label": "Tear Gas",
+      "ammo": "AMMO_SMOKEGRENADE",
+      "max_ammo": 25,
+      "slot": 28,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2694266206,
+      "id": "WEAPON_BZGAS",
+      "label": "BZ Gas",
+      "ammo": "AMMO_BZGAS",
+      "max_ammo": 25,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 615608432,
+      "id": "WEAPON_MOLOTOV",
+      "label": "Molotov",
+      "ammo": "AMMO_MOLOTOV",
+      "max_ammo": 25,
+      "slot": 29,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 101631238,
+      "id": "WEAPON_FIREEXTINGUISHER",
+      "label": "Fire Extinguisher",
+      "ammo": "AMMO_FIREEXTINGUISHER",
+      "max_ammo": 2000,
+      "slot": 30,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 883325847,
+      "id": "WEAPON_PETROLCAN",
+      "label": "Jerry Can",
+      "ammo": "AMMO_PETROLCAN",
+      "max_ammo": 4500,
+      "slot": 31,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2803906140,
+      "id": "GADGET_NIGHTVISION",
+      "label": "Nightvision Goggles",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4222310262,
+      "id": "GADGET_PARACHUTE",
+      "label": "Parachute",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "slot": 33,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 966099553,
+      "id": "OBJECT",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2294779575,
+      "id": "WEAPON_BRIEFCASE",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 28811031,
+      "id": "WEAPON_BRIEFCASE_02",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 600439132,
+      "id": "WEAPON_BALL",
+      "label": "Ball",
+      "ammo": "AMMO_BALL",
+      "max_ammo": 1,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1233104067,
+      "id": "WEAPON_FLARE",
+      "label": "Flare",
+      "ammo": "AMMO_FLARE",
+      "max_ammo": 25,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1945616459,
+      "id": "VEHICLE_WEAPON_TANK",
+      "label": "Tank Cannon",
+      "ammo": "AMMO_TANK",
+      "max_ammo": 100,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4171469727,
+      "id": "VEHICLE_WEAPON_SPACE_ROCKET",
+      "label": "Missiles",
+      "ammo": "AMMO_SPACE_ROCKET",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3473446624,
+      "id": "VEHICLE_WEAPON_PLANE_ROCKET",
+      "label": "Missiles",
+      "ammo": "AMMO_PLANE_ROCKET",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4026335563,
+      "id": "VEHICLE_WEAPON_PLAYER_LASER",
+      "label": "Laser",
+      "ammo": "AMMO_PLAYER_LASER",
+      "max_ammo": 100,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1259576109,
+      "id": "VEHICLE_WEAPON_PLAYER_BULLET",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1186503822,
+      "id": "VEHICLE_WEAPON_PLAYER_BUZZARD",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2669318622,
+      "id": "VEHICLE_WEAPON_PLAYER_HUNTER",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3800181289,
+      "id": "VEHICLE_WEAPON_PLAYER_LAZER",
+      "label": "Cannon",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1566990507,
+      "id": "VEHICLE_WEAPON_ENEMY_LASER",
+      "label": "Laser",
+      "ammo": "AMMO_ENEMY_LASER",
+      "max_ammo": 100,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3450622333,
+      "id": "VEHICLE_WEAPON_SEARCHLIGHT",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3530961278,
+      "id": "VEHICLE_WEAPON_RADAR",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3204302209,
+      "id": "WEAPON_VEHICLE_ROCKET",
+      "label": "Invalid",
+      "ammo": "AMMO_RPG",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1223143800,
+      "id": "WEAPON_BARBED_WIRE",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4284007675,
+      "id": "WEAPON_DROWNING",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1936677264,
+      "id": "WEAPON_DROWNING_IN_VEHICLE",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2339582971,
+      "id": "WEAPON_BLEEDING",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 539292904,
+      "id": "WEAPON_EXPLOSION",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3452007600,
+      "id": "WEAPON_FALL",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 910830060,
+      "id": "WEAPON_EXHAUSTION",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3425972830,
+      "id": "WEAPON_HIT_BY_WATER_CANNON",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 133987706,
+      "id": "WEAPON_RAMMED_BY_CAR",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2741846334,
+      "id": "WEAPON_RUN_OVER_BY_CAR",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 341774354,
+      "id": "WEAPON_HELI_CRASH",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2971687502,
+      "id": "VEHICLE_WEAPON_ROTORS",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3750660587,
+      "id": "WEAPON_FIRE",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3854032506,
+      "id": "WEAPON_ANIMAL_RETRIEVER",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3146768957,
+      "id": "WEAPON_SMALL_DOG",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 743550225,
+      "id": "WEAPON_TIGER_SHARK",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3030980043,
+      "id": "WEAPON_HAMMERHEAD_SHARK",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4198358245,
+      "id": "WEAPON_KILLER_WHALE",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 861723357,
+      "id": "WEAPON_BOAR",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1205296881,
+      "id": "WEAPON_PIG",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1161062353,
+      "id": "WEAPON_COYOTE",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4106648222,
+      "id": "WEAPON_DEER",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 955837630,
+      "id": "WEAPON_HEN",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2793925639,
+      "id": "WEAPON_RABBIT",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3799318422,
+      "id": "WEAPON_CAT",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 94548753,
+      "id": "WEAPON_COW",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1834887169,
+      "id": "WEAPON_BIRD_CRAP",
+      "label": "Grenade",
+      "ammo": "AMMO_BIRD_CRAP",
+      "max_ammo": 25,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4192643659,
+      "id": "WEAPON_BOTTLE",
+      "label": "Bottle",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3218215474,
+      "id": "WEAPON_SNSPISTOL",
+      "label": "SNS Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SNSPISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_SNSPISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_SNSPISTOL_VARMOD_LOWRIDER",
+          "label": "Etched Wood Grip Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SNSPISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_SNSPISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_SNSPISTOL_VARMOD_LOWRIDER",
+          "label": "Etched Wood Grip Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3523564046,
+      "id": "WEAPON_HEAVYPISTOL",
+      "label": "Heavy Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2132975508,
+      "id": "WEAPON_BULLPUPRIFLE",
+      "label": "Bullpup Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_BULLPUPRIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_BULLPUPRIFLE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr_2",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_SMALL",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp_2",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_BULLPUPRIFLE_VARMOD_LOW",
+          "label": "Gilded Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_BULLPUPRIFLE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_BULLPUPRIFLE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr_2",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_SCOPE_SMALL",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_AR_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp_2",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_BULLPUPRIFLE_VARMOD_LOW",
+          "label": "Gilded Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3231910285,
+      "id": "WEAPON_SPECIALCARBINE",
+      "label": "Special Carbine",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SPECIALCARBINE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_SPECIALCARBINE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_SPECIALCARBINE_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_SCOPE_MEDIUM",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_SPECIALCARBINE_VARMOD_LOWRIDER",
+          "label": "Etched Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SPECIALCARBINE_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_SPECIALCARBINE_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_SPECIALCARBINE_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_SCOPE_MEDIUM",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_SUPP_02",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_SPECIALCARBINE_VARMOD_LOWRIDER",
+          "label": "Etched Gun Metal Finish",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2285322324,
+      "id": "WEAPON_SNSPISTOL_MK2",
+      "label": "SNS Pistol Mk II",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 1785463520,
+      "id": "WEAPON_MARKSMANRIFLE_MK2",
+      "label": "Marksman Rifle Mk II",
+      "ammo": "AMMO_SNIPER",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 1432025498,
+      "id": "WEAPON_PUMPSHOTGUN_MK2",
+      "label": "Pump Shotgun Mk II",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 2228681469,
+      "id": "WEAPON_BULLPUPRIFLE_MK2",
+      "label": "Bullpup Rifle Mk II",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 2526821735,
+      "id": "WEAPON_SPECIALCARBINE_MK2",
+      "label": "Special Carbine Mk II",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 4159824478,
+      "id": "WEAPON_ACIDPACKAGE",
+      "label": "Acid Package",
+      "ammo": "AMMO_ACIDPACKAGE",
+      "max_ammo": 10,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 889061222,
+      "id": "WEAPON_ARENA_MACHINE_GUN",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1686798800,
+      "id": "WEAPON_ARENA_HOMING_MISSILE",
+      "label": "Cannon",
+      "ammo": "AMMO_ARENA_HOMING_MISSILE",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1703483498,
+      "id": "WEAPON_CANDYCANE",
+      "label": "Candy Cane",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4272043364,
+      "id": "WEAPON_RAILGUNXM3",
+      "label": "Railgun",
+      "ammo": "AMMO_RAILGUNXM3",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 465894841,
+      "id": "WEAPON_PISTOLXM3",
+      "label": "WM 29 Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2939590305,
+      "id": "WEAPON_RAYPISTOL",
+      "label": "Up-n-Atomizer",
+      "ammo": "AMMO_RAYPISTOL",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Blue tint",
+        "Purple tint",
+        "Green tint",
+        "Orange tint",
+        "Pink tint",
+        "Gold tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1198256469,
+      "id": "WEAPON_RAYCARBINE",
+      "label": "Unholy Hellbringer",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Blue tint",
+        "Purple tint",
+        "Green tint",
+        "Orange tint",
+        "Pink tint",
+        "Gold tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3056410471,
+      "id": "WEAPON_RAYMINIGUN",
+      "label": "Widowmaker",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Blue tint",
+        "Purple tint",
+        "Green tint",
+        "Orange tint",
+        "Pink tint",
+        "Gold tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2548703416,
+      "id": "WEAPON_DOUBLEACTION",
+      "label": "Double-Action Revolver",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint"
+      ]
+    },
+    {
+      "hash": 126349499,
+      "id": "WEAPON_SNOWBALL",
+      "label": "Snowball",
+      "ammo": "AMMO_SNOWBALL",
+      "max_ammo": 10,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2874559379,
+      "id": "WEAPON_PROXMINE",
+      "label": "Proximity Mine",
+      "ammo": "AMMO_PROXMINE",
+      "max_ammo": 5,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1672152130,
+      "id": "WEAPON_HOMINGLAUNCHER",
+      "label": "Homing Launcher",
+      "ammo": "AMMO_HOMINGLAUNCHER",
+      "max_ammo": 10,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3415619887,
+      "id": "WEAPON_REVOLVER_MK2",
+      "label": "Heavy Revolver Mk II",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 1627465347,
+      "id": "WEAPON_GUSENBERG",
+      "label": "Gusenberg Sweeper",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2460120199,
+      "id": "WEAPON_DAGGER",
+      "label": "Antique Cavalry Dagger",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 137902532,
+      "id": "WEAPON_VINTAGEPISTOL",
+      "label": "Vintage Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2828843422,
+      "id": "WEAPON_MUSKET",
+      "label": "Musket",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2138347493,
+      "id": "WEAPON_FIREWORK",
+      "label": "Firework Launcher",
+      "ammo": "AMMO_FIREWORK",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 4191993645,
+      "id": "WEAPON_HATCHET",
+      "label": "Hatchet",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1834241177,
+      "id": "WEAPON_RAILGUN",
+      "label": "Railgun",
+      "ammo": "AMMO_RAILGUN",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 984333226,
+      "id": "WEAPON_HEAVYSHOTGUN",
+      "label": "Heavy Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3342088282,
+      "id": "WEAPON_MARKSMANRIFLE",
+      "label": "Marksman Rifle",
+      "ammo": "AMMO_SNIPER",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3794977420,
+      "id": "WEAPON_GARBAGEBAG",
+      "label": "Knife",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3494679629,
+      "id": "WEAPON_HANDCUFFS",
+      "label": "Knife",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 727643628,
+      "id": "WEAPON_CERAMICPISTOL",
+      "label": "Ceramic Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2636060646,
+      "id": "WEAPON_MILITARYRIFLE",
+      "label": "Military Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 94989220,
+      "id": "WEAPON_COMBATSHOTGUN",
+      "label": "Combat Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 849905853,
+      "id": "WEAPON_TRANQUILIZER",
+      "label": "Stun Gun",
+      "ammo": "AMMO_TRANQUILIZER",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3126027122,
+      "id": "WEAPON_HAZARDCAN",
+      "label": "Hazardous Jerry Can",
+      "ammo": "AMMO_HAZARDCAN",
+      "max_ammo": 4500,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1097917585,
+      "id": "VEHICLE_WEAPON_NOSE_TURRET_VALKYRIE",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2756787765,
+      "id": "VEHICLE_WEAPON_TURRET_VALKYRIE",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1198879012,
+      "id": "WEAPON_FLAREGUN",
+      "label": "Flare Gun",
+      "ammo": "AMMO_FLAREGUN",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2144528907,
+      "id": "VEHICLE_WEAPON_TURRET_TECHNICAL",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1155224728,
+      "id": "VEHICLE_WEAPON_TURRET_INSURGENT",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 1470379660,
+      "id": "WEAPON_GADGETPISTOL",
+      "label": "Perico Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2441047180,
+      "id": "WEAPON_NAVYREVOLVER",
+      "label": "Navy Revolver",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint"
+      ]
+    },
+    {
+      "hash": 1638077257,
+      "id": "VEHICLE_WEAPON_PLAYER_SAVAGE",
+      "label": "Cannon",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3638508604,
+      "id": "WEAPON_KNUCKLE",
+      "label": "Knuckle Duster",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_KNUCKLE_VARMOD_PIMP",
+          "label": "The Pimp",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_KNUCKLE_VARMOD_BALLAS",
+          "label": "The Ballas",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_KNUCKLE_VARMOD_DOLLAR",
+          "label": "The Hustler",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_KNUCKLE_VARMOD_DIAMOND",
+          "label": "The Rock",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_KNUCKLE_VARMOD_HATE",
+          "label": "The Hater",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_KNUCKLE_VARMOD_LOVE",
+          "label": "The Lover",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_KNUCKLE_VARMOD_PLAYER",
+          "label": "The Player",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_KNUCKLE_VARMOD_KING",
+          "label": "The King",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 8,
+          "id": "COMPONENT_KNUCKLE_VARMOD_VAGOS",
+          "label": "The Vagos",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_KNUCKLE_VARMOD_PIMP",
+          "label": "The Pimp",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_KNUCKLE_VARMOD_BALLAS",
+          "label": "The Ballas",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_KNUCKLE_VARMOD_DOLLAR",
+          "label": "The Hustler",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_KNUCKLE_VARMOD_DIAMOND",
+          "label": "The Rock",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_KNUCKLE_VARMOD_HATE",
+          "label": "The Hater",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_KNUCKLE_VARMOD_LOVE",
+          "label": "The Lover",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 6,
+          "id": "COMPONENT_KNUCKLE_VARMOD_PLAYER",
+          "label": "The Player",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 7,
+          "id": "COMPONENT_KNUCKLE_VARMOD_KING",
+          "label": "The King",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 8,
+          "id": "COMPONENT_KNUCKLE_VARMOD_VAGOS",
+          "label": "The Vagos",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": []
+    },
+    {
+      "hash": 171789620,
+      "id": "WEAPON_COMBATPDW",
+      "label": "Combat PDW",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_COMBATPDW_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip_2",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_COMBATPDW_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip_2",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_COMBATPDW_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip_2",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_SCOPE_SMALL",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip_2",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_COMBATPDW_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip_2",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_COMBATPDW_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip_2",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_COMBATPDW_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip_2",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_AR_FLSH",
+          "label": "Flashlight",
+          "slot": "WAPFlshLasr",
+          "default": false
+        },
+        {
+          "bit": 4,
+          "id": "COMPONENT_AT_SCOPE_SMALL",
+          "label": "Scope",
+          "slot": "WAPScop_2",
+          "default": false
+        },
+        {
+          "bit": 5,
+          "id": "COMPONENT_AT_AR_AFGRIP",
+          "label": "Grip",
+          "slot": "WAPGrip_2",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3696079510,
+      "id": "WEAPON_MARKSMANPISTOL",
+      "label": "Marksman Pistol",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 4019527611,
+      "id": "WEAPON_DBSHOTGUN",
+      "label": "Double Barrel Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3713923289,
+      "id": "WEAPON_MACHETE",
+      "label": "Machete",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3675956304,
+      "id": "WEAPON_MACHINEPISTOL",
+      "label": "Machine Pistol",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MACHINEPISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_MACHINEPISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_MACHINEPISTOL_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_PI_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MACHINEPISTOL_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_MACHINEPISTOL_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_MACHINEPISTOL_CLIP_03",
+          "label": "Drum Magazine",
+          "slot": "WAPClip",
+          "default": false
+        },
+        {
+          "bit": 3,
+          "id": "COMPONENT_AT_PI_SUPP",
+          "label": "Suppressor",
+          "slot": "WAPSupp",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1649403952,
+      "id": "WEAPON_COMPACTRIFLE",
+      "label": "Compact Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2343591895,
+      "id": "WEAPON_FLASHLIGHT",
+      "label": "Flashlight",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 729375873,
+      "id": "VEHICLE_WEAPON_TURRET_LIMO",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 738733437,
+      "id": "WEAPON_AIR_DEFENCE_GUN",
+      "label": "Cannon",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3756226112,
+      "id": "WEAPON_SWITCHBLADE",
+      "label": "Switchblade",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SWITCHBLADE_VARMOD_VAR1",
+          "label": "VIP Variant",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_SWITCHBLADE_VARMOD_VAR2",
+          "label": "Bodyguard Variant",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_SWITCHBLADE_VARMOD_VAR1",
+          "label": "VIP Variant",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_SWITCHBLADE_VARMOD_VAR2",
+          "label": "Bodyguard Variant",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": []
+    },
+    {
+      "hash": 3249783761,
+      "id": "WEAPON_REVOLVER",
+      "label": "Heavy Revolver",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_REVOLVER_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_REVOLVER_VARMOD_BOSS",
+          "label": "VIP Variant",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_REVOLVER_VARMOD_GOON",
+          "label": "Bodyguard Variant",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_REVOLVER_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_REVOLVER_VARMOD_BOSS",
+          "label": "VIP Variant",
+          "slot": "gun_root",
+          "default": false
+        },
+        {
+          "bit": 2,
+          "id": "COMPONENT_REVOLVER_VARMOD_GOON",
+          "label": "Bodyguard Variant",
+          "slot": "gun_root",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3041872152,
+      "id": "VEHICLE_WEAPON_TURRET_BOXVILLE",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3959029566,
+      "id": "VEHICLE_WEAPON_CANNON_BLAZER",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 50118905,
+      "id": "VEHICLE_WEAPON_RUINER_BULLET",
+      "label": "Machine Gun",
+      "ammo": "AMMO_MINIGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 84788907,
+      "id": "VEHICLE_WEAPON_RUINER_ROCKET",
+      "label": "Missiles",
+      "ammo": "AMMO_SPACE_ROCKET",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 125959754,
+      "id": "WEAPON_COMPACTLAUNCHER",
+      "label": "Compact Grenade Launcher",
+      "ammo": "AMMO_GRENADELAUNCHER",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3173288789,
+      "id": "WEAPON_MINISMG",
+      "label": "Mini SMG",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [
+        {
+          "bit": 0,
+          "id": "COMPONENT_MINISMG_CLIP_01",
+          "label": "Default Clip",
+          "slot": "WAPClip",
+          "default": true
+        },
+        {
+          "bit": 1,
+          "id": "COMPONENT_MINISMG_CLIP_02",
+          "label": "Extended Clip",
+          "slot": "WAPClip",
+          "default": false
+        }
+      ],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 419712736,
+      "id": "WEAPON_WRENCH",
+      "label": "Pipe Wrench",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 317205821,
+      "id": "WEAPON_AUTOSHOTGUN",
+      "label": "Sweeper Shotgun",
+      "ammo": "AMMO_SHOTGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 2484171525,
+      "id": "WEAPON_POOLCUE",
+      "label": "Pool Cue",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3441901897,
+      "id": "WEAPON_BATTLEAXE",
+      "label": "Battle Axe",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3125143736,
+      "id": "WEAPON_PIPEBOMB",
+      "label": "Pipe Bomb",
+      "ammo": "AMMO_PIPEBOMB",
+      "max_ammo": 10,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 4208062921,
+      "id": "WEAPON_CARBINERIFLE_MK2",
+      "label": "Carbine Rifle Mk II",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 3686625920,
+      "id": "WEAPON_COMBATMG_MK2",
+      "label": "Combat MG Mk II",
+      "ammo": "AMMO_MG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 2024373456,
+      "id": "WEAPON_SMG_MK2",
+      "label": "SMG Mk II",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 961495388,
+      "id": "WEAPON_ASSAULTRIFLE_MK2",
+      "label": "Assault Rifle Mk II",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 177293209,
+      "id": "WEAPON_HEAVYSNIPER_MK2",
+      "label": "Heavy Sniper Mk II",
+      "ammo": "AMMO_SNIPER",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 3219281620,
+      "id": "WEAPON_PISTOL_MK2",
+      "label": "Pistol Mk II",
+      "ammo": "AMMO_PISTOL",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Classic Black",
+        "Classic Gray",
+        "Classic Two-Tone",
+        "Classic White",
+        "Classic Beige",
+        "Classic Green",
+        "Classic Blue",
+        "Classic Earth"
+      ]
+    },
+    {
+      "hash": 940833800,
+      "id": "WEAPON_STONE_HATCHET",
+      "label": "Stone Hatchet",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3520460075,
+      "id": "WEAPON_TACTICALRIFLE",
+      "label": "Service Carbine",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1853742572,
+      "id": "WEAPON_PRECISIONRIFLE",
+      "label": "Precision Rifle",
+      "ammo": "AMMO_SNIPER",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 3347935668,
+      "id": "WEAPON_HEAVYRIFLE",
+      "label": "Heavy Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 406929569,
+      "id": "WEAPON_FERTILIZERCAN",
+      "label": "Fertilizer Can",
+      "ammo": "AMMO_FERTILIZERCAN",
+      "max_ammo": 4500,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3676729658,
+      "id": "WEAPON_EMPLAUNCHER",
+      "label": "Compact EMP Launcher",
+      "ammo": "AMMO_EMPLAUNCHER",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1171102963,
+      "id": "WEAPON_STUNGUN_MP",
+      "label": "Stun Gun",
+      "ammo": "AMMO_STUNGUN",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 350597077,
+      "id": "WEAPON_TECPISTOL",
+      "label": "Tactical SMG",
+      "ammo": "AMMO_SMG",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 62870901,
+      "id": "WEAPON_SNOWLAUNCHER",
+      "label": "Snowball Launcher",
+      "ammo": "AMMO_SNOWLAUNCHER",
+      "max_ammo": 20,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 1924557585,
+      "id": "WEAPON_BATTLERIFLE",
+      "label": "Battle Rifle",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Black tint",
+        "Green tint",
+        "Gold tint",
+        "Pink tint",
+        "Army tint",
+        "LSPD tint",
+        "Orange tint",
+        "Platinum tint"
+      ]
+    },
+    {
+      "hash": 485882440,
+      "id": "WEAPON_HACKINGDEVICE",
+      "label": "Hacking Device",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 3670016037,
+      "id": "WEAPON_STUNROD",
+      "label": "The Shocker",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2378080583,
+      "id": "WEAPON_STRICKLER",
+      "label": "El Strickler",
+      "ammo": "AMMO_RIFLE",
+      "max_ammo": 9999,
+      "components": [],
+      "modern_components": [],
+      "tints": [
+        "Red Fountain"
+      ]
+    },
+    {
+      "hash": 3094580364,
+      "id": "WEAPON_BRIEFCASE_03",
+      "label": "Invalid",
+      "ammo": "NULL",
+      "max_ammo": 0,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    },
+    {
+      "hash": 2663087251,
+      "id": "WEAPON_NEWSPAPER",
+      "label": "Newspaper",
+      "ammo": "AMMO_NEWSPAPER",
+      "max_ammo": 10,
+      "components": [],
+      "modern_components": [],
+      "tints": []
+    }
+  ]
+}

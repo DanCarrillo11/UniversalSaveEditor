@@ -900,7 +900,7 @@ class Window(QMainWindow):
                 if identity!=last:
                     rows.addWidget(label((section.selection+' / ' if query and category.selector_label=='Character' else '')+section.name,'eyebrow'));last=identity
                     abilities=[f for f in section.fields if self.save.game=='kh3' and ':ability:' in f.key and not f.readonly]
-                    unlocks=[f for f in section.fields if not f.readonly and (f.boolean or f.fmt=='xml-unlock') and not f.key.startswith(('remove_item:','equipped_accessory:'))]
+                    unlocks=[f for f in section.fields if not f.readonly and (f.boolean or f.fmt=='xml-unlock') and not f.key.startswith(('remove_item:','equipped_accessory:','weapon_inventory:'))]
                     if abilities or unlocks:
                         actions=QHBoxLayout()
                         if abilities:
@@ -908,9 +908,10 @@ class Window(QMainWindow):
                                 action=button(title,lambda checked=False,fs=abilities,m=mode:self.set_ability_fields(fs,m))
                                 action.setToolTip('Applies to this entire ability section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)
                         else:
-                            options=[('Unlock section' if self.save.game=='ror2' else 'Enable section',1)]
+                            weapon_shop=all(f.key.startswith('weapon_shop:') for f in unlocks)
+                            options=[('Unlock shop options' if weapon_shop else 'Unlock section' if self.save.game=='ror2' else 'Enable section',1)]
                             if self.save.game=='alice':options.append(('Disable all',0))
-                            options.append(('Restore section',None))
+                            options.append(('Restore shop options' if weapon_shop else 'Restore section',None))
                             for title,value in options:
                                 action=button(title,lambda checked=False,fs=unlocks,v=value:self.set_unlock_fields(fs,v))
                                 action.setToolTip('Applies to this entire section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)

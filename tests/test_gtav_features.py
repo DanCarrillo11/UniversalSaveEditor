@@ -6,7 +6,7 @@ from rockstar_container import checksum, aes, RockstarContainer, name_hash
 from test_rockstar import section
 
 
-def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False):
+def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False, weapons=False, weapon_stride=24):
     blocks = []
     definitions = []
     def add(identity, data, size, fields):
@@ -15,6 +15,9 @@ def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False)
                             b''.join(struct.pack('>IBBHI', *x) for x in fields)))
     keys=('TOTAL_CASH','STAMINA','SHOOTING_ABILITY','STRENGTH','STEALTH_ABILITY','FLYING_ABILITY','WHEELIE_ABILITY','LUNG_CAPACITY','SPECIAL_ABILITY')
     stats=b''.join(struct.pack('>Ii',name_hash(f'sp{n}_{k}'),1000 if k=='TOTAL_CASH' else 25) for n in range(3) for k in keys)
+    if weapons:
+        from test_gtav_weapons import shop_stats
+        stats += shop_stats()
     add(2199017832, stats, 8,
         [(3742647683, 5, 0, 0, 0), (3021077118, 5, 0, 4, 0)])
     player = bytearray(208)
@@ -50,6 +53,10 @@ def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False)
     fields += [(h,0,0,off+shift,0) for h,off in ((2386424170,79),(779245171,80),(1983399964,81),(1473572232,82),(2407176912,83),(601072703,84))]
     fields += [(3810156612,13,4,86+shift,524312 if vehicle_size == 112 else 524311)]
     add(2541711729, vehicle, vehicle_size, fields)
+    if weapons:
+        from test_gtav_weapons import script_blocks
+        for identity, payload, size, fields in script_blocks(weapon_stride):
+            add(identity, payload, size, fields)
     data = bytearray()
     mapping = struct.pack('>IHH',1,len(blocks),0x7070)
     for identity, payload in blocks:

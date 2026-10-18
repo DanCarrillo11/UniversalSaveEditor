@@ -645,3 +645,36 @@ There is no new external dataset or runtime dependency. Online/mission items and
 unrecognized acquisition types are not inferred from a shared name prefix.
 Native tests verify structural growth and requested quantities, not successful
 game loading, capacity enforcement, acquisition rewards or runtime GUID behavior.
+
+
+### GTA V story weapon expansion (v0.43)
+
+Weapon identifiers, English labels, ammo families/capacities, attachment points,
+default parts and tint names are format/name facts from
+[DurtyFree/gta-v-data-dumps weapons.json](https://github.com/DurtyFree/gta-v-data-dumps/blob/b65684e00f689fdec405c5f1055322c802d3c895/weapons.json).
+Only a small identifier/relationship table is packaged; no game artwork, parameter
+binary, full dump or resource database is bundled.
+
+[udoprog/gta-v-scripts](https://github.com/udoprog/gta-v-scripts/tree/82a69a01a672287e8e4677961f6aa946402fe1d0)
+Scripts/player_controller.c func_113/116 and the inventory writer around line
+83725 provide base slot identities, three-cell component order and one-hot tint
+bits 20–27. [YimMenu/GTA-V-Decompiled-Scripts](https://github.com/YimMenu/GTA-V-Decompiled-Scripts/tree/05b0bb75009c9fecfa351f499d2593ee73a7d1ae)
+build 2628 player_controller.c func_122/126/655 provide the five-cell inventory
+shape, separate tint/livery fields, revised component order and shared ammo
+semantics. Only numeric/identifier relationships informed the independent writer;
+no decompiled script implementation is shipped.
+
+[calamity-inc/gta-v-joaat-hash-db](https://github.com/calamity-inc/gta-v-joaat-hash-db/tree/7fa8525cad6a87c7b68bb3c35f3f0bb05fcdfc84)
+extract_stats.php and extracted stat names corroborate SP0/SP1/SP2_WEAP_* bank
+names. The user supplied [XB36Hazard's GTA V Save Editor v5.9](https://x3t-infinity.com/GTAV_SE).
+Static resource/IL inspection, without executing the installer or editor, identified
+40 shop weapon/bank/bit relationships and corroborated purchase/unlock semantics.
+Only small format facts were independently normalized; no proprietary code,
+encrypted/decrypted resource, artwork, installer or reference executable is bundled.
+Its built-in PC template was used locally to corroborate the five-cell schema and
+default-pistol component bit. No native sample is distributed.
+
+Native PSO schemas corroborate member identities, fixed capacities, padded VM
+cells and offsets. Three native files and synthetic graphs verify exact masked
+writes, dependencies, unknown-bit/padding preservation and container integrity.
+These checks do not establish Enhanced-specific or in-game compatibility.
