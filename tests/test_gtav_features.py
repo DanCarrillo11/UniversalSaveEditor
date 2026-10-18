@@ -6,7 +6,7 @@ from rockstar_container import checksum, aes, RockstarContainer, name_hash
 from test_rockstar import section
 
 
-def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False, weapons=False, weapon_stride=24, styles=False, default_kit=False, shared_modmap=False):
+def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False, weapons=False, weapon_stride=24, styles=False, default_kit=False, shared_modmap=False, clothes=False):
     blocks = []
     definitions = []
     def add(identity, data, size, fields):
@@ -26,6 +26,7 @@ def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False,
     struct.pack_into('>ff', player, 64, 190, 50)
     fields = [(h, 0, 0, off, 0) for h, off in ((1834379285,20),(1770698022,21),(1402367612,22),(2978589556,28),(2123147925,29))]
     fields += [(495965803,4,0,24,0),(436447855,4,0,26,0),(1442269562,6,0,32,0),(137683408,7,0,64,0),(3562964998,7,0,68,0)]
+    if clothes:fields += [(3613884743,16,1,144,1507352),(3504215824,16,1,168,1703963)]
     add(2383497134, player, 208, fields)
     if duplicate:
         blocks.append((2383497134, player))
@@ -57,10 +58,15 @@ def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False,
     if styles:
         from test_gtav_vehicle_style import add_style
         add_style(add,blocks,vehicle,vehicle_size,default_kit,shared_modmap)
-    if weapons:
+    if weapons or clothes:
         from test_gtav_weapons import script_blocks
+        if clothes:
+            from test_gtav_clothes import script_blocks
         for identity, payload, size, fields in script_blocks(weapon_stride):
             add(identity, payload, size, fields)
+    if clothes:
+        from test_gtav_clothes import active_maps
+        active_maps(add,blocks,player)
     data = bytearray()
     mapping = struct.pack('>IHH',1,len(blocks),0x7070)
     for identity, payload in blocks:

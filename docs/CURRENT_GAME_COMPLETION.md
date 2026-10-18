@@ -9,6 +9,13 @@ is marked full support and no completion percentage is inferred from field count
 
 ## Current GTA V pass
 
+v0.45 adds named static wardrobe availability, purchase and seen markers, plus
+guarded synchronized current garments for Michael, Franklin and Trevor. Old/new
+catalogues contain 1,911/1,888 ordinary entries across the three actors. Unknown
+entries, hair/beard/prop equipping, composite outfit assembly and runtime DLC
+apparel remain open. Three native references pass file-level masked and combined
+checks; successful loading in the game and Enhanced-native checks remain pending.
+
 v0.44 adds named saved-vehicle paint, window tint, smoke/neon RGB and recognized
 engine/brake/transmission/suspension/armor stages. Typed maps, model/kit agreement
 and metadata ranges protect unsupported setups. Two native files pass individual
@@ -24,7 +31,7 @@ masked shop edits and combined acquisition/customization with requested-value
 reparsing, checksums and unchanged original files. UI staging/reset and previews
 include the new tools. This is partial coverage, not a completion percentage.
 
-Full DLC slot acquisition, vehicle creation/model swaps and complete body/wheel/livery tuning, property/clothing acquisition,
+Full DLC slot acquisition, vehicle creation/model swaps and complete body/wheel/livery tuning, properties, complete apparel/prop acquisition/equipping,
 collectible/story/reward dependencies, Enhanced-native validation and in-game
 loading remain open. Earlier player, clock and occupied-vehicle tools are retained.
 

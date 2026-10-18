@@ -14,6 +14,35 @@ class RockstarInterfaceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):cls.app=QApplication.instance() or QApplication([])
 
+    def test_gta_wardrobe_and_current_clothing_stage_bulk_restore_and_preview(self):
+        from test_gtav_features import fixture as expanded
+        from PySide6.QtWidgets import QCheckBox,QComboBox,QPushButton
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=root/'SGTA50000';raw=expanded(True,clothes=True);p.write_bytes(raw)
+            with patch('app.discover',return_value=[]):w=Window(settings=QSettings(str(root/'prefs.ini'),QSettings.Format.IniFormat))
+            with patch.object(w,'may_discard',return_value=True):
+                w.reduce_motion.setChecked(True);w.show();w.resize(1280,800)
+                try:
+                    self.assertTrue(w.load('gtav',p))
+                    key=(0,'clothes_worn:1:3');w.reveal_field(key);self.app.processEvents()
+                    control=w.inputs[key];self.assertIsInstance(control,QComboBox)
+                    value=(control.currentIndex()+1)%control.count();control.setCurrentIndex(value)
+                    purchase=(0,'clothes:0:4:0:1');w.reveal_field(purchase);self.app.processEvents()
+                    self.assertIsInstance(w.inputs[purchase],QCheckBox);w.inputs[purchase].setChecked(True)
+                    changes=w.validated_changes();self.assertEqual(changes,{key:value,purchase:1})
+                    self.assertFalse(Save(w.save.patched(changes),'gtav').warnings)
+                    self.assertEqual(p.read_bytes(),raw)
+                    w.reset();w.reveal_field(purchase);self.app.processEvents()
+                    next(b for b in w.findChildren(QPushButton) if b.text()=='Acquire wardrobe section' and b.isVisible()).click()
+                    self.app.processEvents();changes=w.validated_changes()
+                    self.assertTrue(changes);self.assertTrue(all(k.startswith('clothes:0:4:') for slot,k in changes))
+                    self.assertFalse(Save(w.save.patched(changes),'gtav').warnings)
+                    w.reset();w.open_preview('gtav');self.app.processEvents()
+                    w.reveal_field(key);self.app.processEvents()
+                    self.assertIsInstance(w.inputs[key],QComboBox)
+                    self.assertFalse(w.review_button.isEnabled());self.assertFalse(w.validated_changes())
+                finally:w.close();w.deleteLater();self.app.processEvents()
+
     def test_vehicle_paint_and_model_specific_performance_choices_stage_and_reset(self):
         from test_gtav_features import fixture as expanded
         from PySide6.QtWidgets import QComboBox,QLineEdit

@@ -125,7 +125,7 @@ def generate():
     from test_rdr2_features import fixture as rdr2_example
     from test_rdr2_pso import rsav as rdr2_archive
     result={}
-    factories={'gtav':lambda:gta_expanded(weapons=True,weapon_stride=40,styles=True),'rdr2':lambda:rdr2_archive(False,rdr2_example(False,records=True,bounties=True,unlocks=True,supplies=True,components=True,horse_names=True)),
+    factories={'gtav':lambda:gta_expanded(weapons=True,weapon_stride=40,styles=True,clothes=True),'rdr2':lambda:rdr2_archive(False,rdr2_example(False,records=True,bounties=True,unlocks=True,supplies=True,components=True,horse_names=True)),
         'webfishing':fishing,'ror2':profile,'alice':alice,'kh1':lambda:populated_kh('kh1'),
         'kh2':lambda:populated_kh('kh2'),'recom':lambda:kh_extra('recom'),'bbs':lambda:kh_extra('bbs'),
         'ddd':lambda:kh_extra('ddd'),'kh3':kh3_example,'eldenring':elden_example,

@@ -699,3 +699,25 @@ facts, not a claim that editing color installs or enables the mod.
 
 Only existing uniquely mapped entries are edited. New vehicle/model acquisition,
 complete body/wheel/livery tuning and in-game validation are not established.
+
+
+### GTA V wardrobe ownership and current garments (v0.45)
+
+Literal numerical catalogue facts and clothing-bank semantics are corroborated
+by pinned primary game-script decompilations, without executing those scripts:
+[YimMenu build 2628](https://github.com/YimMenu/GTA-V-Decompiled-Scripts/tree/05b0bb75009c9fecfa351f499d2593ee73a7d1ae)
+`clothes_shop_sp.c` functions 84/88/1347 and the character-specific literal
+catalogues; and [udoprog build 1011–1032](https://github.com/udoprog/gta-v-scripts/tree/82a69a01a672287e8e4677961f6aa946402fe1d0)
+`Scripts/clothes_shop_sp.c` plus `Scripts/player_controller.c` functions 345,
+348/349. Numerical bank/category/item relationships and drawable/texture pairs
+were independently normalized. Conditional, special, unnamed and runtime DLC
+entries are excluded; no script implementation or native sample is distributed.
+
+[root-cause/v-labels](https://github.com/root-cause/v-labels/tree/1c896c487548e49c59fb31691c4279aa84c938b5)
+provides the matching short item-name lookup. Only referenced names are included,
+with ambiguous/missing labels retaining their identifier. Its MIT notice appears
+in THIRD_PARTY_NOTICES.txt and licenses/v-labels-MIT.txt; the complete dump is not
+bundled. Existing parser-dump and CodeWalker references corroborate PSO schema,
+padded cells, embedded members and component-map structure facts. Active/native
+and per-character script copies must agree before a current garment is writable.
+These structural checks do not establish in-game or Enhanced-native validation.

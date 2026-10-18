@@ -2,7 +2,7 @@
 
 SPDX-License-Identifier: GPL-3.0-or-later
 Scalar schema facts: alexguirre/rage-parser-dumps; see SOURCES.md.
-No script globals, account identifiers or online state are exposed.
+Untyped script globals, account identifiers and online state are not exposed.
 """
 import math
 import struct
@@ -87,6 +87,8 @@ class GtavFeatures:
         self.vehicles = VehicleFields(self, Field)
         from gtav_weapons import WeaponFields
         self.weapons = WeaponFields(self, Field)
+        from gtav_clothes import ClothingFields
+        self.clothes = ClothingFields(self, Field)
 
     def patch(self, plain, changes):
         changes = dict(changes)
@@ -109,3 +111,4 @@ class GtavFeatures:
                 struct.pack_into(fmt, plain, at, value)
         self.vehicles.patch(plain, changes)
         self.weapons.patch(plain, changes)
+        self.clothes.patch(plain, changes)

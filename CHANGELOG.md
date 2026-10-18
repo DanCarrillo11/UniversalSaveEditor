@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.45.0-alpha
+
+
+- Browse named single-player wardrobe entries separately for Michael, Franklin
+  and Trevor, including clothes, ordinary outfits, props and barber purchases.
+- Manage each entry's availability, purchase and seen marker. Buying an item
+  also makes it available, without charging money. Acquire a whole wardrobe
+  section or restore its pending changes.
+- Change recognized currently worn garments using named style/texture choices.
+  The writer synchronizes the saved character outfit and, for the active actor,
+  its native drawable/texture maps. Selecting another garment acquires it.
+- Use the new sections under Equipment, with character filters, search,
+  pagination, review/reset and offline previews.
+
+Native structural checks pass; game loading and complete GTA V coverage remain pending.
+
 ## v0.44.0-alpha
 
 

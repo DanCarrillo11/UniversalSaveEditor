@@ -909,7 +909,8 @@ class Window(QMainWindow):
                                 action.setToolTip('Applies to this entire ability section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)
                         else:
                             weapon_shop=all(f.key.startswith('weapon_shop:') for f in unlocks)
-                            options=[('Unlock shop options' if weapon_shop else 'Unlock section' if self.save.game=='ror2' else 'Enable section',1)]
+                            wardrobe=all(f.key.startswith('clothes:') for f in unlocks)
+                            options=[('Acquire wardrobe section' if wardrobe else 'Unlock shop options' if weapon_shop else 'Unlock section' if self.save.game=='ror2' else 'Enable section',1)]
                             if self.save.game=='alice':options.append(('Disable all',0))
                             options.append(('Restore shop options' if weapon_shop else 'Restore section',None))
                             for title,value in options:
@@ -968,7 +969,8 @@ class Window(QMainWindow):
             entry.setEnabled(not field.readonly)
             entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
         elif field.choices:
-            entry=QComboBox();entry.addItems(field.choices);entry.setFixedWidth(190)
+            entry=QComboBox();entry.addItems(field.choices)
+            entry.setFixedWidth(320 if field.key.startswith('clothes_worn:') else 190)
             if not self.preview_mode:
                 for index in range(len(field.choices)):
                     entry.model().item(index).setEnabled(field.minimum <= index <= field.maximum)

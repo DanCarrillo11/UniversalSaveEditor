@@ -111,7 +111,7 @@ def organize_fields(game, fields):
                     if game=='re9':section,selection='Existing items',item.collection or 'Inventory'
         if game=='gtav':
             category = 'Progress' if item.collection == 'World' else 'Equipment' if item.collection == 'Vehicles' or item.key.startswith('vehicle:') else 'Characters'
-            if item.key.startswith(('weapon_shop:', 'weapon_ammo:', 'weapon_inventory:')):
+            if item.key.startswith(('weapon_shop:', 'weapon_ammo:', 'weapon_inventory:', 'clothes:', 'clothes_worn:')):
                 category = 'Equipment'
             section,selection=group,item.collection
             if item.key.startswith(('weapon_shop:', 'weapon_ammo:', 'weapon_inventory:')):

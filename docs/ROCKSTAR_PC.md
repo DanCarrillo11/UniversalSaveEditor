@@ -146,6 +146,38 @@ Successful in-game loading, persistence and Enhanced-native validation remain
 unverified. Vehicle/model acquisition and complete body/wheel/livery tuning are
 still unsupported; this is not full GTA V compatibility.
 
+
+### GTA V wardrobe and synchronized garments (v0.45)
+
+The script root embeds a checked three-character array of 164-cell clothing
+state records. Each record contains 41 fixed three-state bit banks. Availability,
+purchase and seen are distinct states, not money-spent counters. Named static
+catalogue entries select category, bank and bit; no all-bits mask guesses future
+or unnamed unlocks. Old/new known script layouts use separate catalogues of
+1,911/1,888 named ordinary entries across the three protagonists. Hair and beard
+purchase states are included, but growth/restoration state is not edited.
+Buying implies availability; explicitly contradictory requests fail before writing.
+Removing availability also removes purchase. Seen is independent. Neighbor bits,
+VM padding and all unsupported catalogue entries stay unchanged.
+
+Known current clothing is stored in per-character 65-cell snapshots. Only exact
+schemas and recognized drawable/texture pairs qualify. For the one active actor,
+the snapshot must agree with both dedicated native component maps, with twelve
+sorted unique component hashes and an ordinary zero-resource drawable value.
+Changing garments writes both copies and acquires the selected static entry.
+An explicit no-op does not purchase anything. Inactive protagonists update only
+their own snapshot. Unknown player models, map pointers, resource overrides and
+disagreeing active snapshots protect the affected outfit. Overlapping mapped
+blocks or script substructures protect the wardrobe instead of guessing ownership.
+
+Composite outfits and props have acquisition flags only. The writer does not
+assemble their multi-part combinations, apply mission dependencies, equip hair/
+beards/props, resolve runtime DLC catalogues or infer safe combinations of layers.
+No save or personal sample is packaged. Three native references, plain/encrypted
+copies, synthetic graphs, paginated UI staging/reset and offline preview checks
+verify the implemented file-level scope. Successful game loading, persistence
+and Enhanced-native validation remain unverified.
+
 ## RDR2
 
 The PC `SRDR#####` story envelope has header version 4, AES body at 0x110 and

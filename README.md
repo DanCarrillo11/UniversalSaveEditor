@@ -8,11 +8,15 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.44.0-alpha** expands saved GTA V garage vehicles with named paint,
-window tint, tire-smoke/neon RGB colors and recognized performance stages.
-Vehicle models and garage membership are preserved; unsupported kits stay protected.
-The two known vehicle layouts pass native file-level checks. Successful in-game
-loading and Enhanced-specific native validation remain pending.
+Version **v0.45.0-alpha** adds named GTA V wardrobe availability, purchase
+and seen markers, plus synchronized selection of recognized current garments.
+Michael, Franklin and Trevor have separate wardrobe sections. Special/unnamed
+and dynamic DLC apparel, hair/beard/prop equipping and composite outfit assembly
+remain protected. Three native references pass structural checks; successful
+in-game loading and Enhanced-native validation remain pending.
+
+v0.44 expanded existing garage vehicles with named paint, window tint,
+tire-smoke/neon RGB colors and recognized performance stages.
 
 v0.43 expanded GTA V story weapons: add/remove 35 recognized base-slot weapons
 per character, share ammunition, equip mapped components/colors and manage shop
@@ -120,7 +124,7 @@ See [support privacy, recent saves and collection labels](docs/SUPPORT_AND_HISTO
 
 | Game | Editable fields | Status / save action |
 |---|---|---|
-| GTA V, PC Story Mode | Character cash/skills; saved-player health/armor/flags; clock/resprays; vehicle protections/plates; base-slot weapon acquisition, shared ammo, components/colors and weapon-shop flags | Limited; Legacy native files checked; Enhanced-specific file check and game loading pending |
+| GTA V, PC Story Mode | Character cash/skills; saved-player health/armor/flags; clock/resprays; vehicle paint/performance/protections/plates; named wardrobe ownership and synchronized current garments; base-slot weapon acquisition, shared ammo, components/colors and weapon-shop flags | Limited; Legacy native files checked; Enhanced-specific file check and game loading pending |
 | Red Dead Redemption 2, PC Story Mode | Cash/camp, honor, player attributes, supplies/ammunition, weapon condition/parts/finishes, horse care/names, compendium/history, bounties, catalog unlocks and experimental common-supply acquisition | Limited; three native files checked. Weapon/clothing acquisition, stable management, story/reward dependencies and game loading pending. See [exact scope](docs/RDR2_FIELDS.md). |
 | Elden Ring | Runes, attributes/vitals, automatic level, appearance sliders, deaths, inventory/storage stacks, held-goods creation, 171 base-game spell acquisitions, owned spell loadouts, existing upgrades and NG+ scaling | Experimental Steam SL2; in-game verification pending |
 | Resident Evil 4 (2005), Steam Ultimate HD Edition | Pesetas, difficulty, player/Ashley health, save count, completed rounds and combat statistics, existing case quantities and known weapon tune-up tiers | Experimental; direct apply; new case objects and comprehensive unlocks pending |
@@ -217,7 +221,7 @@ games, which are not advertised as compatible yet.
 | Max Payne | Equipment |
 | Resident Evil 4 (2005), Steam UHD | Progress, Characters, Records |
 | WEBFISHING | Progress, Equipment, Collection |
-| GTA V | Characters: cash/skills and saved player; Progress: clock; Equipment: choose a protagonist and weapon for inventory/shop options, or Vehicles for garage controls |
+| GTA V | Characters: cash/skills and saved player; Progress: clock; Equipment: choose a protagonist for weapons, wardrobe or current clothes, or Vehicles for garage controls |
 | Red Dead Redemption 2 | Progress: Currency / Camp / Bounties / Statistics / World clock; Character: Honor / Cores / XP; Inventory: Supplies / Ammunition / Weapons / Horses / Compendium / Catalog unlocks / Add supplies |
 | Risk of Rain 2 | Progress, Unlocks, Records |
 | Alice persistent profile | Progress, Character, Collection |
