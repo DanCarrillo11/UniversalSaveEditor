@@ -8,12 +8,15 @@ applicable. Changes save directly to the opened file, keeping its name and
 location. No automatic backups are created. Alpha versions describe the
 application's development stage; verified versions are published as GitHub Releases.
 
-Version **v0.43.0-alpha** expands GTA V story weapons: add/remove 35 recognized
-base-slot weapons per character, synchronize shared ammunition, select mapped
-attachments and equipped colors, and manage shop acquisition for 40 weapons.
-Adding/equipping also updates recognized shop ownership without spending cash.
-Three native files cover two distinct inventory revisions; game loading and
-Enhanced-specific verification remain pending. This is partial support.
+Version **v0.44.0-alpha** expands saved GTA V garage vehicles with named paint,
+window tint, tire-smoke/neon RGB colors and recognized performance stages.
+Vehicle models and garage membership are preserved; unsupported kits stay protected.
+The two known vehicle layouts pass native file-level checks. Successful in-game
+loading and Enhanced-specific native validation remain pending.
+
+v0.43 expanded GTA V story weapons: add/remove 35 recognized base-slot weapons
+per character, share ammunition, equip mapped components/colors and manage shop
+acquisition for 40 weapons. These controls remain available.
 
 v0.41 expanded RDR2 acquisition to 159 ordinary supplies,
 including tonics, herbs, cooked food and Story Mode ammunition variants. Enter

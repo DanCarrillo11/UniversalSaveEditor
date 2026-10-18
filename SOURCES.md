@@ -678,3 +678,24 @@ Native PSO schemas corroborate member identities, fixed capacities, padded VM
 cells and offsets. Three native files and synthetic graphs verify exact masked
 writes, dependencies, unknown-bit/padding preservation and container integrity.
 These checks do not establish Enhanced-specific or in-game compatibility.
+
+
+### GTA V saved vehicle appearance and performance (v0.44)
+
+The same pinned DurtyFree dump provides `vehicleColors.json`, `vehicles.json` and
+`vehicleModKits.json`. Only paint labels and small model/kit/stage relationships
+are packaged, not the complete dumps, art, game binaries or resources. Native
+occupied garage records corroborate Voltic, Infernus and Massacro kit IDs and
+the 40/48-byte variation schemas. Existing parser-dump attribution covers scalar
+members, embedded variation and hash/byte ATBINARYMAP records.
+
+[citizenfx/natives SetVehicleMod](https://github.com/citizenfx/natives/blob/master/VEHICLE/SetVehicleMod.md)
+documents VMT engine/brake/gearbox/suspension/armor names; hashed names identify
+the native map entries. The pinned dump supplies per-kit contiguous stage ranges.
+[SetVehicleWindowTint](https://github.com/citizenfx/natives/blob/master/VEHICLE/SetVehicleWindowTint.md)
+documents the seven tint values. Only enum/format facts informed the independent
+writer; no Cfx implementation is copied. Smoke/neon channels are scalar member
+facts, not a claim that editing color installs or enables the mod.
+
+Only existing uniquely mapped entries are edited. New vehicle/model acquisition,
+complete body/wheel/livery tuning and in-game validation are not established.

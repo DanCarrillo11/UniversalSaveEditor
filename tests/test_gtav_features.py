@@ -6,7 +6,7 @@ from rockstar_container import checksum, aes, RockstarContainer, name_hash
 from test_rockstar import section
 
 
-def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False, weapons=False, weapon_stride=24):
+def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False, weapons=False, weapon_stride=24, styles=False, default_kit=False, shared_modmap=False):
     blocks = []
     definitions = []
     def add(identity, data, size, fields):
@@ -46,13 +46,17 @@ def fixture(encrypted=False, vehicle_size=112, duplicate=False, malformed=False,
     vehicle = bytearray(vehicle_size)
     shift = 12 if vehicle_size == 112 else 0
     modeloff = 64 if vehicle_size == 112 else 56
-    struct.pack_into('>I', vehicle, modeloff, name_hash('adder'))
+    struct.pack_into('>I', vehicle, modeloff, name_hash('emperor' if styles and default_kit else 'voltic' if styles else 'adder'))
     vehicle[77 + shift] = 1
     vehicle[86 + shift:94 + shift] = b'TEST1234'
     fields = [(1442269562,6,0,modeloff,0),(1697766853,0,0,77+shift,0)]
     fields += [(h,0,0,off+shift,0) for h,off in ((2386424170,79),(779245171,80),(1983399964,81),(1473572232,82),(2407176912,83),(601072703,84))]
     fields += [(3810156612,13,4,86+shift,524312 if vehicle_size == 112 else 524311)]
+    if styles:fields += [(3489090097,12,0,0,2181085963)]
     add(2541711729, vehicle, vehicle_size, fields)
+    if styles:
+        from test_gtav_vehicle_style import add_style
+        add_style(add,blocks,vehicle,vehicle_size,default_kit,shared_modmap)
     if weapons:
         from test_gtav_weapons import script_blocks
         for identity, payload, size, fields in script_blocks(weapon_stride):

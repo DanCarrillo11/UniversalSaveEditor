@@ -43,6 +43,7 @@ class VehicleFields:
     def __init__(self, feature, Field):
         self.feature = feature
         self.plates = {}
+        self.styles = None
         owner = feature.owner
         raw = owner.container.plain
         roots = [(f, at, length) for f in owner.container.frames for h, at, length in f.blocks if h == GARAGES]
@@ -76,11 +77,13 @@ class VehicleFields:
                     rows.append((house, slot, b))
         except (ValueError, struct.error):
             return
+        style_rows=[]
         for house, slot, b in rows:
             if raw[b + 77 + shift] != 1 or u32(raw, b + modeloff) in (0, 0xffffffff):
                 continue
             prefix = f'vehicle:{house}:{slot}'
             collection = f'Garage {house + 1} · Vehicle {slot + 1}'
+            style_rows.append((prefix,collection,b,f,size))
             note = ('Existing occupied garage record only. Vehicle identity, ownership, upgrades and '
                     'slot membership are preserved. Scripts may override saved protections. '
                     'Edited-save loading has not been verified in-game.')
@@ -104,6 +107,8 @@ class VehicleFields:
             self.plates[key] = b + off
             owner.fields.append(Field(key, 'License plate (up to 8 ASCII characters)', value.decode('ascii'),
                 b + off, '', 0, 8, 'Saved vehicle', collection=collection, text=True, note=note))
+        from gtav_vehicle_style import VehicleStyleFields
+        self.styles = VehicleStyleFields(feature,Field,style_rows)
 
     def patch(self, plain, changes):
         for key, at in self.plates.items():
@@ -113,3 +118,5 @@ class VehicleFields:
             if not isinstance(value, str) or len(value) > 8 or any(ord(c) < 32 or ord(c) > 126 for c in value):
                 raise ValueError('A GTA V license plate accepts up to 8 printable ASCII characters.')
             plain[at:at + 8] = value.encode('ascii').ljust(8, b'\0')
+        if self.styles is not None:
+            self.styles.patch(plain,changes)

@@ -42,6 +42,8 @@ def kh2_inventory_section(key):
 
 def organize_fields(game, fields):
     """Assign every field exactly once, with at most three top-level categories."""
+    vehicle_names={f.key.rsplit(':',1)[0]:f.value for f in fields
+                   if f.key.startswith('vehicle:') and f.key.endswith(':model_name')} if game=='gtav' else {}
     order = {
         'kh1': ('Progress', 'Characters', 'Collection'),
         'kh2': ('Progress', 'Characters', 'Collection'),
@@ -116,6 +118,10 @@ def organize_fields(game, fields):
                 section=group.split(' · ',1)[-1]
             if item.key.startswith('vehicle:'):
                 section,selection=item.collection,'Vehicles'
+                prefix=item.key.rsplit(':',1)[0]
+                if prefix in vehicle_names:
+                    _,house,slot=prefix.split(':')
+                    section=f'{vehicle_names[prefix]} · Garage {int(house)+1}, slot {int(slot)+1}'
         if game=='rdr2':
             if group in ('Player cores','Player progression','Honor'):category,section,selection='Character',group,'Player'
             elif group in ('Weapon condition','Horses'):category,section,selection='Collection',item.collection or group,group

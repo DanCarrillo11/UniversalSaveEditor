@@ -9,6 +9,13 @@ is marked full support and no completion percentage is inferred from field count
 
 ## Current GTA V pass
 
+v0.44 adds named saved-vehicle paint, window tint, smoke/neon RGB and recognized
+engine/brake/transmission/suspension/armor stages. Typed maps, model/kit agreement
+and metadata ranges protect unsupported setups. Two native files pass individual
+and combined exact-span/checksum checks. Vehicle creation/model swaps and complete
+body/wheel/livery tuning are still open; no game-load validation is claimed.
+
+
 v0.43 adds/removes 35 recognized GTA V base-slot weapons per character,
 synchronizes carried ammo, equips mapped components/colors and manages shop
 acquisition for 40 weapons. Both three/five-cell inventories are gated by their
@@ -17,7 +24,7 @@ masked shop edits and combined acquisition/customization with requested-value
 reparsing, checksums and unchanged original files. UI staging/reset and previews
 include the new tools. This is partial coverage, not a completion percentage.
 
-Full DLC slot acquisition, vehicles/models/tuning, property/clothing acquisition,
+Full DLC slot acquisition, vehicle creation/model swaps and complete body/wheel/livery tuning, property/clothing acquisition,
 collectible/story/reward dependencies, Enhanced-native validation and in-game
 loading remain open. Earlier player, clock and occupied-vehicle tools are retained.
 

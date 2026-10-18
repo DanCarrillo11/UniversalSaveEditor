@@ -111,6 +111,41 @@ properties, clothing, collectibles and complete mission/reward dependencies are
 not implemented. Enhanced-native validation and edited-save game loading remain
 unverified. File-level checks are not evidence of successful game loading.
 
+
+### GTA V garage appearance and performance (v0.44)
+
+The existing occupied-vehicle membership graph also gates its embedded variation
+structure. Known 40/48-byte variation shapes must match the 96/112-byte parent;
+every exposed member needs its exact hash, unsigned-byte type and declared offset.
+Named primary/secondary/pearlescent/wheel paint use the 161 known palette indexes.
+Window tint is bounded to its seven named values. Unknown/sentinel palette/tint
+values are preserved rather than silently assigned a label. Smoke/neon RGB values
+do not install or enable their corresponding modifications. Model names are read-only.
+
+Performance edits follow the existing mods ATBINARYMAP: bounded PSO pointer,
+count/capacity, typed eight-byte hash/byte pairs, sorted unique keys and unique
+membership across vehicles are required. Existing engine/brake/transmission/
+suspension/armor entries must match the named model's stored kit and its known
+contiguous stage range. Stock is saved as 255; the UI shows Stock then stage 1
+onwards. Unknown stages are not reinterpreted or clamped. EV models do not receive
+unsupported transmission stages. No map rows or garage records are created.
+
+A vehicle with no installed kit (255) and exactly one known model kit can initialize
+that kit when applying an actual upgrade. An explicit stock no-op retains 255.
+This initialization is an additional byte change; reverting a stage to stock does
+not infer the earlier kit setup. Other map nodes, node padding, coordinates,
+models, wheel/body/livery parameters and membership remain unchanged.
+
+Two native Legacy files expose 15 and 55 new editable appearance/performance
+controls, plus read-only model labels. Individual/combined edits pass exact-span,
+requested-value reparsing and checksum checks in plaintext/encrypted copies.
+Original files remain unchanged. Synthetic and UI tests cover both layouts,
+default-kit activation, unknown kits, broken pointers, duplicate/unsorted maps,
+opaque node bytes, palette/tint bounds, staging/reset and offline previews.
+Successful in-game loading, persistence and Enhanced-native validation remain
+unverified. Vehicle/model acquisition and complete body/wheel/livery tuning are
+still unsupported; this is not full GTA V compatibility.
+
 ## RDR2
 
 The PC `SRDR#####` story envelope has header version 4, AES body at 0x110 and

@@ -1,2 +1,2 @@
 """Application and release version."""
-VERSION = '0.43.0-alpha'
+VERSION = '0.44.0-alpha'

@@ -14,6 +14,33 @@ class RockstarInterfaceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):cls.app=QApplication.instance() or QApplication([])
 
+    def test_vehicle_paint_and_model_specific_performance_choices_stage_and_reset(self):
+        from test_gtav_features import fixture as expanded
+        from PySide6.QtWidgets import QComboBox,QLineEdit
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=root/'SGTA50000';raw=expanded(True,weapons=True,styles=True);p.write_bytes(raw)
+            with patch('app.discover',return_value=[]):w=Window(settings=QSettings(str(root/'prefs.ini'),QSettings.Format.IniFormat))
+            with patch.object(w,'may_discard',return_value=True):
+                w.reduce_motion.setChecked(True);w.show();w.resize(1280,800)
+                try:
+                    self.assertTrue(w.load('gtav',p))
+                    expected={(0,'vehicle:0:0:primary'):160,(0,'vehicle:0:0:mod_11'):4,
+                              (0,'vehicle:0:0:window_tint'):3}
+                    for key,value in expected.items():
+                        w.reveal_field(key);self.app.processEvents();control=w.inputs[key]
+                        self.assertIsInstance(control,QComboBox);control.setCurrentIndex(value)
+                    self.assertEqual(w.validated_changes(),expected)
+                    self.assertFalse(Save(w.save.patched(expected),'gtav').warnings)
+                    w.reveal_field((0,'vehicle:0:0:model_name'));self.app.processEvents()
+                    self.assertIsInstance(w.inputs[0,'vehicle:0:0:model_name'],QLineEdit)
+                    self.assertTrue(w.inputs[0,'vehicle:0:0:model_name'].isReadOnly())
+                    self.assertEqual(p.read_bytes(),raw);w.reset();self.assertFalse(w.validated_changes())
+                    w.open_preview('gtav');self.app.processEvents()
+                    w.reveal_field((0,'vehicle:0:0:primary'));self.app.processEvents()
+                    self.assertEqual(w.inputs[0,'vehicle:0:0:primary'].count(),161)
+                    self.assertFalse(w.review_button.isEnabled())
+                finally:w.close();w.deleteLater();self.app.processEvents()
+
     def test_gta_weapon_inventory_shop_and_color_choices_stage_across_sections(self):
         from test_gtav_features import fixture as expanded
         from PySide6.QtWidgets import QCheckBox,QComboBox,QLineEdit

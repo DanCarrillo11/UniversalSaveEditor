@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.44.0-alpha
+
+
+- Select named primary/secondary, pearlescent and wheel paint for recognized
+  occupied garage vehicles. The catalogue includes 161 named paint indexes.
+- Edit window tint and the saved RGB colors for tire smoke and neon lighting.
+  Color editing does not install or enable the corresponding modification.
+- Select supported engine, brake, transmission, suspension and armor stages.
+  Only existing uniquely mapped modification entries and matching vehicle kits
+  qualify. A model with one known kit can initialize it when applying an upgrade.
+  Unknown stages, unsupported kits and ambiguous maps stay protected.
+- Show each recognized vehicle's model name as read-only information. Keep its
+  identity, location, garage membership, body kit, wheels and other state intact.
+- Browse the new fields through Equipment > Vehicles, including offline examples.
+  All earlier character, weapon, shop, clock, garage-service and plate tools remain.
+
+Native checks pass; game loading and full GTA V coverage remain pending.
+
 ## v0.43.0-alpha
 
 - Add/remove 35 identified base-slot weapons for Michael, Franklin and Trevor.
