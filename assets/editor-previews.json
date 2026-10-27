@@ -218047,7 +218047,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Reserve quantity before carried-item transfers. Equipping consumes a reserve copy; replacing a carried item returns its old copy.",
             "collection": "",
             "item_id": 1,
             "art_choices": []
@@ -218063,7 +218063,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Reserve quantity before carried-item transfers. Equipping consumes a reserve copy; replacing a carried item returns its old copy.",
             "collection": "",
             "item_id": 2,
             "art_choices": []
@@ -218079,7 +218079,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Reserve quantity before carried-item transfers. Equipping consumes a reserve copy; replacing a carried item returns its old copy.",
             "collection": "",
             "item_id": 3,
             "art_choices": []
@@ -218095,7 +218095,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Reserve quantity before carried-item transfers. Equipping consumes a reserve copy; replacing a carried item returns its old copy.",
             "collection": "",
             "item_id": 4,
             "art_choices": []
@@ -218111,7 +218111,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Reserve quantity before carried-item transfers. Equipping consumes a reserve copy; replacing a carried item returns its old copy.",
             "collection": "",
             "item_id": 6,
             "art_choices": []
@@ -218127,7 +218127,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Reserve quantity before carried-item transfers. Equipping consumes a reserve copy; replacing a carried item returns its old copy.",
             "collection": "",
             "item_id": 7,
             "art_choices": []
@@ -218143,7 +218143,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Reserve quantity before carried-item transfers. Equipping consumes a reserve copy; replacing a carried item returns its old copy.",
             "collection": "",
             "item_id": 8,
             "art_choices": []
@@ -218159,7 +218159,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 9,
             "art_choices": []
@@ -218175,7 +218175,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 10,
             "art_choices": []
@@ -218191,7 +218191,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 11,
             "art_choices": []
@@ -218207,7 +218207,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 12,
             "art_choices": []
@@ -218223,7 +218223,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 13,
             "art_choices": []
@@ -218239,7 +218239,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 14,
             "art_choices": []
@@ -218255,7 +218255,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 15,
             "art_choices": []
@@ -218271,7 +218271,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 16,
             "art_choices": []
@@ -218279,7 +218279,7 @@
           {
             "key": "inventory:17",
             "label": "Protect Chain",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 99,
@@ -218287,7 +218287,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 17,
             "art_choices": []
@@ -218303,7 +218303,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 18,
             "art_choices": []
@@ -218319,7 +218319,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 19,
             "art_choices": []
@@ -218335,7 +218335,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 20,
             "art_choices": []
@@ -218351,7 +218351,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 21,
             "art_choices": []
@@ -218367,7 +218367,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 22,
             "art_choices": []
@@ -218383,7 +218383,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 23,
             "art_choices": []
@@ -218399,7 +218399,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 24,
             "art_choices": []
@@ -218415,7 +218415,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 25,
             "art_choices": []
@@ -218431,7 +218431,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 26,
             "art_choices": []
@@ -218447,7 +218447,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 27,
             "art_choices": []
@@ -218463,7 +218463,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 28,
             "art_choices": []
@@ -218479,7 +218479,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 29,
             "art_choices": []
@@ -218495,7 +218495,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 30,
             "art_choices": []
@@ -218511,7 +218511,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 31,
             "art_choices": []
@@ -218527,7 +218527,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 32,
             "art_choices": []
@@ -218543,7 +218543,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 33,
             "art_choices": []
@@ -218559,7 +218559,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 34,
             "art_choices": []
@@ -218575,7 +218575,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 35,
             "art_choices": []
@@ -218591,7 +218591,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 36,
             "art_choices": []
@@ -218607,7 +218607,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 37,
             "art_choices": []
@@ -218623,7 +218623,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 38,
             "art_choices": []
@@ -218639,7 +218639,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 39,
             "art_choices": []
@@ -218655,7 +218655,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 40,
             "art_choices": []
@@ -218671,7 +218671,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 41,
             "art_choices": []
@@ -218687,7 +218687,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 42,
             "art_choices": []
@@ -218703,7 +218703,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 43,
             "art_choices": []
@@ -218719,7 +218719,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 44,
             "art_choices": []
@@ -218735,7 +218735,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 45,
             "art_choices": []
@@ -218751,7 +218751,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 46,
             "art_choices": []
@@ -218767,7 +218767,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 47,
             "art_choices": []
@@ -218783,7 +218783,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 48,
             "art_choices": []
@@ -218799,7 +218799,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 49,
             "art_choices": []
@@ -218815,7 +218815,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 50,
             "art_choices": []
@@ -218831,7 +218831,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 51,
             "art_choices": []
@@ -218847,7 +218847,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 52,
             "art_choices": []
@@ -218863,7 +218863,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 53,
             "art_choices": []
@@ -218879,7 +218879,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 54,
             "art_choices": []
@@ -218895,7 +218895,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 55,
             "art_choices": []
@@ -218911,7 +218911,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 56,
             "art_choices": []
@@ -218927,7 +218927,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 58,
             "art_choices": []
@@ -218943,7 +218943,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 59,
             "art_choices": []
@@ -218959,7 +218959,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 60,
             "art_choices": []
@@ -218975,7 +218975,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 61,
             "art_choices": []
@@ -218991,7 +218991,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 62,
             "art_choices": []
@@ -219007,7 +219007,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 63,
             "art_choices": []
@@ -219023,7 +219023,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 64,
             "art_choices": []
@@ -219039,7 +219039,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 65,
             "art_choices": []
@@ -219055,7 +219055,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 66,
             "art_choices": []
@@ -219071,7 +219071,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 67,
             "art_choices": []
@@ -219087,7 +219087,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 68,
             "art_choices": []
@@ -219103,7 +219103,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 69,
             "art_choices": []
@@ -219119,7 +219119,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 70,
             "art_choices": []
@@ -219135,7 +219135,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 71,
             "art_choices": []
@@ -219143,7 +219143,7 @@
           {
             "key": "inventory:81",
             "label": "Kingdom Key",
-            "value": 0,
+            "value": 1,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 99,
@@ -219151,7 +219151,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 81,
             "art_choices": []
@@ -219167,7 +219167,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Temporary story-weapon ownership is preserved. These weapons cannot be acquired outside their story context.",
             "collection": "",
             "item_id": 82,
             "art_choices": []
@@ -219183,7 +219183,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Temporary story-weapon ownership is preserved. These weapons cannot be acquired outside their story context.",
             "collection": "",
             "item_id": 83,
             "art_choices": []
@@ -219199,7 +219199,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Temporary story-weapon ownership is preserved. These weapons cannot be acquired outside their story context.",
             "collection": "",
             "item_id": 84,
             "art_choices": []
@@ -219215,7 +219215,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Temporary story-weapon ownership is preserved. These weapons cannot be acquired outside their story context.",
             "collection": "",
             "item_id": 85,
             "art_choices": []
@@ -219231,7 +219231,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 86,
             "art_choices": []
@@ -219247,7 +219247,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 87,
             "art_choices": []
@@ -219263,7 +219263,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 88,
             "art_choices": []
@@ -219279,7 +219279,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 89,
             "art_choices": []
@@ -219295,7 +219295,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 90,
             "art_choices": []
@@ -219311,7 +219311,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 91,
             "art_choices": []
@@ -219327,7 +219327,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 92,
             "art_choices": []
@@ -219343,7 +219343,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 93,
             "art_choices": []
@@ -219359,7 +219359,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 94,
             "art_choices": []
@@ -219375,7 +219375,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 95,
             "art_choices": []
@@ -219391,7 +219391,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 96,
             "art_choices": []
@@ -219407,7 +219407,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 97,
             "art_choices": []
@@ -219423,7 +219423,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 98,
             "art_choices": []
@@ -219439,7 +219439,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 99,
             "art_choices": []
@@ -219455,7 +219455,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 100,
             "art_choices": []
@@ -219471,7 +219471,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 101,
             "art_choices": []
@@ -219487,7 +219487,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 102,
             "art_choices": []
@@ -219495,7 +219495,7 @@
           {
             "key": "inventory:103",
             "label": "Mage's Staff",
-            "value": 0,
+            "value": 1,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 99,
@@ -219503,7 +219503,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 103,
             "art_choices": []
@@ -219519,7 +219519,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 104,
             "art_choices": []
@@ -219535,7 +219535,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 105,
             "art_choices": []
@@ -219551,7 +219551,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 106,
             "art_choices": []
@@ -219567,7 +219567,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 107,
             "art_choices": []
@@ -219583,7 +219583,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 108,
             "art_choices": []
@@ -219599,7 +219599,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 109,
             "art_choices": []
@@ -219615,7 +219615,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 110,
             "art_choices": []
@@ -219631,7 +219631,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 111,
             "art_choices": []
@@ -219647,7 +219647,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 112,
             "art_choices": []
@@ -219663,7 +219663,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 113,
             "art_choices": []
@@ -219679,7 +219679,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 114,
             "art_choices": []
@@ -219695,7 +219695,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 115,
             "art_choices": []
@@ -219711,7 +219711,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 116,
             "art_choices": []
@@ -219727,7 +219727,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 117,
             "art_choices": []
@@ -219735,7 +219735,7 @@
           {
             "key": "inventory:119",
             "label": "Knight's Shield",
-            "value": 0,
+            "value": 1,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 99,
@@ -219743,7 +219743,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 119,
             "art_choices": []
@@ -219759,7 +219759,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 120,
             "art_choices": []
@@ -219775,7 +219775,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 121,
             "art_choices": []
@@ -219791,7 +219791,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 122,
             "art_choices": []
@@ -219807,7 +219807,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 123,
             "art_choices": []
@@ -219823,7 +219823,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 124,
             "art_choices": []
@@ -219839,7 +219839,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 125,
             "art_choices": []
@@ -219855,7 +219855,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 126,
             "art_choices": []
@@ -219871,7 +219871,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 127,
             "art_choices": []
@@ -219887,7 +219887,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 128,
             "art_choices": []
@@ -219903,7 +219903,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 129,
             "art_choices": []
@@ -219919,7 +219919,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 130,
             "art_choices": []
@@ -219935,7 +219935,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 131,
             "art_choices": []
@@ -219951,7 +219951,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 132,
             "art_choices": []
@@ -219967,7 +219967,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.",
             "collection": "",
             "item_id": 133,
             "art_choices": []
@@ -219983,7 +219983,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 142,
             "art_choices": []
@@ -219999,7 +219999,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 143,
             "art_choices": []
@@ -220015,7 +220015,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 144,
             "art_choices": []
@@ -220031,7 +220031,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 152,
             "art_choices": []
@@ -220047,7 +220047,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 153,
             "art_choices": []
@@ -220063,7 +220063,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 154,
             "art_choices": []
@@ -220079,7 +220079,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 155,
             "art_choices": []
@@ -220095,7 +220095,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 156,
             "art_choices": []
@@ -220111,7 +220111,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 157,
             "art_choices": []
@@ -220127,7 +220127,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 231,
             "art_choices": []
@@ -220143,7 +220143,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 233,
             "art_choices": []
@@ -220159,7 +220159,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 234,
             "art_choices": []
@@ -220175,7 +220175,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 235,
             "art_choices": []
@@ -220191,7 +220191,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 236,
             "art_choices": []
@@ -220207,7 +220207,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 237,
             "art_choices": []
@@ -220223,7 +220223,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 238,
             "art_choices": []
@@ -220239,7 +220239,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 239,
             "art_choices": []
@@ -220255,7 +220255,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 240,
             "art_choices": []
@@ -220271,7 +220271,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 241,
             "art_choices": []
@@ -220287,7 +220287,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 242,
             "art_choices": []
@@ -220303,7 +220303,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 243,
             "art_choices": []
@@ -220319,7 +220319,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 244,
             "art_choices": []
@@ -220335,7 +220335,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 245,
             "art_choices": []
@@ -220351,7 +220351,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 246,
             "art_choices": []
@@ -220367,7 +220367,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 247,
             "art_choices": []
@@ -220383,7 +220383,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 248,
             "art_choices": []
@@ -220399,7 +220399,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 249,
             "art_choices": []
@@ -220415,7 +220415,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 250,
             "art_choices": []
@@ -220431,7 +220431,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 251,
             "art_choices": []
@@ -220447,7 +220447,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 252,
             "art_choices": []
@@ -220463,7 +220463,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 253,
             "art_choices": []
@@ -220479,7 +220479,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 254,
             "art_choices": []
@@ -220495,7 +220495,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.",
             "collection": "",
             "item_id": 255,
             "art_choices": []
@@ -220538,16 +220538,12 @@
             "value": 0,
             "fmt": "",
             "minimum": 0,
-            "maximum": 21,
+            "maximum": 17,
             "group": "Equipment",
             "decimal": false,
             "boolean": false,
             "choices": [
               "Kingdom Key",
-              "Dream Sword",
-              "Dream Shield (Sora)",
-              "Dream Rod (Sora)",
-              "Wooden Sword",
               "Jungle King",
               "Three Wishes",
               "Fairy Harp",
@@ -220566,15 +220562,11 @@
               "Diamond Dust",
               "One-Winged Angel"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
               81,
-              82,
-              83,
-              84,
-              85,
               86,
               87,
               88,
@@ -220661,7 +220653,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -220789,7 +220781,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -221564,7 +221556,7 @@
               "Meteor Strike",
               "Fantasista"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -221652,7 +221644,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -221780,7 +221772,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -222520,7 +222512,7 @@
               "Mighty Shield",
               "Seven Elements"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -222608,7 +222600,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -222736,7 +222728,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -223574,7 +223566,7 @@
             "choices": [
               "Empty"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -223648,7 +223640,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -223776,7 +223768,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -224598,7 +224590,7 @@
             "choices": [
               "Empty"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -225070,7 +225062,7 @@
             "choices": [
               "Empty"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -225542,7 +225534,7 @@
             "choices": [
               "Empty"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -226014,7 +226006,7 @@
             "choices": [
               "Empty"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -226486,7 +226478,7 @@
             "choices": [
               "Empty"
             ],
-            "note": "Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.",
+            "note": "Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -226560,7 +226552,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
@@ -226688,7 +226680,7 @@
               "Prime Cap",
               "Obsidian Ring"
             ],
-            "note": "Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.",
+            "note": "Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.",
             "collection": "",
             "item_id": null,
             "art_choices": [
