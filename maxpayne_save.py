@@ -5,7 +5,6 @@ Weapon IDs are checked against the original game's inventory definitions.
 See docs/MAX_PAYNE_FORMAT.md for evidence and outstanding checks.
 """
 from dataclasses import dataclass
-import math
 import struct
 
 
@@ -86,13 +85,13 @@ class Reader:
         if tag in INTEGER_WIDTHS:
             value = int.from_bytes(self.raw[start:end], 'little', signed=tag in SIGNED)
         elif tag == 0x0e:
+            # Untouched world records may contain noncanonical flag bytes.
+            # Validate editable ownership in its exact inventory context only.
             value = self.raw[start]
-            if value not in (0, 1):
-                raise MaxPayneFormatError('Invalid Max Payne boolean.')
         elif tag in (0x09, 0x0a):
+            # Nonfinite values in unknown world state are retained verbatim by
+            # the writer, not converted into editable player attributes.
             value = struct.unpack_from('<f' if tag == 0x09 else '<d', self.raw, start)[0]
-            if not math.isfinite(value):
-                raise MaxPayneFormatError('Non-finite Max Payne scalar.')
         else:
             value = self.raw[start:end]
         return Value(offset, end, tag, value)
@@ -188,7 +187,8 @@ class MaxPayneEditor(MaxPayneArchive):
                 raise MaxPayneFormatError('Unsupported Max Payne inventory entry.')
             for variant, identifier in enumerate(identifiers):
                 id_node, owned = v[4+variant*2:6+variant*2]
-                if id_node.tag not in SIGNED or id_node.value != identifier or owned.tag != 0x0e:
+                if (id_node.tag not in SIGNED or id_node.value != identifier or
+                        owned.tag != 0x0e or owned.value not in (0, 1)):
                     raise MaxPayneFormatError('Weapon IDs do not match the original Max Payne inventory.')
                 if identifier not in (0,16):
                     key = f'weapon:{identifier}'

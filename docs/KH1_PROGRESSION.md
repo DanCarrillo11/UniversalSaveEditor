@@ -61,3 +61,22 @@ non-CRC byte. The original reference stayed unchanged. Loading edited saves in
 the game is still unverified.
 
 Format references and pinned revisions are listed in [SOURCES.md](../SOURCES.md).
+
+## Equipment-aware maximum HP and MP (v0.51)
+
+The character's Attributes section shows recognized maximum HP and MP with
+equipment. Base values remain separate. 54 accessory HP/MP pairs and 52 signed
+weapon MP bonuses match the original PC battle table. Only supported character
+weapon families contribute; world companions' unmapped MP behavior is preserved.
+
+Base, current and equipment edits are checked together. Reducing a known maximum
+clamps a previously valid current value; an explicitly requested excess is
+rejected. Increasing the maximum does not heal or refill. Existing unexplained
+excess, unknown equipment and modified/runtime effects are not recalculated.
+Unsupported totals outside the byte range are not assigned guessed saturation.
+
+39 public records contain 351 recognized HP and 117 MP configurations; 59 valid
+current HP values exceed saved base HP, which must not be used as their limit.
+351 HP and 117 MP base edits, with 350 HP and 108 MP automatic clamps, passed
+reparsing, unrelated-byte checks and exact restoration of non-CRC bytes. The
+original reference stayed unchanged. Loading edited saves is still unverified.

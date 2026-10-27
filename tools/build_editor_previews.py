@@ -47,6 +47,7 @@ def populated_kh(game):
         base=record+(4+c*0x74 if game=='kh1' else 0x24f0+c*0x114)
         raw[base if game=='kh1' else base+15]=20
         if game=='kh1':
+            raw[base+1:base+5]=bytes((50,50,5,5))
             raw[base+5]=20
             raw[base+0x42]=0  # A recognized synthetic AP budget, not unknown live data.
     if game=='kh2':

@@ -1,5 +1,24 @@
 # References and attribution
 
+## v0.51 additional native-file checks
+
+KH1 HP/MP calculations use factual accessory HP/MP values and signed weapon MP
+bonuses from [gaithern/KH1-DOCUMENTATION](https://github.com/gaithern/KH1-DOCUMENTATION/tree/4109d2d08c0b08ecd25c6a5805c869f44316dd12),
+`data/btltbl/accessory-stats.csv` and `weapon-stats.csv`. All mapped values were
+independently checked against the original local PC battle table; the newer
+weapon documentation corrects differences in the previously inspected older
+randomizer table. No original table or documentation database is distributed.
+39 public records support 351 HP and 117 MP configurations and preserving edits.
+These are file-level observations, not runtime-effects or gameplay certification.
+
+The Max Payne investigation additionally used Endurance's [Full Game & Individual
+Level Saves](https://www.speedrun.com/max_payne_1/resources/p78jl), supplied by the
+user after the site required a human download check. 42 public PC files exposed
+noncanonical flags/nonfinite scalars in unrelated world state. They are preserved
+without exposing guessed attributes. Known editable ownership is still validated
+in context. 565 inventory edits reparse and restore exactly. No sample, screenshot,
+caption, game binary or extracted asset is bundled or installed as a live save.
+
 ## v0.50 KH1 AP calculations
 
 Numeric AP costs, accessory bonuses and PC table positions were independently

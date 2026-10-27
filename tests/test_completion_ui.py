@@ -5,13 +5,14 @@ from pathlib import Path
 import tempfile,unittest
 from unittest.mock import patch
 from PySide6.QtCore import QSettings
-from PySide6.QtWidgets import QApplication,QComboBox
+from PySide6.QtWidgets import QApplication,QComboBox,QDialog,QTextEdit
 from app import Window
 from core import Save
 from test_re_engine import ACCOUNT
 from test_requiem import fixture as requiem
 from test_elden_talismans import fixture as elden
 from test_kh1_ap import fixture as kh1_ap
+from test_kh1_vitals import fixture as kh1_vitals
 
 
 class CompletionUiTests(unittest.TestCase):
@@ -34,6 +35,10 @@ class CompletionUiTests(unittest.TestCase):
         control.setCurrentIndex(3)
         self.assertEqual(self.w.validated_changes(),{(0,field.key):3});self.assertTrue(self.w.review_button.isEnabled())
         self.assertEqual(path.read_bytes(),raw)
+        self.w.edits={};self.w.open_preview('re9')
+        field=next(f for f in self.w.save.slots[0].fields if f.group=='Difficulty')
+        self.w.inputs[0,field.key].setCurrentIndex(2)
+        self.assertEqual(self.w.edits,{});self.assertFalse(self.w.review_button.isEnabled())
 
     def test_kh1_budget_and_combined_changes_survive_character_navigation(self):
         raw,*_=kh1_ap();path=self.root/'KHFM_WW.png';path.write_bytes(raw);self.w.load('kh1',path)
@@ -45,10 +50,18 @@ class CompletionUiTests(unittest.TestCase):
         parsed=Save(output,'kh1');fields={f.key:f for f in parsed.slots[0].fields}
         self.assertEqual((fields['0:ap_used'].value,fields['0:ap_capacity'].value),(5,5))
         self.assertTrue(self.w.review_button.isEnabled());self.assertEqual(path.read_bytes(),raw)
-        self.w.edits={};self.w.open_preview('re9')
-        field=next(f for f in self.w.save.slots[0].fields if f.group=='Difficulty')
-        self.w.inputs[0,field.key].setCurrentIndex(2)
-        self.assertEqual(self.w.edits,{});self.assertFalse(self.w.review_button.isEnabled())
+
+    def test_kh1_vitals_review_explains_automatic_clamp_before_writing(self):
+        raw,*_=kh1_vitals();path=self.root/'KHFM_WW.png';path.write_bytes(raw);self.w.load('kh1',path)
+        self.w.go_to_change((0,'0:hp'));self.w.inputs[0,'0:hp'].setText('40')
+        reviewed=[]
+        def dismiss(dialog):
+            reviewed.append(dialog.findChild(QTextEdit).toPlainText())
+            return QDialog.DialogCode.Rejected
+        with patch('app.QDialog.exec',dismiss):self.w.review()
+        self.assertEqual(len(reviewed),1)
+        self.assertIn('Automatic related changes',reviewed[0]);self.assertIn('54 → 46',reviewed[0])
+        self.assertEqual(path.read_bytes(),raw)
 
     def test_talisman_selection_is_in_equipment_and_survives_category_and_mode_changes(self):
         raw=elden();path=self.root/'ER0000.sl2';path.write_bytes(raw);self.w.load('eldenring',path)

@@ -5,7 +5,8 @@ The Steam account, timestamp, story progress and unrelated regions are retained.
 GFWL, console and differently sized variants are rejected.
 
 The independent adapter exposes money, exchange points, Chris and Sheva costume
-flags, screen filters, 19 infinite-ammunition flags and 12 library-file flags.
+flags, screen filters, 19 infinite-ammunition flags, 12 library-file flags and
+45 named figure flags.
 An infinite-ammunition flag does not create or upgrade its weapon. DLC ownership
 is still required for DLC content. Navigation is Progress / Unlocks / Collection.
 
@@ -29,4 +30,4 @@ and reparsed after in-memory currency and flag edits. The fixture is not bundled
 
 Synthetic tests cover checksum boundaries, reserved bits, identity, rejected
 variants, limits and explicit integrity repair. Edited saves have not been loaded
-in-game. Inventory ownership, upgrades, figures and chapter editing are pending.
+in-game. Inventory ownership, upgrades and chapter editing are pending.

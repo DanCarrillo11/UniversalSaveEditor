@@ -1,32 +1,28 @@
-# v0.50.0-alpha — KH1 ability AP budgets
+# v0.51.0-alpha — KH1 equipment-aware HP/MP and Max Payne compatibility
 
-- See equipped and available AP in the Abilities section for recognized KH1
-  Final Mix characters. Base AP and equipped accessory bonuses contribute to
-  availability; each equipped duplicate has its own cost.
-- Check ability, base-AP and accessory changes together. If a change would
-  increase a known AP deficit, the editor explains how to resolve it before
-  saving. Increase base AP, choose another accessory or unequip an ability in
-  the same change.
-- Preserve unknown active costs, unidentified accessories, unusual capacities,
-  world/story records and stock. Character-specific behavior and modified game
-  tables are not inferred. The two later unmapped ability IDs do not receive
-  invented AP costs.
-- Browse the AP controls without opening a save. Portable build checks regenerate
-  synthetic examples before testing, including when fixtures or the build itself
-  change.
-- Wider ability selectors keep common names and their equipped state readable.
+- KH1 shows recognized maximum HP/MP including equipment bonuses. Base, current,
+  accessory and weapon edits are checked together. Reducing a known maximum
+  clamps a previously valid current value; an explicit conflicting value is
+  rejected. Increases do not heal or refill, and unknown effects are preserved.
+- Fix Max Payne rejecting entire saves because untouched world data contains
+  noncanonical flag bytes or nonfinite scalars. Preserve those bytes while
+  checking recognized weapon ownership and retaining structural bounds.
+  All 42 additional public reference saves now open; 11 previously failed.
+- Show related KH1 current-value changes in the review before saving. Updated
+  read-only examples use valid synthetic attributes and include the new maxima.
 
-59 documented ability costs and 64 accessory AP rows match the original PC
-battle table; 54 named supported accessories are used. File-level checks cover
-39 public reference records, 345 base-AP changes and 66 enables of existing
-owned abilities. Unrelated bytes are preserved and original references stay
-unchanged. These checks do not establish game loading or full catalogue support.
+File-level checks: KH1 has 39 public records, 351 HP changes and 117 MP changes,
+including 350 HP and 108 MP automatic clamps. Unrelated bytes are preserved and
+non-CRC bytes restore exactly. Max Payne: 565 inventory edits across 42 reference
+files, exact restoration, original screenshots and world state retained. Original
+reference files stay unchanged. These checks do not prove successful game loading.
 
-543 automated tests pass, including combined AP changes, native preservation,
-search/category navigation and preview-only behavior.
+Max Payne health, Bullet Time and loaded rounds remain unmapped. Complete growth,
+story/reward dependencies and other catalogue limits are still documented; no
+full-support certification is claimed.
 
-Retains v0.49's Requiem difficulty controls and Elden Ring talisman acquisition
-and loadouts, plus all other existing editors and their documented limits.
+540 automated application tests pass, including preservation of unknown world
+encodings, coupled attributes/equipment and the review of automatic HP changes.
 
 Download UniversalSaveEditor.exe or the Windows ZIP under Assets. Changes apply
-to the opened save in place without an automatic backup or renamed edited copy.
+to the opened save in place, without an automatic backup or renamed edited copy.

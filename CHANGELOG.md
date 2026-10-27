@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.51.0-alpha
+
+- Show recognized KH1 effective maximum HP and MP, including accessory bonuses
+  and signed weapon MP bonuses. Check base/current/equipment edits as one
+  transaction; decreasing a known maximum clamps a previously valid current
+  value, while explicit conflicting values are rejected. Increases do not heal.
+  Unknown equipment, runtime effects and modified tables are not inferred.
+- Fix Max Payne rejecting entire saves for noncanonical flags or nonfinite
+  scalars in unrelated world records. Preserve those original bytes while
+  retaining strict validation of editable weapon ownership and structural bounds.
+  All 42 new public reference saves open; 11 previously failed.
+- Verify 351 HP and 117 MP changes across 39 KH1 reference records, including
+  458 automatic current-value clamps and exact non-CRC restoration. Max Payne:
+  565 inventory edits across 42 references, with exact restoration and original
+  screenshots/world data retained. These are file-level checks, not game loading.
+
 ## v0.50.0-alpha
 
 - Show calculated equipped/available AP for recognized KH1 Final Mix characters.

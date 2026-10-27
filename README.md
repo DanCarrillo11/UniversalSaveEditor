@@ -4,10 +4,11 @@ A portable Windows app for editing saves from multiple PC games in one place.
 Open a game, find what you want to change, review your edits and save.
 No installation, Python setup, account or save uploads are required.
 
-v0.50 adds recognized KH1 equipped/available AP calculations and checks combined
-ability, base-AP and accessory changes. Standard accessory bonuses and duplicate
-equipped abilities count toward the budget. Unknown costs remain protected from
-inference. Requiem difficulty and Elden Ring talisman additions from v0.49 are
+v0.51 adds recognized KH1 maximum HP/MP with equipment and checks combined
+attribute/equipment changes. Reducing a known maximum updates current values
+when needed, with automatic changes shown before saving. Max Payne now opens
+42 additional reference saves while preserving unknown world values that
+previously caused rejection. Prior AP, Requiem and Elden Ring improvements are
 retained. Current coverage and remaining work are documented separately; these
 changes do not establish full game support.
 

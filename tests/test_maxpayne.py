@@ -110,10 +110,26 @@ class MaxPayneReaderTests(unittest.TestCase):
             with self.assertRaises(MaxPayneFormatError):
                 MaxPayneArchive(raw)
 
-    def test_invalid_boolean_and_nonfinite_scalar_are_rejected(self):
+    def test_unknown_boolean_encodings_and_nonfinite_scalars_are_preserved(self):
         for payload in (b'\x0e\x02', b'\x09' + struct.pack('<f', float('nan'))):
-            with self.assertRaises(MaxPayneFormatError):
-                MaxPayneArchive(fixture(payload=payload))
+            raw=fixture(payload=payload)
+            self.assertEqual(MaxPayneArchive(raw).raw,raw)
+
+    def test_noncanonical_editable_ownership_stays_rejected(self):
+        raw=bytearray(inventory_fixture());save=Save(raw,'maxpayne')
+        raw[save.maxpayne.nodes['weapon:5'].offset+1]=2
+        with self.assertRaises(ValueError):Save(raw,'maxpayne')
+
+    def test_inventory_edits_preserve_unknown_world_encodings_exactly(self):
+        original=inventory_fixture();old=MaxPayneArchive(original)
+        suffix=chunk(0,1,b'\x0e\xff\x09'+bytes.fromhex('4523a17f')+b'\x0a'+struct.pack('<d',float('inf')))
+        world=old.roots[0]
+        raw=original[:world.offset]+chunk(16,13,original[world.offset+13:world.end]+suffix)+original[world.end:]
+        save=Save(raw,'maxpayne')
+        self.assertEqual(save.patched({}),raw)
+        out=save.patched({(0,'weapon:5'):1,(0,'ammo:3'):150})
+        self.assertEqual(out.count(suffix),1)
+        check=Save(out,'maxpayne');self.assertEqual(check.maxpayne.raw[check.maxpayne.roots[0].end-len(suffix):check.maxpayne.roots[0].end],suffix)
 
     def test_child_cannot_escape_parent_bounds(self):
         bad = b'\x0c' + struct.pack('<III', 0, 1, 100)

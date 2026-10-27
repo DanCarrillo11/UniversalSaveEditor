@@ -9,6 +9,7 @@ from kh_party_tables import KH1_ABILITIES, KH2_ABILITIES, KH2_EQUIPMENT
 from kh2_relationships import Kh2Relationships
 from kh1_progression import Kh1Progression
 from kh1_ap import Kh1Ap
+from kh1_vitals import Kh1Vitals
 
 KH1_CHARACTERS=('Sora','Donald','Goofy','Tarzan','Pooh','Aladdin','Ariel','Jack Skellington','Peter Pan','Beast')
 KH2_CHARACTERS=('Sora','Donald','Goofy','Mickey','Auron','Mulan','Aladdin','Jack Sparrow','Beast','Jack Skellington','Simba','Tron','Riku')
@@ -23,6 +24,7 @@ class PartyEditor:
         self.kh2=Kh2Relationships(raw,field_type,KH2_CHARACTERS) if game=='kh2' else None
         self.kh1=Kh1Progression(raw,field_type) if game=='kh1' else None
         self.kh1_ap=Kh1Ap(raw,field_type,KH1_CHARACTERS) if game=='kh1' else None
+        self.kh1_vitals=Kh1Vitals(raw,field_type,KH1_CHARACTERS) if game=='kh1' else None
 
     def shared(self,fields,slot,record):
         if self.game!='kh1':return
@@ -131,6 +133,7 @@ class PartyEditor:
                     'Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.')
             self.abilities(fields,slot,prefix,name,base+0x40,48,'<B',KH1_ABILITIES,0x80)
             self.kh1_ap.character(fields,slot,character,base)
+            self.kh1_vitals.character(fields,slot,character,base)
             if character==0:
                 self.kh1.magic(fields,slot,record)
                 return
@@ -171,6 +174,7 @@ class PartyEditor:
             struct.pack_into(fmt,result,offset,values[value])
         if self.kh1:result=self.kh1.finish(result,changes)
         if self.kh1_ap:result=self.kh1_ap.finish(result,changes)
+        if self.kh1_vitals:result=self.kh1_vitals.finish(result,changes)
         for (slot,key),(availability,offset) in self.shortcuts.items():
             command=result[offset]
             if command==255:continue
