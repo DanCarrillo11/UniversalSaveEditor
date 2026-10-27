@@ -170,6 +170,12 @@ progression events, installed content or platform achievements.
 
 ## All-game implementation gates
 
+The generated [completion plan](COMPLETION_PLAN.md) is the current concise
+checklist for all 23 editors. The table below retains earlier research context;
+v0.49 adds guarded Requiem gameplay difficulty and owned Elden Ring talisman
+loadouts with exact accessory groups. The old unresolved items do not imply
+that existing acquisitions, ammunition/tool loadouts or wardrobe tools are absent.
+
 | Game | Principal remaining gate |
 | --- | --- |
 | GTA V | Enhanced-specific native-file verification and in-game loading; character availability, weapons/ammunition, vehicles/garages, properties, cosmetics, missions and rewards. Current scope includes player/world/garage fields plus guarded base-slot weapon acquisition, shared ammo, mapped components/colors and shop flags; not online or character creation. |

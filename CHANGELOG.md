@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.49.0-alpha
+
+- Add four named Requiem gameplay difficulties in verified lazy-ID records.
+  Preserve the cache sentinel, adaptive rank, clear history and reward state.
+  Seven native files pass all four identities and exact restoration.
+- Equip/clear four Elden Ring talisman slots using inventory-backed mapped held
+  items. Check unlocked capacity, four native references and exact accessory
+  groups across 155 named identities. Support atomic swaps and preserve known
+  compatible stacking. Four native files pass 98 assignments across 28 characters.
+- Acquire one missing copy of 116 mapped base-game talismans, checking existing
+  held/storage ownership, clean capacity, registration and acquisition counters.
+  Four native files pass 871 acquisitions; original records remain unchanged.
+  Legitimate duplicate held/storage copies retain their referenced held row.
+- Regenerate read-only examples for the new controls. Preserve original files,
+  inventory ownership and unrelated data; game loading remains unverified.
+- Generate coverage and remaining-gate documentation from runtime evidence and
+  a complete 23-game matrix, with tests that prevent stale contradictory claims.
+  Existing KH1 progression and Elden Ring tool/Physick support are documented.
+- This expands bounded editing; no game is declared full support.
+
 ## v0.48.0-alpha
 
 - Review every staged change with search and bounded pages instead of hiding

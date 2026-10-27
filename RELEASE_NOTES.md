@@ -1,23 +1,25 @@
-# v0.48.0-alpha — A smoother path from library to saved changes
+# v0.49.0-alpha — Requiem difficulty and Elden Ring talismans
 
-- Everyday tools stay front and center, with records and less common settings
-  available through Advanced options. Search long item/equipment choices by name.
-- Find a section by name in long lists; long titles wrap. Clear filters brings
-  back normal browsing after a search or Changed only view.
-- Search and page through all pending changes. Every edit has Go to field and
-  Undo actions, including changes beyond the first 80. Invalid values remain
-  visible and block saving even if the review list is filtered.
-- Resume the last-used detected save and slot by clicking its game cover.
-  File choices include dates and full-path tooltips; opening a save from an
-  editor keeps the selected game's format.
-- Find games with title words in any order. The README now starts with simple
-  download/edit instructions and a clear compatibility summary.
+- Change Requiem's recognized saved gameplay difficulty: Casual, Standard
+  (Modern), Standard (Classic) or Insanity. The verified lazy-cache form is
+  required; unknown/duplicate/backup variants remain protected. Adaptive rank,
+  clear records and reward unlocks are preserved.
+- Equip or clear four Elden Ring talisman slots using already-owned mapped
+  held accessories. Unlocked capacity, four native references, fingerprints and
+  exact exclusive accessory groups are checked. Atomic swaps are supported;
+  compatible talismans such as Graven-School and Graven-Mass can coexist.
+- Acquire one missing copy of 116 mapped base-game talismans. Existing copies
+  in inventory/storage, full capacity, unknown layouts and overflowing counters
+  are protected. No talisman is equipped automatically and DLC acquisition is excluded.
+- Browse both controls in read-only examples. Correct stale coverage claims
+  and keep all 23 editors' remaining functional gates in a tested shared matrix.
 
-This completes the current usability pass. It does not establish full game
-support or add in-game validation. Unsupported formats remain protected.
-Previews remain read-only. Review and save still lists recognized automatic
-related changes before Apply to active save writes the original file in place,
-without an automatic backup or renamed edited copy.
+536 automated tests pass. Requiem: seven native files, all four modes and exact
+restoration. Elden Ring: four native files, 28 characters, 98 assignments and
+exact restoration, plus 871 missing-talisman acquisitions with existing records
+preserved. Original reference files stayed unchanged. These are
+file-level checks; game loading, derived gameplay effects and complete catalogue
+support remain pending. Other current game editors and their limits are retained.
 
-Download `UniversalSaveEditor.exe` or the Windows ZIP under **Assets**. You can
-also update from an earlier version with **Updates > Restart and update**.
+Download UniversalSaveEditor.exe or the Windows ZIP under Assets. Changes apply
+to the opened save in place without an automatic backup or renamed edited copy.

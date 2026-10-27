@@ -15,6 +15,7 @@ from village_context import VillageContext
 from item_art import item_art
 from requiem_context import RequiemContext
 from requiem_equipment import RequiemEquipment
+from requiem_difficulty import RequiemDifficulty
 from remake_context import RemakeContext
 from remake_inventory_capacity import RemakeInventoryCapacity
 from re_engine_extensions import EXTRA_SPECS,DIFFICULTIES,EngineExtensions
@@ -88,6 +89,7 @@ class ReEngineSave:
         village=VillageContext(nodes,self.data) if game=='re8' else None
         self.requiem=RequiemContext(nodes,self.data) if game=='re9' else None
         self.requiem_equipment=RequiemEquipment(self.requiem,field_type) if self.requiem else None
+        self.requiem_difficulty=RequiemDifficulty(self.requiem,field_type) if self.requiem else None
         self.remake=RemakeContext(nodes,self.data,field_type) if game=='re4_remake' else None
         self.inventory_capacity=RemakeInventoryCapacity(nodes,self.data,game,field_type) if game in ('re2','re3') else None
         wanted={(owner,murmur32(name.encode())):(label,group,fmt,maximum)
@@ -122,6 +124,7 @@ class ReEngineSave:
         if self.remake:extra.extend(self.remake.fields)
         if self.inventory_capacity:extra.extend(self.inventory_capacity.fields)
         if self.requiem_equipment:extra.extend(self.requiem_equipment.fields)
+        if self.requiem_difficulty:extra.extend(self.requiem_difficulty.fields)
         if not selected and not extra:
             raise ValueError('This file has no supported editable fields. Open a gameplay slot for health or inventory, or the system profile for currency and unlocks.')
         if len(selected)+len(extra)>5000:raise ValueError('Too many editable fields in this RE Engine variant.')
@@ -180,12 +183,14 @@ class ReEngineSave:
         result=bytearray(self.data)
         for key,value in changes.items():
             if self.requiem_equipment and key in self.requiem_equipment.operations:continue
+            if self.requiem_difficulty and key in self.requiem_difficulty.operations:continue
             if self.inventory_capacity and key in self.inventory_capacity.operations:continue
             if key not in self.operations:raise ValueError('Unauthorized RE Engine field.')
             offset,fmt=self.operations[key]
             struct.pack_into(fmt,result,offset,value)
         if self.requiem:self.requiem.apply_health_levels(result,changes)
         if self.requiem_equipment:self.requiem_equipment.patch(result,changes)
+        if self.requiem_difficulty:self.requiem_difficulty.patch(result,changes)
         if self.remake:self.remake.patch(result,changes)
         if self.inventory_capacity:self.inventory_capacity.patch(result,changes)
         return self.envelope.patch(bytes(result[self.envelope.offset:]))

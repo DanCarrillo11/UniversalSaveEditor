@@ -71,11 +71,13 @@ def inventory(ambiguous=False,parts=False,bad_reference=False,equipment=False):
     return INVENTORY,fields
 
 
-def fixture(ambiguous=False,mismatch=False,parts=False,bad_reference=False,equipment=False):
+def fixture(ambiguous=False,mismatch=False,parts=False,bad_reference=False,equipment=False,difficulty=False):
     w=Writer();w.data.extend(stream('re9'))
     w.root(CHARACTERS,[('_CharacterSaves',-1,[character(False),character(mismatch=mismatch)])])
     w.root(MANAGER,[('_InventoryData',-1,[inventory(ambiguous,parts,bad_reference,equipment)]),('_BackupInventoryData',-1,[inventory(parts=True)])])
     w.root(*panel(0x77889900,99)) # misleading scene stock is not player inventory
+    if difficulty:
+        w.root(0xda736ae5,[('DifficultyIDValue',7,('<i',-1)),('DifficultyIDNameHash',8,('<I',3326958550))])
     return wrap(bytes(w.data[16:]),'re9')
 
 

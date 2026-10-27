@@ -9,4 +9,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements.txt
+      - name: Regenerate offline editor examples
+        run: python tools/build_editor_previews.py
       - run: python -m unittest discover -s tests -v

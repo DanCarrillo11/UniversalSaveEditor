@@ -749,6 +749,10 @@ class Save:
                 actual=expected if self.elden_ring.equipment_loadouts[index].verifies(check.elden_ring.equipment_loadouts[index],key,value) else None
             if self.game=='eldenring' and key.startswith(('quick_slot:','physick_slot:')):
                 actual=expected if self.elden_ring.tool_loadouts[index].verifies(check.elden_ring.tool_loadouts[index],key,value) else None
+            if self.game=='eldenring' and key.startswith('talisman_slot:'):
+                actual=expected if self.elden_ring.talisman_loadouts[index].verifies(check.elden_ring.talisman_loadouts[index],key,value) else None
+            if self.game=='eldenring' and key.startswith('add_talisman:'):
+                actual=expected if self.elden_ring.talisman_loadouts[index].verifies_addition(check.elden_ring.talisman_loadouts[index],key,value) else None
             if actual is None and self.game=='re1_hd' and key.endswith(':identity') and value==0:
                 identifier,quantity=struct.unpack_from('<2I',check.re_hd.plain,field.offset)
                 if (identifier,quantity)==(0,0):actual=0

@@ -1,5 +1,22 @@
 # Requiem player, inventory and attached upgrades
 
+## Saved gameplay difficulty (v0.49)
+
+The single current `GameDifficultyManager.GameSavedata` (`da736ae5`) exposes
+Casual, Standard (Modern), Standard (Classic) and Insanity when its original
+`DifficultyIDValue` is the observed lazy-resolution sentinel `-1`. The exact
+four named `DifficultyIDNameHash` identities are checked independently against
+UTF-16 Murmur hashes. Only that hash changes. The cached sentinel, adaptive
+rank, completion/history, rewards and difficulty-unlock flags are preserved.
+
+Multiple objects, nested backup/scenario objects, unknown identities, duplicate
+properties, unsupported scalar types and non-lazy representations do not offer
+a writer. Missing records are not synthesized. Seven native gameplay files
+passed each mode, exact payload-span checks, authenticated reparsing and
+byte-identical restoration. Originals stayed unchanged. This establishes
+file-level behavior; engine loading and difficulty-specific rewards still need
+in-game checks. See the pinned factual references in SOURCES.md.
+
 This adapter targets Steam DSSS/Mandarin files. The envelope, original account,
 length, metadata, padding and trailer are preserved. Gameplay slots and system
 profiles contain different options. Nine native Steam files were checked for

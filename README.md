@@ -4,12 +4,18 @@ A portable Windows app for editing saves from multiple PC games in one place.
 Open a game, find what you want to change, review your edits and save.
 No installation, Python setup, account or save uploads are required.
 
+v0.49 adds named Requiem gameplay difficulty and owned Elden Ring talisman
+loadouts and missing base-game talisman acquisition, with capacity, ownership,
+exclusive-group and native-reference checks. Read-only
+examples include both. Coverage and remaining-gate documentation now share the
+app's current evidence; these changes do not establish full game support.
+
 ## Download and open
 
 Download **UniversalSaveEditor.exe** from
 [the latest release](https://github.com/DanCarrillo11/UniversalSaveEditor/releases/latest)
 and double-click it. If you download the Windows ZIP, extract it first.
-Both portable downloads are provided under the release's **Assets** section.
+Use the Windows ZIP under **Releases > Assets** for the portable application.
 
 ## Edit your first save
 

@@ -164,6 +164,7 @@ def quick_actions(game, fields, preview=False):
 
 
 def boolean_states(game, field):
+    if field.key.startswith('add_talisman:'):return ('Not acquired','Acquire')
     if field.fmt=='xml-unlock':return ('Locked','Unlocked')
     if game=='maxpayne':return ('Not owned','Owned')
     if field.key.startswith('clothes:'):

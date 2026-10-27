@@ -1,5 +1,30 @@
 # References and attribution
 
+## v0.49 functional continuation
+
+Requiem's four difficulty name/hash relationships use the serialized
+`GameDifficultyManager.GameSavedata` facts and `GameDifficultyID.Hash` in the
+already attributed REE schema, plus the named ID facts in
+[Namsku/re-engine-trainer difficulty module](https://github.com/Namsku/re-engine-trainer/blob/1ffee4852f4f354507ef5e7e1bdb3c0e1c50347e/re9/requiem_trainer/features/difficulty.lua).
+The independent saved-file writer does not copy or execute trainer code. It
+requires the recognized native lazy-cache sentinel and edits only its hash;
+seven native files passed all four modes and byte-identical restoration.
+
+Elden Ring talisman assignments extend the independently implemented native
+equipment layout, cross-checked against the already attributed ER-Save-Lib
+structures and
+[SaveForge equipment writer](https://github.com/oisis/EldenRing-SaveForge/blob/ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5/backend/core/equipment_writer.go).
+155 short names/IDs are factual references from
+[SaveForge talisman names](https://github.com/oisis/EldenRing-SaveForge/blob/ee1042d7a5bd933f91e6f8a0162e0e0237a1c4c5/backend/db/data/talismans.go).
+Exact numeric `accessoryGroup` facts are independently joined by matching name
+from [Eldenplanner's parameter-derived constants](https://github.com/SchmittYannic/Eldenplanner/blob/fc04d548fc0977e4f71280a6c3e37b5699833685/frontend/src/utils/constants.ts).
+This avoids guessing groups from adjacent IDs: Graven-School and Graven-Mass
+have distinct groups and may coexist. Native representations/fingerprints were
+cross-checked on 112 slots, then 98 assignments across 28 characters passed
+exact restoration. The shipped table contains only identity/name/group facts,
+not upstream implementations or a complete parameter dump. DLC group conflicts
+have synthetic coverage; game loading and derived effects remain unverified.
+
 The project is distributed under GPL-3.0-or-later. It uses Python, PySide6 and cryptography. Personal save files are not included. Cover images are included as identification resources; their rights remain with their respective owners and are not covered by the source-code license.
 
 - [Godot 3.5 binary serialization API](https://docs.godotengine.org/en/3.5/tutorials/io/binary_serialization_api.html): Variant types, sizes, and flags.
@@ -721,3 +746,10 @@ bundled. Existing parser-dump and CodeWalker references corroborate PSO schema,
 padded cells, embedded members and component-map structure facts. Active/native
 and per-character script copies must agree before a current garment is writable.
 These structural checks do not establish in-game or Enhanced-native validation.
+
+Native occupied-vehicle values also corroborate that saved performance indexes
+address the matching kit StatMods array, rather than the per-type UI Index.
+For example, brake positions 4–6 follow engine positions 0–3 in the referenced
+classic kits. The writer maps stage choices to those native positions and rejects
+a position belonging to another mod type. This corrects the earlier direct
+UI-index assumption. No game-load validation is inferred from this agreement.

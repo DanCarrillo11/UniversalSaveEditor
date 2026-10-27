@@ -98,7 +98,8 @@ def elden_example():
     from test_elden_equipment_creation import ready as physical
     from test_elden_loadouts import fixture as equipment
     from test_elden_tools import fixture as tools
-    return tools(source=equipment(source=physical(source=ready(source=elden_appearance()[0])[0])))
+    from test_elden_talismans import fixture as talismans
+    return talismans(source=tools(source=equipment(source=physical(source=ready(source=elden_appearance()[0])[0]))))
 
 def kh3_example():
     import zlib
@@ -130,7 +131,7 @@ def generate():
         'kh2':lambda:populated_kh('kh2'),'recom':lambda:kh_extra('recom'),'bbs':lambda:kh_extra('bbs'),
         'ddd':lambda:kh_extra('ddd'),'kh3':kh3_example,'eldenring':elden_example,
         'maxpayne':inventory_fixture,'re1_hd':hd,'re4_2005':re4_ready,'re4_remake':re4_remake_example,
-        're5':re5,'re6':re6,'re8':village,'re9':lambda:requiem(parts=True,equipment=True),
+        're5':re5,'re6':re6,'re8':village,'re9':lambda:requiem(parts=True,equipment=True,difficulty=True),
         're2':lambda:remake_capacity('re2'),'re3':lambda:remake_capacity('re3')}
     for game in GAMES:
         samples=[('Example save',factories[game.id]())] if game.id in factories else [('Gameplay and profile fields · example',wrap(stream(game.id),game.id))]
