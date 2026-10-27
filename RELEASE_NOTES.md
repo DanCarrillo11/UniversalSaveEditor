@@ -1,25 +1,32 @@
-# v0.49.0-alpha — Requiem difficulty and Elden Ring talismans
+# v0.50.0-alpha — KH1 ability AP budgets
 
-- Change Requiem's recognized saved gameplay difficulty: Casual, Standard
-  (Modern), Standard (Classic) or Insanity. The verified lazy-cache form is
-  required; unknown/duplicate/backup variants remain protected. Adaptive rank,
-  clear records and reward unlocks are preserved.
-- Equip or clear four Elden Ring talisman slots using already-owned mapped
-  held accessories. Unlocked capacity, four native references, fingerprints and
-  exact exclusive accessory groups are checked. Atomic swaps are supported;
-  compatible talismans such as Graven-School and Graven-Mass can coexist.
-- Acquire one missing copy of 116 mapped base-game talismans. Existing copies
-  in inventory/storage, full capacity, unknown layouts and overflowing counters
-  are protected. No talisman is equipped automatically and DLC acquisition is excluded.
-- Browse both controls in read-only examples. Correct stale coverage claims
-  and keep all 23 editors' remaining functional gates in a tested shared matrix.
+- See equipped and available AP in the Abilities section for recognized KH1
+  Final Mix characters. Base AP and equipped accessory bonuses contribute to
+  availability; each equipped duplicate has its own cost.
+- Check ability, base-AP and accessory changes together. If a change would
+  increase a known AP deficit, the editor explains how to resolve it before
+  saving. Increase base AP, choose another accessory or unequip an ability in
+  the same change.
+- Preserve unknown active costs, unidentified accessories, unusual capacities,
+  world/story records and stock. Character-specific behavior and modified game
+  tables are not inferred. The two later unmapped ability IDs do not receive
+  invented AP costs.
+- Browse the AP controls without opening a save. Portable build checks regenerate
+  synthetic examples before testing, including when fixtures or the build itself
+  change.
+- Wider ability selectors keep common names and their equipped state readable.
 
-536 automated tests pass. Requiem: seven native files, all four modes and exact
-restoration. Elden Ring: four native files, 28 characters, 98 assignments and
-exact restoration, plus 871 missing-talisman acquisitions with existing records
-preserved. Original reference files stayed unchanged. These are
-file-level checks; game loading, derived gameplay effects and complete catalogue
-support remain pending. Other current game editors and their limits are retained.
+59 documented ability costs and 64 accessory AP rows match the original PC
+battle table; 54 named supported accessories are used. File-level checks cover
+39 public reference records, 345 base-AP changes and 66 enables of existing
+owned abilities. Unrelated bytes are preserved and original references stay
+unchanged. These checks do not establish game loading or full catalogue support.
+
+543 automated tests pass, including combined AP changes, native preservation,
+search/category navigation and preview-only behavior.
+
+Retains v0.49's Requiem difficulty controls and Elden Ring talisman acquisition
+and loadouts, plus all other existing editors and their documented limits.
 
 Download UniversalSaveEditor.exe or the Windows ZIP under Assets. Changes apply
 to the opened save in place without an automatic backup or renamed edited copy.

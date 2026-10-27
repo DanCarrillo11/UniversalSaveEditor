@@ -4,11 +4,12 @@ A portable Windows app for editing saves from multiple PC games in one place.
 Open a game, find what you want to change, review your edits and save.
 No installation, Python setup, account or save uploads are required.
 
-v0.49 adds named Requiem gameplay difficulty and owned Elden Ring talisman
-loadouts and missing base-game talisman acquisition, with capacity, ownership,
-exclusive-group and native-reference checks. Read-only
-examples include both. Coverage and remaining-gate documentation now share the
-app's current evidence; these changes do not establish full game support.
+v0.50 adds recognized KH1 equipped/available AP calculations and checks combined
+ability, base-AP and accessory changes. Standard accessory bonuses and duplicate
+equipped abilities count toward the budget. Unknown costs remain protected from
+inference. Requiem difficulty and Elden Ring talisman additions from v0.49 are
+retained. Current coverage and remaining work are documented separately; these
+changes do not establish full game support.
 
 ## Download and open
 

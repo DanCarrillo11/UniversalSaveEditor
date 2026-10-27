@@ -8,6 +8,7 @@ from kh_items import ITEMS
 from kh_party_tables import KH1_ABILITIES, KH2_ABILITIES, KH2_EQUIPMENT
 from kh2_relationships import Kh2Relationships
 from kh1_progression import Kh1Progression
+from kh1_ap import Kh1Ap
 
 KH1_CHARACTERS=('Sora','Donald','Goofy','Tarzan','Pooh','Aladdin','Ariel','Jack Skellington','Peter Pan','Beast')
 KH2_CHARACTERS=('Sora','Donald','Goofy','Mickey','Auron','Mulan','Aladdin','Jack Sparrow','Beast','Jack Skellington','Simba','Tron','Riku')
@@ -21,6 +22,7 @@ class PartyEditor:
         self.shortcuts={}
         self.kh2=Kh2Relationships(raw,field_type,KH2_CHARACTERS) if game=='kh2' else None
         self.kh1=Kh1Progression(raw,field_type) if game=='kh1' else None
+        self.kh1_ap=Kh1Ap(raw,field_type,KH1_CHARACTERS) if game=='kh1' else None
 
     def shared(self,fields,slot,record):
         if self.game!='kh1':return
@@ -98,7 +100,7 @@ class PartyEditor:
                 if original:options[original]='Empty (saved flag)'
             self.choice(fields,slot,f'{prefix}:ability:{index}',f'{label} · Ability entry {index+1}',offset,fmt,options,'Abilities',
                 ('Choose a known ability and its equipped state. Standard AP budgets are checked for recognized character data; duplicate entries and unknown data are preserved. Apply to expose the next empty entry.'
-                 if self.game=='kh2' else 'Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.'))
+                 if self.game=='kh2' else 'Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.'))
 
     def character(self,fields,slot,record,character):
         kh1=self.game=='kh1';names=KH1_CHARACTERS if kh1 else KH2_CHARACTERS
@@ -128,6 +130,7 @@ class PartyEditor:
                 for index in range(count):self.choice(fields,slot,f'{prefix}:{title.lower()}:{index}',f'{name} · {title} {index+1}',base+array_offset+index,'<B',options,'Equipment',
                     'Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.')
             self.abilities(fields,slot,prefix,name,base+0x40,48,'<B',KH1_ABILITIES,0x80)
+            self.kh1_ap.character(fields,slot,character,base)
             if character==0:
                 self.kh1.magic(fields,slot,record)
                 return
@@ -167,6 +170,7 @@ class PartyEditor:
             offset,fmt,values=self.encodings[key]
             struct.pack_into(fmt,result,offset,values[value])
         if self.kh1:result=self.kh1.finish(result,changes)
+        if self.kh1_ap:result=self.kh1_ap.finish(result,changes)
         for (slot,key),(availability,offset) in self.shortcuts.items():
             command=result[offset]
             if command==255:continue

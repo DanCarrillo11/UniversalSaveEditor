@@ -11,6 +11,7 @@ from core import Save
 from test_re_engine import ACCOUNT
 from test_requiem import fixture as requiem
 from test_elden_talismans import fixture as elden
+from test_kh1_ap import fixture as kh1_ap
 
 
 class CompletionUiTests(unittest.TestCase):
@@ -33,6 +34,17 @@ class CompletionUiTests(unittest.TestCase):
         control.setCurrentIndex(3)
         self.assertEqual(self.w.validated_changes(),{(0,field.key):3});self.assertTrue(self.w.review_button.isEnabled())
         self.assertEqual(path.read_bytes(),raw)
+
+    def test_kh1_budget_and_combined_changes_survive_character_navigation(self):
+        raw,*_=kh1_ap();path=self.root/'KHFM_WW.png';path.write_bytes(raw);self.w.load('kh1',path)
+        key=(0,'0:ability:0');self.w.go_to_change(key)
+        control=self.w.inputs[key];control.setCurrentIndex(control.findText('Second Chance · Equipped'))
+        self.w.go_to_change((0,'0:ap'));self.w.inputs[0,'0:ap'].setText('2')
+        self.w.go_to_change((0,'1:ability:0'));self.w.go_to_change(key)
+        changes=self.w.validated_changes();output=self.w.save.patched(changes)
+        parsed=Save(output,'kh1');fields={f.key:f for f in parsed.slots[0].fields}
+        self.assertEqual((fields['0:ap_used'].value,fields['0:ap_capacity'].value),(5,5))
+        self.assertTrue(self.w.review_button.isEnabled());self.assertEqual(path.read_bytes(),raw)
         self.w.edits={};self.w.open_preview('re9')
         field=next(f for f in self.w.save.slots[0].fields if f.group=='Difficulty')
         self.w.inputs[0,field.key].setCurrentIndex(2)

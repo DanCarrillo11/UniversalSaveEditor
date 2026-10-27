@@ -28,8 +28,36 @@ populated public Steam records applied 231 spell-tier changes, 145 new summons,
 record reparsed with valid integrity; the reference file and unrelated bytes,
 including reward flags, remained unchanged.
 
-These are file-level results, not an in-game verification. AP budgets, equipment
+These are file-level results, not an in-game verification. Recognized standard
+AP budgets are now checked as described below. Remaining AP costs, equipment
 relationships, complete growth, story/journal dependencies and reward delivery
 remain incomplete. No full-support certification is claimed.
+
+## Recognized AP budgets (v0.50)
+
+Characters > select a character > Abilities shows equipped and available AP when
+all active costs and equipped accessory identities are recognized. Availability
+is saved base AP plus the standard bonuses of the unlocked accessory entries.
+An equipped duplicate consumes its own AP. KH1's high bit means unequipped;
+empty flagged entries consume none. Pooh and absent/unsupported characters do
+not receive an inferred budget.
+
+Ability, base-AP and accessory changes form one transaction. Increasing the
+known AP deficit is rejected with an explanation; sufficient base AP or another
+accessory can be selected in that same change. Existing inconsistent excess can
+be preserved or reduced. This does not move stock, change learned growth,
+recalculate other stats, or infer character-specific ability compatibility.
+
+59 standard ability costs and 64 accessory AP rows were checked against the
+original installed PC battle table; only the 54 named supported accessories are
+used. Unknown active costs (including the two unmapped later ability IDs),
+unidentified accessories, unsupported slot counts and non-byte derived capacity
+hide the calculation. No budget is guessed for those cases or modified tables.
+Public save inspection found 345 recognized character budgets across 39 records;
+16 require their accessory bonuses to cover equipped costs. None exceeded the
+calculated total. 345 base-AP changes and 66 enables of existing owned abilities
+passed native reparsing, unrelated-byte checks and exact restoration of every
+non-CRC byte. The original reference stayed unchanged. Loading edited saves in
+the game is still unverified.
 
 Format references and pinned revisions are listed in [SOURCES.md](../SOURCES.md).

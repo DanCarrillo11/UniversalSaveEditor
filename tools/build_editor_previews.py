@@ -46,6 +46,9 @@ def populated_kh(game):
     for c,name in enumerate(KH1_CHARACTERS if game=='kh1' else KH2_CHARACTERS):
         base=record+(4+c*0x74 if game=='kh1' else 0x24f0+c*0x114)
         raw[base if game=='kh1' else base+15]=20
+        if game=='kh1':
+            raw[base+5]=20
+            raw[base+0x42]=0  # A recognized synthetic AP budget, not unknown live data.
     if game=='kh2':
         for c,weapon in enumerate((41,75,49)):
             base=record+0x24f0+c*0x114

@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.50.0-alpha
+
+- Show calculated equipped/available AP for recognized KH1 Final Mix characters.
+  Standard ability costs, duplicate enabled entries and equipped accessory bonuses
+  contribute to the budget. AP, ability and accessory edits are checked together.
+  Existing excess can be reduced or retained but cannot increase.
+- Preserve unsupported active costs, unknown accessories and unusual capacities
+  without inventing budgets. Character-specific behavior, growth and stock
+  ownership semantics remain separate unfinished work.
+- Give ability selectors enough width to read common names and equipped states.
+- Verify factual costs/bonuses against the original PC battle table. Public
+  reference saves provide 345 recognized character budgets across 39 records;
+  in-game verification remains pending.
+- Regenerate synthetic editor examples in every portable build, including builds
+  triggered by fixture or workflow changes.
+
 ## v0.49.0-alpha
 
 - Add four named Requiem gameplay difficulties in verified lazy-ID records.

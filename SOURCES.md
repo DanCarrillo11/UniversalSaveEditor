@@ -1,5 +1,20 @@
 # References and attribution
 
+## v0.50 KH1 AP calculations
+
+Numeric AP costs, accessory bonuses and PC table positions were independently
+compared with [gaithern/KH1-DOCUMENTATION](https://github.com/gaithern/KH1-DOCUMENTATION/tree/4109d2d08c0b08ecd25c6a5805c869f44316dd12),
+specifically `data/btltbl/ability-ap-costs.csv` and `accessory-stats.csv`.
+All 59 documented costs and 64 accessory AP rows match the original local PC
+`btltbl.bin`; only named supported accessories are used by the calculation.
+Ability identities and the unequipped high-bit representation use the previously
+attributed Kingdom Save Editor format. The new calculator is independently
+written from these numeric format facts; no source implementation, original
+battle table, reference save, or documentation database is distributed.
+Later ability IDs 64/65 and unknown active costs are not assigned guessed costs.
+Public reference inspection covers 345 recognized character budgets across 39
+records; this is file-level evidence, not gameplay certification.
+
 ## v0.49 functional continuation
 
 Requiem's four difficulty name/hash relationships use the serialized

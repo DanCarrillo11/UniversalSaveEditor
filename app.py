@@ -1043,7 +1043,7 @@ class Window(QMainWindow):
             entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
         elif field.choices:
             entry=SearchableComboBox();entry.addItems(field.choices)
-            entry.setFixedWidth(320 if field.key.startswith('clothes_worn:') else 190)
+            entry.setFixedWidth(320 if field.key.startswith('clothes_worn:') else 280 if field.group=='Abilities' else 190)
             if not self.preview_mode:
                 for index in range(len(field.choices)):
                     entry.model().item(index).setEnabled(field.minimum <= index <= field.maximum)
