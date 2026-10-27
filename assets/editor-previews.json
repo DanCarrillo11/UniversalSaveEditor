@@ -217703,7 +217703,7 @@
           {
             "key": "0:hp_current",
             "label": "Sora \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -217711,7 +217711,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217719,7 +217719,7 @@
           {
             "key": "0:hp",
             "label": "Sora \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -217727,7 +217727,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217735,7 +217735,7 @@
           {
             "key": "0:mp_current",
             "label": "Sora \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -217743,7 +217743,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217751,7 +217751,7 @@
           {
             "key": "0:mp",
             "label": "Sora \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -217759,7 +217759,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217815,7 +217815,7 @@
           {
             "key": "1:hp_current",
             "label": "Donald \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -217823,7 +217823,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217831,7 +217831,7 @@
           {
             "key": "1:hp",
             "label": "Donald \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -217839,7 +217839,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217847,7 +217847,7 @@
           {
             "key": "1:mp_current",
             "label": "Donald \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -217855,7 +217855,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217863,7 +217863,7 @@
           {
             "key": "1:mp",
             "label": "Donald \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -217871,7 +217871,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217927,7 +217927,7 @@
           {
             "key": "2:hp_current",
             "label": "Goofy \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -217935,7 +217935,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217943,7 +217943,7 @@
           {
             "key": "2:hp",
             "label": "Goofy \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -217951,7 +217951,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217959,7 +217959,7 @@
           {
             "key": "2:mp_current",
             "label": "Goofy \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -217967,7 +217967,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -217975,7 +217975,7 @@
           {
             "key": "2:mp",
             "label": "Goofy \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -217983,7 +217983,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -221327,6 +221327,38 @@
             "art_choices": []
           },
           {
+            "key": "0:hp_effective_max",
+            "label": "Sora \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "0:mp_effective_max",
+            "label": "Sora \u00b7 Maximum MP with equipment",
+            "value": 5,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "0:magic:0",
             "label": "Sora \u00b7 Fire",
             "value": 0,
@@ -222286,6 +222318,38 @@
             "art_choices": []
           },
           {
+            "key": "1:hp_effective_max",
+            "label": "Donald \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "1:mp_effective_max",
+            "label": "Donald \u00b7 Maximum MP with equipment",
+            "value": 5,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "1:magic:0",
             "label": "Fire available",
             "value": 0,
@@ -223210,6 +223274,38 @@
             "art_choices": []
           },
           {
+            "key": "2:hp_effective_max",
+            "label": "Goofy \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "2:mp_effective_max",
+            "label": "Goofy \u00b7 Maximum MP with equipment",
+            "value": 5,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "2:magic:0",
             "label": "Fire available",
             "value": 0,
@@ -223356,7 +223452,7 @@
           {
             "key": "3:hp_current",
             "label": "Tarzan \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -223364,7 +223460,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -223372,7 +223468,7 @@
           {
             "key": "3:hp",
             "label": "Tarzan \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -223380,7 +223476,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -223388,7 +223484,7 @@
           {
             "key": "3:mp_current",
             "label": "Tarzan \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -223404,7 +223500,7 @@
           {
             "key": "3:mp",
             "label": "Tarzan \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -224218,6 +224314,22 @@
             "art_choices": []
           },
           {
+            "key": "3:hp_effective_max",
+            "label": "Tarzan \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "3:magic:0",
             "label": "Fire available",
             "value": 0,
@@ -224364,7 +224476,7 @@
           {
             "key": "5:hp_current",
             "label": "Aladdin \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -224372,7 +224484,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -224380,7 +224492,7 @@
           {
             "key": "5:hp",
             "label": "Aladdin \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -224388,7 +224500,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -224396,7 +224508,7 @@
           {
             "key": "5:mp_current",
             "label": "Aladdin \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -224412,7 +224524,7 @@
           {
             "key": "5:mp",
             "label": "Aladdin \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -224674,6 +224786,22 @@
             "art_choices": []
           },
           {
+            "key": "5:hp_effective_max",
+            "label": "Aladdin \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "5:magic:0",
             "label": "Fire available",
             "value": 0,
@@ -224820,7 +224948,7 @@
           {
             "key": "6:hp_current",
             "label": "Ariel \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -224828,7 +224956,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -224836,7 +224964,7 @@
           {
             "key": "6:hp",
             "label": "Ariel \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -224844,7 +224972,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -224852,7 +224980,7 @@
           {
             "key": "6:mp_current",
             "label": "Ariel \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -224868,7 +224996,7 @@
           {
             "key": "6:mp",
             "label": "Ariel \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -225130,6 +225258,22 @@
             "art_choices": []
           },
           {
+            "key": "6:hp_effective_max",
+            "label": "Ariel \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "6:magic:0",
             "label": "Fire available",
             "value": 0,
@@ -225276,7 +225420,7 @@
           {
             "key": "7:hp_current",
             "label": "Jack Skellington \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -225284,7 +225428,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -225292,7 +225436,7 @@
           {
             "key": "7:hp",
             "label": "Jack Skellington \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -225300,7 +225444,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -225308,7 +225452,7 @@
           {
             "key": "7:mp_current",
             "label": "Jack Skellington \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -225324,7 +225468,7 @@
           {
             "key": "7:mp",
             "label": "Jack Skellington \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -225586,6 +225730,22 @@
             "art_choices": []
           },
           {
+            "key": "7:hp_effective_max",
+            "label": "Jack Skellington \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "7:magic:0",
             "label": "Fire available",
             "value": 0,
@@ -225732,7 +225892,7 @@
           {
             "key": "8:hp_current",
             "label": "Peter Pan \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -225740,7 +225900,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -225748,7 +225908,7 @@
           {
             "key": "8:hp",
             "label": "Peter Pan \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -225756,7 +225916,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -225764,7 +225924,7 @@
           {
             "key": "8:mp_current",
             "label": "Peter Pan \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -225780,7 +225940,7 @@
           {
             "key": "8:mp",
             "label": "Peter Pan \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -226042,6 +226202,22 @@
             "art_choices": []
           },
           {
+            "key": "8:hp_effective_max",
+            "label": "Peter Pan \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
             "key": "8:magic:0",
             "label": "Fire available",
             "value": 0,
@@ -226188,7 +226364,7 @@
           {
             "key": "9:hp_current",
             "label": "Beast \u00b7 Current HP",
-            "value": 0,
+            "value": 50,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -226196,7 +226372,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -226204,7 +226380,7 @@
           {
             "key": "9:hp",
             "label": "Beast \u00b7 Base HP",
-            "value": 1,
+            "value": 50,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -226212,7 +226388,7 @@
             "decimal": false,
             "boolean": false,
             "choices": [],
-            "note": "",
+            "note": "Equipment bonuses contribute to the recognized maximum; base, equipment and current values are checked together.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -226220,7 +226396,7 @@
           {
             "key": "9:mp_current",
             "label": "Beast \u00b7 Current MP",
-            "value": 0,
+            "value": 5,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -226236,7 +226412,7 @@
           {
             "key": "9:mp",
             "label": "Beast \u00b7 Base MP",
-            "value": 1,
+            "value": 5,
             "fmt": "<B",
             "minimum": 1,
             "maximum": 255,
@@ -227045,6 +227221,22 @@
             "boolean": false,
             "choices": [],
             "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "9:hp_effective_max",
+            "label": "Beast \u00b7 Maximum HP with equipment",
+            "value": 50,
+            "fmt": "",
+            "minimum": 1,
+            "maximum": 255,
+            "group": "Attributes",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Saved base plus recognized standard equipped bonuses. MP includes signed weapon bonuses. Current values are not increased automatically; reducing a recognized maximum clamps a previously valid current value unless an explicit conflicting value is requested. Runtime effects, modified game tables and unknown identities are not inferred.",
             "collection": "",
             "item_id": null,
             "art_choices": []
