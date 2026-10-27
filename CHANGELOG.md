@@ -1,6 +1,54 @@
 # Changelog
 
+## v0.48.0-alpha
+
+- Review every staged change with search and bounded pages instead of hiding
+  changes after the first 80. Return to or undo any entry; validation remains
+  visible even when its corresponding change is filtered out.
+- Find sections by name in long navigation lists and wrap long section titles.
+  Clear editor search/Changed only filters with one action; hide unused paging.
+- Resume the last-used detected save and slot from a game cover, preserve
+  in-progress edits, and show file dates and full-path tooltips in file selection.
+- Keep Open save within the selected game's editor. Match library search words
+  in any order. Simplify the README around downloading, editing and actual scope.
+- Preserve original field validation, direct saving, preview read-only behavior
+  and game-format boundaries. This is a usability update, not expanded support.
+
+## v0.47.0-alpha
+
+- Search long option lists by name. Selecting an option preserves its original
+  native index and disabled-state rules; cancelling leaves the value unchanged.
+- Match editor search terms in any order, normalize accents/punctuation and
+  recognize common currency, health, XP, ammunition and difficulty terms.
+- Add Fix first issue and Go to field links to reach invalid/pending values
+  across slots, pages, hidden Advanced views and filtered sections.
+- Clarify purchase, availability, seen and carried-weapon states. Use an
+  informational banner for previews and clearer View changes / Review and save
+  buttons. No save is written by navigation, search, selection or previews.
+
+
+## v0.46.0-alpha
+
+- Show everyday tools first in every editor; move saved records and less common
+  settings to an opt-in Advanced tab without discarding any native field.
+- Split RDR2 into Character, Inventory, Weapons and Horse. Separate owned items
+  from item acquisition; explain catalogue unlocks and compendium records.
+- Add staged Repair weapon and Refill cores actions, scoped to the selected
+  saved weapon or actor. Keep same-model weapons separate.
+- Simplify GTA wardrobe purchases and move raw shop/seen/availability flags to
+  Advanced. Put current clothes ahead of long equipment lists.
+- Remove generic enable-everything actions for mixed gameplay/state flags.
+  Keep named Risk of Rain 2 unlock and GTA wardrobe-purchase actions.
+- Make long field notes opt-in through Details; add contextual explanations,
+  hidden-search guidance and actor/item context to pending-change review.
+- Preserve hidden invalid edits and block saving until they are fixed. Preview
+  navigation remains read-only. Existing format/gameplay limits still apply.
+
+
 ## v0.45.0-alpha
+
+- Correct native vehicle performance indexes: map stage choices through the
+  matching kit table instead of writing per-type UI indexes.
 
 
 - Browse named single-player wardrobe entries separately for Michael, Franklin

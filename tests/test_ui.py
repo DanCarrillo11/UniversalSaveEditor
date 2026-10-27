@@ -204,7 +204,9 @@ class InterfaceTests(unittest.TestCase):
     def test_large_profile_records_are_paged_and_keep_edits_when_search_changes(self):
         raw=('<UserProfile><coins>7</coins><stats>'+''.join(f'<stat name="killsAs.Example{i}">{i}</stat>' for i in range(2200))+'</stats></UserProfile>').encode()
         save=Save(raw,'ror2');w=self.window;w.display_save(save,self.root/'large.xml');self.app.processEvents()
-        records=w.tabs.widget(next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)=='Records'))
+        w.advanced_options.setChecked(True);self.app.processEvents()
+        w.reveal_field((0,'stat:killsAs.Example2199'));self.app.processEvents()
+        records=w.tabs.widget(next(i for i in range(w.tabs.count()) if w.tabs.tabText(i)=='Advanced'))
         pages=records.findChild(QComboBox,'recordPage');search=records.findChild(QLineEdit,'fieldSearch')
         self.assertEqual(pages.count(),22);self.assertLess(len(w.inputs),600)
         pages.setCurrentIndex(21);self.app.processEvents();self.assertIn((0,'stat:killsAs.Example2199'),w.inputs)
@@ -830,7 +832,7 @@ class InterfaceTests(unittest.TestCase):
     def test_alice_apply_replaces_active_profile_without_backup(self):
         path=self.root/'PersistentData_PC.PSD';original=alice();path.write_bytes(original)
         w=self.window;w.open_path(path);w.inputs[(0,'teeth')].setText('1234')
-        self.assertEqual(w.review_button.text(),'Save changes')
+        self.assertEqual(w.review_button.text(),'Review and save')
         def apply_dialog():
             dialog=self.app.activeModalWidget()
             for item in dialog.findChildren(QPushButton):
@@ -971,7 +973,7 @@ class InterfaceTests(unittest.TestCase):
             ('kh1',kingdom(),['Progress','Characters','Collection']),
             ('kh2',kingdom2(),['Progress','Characters','Collection']),
             ('webfishing',test_extended.ExtendedTests().fixture(),['Progress','Equipment','Collection']),
-            ('ror2',ror2(),['Progress','Unlocks','Records']),
+            ('ror2',ror2(),['Progress','Unlocks']),
             ('alice',alice(),['Progress','Character','Collection']),
             ('alice',configuration(),['Progress']),
         )
@@ -1044,7 +1046,7 @@ class InterfaceTests(unittest.TestCase):
                 path=self.root/(game+'.mps' if game=='maxpayne' else game+'.png')
                 path.write_bytes(inventory_fixture() if game=='maxpayne' else archive(game))
                 self.assertTrue(w.load(game,path))
-                self.assertLessEqual(w.tabs.count(),3)
+                self.assertLessEqual(w.tabs.count(),4)
                 self.assertEqual({key for index,key in w.field_index if index==0},{f.key for f in w.save.slots[0].fields})
                 key='ammo:3' if game=='maxpayne' else 'moogle_points' if game=='recom' else 'munny'
                 w.inputs[0,key].setText('150')
@@ -1165,7 +1167,7 @@ class InterfaceTests(unittest.TestCase):
                 check=Save(output,game,path,ACCOUNT)
                 self.assertEqual(next(f.value for f in check.slots[0].fields if f.key==field.key),value)
                 self.assertFalse(check.warnings);self.assertEqual(path.read_bytes(),raw)
-                self.assertLessEqual(w.tabs.count(),3)
+                self.assertLessEqual(w.tabs.count(),4)
                 w.edits={}
 
     def test_kh2_magic_and_ap_edits_survive_navigation_and_preserve_the_file_until_saved(self):

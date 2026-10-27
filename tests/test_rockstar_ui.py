@@ -94,10 +94,9 @@ class RockstarInterfaceTests(unittest.TestCase):
                     self.assertEqual(p.read_bytes(),raw);w.reset();self.assertFalse(w.validated_changes())
                     w.reveal_field((0,'weapon_shop:1:1b06d571:purch_0:25'));self.app.processEvents()
                     from PySide6.QtWidgets import QPushButton
-                    action=next(b for b in w.findChildren(QPushButton) if b.text()=='Unlock shop options' and b.isVisible())
-                    action.click();self.app.processEvents()
-                    self.assertTrue(w.validated_changes())
-                    self.assertTrue(all(key.startswith('weapon_shop:') for slot,key in w.validated_changes()))
+                    self.assertTrue(w.advanced_options.isChecked())
+                    self.assertFalse(any(b.isVisible() and b.text() in ('Unlock shop options','Enable all','Enable section')
+                                         for b in w.findChildren(QPushButton)))
                     w.reset()
                     w.open_preview('gtav');self.app.processEvents()
                     for key in changes:

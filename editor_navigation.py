@@ -5,14 +5,16 @@ SPDX-License-Identifier: GPL-3.0-or-later
 from collections import Counter
 import weakref
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QSize, QRect
 from PySide6.QtWidgets import (
     QWidget, QFrame, QLabel, QPushButton, QComboBox, QListWidget, QListWidgetItem,
-    QHBoxLayout, QVBoxLayout, QGridLayout, QScrollArea, QSizePolicy,
+    QHBoxLayout, QVBoxLayout, QGridLayout, QScrollArea, QSizePolicy, QLineEdit,
 )
+from editor_search import matches_query
 
 
 def category_title(game, name):
+    if game=='gtav' and name=='Equipment':return 'Equipment and style'
     if name != 'Collection':
         return name
     return {'alice': 'Collectibles', 'recom': 'Cards', 'bbs': 'Commands',
@@ -28,7 +30,10 @@ class FieldControls(dict):
     def __missing__(self, key):
         reveal = self._reveal()
         if reveal is not None:
-            reveal(key)
+            control=reveal(key)
+            # Revealing an advanced field may rebuild the view and replace
+            # this registry. Return the control from the new registry.
+            if control is not None:return control
         if key not in self:
             raise KeyError(key)
         return dict.__getitem__(self, key)
@@ -93,11 +98,22 @@ class SectionNavigation(QWidget):
         caption = QLabel(title.upper(), self.side)
         caption.setObjectName('navigationCaption')
         side.addWidget(caption)
+        self.section_search=QLineEdit(self.side)
+        self.section_search.setObjectName('sectionSearch')
+        self.section_search.setPlaceholderText('Find a section…')
+        self.section_search.setAccessibleName('Find a section in '+title)
+        self.section_search.setClearButtonEnabled(True)
+        side.addWidget(self.section_search)
         self.list = QListWidget(self.side)
         self.list.setObjectName('sectionNavigation')
         self.list.setAccessibleName('Sections in ' + title)
         self.list.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.list.setWordWrap(True)
+        self.list.setTextElideMode(Qt.TextElideMode.ElideNone)
         side.addWidget(self.list, 1)
+        self.no_sections=QLabel('No matching sections. Clear the search to see them again.',self.side)
+        self.no_sections.setObjectName('sectionExplanation');self.no_sections.setWordWrap(True)
+        self.no_sections.hide();side.addWidget(self.no_sections)
         root.addWidget(self.side)
         self.main = QWidget(self)
         self.main.setObjectName('clearSurface')
@@ -111,7 +127,7 @@ class SectionNavigation(QWidget):
         self.selector.setObjectName('sectionSelector')
         self.selector.setAccessibleName(category.selector_label + ' in ' + title)
         selections = list(dict.fromkeys(s.selection for s in category.sections))
-        if category.selector_label != 'Character':
+        if category.selector_label not in ('Character','Browse'):
             self.selector.addItem('Overview', '')
         for value in selections:
             self.selector.addItem(value, value)
@@ -121,10 +137,10 @@ class SectionNavigation(QWidget):
         self.selector.setCurrentIndex(self.selector.findData(selected))
         self.selector.hide()
 
-        if category.selector_label == 'Character':
+        if category.selector_label in ('Character','Browse'):
             self.characters = QScrollArea(self.main)
             self.characters.setObjectName('characterStrip')
-            self.characters.setAccessibleName('Choose a character')
+            self.characters.setAccessibleName('Choose a character' if category.selector_label=='Character' else 'Choose what to browse')
             self.characters.setWidgetResizable(True)
             self.characters.setFixedHeight(54)
             self.characters.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -156,20 +172,26 @@ class SectionNavigation(QWidget):
         self.heading.setObjectName('editorSectionTitle')
         self.heading.setWordWrap(True)
         self.content.addWidget(self.heading)
+        self.explanation=QLabel(self.main)
+        self.explanation.setObjectName('sectionExplanation')
+        self.explanation.setWordWrap(True)
+        self.content.addWidget(self.explanation)
         self.list.currentItemChanged.connect(self._select_section)
         self.selector.currentIndexChanged.connect(self._select_group)
+        self.section_search.textChanged.connect(self.filter_sections)
         self._select_group()
 
     def select_character(self, name):
         self.selector.setCurrentIndex(self.selector.findData(name))
 
     def _select_group(self):
+        self.section_search.clear()
         selected = self.selector.currentData()
         self.state['selection'] = selected
         for name, chip in self.character_buttons.items():
             chip.setChecked(name == selected)
         available = [s for s in self.category.sections
-                     if self.category.selector_label != 'Character' or s.selection == selected]
+                     if self.category.selector_label not in ('Character','Browse') or s.selection == selected]
         duplicates = Counter(s.name for s in available)
         remembered = self.state.setdefault('sections', {}).get(selected)
         chosen = next((s for s in available if (s.selection, s.name) == remembered), None)
@@ -185,9 +207,35 @@ class SectionNavigation(QWidget):
             if section is chosen:
                 self.list.setCurrentItem(item)
         self.list.blockSignals(False)
+        self.size_section_items()
+        self.section_search.setVisible(len(available)>8)
+        self.filter_sections()
         self.active_section = chosen if selected else None
         self._update_heading()
         self.changed.emit()
+
+    def filter_sections(self):
+        visible=0
+        for index in range(self.list.count()):
+            item=self.list.item(index)
+            match=matches_query(item.text(),self.section_search.text(),aliases=False)
+            item.setHidden(not match);visible+=match
+        self.no_sections.setVisible(not visible)
+
+    def size_section_items(self):
+        width=max(90,self.list.viewport().width()-28)
+        for index in range(self.list.count()):
+            item=self.list.item(index)
+            bounds=self.list.fontMetrics().boundingRect(QRect(0,0,width,10000),Qt.TextFlag.TextWordWrap,item.text())
+            item.setSizeHint(QSize(0,max(44,bounds.height()+28)))
+
+    def showEvent(self,event):
+        super().showEvent(event)
+        self.size_section_items()
+
+    def resizeEvent(self,event):
+        super().resizeEvent(event)
+        if hasattr(self,'list'):self.size_section_items()
 
     def _select_section(self, item, previous=None):
         if item is None:
@@ -209,11 +257,15 @@ class SectionNavigation(QWidget):
         if self.character_buttons:
             trail += ' / ' + self.selector.currentData()
         self.breadcrumb.setText(trail)
+        self.explanation.setVisible(bool(getattr(section,'help_text','')))
+        self.explanation.setText(getattr(section,'help_text',''))
 
     def set_search_state(self, query, changed_only=False):
         self.heading.setText('Search results' if query else 'Pending changes' if changed_only
                              else self.active_section.name if self.active_section else 'Overview')
         self.list.setEnabled(not query and not changed_only)
+        self.section_search.setEnabled(not query and not changed_only)
+        self.explanation.setVisible(not query and not changed_only and bool(getattr(self.active_section,'help_text','')))
 
     def includes(self, section, query='', changed_only=False):
         return bool(query or changed_only or self.active_section is None or section is self.active_section)

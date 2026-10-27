@@ -84,7 +84,8 @@ jobs:
           $config | ConvertTo-Json | Set-Content release.json -Encoding utf8NoBOM
           git config user.name 'DanCarrillo11'
           git config user.email '129711656+DanCarrillo11@users.noreply.github.com'
-          git add --all
+          # The portable build is distributed as a Release asset, not a Git blob.
+          git add --all -- . ':(exclude)UniversalSaveEditor.exe'
           if ($LASTEXITCODE -ne 0) { throw 'Could not stage release' }
           $tree = git write-tree
           if ($LASTEXITCODE -ne 0) { throw 'Could not write release tree' }
@@ -102,7 +103,7 @@ jobs:
           New-Item -ItemType Directory -Path $releaseDir -Force | Out-Null
           Copy-Item UniversalSaveEditor.exe,SHA256SUMS.txt,README.md,LICENSE -Destination $releaseDir
           Compress-Archive -Path "$releaseDir/*" -DestinationPath "UniversalSaveEditor-v$($config.version)-Windows.zip" -Force
-      - name: Publish pre-release
+      - name: Publish release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}

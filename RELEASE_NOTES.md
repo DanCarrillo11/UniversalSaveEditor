@@ -1,30 +1,23 @@
-# v0.45.0-alpha — GTA V wardrobe and saved clothing
+# v0.48.0-alpha — A smoother path from library to saved changes
 
-- Browse named single-player wardrobe entries separately for Michael, Franklin
-  and Trevor, including clothes, ordinary outfits, props and barber purchases.
-- Manage each entry's availability, purchase and seen marker. Buying an item
-  also makes it available, without charging money. Acquire a whole wardrobe
-  section or restore its pending changes.
-- Change recognized currently worn garments using named style/texture choices.
-  The writer synchronizes the saved character outfit and, for the active actor,
-  its native drawable/texture maps. Selecting another garment acquires it.
-- Use the new sections under Equipment, with character filters, search,
-  pagination, review/reset and offline previews.
+- Everyday tools stay front and center, with records and less common settings
+  available through Advanced options. Search long item/equipment choices by name.
+- Find a section by name in long lists; long titles wrap. Clear filters brings
+  back normal browsing after a search or Changed only view.
+- Search and page through all pending changes. Every edit has Go to field and
+  Undo actions, including changes beyond the first 80. Invalid values remain
+  visible and block saving even if the review list is filtered.
+- Resume the last-used detected save and slot by clicking its game cover.
+  File choices include dates and full-path tooltips; opening a save from an
+  editor keeps the selected game's format.
+- Find games with title words in any order. The README now starts with simple
+  download/edit instructions and a clear compatibility summary.
 
-The older and newer catalogues contain 1,911 and 1,888 named static entries
-across the three characters, respectively. Unknown, special/unnamed and runtime
-DLC entries are preserved. Three native references pass masked bit checks and
-combined changes in plaintext/encrypted copies, with checksums, exact byte-span
-checks and unchanged originals. Synthetic and interface tests cover conflicting
-requests, bit 31, padding, actor isolation, bad headers/schemas, active snapshot
-disagreement, resource overrides and broken pointers.
+This completes the current usability pass. It does not establish full game
+support or add in-game validation. Unsupported formats remain protected.
+Previews remain read-only. Review and save still lists recognized automatic
+related changes before Apply to active save writes the original file in place,
+without an automatic backup or renamed edited copy.
 
-**GTA V remains Limited coverage.** Hair/beard and prop equipping, composite
-outfit assembly, dynamic DLC apparel, complete vehicle/body/wheel/livery tools,
-full DLC weapon acquisition, properties and story/reward dependencies remain
-pending. Enhanced-native and successful in-game loading/persistence verification
-are not claimed. Earlier vehicle and weapon tools remain available.
-
-Download UniversalSaveEditor.exe under Assets, use Updates > Restart and update,
-or extract Code > Download ZIP and open the included exe. Applying changes
-overwrites the opened save in place, without automatic backups or .edited files.
+Download `UniversalSaveEditor.exe` or the Windows ZIP under **Assets**. You can
+also update from an earlier version with **Updates > Restart and update**.

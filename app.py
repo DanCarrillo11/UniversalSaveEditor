@@ -17,7 +17,10 @@ from core import Save, discover, read_limited, replace_current, identify_game, b
 from catalog import GAMES, BY_ID, PLATFORMS
 from artwork import Artwork
 from editor_layout import organize_fields
+from editor_presentation import present_categories, is_advanced, section_help, bulk_actions, field_label, quick_actions, boolean_states
 from editor_navigation import SectionNavigation, AttributeGrid, FieldControls, category_title
+from editor_search import matches_query
+from choice_picker import SearchableComboBox
 from ror2_unlocks import UNLOCK_IDS
 from version import VERSION
 from appearance import PALETTES, stylesheet
@@ -95,7 +98,7 @@ def number_text(value):
 def value_text(field,value):
     if field.fmt == 'xml-unlock':
         return 'Unlocked' if int(value) else 'Locked'
-    if field.boolean:return 'Enabled' if int(value) else 'Disabled'
+    if field.boolean:return boolean_states(None,field)[bool(int(value))]
     if field.choices:
         try:return field.choices[int(value)]
         except (ValueError,IndexError):return str(value)
@@ -339,6 +342,7 @@ class Window(QMainWindow):
         self.detail_scroll.viewport().setObjectName('clearSurface')
         self.detail_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         detail_content=QWidget();detail_content.setObjectName('clearSurface');self.detail_box=layout(detail_content,True,12,10)
+        self.detail_box.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         self.detail_scroll.setWidget(detail_content);detail_outer.addWidget(self.detail_scroll);content_row.addWidget(self.detail)
         box.addLayout(content_row,1)
         footer=QHBoxLayout();self.available=label(f'{sum(game.editable for game in GAMES):02d} editors available','muted');self.detected=label('00 save files detected','muted')
@@ -356,7 +360,7 @@ class Window(QMainWindow):
         self.editor_search.setPlaceholderText('Search this editor…');self.editor_search.setClearButtonEnabled(True)
         self.editor_search.setAccessibleName('Search across all editor categories');self.editor_search.setMaximumWidth(330)
         self.editor_search.textChanged.connect(self.search_editor);top.addWidget(self.editor_search,1)
-        self.open_editor_file=button('Open another…',self.open_file)
+        self.open_editor_file=button('Open another…',lambda:self.open_file(self.save.game if self.save else None))
         top.addWidget(self.open_editor_file)
         self.details_button=button('Save details',self.toggle_save_details,'editorDetailsToggle')
         self.details_button.setCheckable(True);top.addWidget(self.details_button);outer.addLayout(top)
@@ -377,26 +381,46 @@ class Window(QMainWindow):
         self.warning=label('','warning',True);outer.addWidget(self.warning)
         self.repair=QCheckBox('Repair the integrity check when applying changes')
         self.repair.toggled.connect(self.update_summary);outer.addWidget(self.repair)
+        options=QHBoxLayout()
+        self.editor_mode_note=label('Everyday tools','small',True);options.addWidget(self.editor_mode_note,1)
+        self.advanced_options=QCheckBox('Advanced options')
+        self.advanced_options.setObjectName('advancedOptions')
+        self.advanced_options.setToolTip('Show technical records and less common settings in a separate Advanced tab.')
+        self.advanced_options.toggled.connect(self.change_editor_mode);options.addWidget(self.advanced_options)
+        outer.addLayout(options)
         self.tabs=QTabWidget();self.tabs.setObjectName('editorCategories');self.tabs.setUsesScrollButtons(True);outer.addWidget(self.tabs,1)
         self.changes_dialog=QDialog(self);self.changes_dialog.setWindowTitle('Pending changes');self.changes_dialog.resize(640,570)
         summary=layout(self.changes_dialog,True,24,14)
         summary.addWidget(label('Your pending changes','title'))
         self.summary_description=label('Compare your edits with the file you opened.','muted',True);summary.addWidget(self.summary_description)
-        scroll=QScrollArea();scroll.setWidgetResizable(True)
+        self.change_page=0
+        self.change_search=QLineEdit();self.change_search.setObjectName('pendingChangeSearch')
+        self.change_search.setPlaceholderText('Find a change by name, character or value…')
+        self.change_search.setAccessibleName('Search pending changes');self.change_search.setClearButtonEnabled(True)
+        self.change_search.textChanged.connect(lambda:self.render_pending_changes(True));summary.addWidget(self.change_search)
+        paging=QHBoxLayout();self.change_results=label('','small');paging.addWidget(self.change_results,1)
+        self.change_previous=button('Previous',lambda:self.move_change_page(-1))
+        self.change_next=button('Next',lambda:self.move_change_page(1))
+        paging.addWidget(self.change_previous);paging.addWidget(self.change_next);summary.addLayout(paging)
+        scroll=QScrollArea();scroll.setWidgetResizable(True);self.summary_scroll=scroll
         scroll.viewport().setObjectName('clearSurface')
         self.summary_content=QWidget();self.summary_box=layout(self.summary_content,True,0,10)
         self.summary_content.setObjectName('clearSurface')
         scroll.setWidget(self.summary_content);summary.addWidget(scroll,1)
+        self.summary_issue=label('','warning',True);self.summary_issue.hide();summary.addWidget(self.summary_issue)
         summary.addWidget(button('Done',self.changes_dialog.accept,'primary'))
         footer=QFrame();footer.setObjectName('editorFooter');actions=layout(footer,False,16,10)
         status=QVBoxLayout();status.setSpacing(3)
         self.change_count=label('No pending changes','pendingCount');status.addWidget(self.change_count)
         self.save_steps=label('Changes are applied to the opened save.','small',True);status.addWidget(self.save_steps)
         actions.addLayout(status,1)
+        self.fix_issue_button=button('Fix first issue',self.fix_first_issue)
+        self.fix_issue_button.setObjectName('fixFirstIssue');self.fix_issue_button.hide()
+        actions.addWidget(self.fix_issue_button)
         self.reset_button=button('Reset',self.reset,'editorReset');self.reset_button.setToolTip('Restore every staged value')
         actions.addWidget(self.reset_button)
-        self.changes_button=button('Review changes',self.show_pending_changes);actions.addWidget(self.changes_button)
-        self.review_button=button('Save changes',self.review,'primary');self.review_button.setToolTip('Review and apply changes to the opened file (Ctrl+S or Ctrl+Enter)');actions.addWidget(self.review_button)
+        self.changes_button=button('View changes',self.show_pending_changes);actions.addWidget(self.changes_button)
+        self.review_button=button('Review and save',self.review,'primary');self.review_button.setToolTip('Review and apply changes to the opened file (Ctrl+S or Ctrl+Enter)');actions.addWidget(self.review_button)
         outer.addWidget(footer)
         self.stack.addWidget(page)
 
@@ -408,6 +432,7 @@ class Window(QMainWindow):
         self.changes_dialog.exec()
 
     def search_editor(self,query):
+        self.refresh_mode_note()
         first_match=None
         for index in range(self.tabs.count()):
             page=self.tabs.widget(index)
@@ -415,9 +440,20 @@ class Window(QMainWindow):
             if search:search.setText(query)
             if query and first_match is None:
                 navigation=page.navigation
-                if any(query.casefold().strip() in self.field_search_text(field,' '.join((field.label,field.key,section.name,section.selection)).casefold())
+                if any(matches_query(self.field_search_text(field,' '.join((field.label,field.key,section.name,section.selection)).casefold()),query)
                        for section in navigation.category.sections for field in section.fields):first_match=index
         if first_match is not None:self.tabs.setCurrentIndex(first_match)
+        elif query and self.save and not self.advanced_options.isChecked():
+            needle=query.casefold().strip()
+            hidden=sum(is_advanced(self.save.game,f) and matches_query(self.field_search_text(f,
+                ' '.join((f.label,f.key,f.group,f.collection)).casefold()),needle) for f in self.save.slots[self.slot_index].fields)
+            if hidden:self.editor_mode_note.setText(f'{hidden:,} matching advanced options · Turn on Advanced options to view them')
+
+    def change_editor_mode(self):
+        if not self.save:return
+        query=self.editor_search.text()
+        self.render_fields()
+        self.search_editor(query)
 
     def scan(self):
         try:self.files=discover()
@@ -441,9 +477,9 @@ class Window(QMainWindow):
         if not hasattr(self,'grid'):return
         clear(self.grid)
         for row in range(self.grid.rowCount()):self.grid.setRowStretch(row,0)
-        search=self.search.text().casefold().strip()
+        search=self.search.text().strip()
         platform=self.platform_filter.currentData() if hasattr(self,'platform_filter') else 'all'
-        games=[g for g in GAMES if search in (g.title+' '+g.subtitle+' '+g.family+' '+g.description).casefold()
+        games=[g for g in GAMES if matches_query(g.title+' '+g.subtitle+' '+g.family+' '+g.description,search)
                and (self.filter=='all' or g.editable==(self.filter=='ready'))
                and (platform=='all' or platform in g.platforms)]
         if self.favorites_only:games=[g for g in games if g.id in self.favorites]
@@ -604,9 +640,12 @@ class Window(QMainWindow):
             QMessageBox.information(self,game.title,'Compatibility pending\n\n'+game.description+'\n\nEditing is not available for this game yet.');return
         files=[p for g,p in self.files if g==game.id]
         if self.save and self.save.game==game.id and (not self.preview_mode or not files):self.show_editor();return
-        if files:self.load(game.id,files[0])
+        recent=next((item for item in self.recent_files if item['game']==game.id and Path(item['path']).is_file()
+                     and (not files or Path(item['path']) in files)),None)
+        if files:
+            if recent and Path(recent['path']) in files:self.reopen_recent(recent)
+            else:self.load(game.id,files[0])
         else:
-            recent=next((item for item in self.recent_files if item['game']==game.id and Path(item['path']).is_file()),None)
             if recent:self.reopen_recent(recent)
             else:self.open_preview(game.id)
 
@@ -669,6 +708,7 @@ class Window(QMainWindow):
         self.save=save;self.path=Path(path) if path is not None else None
         self.field_index={(index,field.key):field for index,slot in enumerate(save.slots) for field in slot.fields}
         self.edits={};self.inputs={};self.exported_state=None;self.slot_index=0
+        self.change_search.clear();self.change_page=0
         if self.path is not None:self.last_directory=str(self.path.parent)
         gameinfo=BY_ID[game];self.selected_game=game
         self.editor_title.setText(gameinfo.title)
@@ -678,8 +718,9 @@ class Window(QMainWindow):
         self.coverage.setText('Coverage: '+coverage_label(game)+' · Not full support')
         self.coverage.setToolTip(coverage_text(game))
         self.open_editor_file.setText('Open save…' if self.preview_mode else 'Open another…')
-        self.review_button.setText('Save changes')
+        self.review_button.setText('Review and save')
         self.editor_search.blockSignals(True);self.editor_search.clear();self.editor_search.blockSignals(False)
+        self.advanced_options.blockSignals(True);self.advanced_options.setChecked(False);self.advanced_options.blockSignals(False)
         for (state_game,state_path,category),state in self.editor_view_state.items():
             if state_game==game and state_path==str(self.path):state['query']=''
         self.details_button.setChecked(False);self.details_panel.hide()
@@ -687,14 +728,20 @@ class Window(QMainWindow):
         self.file_combo.blockSignals(True);self.file_combo.clear()
         paths=[p for g,p in self.files if g==game]
         if self.path is not None and self.path not in paths:paths.append(self.path)
-        for p in paths:self.file_combo.addItem(p.name,p)
+        for p in paths:
+            try:date=datetime.fromtimestamp(p.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
+            except OSError:date='Local save'
+            self.file_combo.addItem(p.name+' · '+date,p)
+            self.file_combo.setItemData(self.file_combo.count()-1,str(p),Qt.ItemDataRole.ToolTipRole)
         self.file_combo.setCurrentIndex(paths.index(self.path) if self.path in paths else -1)
         self.file_combo.setToolTip(str(self.path) if self.path else 'No save file opened')
         self.file_combo.setVisible(not self.preview_mode);self.file_combo.blockSignals(False)
         self.slot_combo.blockSignals(True);self.slot_combo.clear()
         self.slot_combo.addItems([s.name for s in save.slots]);self.slot_combo.blockSignals(False)
         self.slot_combo.setVisible(len(save.slots)>1)
-        preview_message=('No save file opened.' if paths else 'No save data found.')+' Preview only — open a save file to edit and apply changes.'
+        preview_message=('No save file opened.' if paths else 'No save data found.')+' Explore available tools, then open a save file to make changes.'
+        self.warning.setObjectName('info' if self.preview_mode else 'warning')
+        self.warning.style().unpolish(self.warning);self.warning.style().polish(self.warning)
         self.warning.setText(preview_message if self.preview_mode else '\n'.join(save.warnings))
         self.warning.setVisible(self.preview_mode or bool(save.warnings))
         notes=getattr(save,'notes',[]);self.editor_notes.setText('\n'.join(notes));self.editor_notes.setVisible(bool(notes))
@@ -731,7 +778,13 @@ class Window(QMainWindow):
         self.inputs=FieldControls(self.reveal_field);self.category_filters=[]
         while self.tabs.count():
             widget=self.tabs.widget(0);self.tabs.removeTab(0);widget.deleteLater()
-        for category in organize_fields(self.save.game,self.save.slots[self.slot_index].fields):
+        fields=self.save.slots[self.slot_index].fields
+        advanced_count=sum(is_advanced(self.save.game,f) for f in fields)
+        self.advanced_options.setVisible(bool(advanced_count))
+        self.advanced_options.setToolTip(f'Show {advanced_count:,} technical records and less common settings in a separate Advanced tab.')
+        self.editor_search.setPlaceholderText('Search all tools…' if self.advanced_options.isChecked() else 'Search everyday tools…')
+        for category in present_categories(self.save.game,fields,self.advanced_options.isChecked()):
+            for section in category.sections:section.help_text=section_help(self.save.game,section)
             self.tabs.addTab(self.build_category(category),category_title(self.save.game,category.name))
         for index in range(self.tabs.count()):
             if self.tabs.tabText(index)==previous:self.tabs.setCurrentIndex(index);break
@@ -742,12 +795,15 @@ class Window(QMainWindow):
         index,identifier=key
         if index!=self.slot_index or key not in self.field_index:return
         field=self.field_index[key]
+        if is_advanced(self.save.game,field) and not self.advanced_options.isChecked():
+            self.advanced_options.setChecked(True)
         self.editor_search.clear()
         for tab_index in range(self.tabs.count()):
             page=self.tabs.widget(tab_index);navigation=page.navigation
             section=next((s for s in navigation.category.sections if any(f is field for f in s.fields)),None)
             if section is None:continue
             self.tabs.setCurrentIndex(tab_index)
+            navigation.section_search.clear()
             page.findChild(QLineEdit,'fieldSearch').clear()
             page.findChild(QCheckBox,'changedOnly').setChecked(False)
             if navigation.character_buttons:navigation.select_character(section.selection)
@@ -757,14 +813,21 @@ class Window(QMainWindow):
                     navigation.list.setCurrentRow(row);break
             pages=page.findChild(QComboBox,'recordPage')
             if pages:pages.setCurrentIndex(section.fields.index(field)//100)
-            return
+            return self.inputs.get(key)
 
     def field_search_text(self,field,base):
+        base+=' '+field_label(self.save.game,field).casefold()
         if not field.choices:return base
         entry=self.inputs.get((self.slot_index,field.key))
         try:index=entry.currentIndex() if isinstance(entry,QComboBox) else field.parse(self.edits.get((self.slot_index,field.key),str(field.value)))
         except ValueError:return base
         return base+' '+field.choices[index].casefold() if 0<=index<len(field.choices) else base
+
+    def clear_editor_filters(self,page):
+        self.editor_search.clear()
+        page.findChild(QLineEdit,'fieldSearch').clear()
+        page.findChild(QCheckBox,'changedOnly').setChecked(False)
+        page.navigation.section_search.clear()
 
     def build_category(self,category):
         if sum(len(s.fields) for s in category.sections)>160:return self.build_large_category(category)
@@ -781,6 +844,8 @@ class Window(QMainWindow):
         tools=QHBoxLayout();changed_only=QCheckBox('Changed only');changed_only.setObjectName('changedOnly')
         changed_only.setAccessibleName('Show changed fields in '+category.name);changed_only.setChecked(state.get('changed_only',False))
         matches=label('','small');matches.setObjectName('fieldCount');tools.addWidget(changed_only);tools.addStretch();tools.addWidget(matches);box.addLayout(tools)
+        clear_filters=button('Clear filters',lambda:self.clear_editor_filters(page),'clearEditorFilters')
+        tools.addWidget(clear_filters)
         empty=label('No fields match this section and search.','muted');empty.hide();sections_box.addWidget(empty)
         blocks=[]
         for section in category.sections:
@@ -790,14 +855,14 @@ class Window(QMainWindow):
             collapsed=state.setdefault('collapsed',{}).get((section.selection,section.name),section.name.endswith(' form'))
             header.setChecked(not collapsed);section_box.addWidget(header)
             body=QWidget();body.setObjectName('clearSurface');body_box=layout(body,True,0,8)
-            unlock_fields=[field for field in section.fields if not field.readonly and
-                           not field.key.startswith(('remove_item:','equipped_accessory:')) and
-                           (field.fmt=='xml-unlock' or field.boolean)]
-            if unlock_fields:
+            unlock_fields=[f for f in section.fields if not f.readonly and (f.boolean or f.fmt=='xml-unlock')]
+            quick=self.quick_action_row(section.fields)
+            if quick:body_box.addLayout(quick)
+            section_actions=bulk_actions(self.save.game,section.fields,self.preview_mode)
+            if section_actions:
                 actions=QHBoxLayout()
-                actions.addWidget(button('Unlock section' if self.save.game=='ror2' else 'Enable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,1),'primary'))
-                if self.save.game=='alice':actions.addWidget(button('Disable all',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,0)))
-                actions.addWidget(button('Restore section',lambda checked=False,fs=unlock_fields:self.set_unlock_fields(fs,None)))
+                for title,value in section_actions:
+                    actions.addWidget(button(title,lambda checked=False,fs=unlock_fields,v=value:self.set_unlock_fields(fs,v)))
                 actions.addStretch();body_box.addLayout(actions)
                 if self.preview_mode:
                     for i in range(actions.count()):
@@ -826,12 +891,13 @@ class Window(QMainWindow):
             state['query']=field_filter.text()
             state['changed_only']=changed_only.isChecked()
             navigation.set_search_state(query,changed_only.isChecked())
+            clear_filters.setVisible(bool(query or changed_only.isChecked()))
             total=0
             for section,block,header,body,rows in blocks:
                 eligible=navigation.includes(section,query,changed_only.isChecked())
                 count=0
                 for searchable,row,key in rows:
-                    visible=eligible and query in self.field_search_text(row._field,searchable) and (not changed_only.isChecked() or (self.slot_index,key) in self.edits)
+                    visible=eligible and matches_query(self.field_search_text(row._field,searchable),query) and (not changed_only.isChecked() or (self.slot_index,key) in self.edits)
                     row.setVisible(visible);count+=visible
                 block.setVisible(bool(count));total+=count
                 expanded=header.isChecked() or bool(query) or changed_only.isChecked()
@@ -870,6 +936,8 @@ class Window(QMainWindow):
         changed.setChecked(state.get('changed_only',False));tools.addWidget(changed);tools.addStretch()
         count=label('','small');count.setObjectName('fieldCount');tools.addWidget(count)
         pages=QComboBox(page);pages.setObjectName('recordPage');pages.setAccessibleName('Saved record page');tools.addWidget(pages)
+        clear_filters=button('Clear filters',lambda:self.clear_editor_filters(page),'clearEditorFilters')
+        tools.addWidget(clear_filters)
         box.addLayout(tools);scroll=QScrollArea();scroll.setObjectName('editorFieldsScroll');scroll.setWidgetResizable(True);content=QFrame();content.setObjectName('editorSection')
         rows=layout(content,True,14,8);rows.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         scroll.setWidget(content);box.addWidget(scroll,1)
@@ -879,13 +947,14 @@ class Window(QMainWindow):
             query=search.text().casefold().strip()
             state.update(query=search.text(),changed_only=changed.isChecked())
             navigation.set_search_state(query,changed.isChecked())
-            matches=[(s,f) for s,f,text in records if navigation.includes(s,query,changed.isChecked()) and query in self.field_search_text(f,text) and
+            clear_filters.setVisible(bool(query or changed.isChecked()))
+            matches=[(s,f) for s,f,text in records if navigation.includes(s,query,changed.isChecked()) and matches_query(self.field_search_text(f,text),query) and
                      (not changed.isChecked() or (self.slot_index,f.key) in self.edits)]
             total=len(matches);page_count=max(1,(total+99)//100)
             index=0 if reset else min(int(state.get('page',0)),page_count-1);state['page']=index
             pages.blockSignals(True);pages.clear()
             for n in range(page_count):pages.addItem(f'Page {n+1} of {page_count}',n)
-            pages.setCurrentIndex(index);pages.setEnabled(page_count>1);pages.blockSignals(False)
+            pages.setCurrentIndex(index);pages.setEnabled(page_count>1);pages.setVisible(page_count>1);pages.blockSignals(False)
             start=index*100;visible=matches[start:start+100]
             count.setText(f'{start+1 if total else 0}–{start+len(visible)} of {total:,} matching records')
             current=tuple(f.key for s,f in visible)
@@ -899,21 +968,19 @@ class Window(QMainWindow):
                 identity=(section.name,section.selection)
                 if identity!=last:
                     rows.addWidget(label((section.selection+' / ' if query and category.selector_label=='Character' else '')+section.name,'eyebrow'));last=identity
+                    quick=self.quick_action_row(section.fields)
+                    if quick:rows.addLayout(quick)
                     abilities=[f for f in section.fields if self.save.game=='kh3' and ':ability:' in f.key and not f.readonly]
-                    unlocks=[f for f in section.fields if not f.readonly and (f.boolean or f.fmt=='xml-unlock') and not f.key.startswith(('remove_item:','equipped_accessory:','weapon_inventory:'))]
-                    if abilities or unlocks:
+                    unlocks=[f for f in section.fields if not f.readonly and (f.boolean or f.fmt=='xml-unlock')]
+                    section_actions=bulk_actions(self.save.game,section.fields,self.preview_mode)
+                    if abilities or section_actions:
                         actions=QHBoxLayout()
                         if abilities:
                             for title,mode in (('Learn section','learn'),('Equip learned','equip'),('Unequip section','unequip'),('Restore section','restore')):
                                 action=button(title,lambda checked=False,fs=abilities,m=mode:self.set_ability_fields(fs,m))
                                 action.setToolTip('Applies to this entire ability section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)
                         else:
-                            weapon_shop=all(f.key.startswith('weapon_shop:') for f in unlocks)
-                            wardrobe=all(f.key.startswith('clothes:') for f in unlocks)
-                            options=[('Acquire wardrobe section' if wardrobe else 'Unlock shop options' if weapon_shop else 'Unlock section' if self.save.game=='ror2' else 'Enable section',1)]
-                            if self.save.game=='alice':options.append(('Disable all',0))
-                            options.append(('Restore shop options' if weapon_shop else 'Restore section',None))
-                            for title,value in options:
+                            for title,value in section_actions:
                                 action=button(title,lambda checked=False,fs=unlocks,v=value:self.set_unlock_fields(fs,v))
                                 action.setToolTip('Applies to this entire section, including other pages.');action.setEnabled(not self.preview_mode);actions.addWidget(action)
                         actions.addStretch();rows.addLayout(actions)
@@ -950,7 +1017,9 @@ class Window(QMainWindow):
                 artwork.setToolTip(art.name if art else '')
             refresh_art(int(self.edits.get(key,field.value)) if field.art_choices else None)
             line.addWidget(artwork)
-        caption=QVBoxLayout();caption.addWidget(label(field.label))
+        caption=QVBoxLayout();caption_heading=QHBoxLayout()
+        caption_heading.addWidget(label(field_label(self.save.game,field)),1)
+        caption.addLayout(caption_heading)
         if self.preview_mode:
             caption.addWidget(label('Example value · open a save to edit','small',True))
         elif field.readonly:
@@ -959,7 +1028,11 @@ class Window(QMainWindow):
             caption.addWidget(label(f'Original: {value_text(field,field.value)}','small',True))
         else:
             caption.addWidget(label(f'Original: {number_text(field.value)}','small',True))
-        if field.note:caption.addWidget(label(field.note,'small',True))
+        if field.note:
+            note=label(field.note,'small',True);note.setVisible(False)
+            about=button('Details',lambda checked=False,n=note:n.setVisible(not n.isVisible()),'fieldHelp')
+            about.setToolTip(field.note);about.setAccessibleName('Explain '+field.label)
+            caption_heading.addWidget(about);caption.addWidget(note)
         error_label=label('','fieldError',True);error_label.hide();caption.addWidget(error_label)
         line.addLayout(caption,1)
         key=(self.slot_index,field.key)
@@ -969,7 +1042,7 @@ class Window(QMainWindow):
             entry.setEnabled(not field.readonly)
             entry.toggled.connect(lambda checked,k=key,f=field,e=entry:self.unlock_changed(k,f,e,checked))
         elif field.choices:
-            entry=QComboBox();entry.addItems(field.choices)
+            entry=SearchableComboBox();entry.addItems(field.choices)
             entry.setFixedWidth(320 if field.key.startswith('clothes_worn:') else 190)
             if not self.preview_mode:
                 for index in range(len(field.choices)):
@@ -1000,6 +1073,31 @@ class Window(QMainWindow):
         if isinstance(entry,QLineEdit):self.mark_entry(entry,field,entry.text())
         else:self.mark_unlock(entry,field,entry.isChecked() if isinstance(entry,QCheckBox) else entry.currentIndex())
         return row
+
+    def quick_action_row(self,fields):
+        actions=quick_actions(self.save.game,fields,self.preview_mode)
+        if not actions:return None
+        row=QHBoxLayout()
+        for title,values in actions:
+            action=button(title,lambda checked=False,changes=values:self.stage_quick_action(changes))
+            action.setToolTip('Stages these changes for review. The save is not modified until you apply them.')
+            action.setEnabled(not self.preview_mode);row.addWidget(action)
+        row.addStretch()
+        return row
+
+    def stage_quick_action(self,values):
+        if self.preview_mode:return
+        self._batch_edit=True
+        try:
+            for identifier,value in values.items():
+                key=(self.slot_index,identifier);field=self.field_index[key]
+                if field.readonly:continue
+                field.validate(value)
+                control=self.inputs.get(key)
+                if isinstance(control,QLineEdit):control.setText(number_text(value))
+                elif value==field.value:self.edits.pop(key,None)
+                else:self.edits[key]=number_text(value)
+        finally:self._batch_edit=False;self.update_summary()
 
     def restore_field(self,key):
         field=self.field_index[key]
@@ -1044,8 +1142,11 @@ class Window(QMainWindow):
     def mark_unlock(self,entry,field,checked):
         changed=int(checked) != field.value
         if isinstance(entry,QCheckBox):
-            states=('Locked','Unlocked') if self.save.game=='ror2' else ('Not owned','Owned') if self.save.game=='maxpayne' else ('Disabled','Enabled')
+            states=boolean_states(self.save.game,field)
             entry.setText(states[bool(checked)])
+        elif isinstance(entry,QComboBox):
+            entry.setToolTip(value_text(field,int(checked))+
+                ('\nOpen this list to search options by name.' if entry.count()>=18 else ''))
         entry.setProperty('changed',changed)
         entry._reset_button.setEnabled(changed)
         entry.style().unpolish(entry);entry.style().polish(entry)
@@ -1092,32 +1193,88 @@ class Window(QMainWindow):
             changes[(index,key)]=value
         return changes
 
-    def update_summary(self):
-        if not hasattr(self,'summary_box') or self._batch_edit:return
+    def go_to_change(self,key):
+        if not self.save or key not in self.field_index:return
+        self.changes_dialog.accept()
+        if key[0]!=self.slot_index:
+            self.slot_combo.setCurrentIndex(key[0]);self.change_slot(key[0])
+        self.reveal_field(key)
+        entry=self.inputs.get(key)
+        if entry is not None:
+            page=self.tabs.currentWidget()
+            scroll=page.findChild(QScrollArea,'editorFieldsScroll') if page else None
+            if scroll:scroll.ensureWidgetVisible(entry._field_row)
+            entry.setFocus(Qt.FocusReason.OtherFocusReason)
+            if isinstance(entry,QLineEdit):entry.selectAll()
+
+    def fix_first_issue(self):
+        for key,text in self.edits.items():
+            try:self.field_index[key].parse(text)
+            except ValueError:
+                self.go_to_change(key);return
+
+    def refresh_mode_note(self):
+        if self.save:
+            fields=self.save.slots[self.slot_index].fields
+            advanced=[f for f in fields if is_advanced(self.save.game,f)]
+            hidden_edits=sum((self.slot_index,f.key) in self.edits for f in advanced)
+            self.editor_mode_note.setText(('Everyday tools and advanced records' if self.advanced_options.isChecked() else
+                'Everyday tools · advanced records are hidden' if advanced else 'Everyday tools')+
+                (f' · {hidden_edits} hidden pending changes' if hidden_edits and not self.advanced_options.isChecked() else ''))
+
+    def move_change_page(self,step):
+        self.change_page=max(0,self.change_page+step)
+        self.render_pending_changes()
+
+    def render_pending_changes(self,reset=False):
+        if not hasattr(self,'summary_box'):return
         clear(self.summary_box)
-        count=len(self.edits)
-        self.change_count.setText(f'{count} pending change'+('s' if count!=1 else '') if count else 'No pending changes')
-        visible_edits=list(self.edits.items())
-        for (index,key),text in visible_edits[:80]:
+        query=self.change_search.text()
+        visible_edits=[]
+        for (index,key),text in self.edits.items():
+            field=self.field_index[index,key]
+            searchable=' '.join((field_label(self.save.game,field),key,self.save.slots[index].name,
+                field.collection or '',field.group or '',value_text(field,field.value),value_text(field,text)))
+            if matches_query(searchable,query):visible_edits.append(((index,key),text))
+        total=len(visible_edits);pages=max(1,(total+79)//80)
+        self.change_page=0 if reset else min(self.change_page,pages-1)
+        start=self.change_page*80
+        for (index,key),text in visible_edits[start:start+80]:
             field=self.field_index[index,key]
             item=QWidget();item.setObjectName('clearSurface');item_box=layout(item,True,0,3)
-            heading=QHBoxLayout();heading.addWidget(label(field.label,'summaryName',True),1)
+            heading=QHBoxLayout();heading.addWidget(label(field_label(self.save.game,field),'summaryName',True),1)
+            edit=button('Go to field',lambda checked=False,k=(index,key):self.go_to_change(k),'fieldHelp')
+            edit.setAccessibleName('Go to '+field.label+' in '+self.save.slots[index].name);heading.addWidget(edit)
             undo=button('↶',lambda checked=False,k=(index,key):self.restore_field(k),'fieldReset');undo.setToolTip('Undo this change');undo.setAccessibleName('Undo '+field.label+' in '+self.save.slots[index].name);heading.addWidget(undo);item_box.addLayout(heading)
             item_box.addWidget(label(f'{value_text(field,field.value)}  →  {value_text(field,text) if text else "…"}','muted',True))
             if len(self.save.slots)>1:item_box.addWidget(label(self.save.slots[index].name,'small',True))
+            context=field.collection or field.group
+            if context:item_box.addWidget(label(context,'small',True))
             self.summary_box.addWidget(item)
-        if len(visible_edits)>80:
-            self.summary_box.addWidget(label(f'+ {len(visible_edits)-80} more changes','muted',True))
-        if not count:self.summary_box.addWidget(label('Your edits will appear here.','muted',True))
+        self.change_results.setText(f'{start+1}–{min(start+80,total)} of {total:,} changes'+(' matching search' if query else '') if total else 'No matching changes' if query else 'No pending changes')
+        self.change_previous.setVisible(pages>1);self.change_next.setVisible(pages>1)
+        self.change_previous.setEnabled(self.change_page>0);self.change_next.setEnabled(self.change_page<pages-1)
+        if not total:
+            self.summary_box.addWidget(label('No changes match your search.' if query else 'Your edits will appear here.','muted',True))
+            if query:self.summary_box.addWidget(button('Clear search',self.change_search.clear))
         if self.repair.isChecked():self.summary_box.addWidget(label('Integrity checks will be repaired in the opened save.','success',True))
+        self.summary_box.addStretch();self.summary_scroll.verticalScrollBar().setValue(0)
+
+    def update_summary(self):
+        if not hasattr(self,'summary_box') or self._batch_edit:return
+        self.refresh_mode_note()
+        count=len(self.edits)
+        self.change_count.setText(f'{count} pending change'+('s' if count!=1 else '') if count else 'No pending changes')
+        self.render_pending_changes()
         valid=True
         try:self.validated_changes()
         except ValueError as error:
-            valid=False;self.summary_box.addWidget(label(str(error),'warning',True))
-        self.summary_box.addStretch()
+            valid=False;self.summary_issue.setText(str(error))
+        self.summary_issue.setVisible(not valid)
         has_work=bool(count or self.repair.isChecked())
         can_repair=not self.save or not self.save.warnings or self.repair.isChecked()
         self.editor_has_error=not valid or not can_repair
+        self.fix_issue_button.setVisible(not valid and not self.preview_mode)
         self.save_steps.setVisible(not self.preview_mode and (self.height()>=850 or self.editor_has_error))
         self.review_button.setEnabled(bool(self.save and not self.preview_mode and not self.runtime_error and has_work and valid and can_repair))
         self.changes_button.setEnabled(bool(self.save and not self.preview_mode and has_work))

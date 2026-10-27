@@ -58,6 +58,8 @@ QPushButton#iconButton { min-width: 18px; padding: 10px 12px; font-size: 17px; }
 QPushButton#rowMenu { background: transparent; border: none; padding: 6px; min-width: 24px; }
 QPushButton#fieldReset { background: transparent; padding: 5px 7px; min-width: 16px; color: @accent@; border-color: transparent; }
 QPushButton#fieldReset:hover { background: @selection@; }
+QPushButton#fieldHelp { color: @muted@; background: transparent; border: none; padding: 3px 6px; font-weight: 400; }
+QPushButton#fieldHelp:hover { color: @accent@; background: @input@; }
 QPushButton#fieldReset:disabled { color: @disabledText@; }
 QPushButton#saveLink { background: transparent; border: none; padding: 2px 0; text-align: left; color: @text@; }
 QPushButton#saveLink:hover { color: @accent@; }
@@ -87,8 +89,16 @@ QListWidget#sectionNavigation::item { color: @secondary@; padding: 12px 10px; bo
 QListWidget#sectionNavigation::item:hover { background: @hover@; }
 QListWidget#sectionNavigation::item:selected { background: @selection@; color: @selectionText@; font-weight: 600; }
 QListWidget#sectionNavigation:disabled { color: @disabledText@; }
+QLineEdit#sectionSearch { font-size: 12px; padding: 8px; }
+QPushButton#clearEditorFilters { padding: 6px 10px; color: @accent@; background: transparent; border-color: transparent; }
+QPushButton#clearEditorFilters:hover { background: @hover@; }
+QListWidget#choiceResults { background: @surface@; border: 1px solid @line@; border-radius: 12px; padding: 6px; outline: none; }
+QListWidget#choiceResults::item { color: @text@; padding: 10px 12px; margin: 2px 0; border-radius: 8px; }
+QListWidget#choiceResults::item:selected { background: @selection@; color: @selectionText@; }
+QListWidget#choiceResults::item:disabled { color: @disabledText@; }
 QLabel#editorBreadcrumb { color: @muted@; font-size: 11px; }
 QLabel#editorSectionTitle { font-size: 24px; font-weight: 600; }
+QLabel#sectionExplanation { color: @muted@; font-size: 12px; padding: 0 0 6px; }
 QPushButton#characterChip { background: @input@; border-color: transparent; border-radius: 11px; padding: 9px 18px; }
 QPushButton#characterChip:checked { background: @selection@; color: @selectionText@; }
 QPushButton#characterChip:hover { background: @hover@; }
