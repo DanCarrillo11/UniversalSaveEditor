@@ -7,6 +7,17 @@ and RDR2 to this catalogue; it does not imply that the earlier editors are compl
 This document records implemented work and the actual remaining gates. No editor
 is marked full support and no completion percentage is inferred from field count.
 
+## Current KH1 inventory pass
+
+v0.52 adds recognized normal equipment ownership and carried-item reserve
+transactions, including duplicate accessories across companions and atomic
+consumable swaps. Automatic related changes appear in review; AP and effective
+HP/MP checks remain active. 113 edits across 39 native records pass reparsing,
+unrelated-byte checks and exact non-CRC restoration. Temporary story weapons,
+unknown state and hidden entries are preserved. Full growth, story/journal/reward
+systems, character-specific rules and game-load verification remain pending.
+[KH1 scope](KH1_PROGRESSION.md).
+
 ## Current GTA V pass
 
 v0.45 adds named static wardrobe availability, purchase and seen markers, plus

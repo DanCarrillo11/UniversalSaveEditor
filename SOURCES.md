@@ -787,3 +787,15 @@ For example, brake positions 4–6 follow engine positions 0–3 in the referenc
 classic kits. The writer maps stage choices to those native positions and rejects
 a position belonging to another mod type. This corrects the earlier direct
 UI-index assumption. No game-load validation is inferred from this agreement.
+
+### KH1 inventory relationships (v0.52)
+
+The already attributed KingdomSaveEditor KHSave.Lib1 character model documents
+eight accessory and twelve carried-item entries, single-byte equipment IDs and
+the inventory table. The independent writer uses those format facts and native
+PC observations: 405 recognized equipped weapon/accessory configurations in 39
+records fit the total-owned quantity, while 66 carried-consumable counts exceed
+reserve stock. Equipped normal weapons retain their ownership byte. Temporary
+Dream/wooden weapons include distinct story-only encodings and are not granted.
+No upstream implementation or native archive is redistributed. 113 in-memory
+changes reparse and restore non-CRC bytes exactly; gameplay remains unverified.

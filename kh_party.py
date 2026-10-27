@@ -10,6 +10,7 @@ from kh2_relationships import Kh2Relationships
 from kh1_progression import Kh1Progression
 from kh1_ap import Kh1Ap
 from kh1_vitals import Kh1Vitals
+from kh1_inventory import Kh1Inventory, TEMPORARY_WEAPONS
 
 KH1_CHARACTERS=('Sora','Donald','Goofy','Tarzan','Pooh','Aladdin','Ariel','Jack Skellington','Peter Pan','Beast')
 KH2_CHARACTERS=('Sora','Donald','Goofy','Mickey','Auron','Mulan','Aladdin','Jack Sparrow','Beast','Jack Skellington','Simba','Tron','Riku')
@@ -25,10 +26,12 @@ class PartyEditor:
         self.kh1=Kh1Progression(raw,field_type) if game=='kh1' else None
         self.kh1_ap=Kh1Ap(raw,field_type,KH1_CHARACTERS) if game=='kh1' else None
         self.kh1_vitals=Kh1Vitals(raw,field_type,KH1_CHARACTERS) if game=='kh1' else None
+        self.kh1_inventory=Kh1Inventory(raw) if game=='kh1' else None
 
     def shared(self,fields,slot,record):
         if self.game!='kh1':return
         self.kh1.record(fields,slot,record)
+        self.kh1_inventory.record(slot,record)
         options={0:'Empty',0x80:'Empty (saved flag)'}
         for identifier,label in ((1,'High Jump'),(2,'Mermaid Kick'),(3,'Glide'),(4,'Superglide')):
             options[identifier]=label+' · Equipped';options[identifier|0x80]=label+' · Unequipped'
@@ -121,16 +124,18 @@ class PartyEditor:
             equipment={identifier:(title,kind) for identifier,title,kind in ITEMS}
             weapon_kind=('Keyblade','Staff','Shield')[character] if character<3 else None
             weapon=struct.unpack_from('<B',self.raw,base+0x32)[0]
-            weapons={identifier:title for identifier,(title,kind) in equipment.items() if kind==weapon_kind}
+            weapons={identifier:title for identifier,(title,kind) in equipment.items()
+                     if kind==weapon_kind and (identifier not in TEMPORARY_WEAPONS or identifier==weapon)}
             if weapon==0:weapons[0]='Empty'
             self.choice(fields,slot,prefix+':weapon',name+' · Weapon',base+0x32,'<B',weapons,'Equipment',
-                'Changes the equipped weapon only. Bag quantities, world variants and derived attributes are preserved.')
+                'Selecting a recognized normal weapon also ensures its saved ownership. Temporary story weapons cannot be acquired here. World variants and story rewards are preserved.')
             for count_offset,array_offset,capacity,kind,title in ((0x18,0x19,8,'Accessory','Accessory'),(0x21,0x22,12,'Consumable','Item')):
                 count=self.raw[base+count_offset]
                 if count>capacity:continue # Preserve unsupported counts rather than making new slots.
                 options={0:'Empty',**{i:t for i,(t,k) in equipment.items() if k==kind}}
                 for index in range(count):self.choice(fields,slot,f'{prefix}:{title.lower()}:{index}',f'{name} · {title} {index+1}',base+array_offset+index,'<B',options,'Equipment',
-                    'Edits an already unlocked equipment slot. Inventory quantities and slot counts are preserved.')
+                    ('Owned accessory counts include equipped copies; a new selection automatically adds any missing copies. Explicit inventory quantities must cover the final equipment.'
+                     if kind=='Accessory' else 'Transfers one copy between this unlocked carried slot and reserve stock. Simultaneous swaps and inventory changes are checked together; no slot is unlocked.'))
             self.abilities(fields,slot,prefix,name,base+0x40,48,'<B',KH1_ABILITIES,0x80)
             self.kh1_ap.character(fields,slot,character,base)
             self.kh1_vitals.character(fields,slot,character,base)
@@ -173,6 +178,7 @@ class PartyEditor:
             offset,fmt,values=self.encodings[key]
             struct.pack_into(fmt,result,offset,values[value])
         if self.kh1:result=self.kh1.finish(result,changes)
+        if self.kh1_inventory:result=self.kh1_inventory.finish(result,changes)
         if self.kh1_ap:result=self.kh1_ap.finish(result,changes)
         if self.kh1_vitals:result=self.kh1_vitals.finish(result,changes)
         for (slot,key),(availability,offset) in self.shortcuts.items():

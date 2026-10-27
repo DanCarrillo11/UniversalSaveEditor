@@ -4,13 +4,13 @@ A portable Windows app for editing saves from multiple PC games in one place.
 Open a game, find what you want to change, review your edits and save.
 No installation, Python setup, account or save uploads are required.
 
-v0.51 adds recognized KH1 maximum HP/MP with equipment and checks combined
-attribute/equipment changes. Reducing a known maximum updates current values
-when needed, with automatic changes shown before saving. Max Payne now opens
-42 additional reference saves while preserving unknown world values that
-previously caused rejection. Prior AP, Requiem and Elden Ring improvements are
-retained. Current coverage and remaining work are documented separately; these
-changes do not establish full game support.
+v0.52 connects KH1 equipment to its saved inventory: normal weapons/accessories
+acquire missing ownership, while carried consumables transfer copies to/from
+reserve stock. Simultaneous swaps and quantity edits are checked together, with
+automatic changes shown before saving. Prior equipment-aware HP/MP, AP, Max
+Payne compatibility, Requiem and Elden Ring improvements are retained. Current
+coverage and remaining work are documented separately; these changes do not
+establish full game support.
 
 ## Download and open
 

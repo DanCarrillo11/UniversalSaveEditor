@@ -13,6 +13,7 @@ from test_requiem import fixture as requiem
 from test_elden_talismans import fixture as elden
 from test_kh1_ap import fixture as kh1_ap
 from test_kh1_vitals import fixture as kh1_vitals
+from test_kh1_inventory import fixture as kh1_inventory
 
 
 class CompletionUiTests(unittest.TestCase):
@@ -62,6 +63,20 @@ class CompletionUiTests(unittest.TestCase):
         self.assertEqual(len(reviewed),1)
         self.assertIn('Automatic related changes',reviewed[0]);self.assertIn('54 → 46',reviewed[0])
         self.assertEqual(path.read_bytes(),raw)
+
+    def test_kh1_equipment_review_includes_automatic_ownership_without_writing(self):
+        raw,*_=kh1_inventory();path=self.root/'KHFM_WW.png';path.write_bytes(raw);self.w.load('kh1',path)
+        key=(0,'0:accessory:1');self.w.go_to_change(key)
+        control=self.w.inputs[key];control.setCurrentIndex(control.findText('Protera Chain'))
+        self.w.editor_search.setText('Munny');self.w.go_to_change(key)
+        self.assertEqual(self.w.inputs[key].currentText(),'Protera Chain')
+        reviewed=[]
+        def dismiss(dialog):
+            reviewed.append(dialog.findChild(QTextEdit).toPlainText())
+            return QDialog.DialogCode.Rejected
+        with patch('app.QDialog.exec',dismiss):self.w.review()
+        self.assertIn('Automatic related changes',reviewed[0]);self.assertIn('0 → 1',reviewed[0])
+        self.assertIn('Protera Chain',reviewed[0]);self.assertEqual(path.read_bytes(),raw)
 
     def test_talisman_selection_is_in_equipment_and_survives_category_and_mode_changes(self):
         raw=elden();path=self.root/'ER0000.sl2';path.write_bytes(raw);self.w.load('eldenring',path)

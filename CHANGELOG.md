@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.52.0-alpha
+
+- Synchronize KH1 normal weapon and accessory ownership when changing equipment.
+  Counts include equipped copies; new selections add only missing copies and
+  unequipping does not sell them. Count all recognized companions and duplicate
+  accessory entries. Explicit quantities cannot worsen an ownership deficit.
+- Transfer carried KH1 consumables to/from reserve stock, checking bounds and
+  all simultaneous slot/quantity edits together. Atomic swaps need no spare
+  copy. Preserve hidden entries and unknown equipment; temporary story weapons
+  cannot be acquired through normal equipment or inventory controls.
+- Include automatic ownership changes in review, preserve AP/HP/MP checks and
+  regenerate consistent synthetic examples. 113 equipment changes across 39
+  native records passed unrelated-byte and exact non-CRC restoration checks.
+  Complete growth, story/reward systems and game-load validation remain open.
+
 ## v0.51.0-alpha
 
 - Show recognized KH1 effective maximum HP and MP, including accessory bonuses

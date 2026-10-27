@@ -19,7 +19,7 @@ GAPS={
     're9':'Named/active character variants, complete named unlocks, verified stack limits, item creation, full equipment/weapon relationships and non-lazy difficulty representations; adaptive-rank/reward dependencies and in-game verification.',
     'webfishing':'Missing quest/collection record creation, reward and remaining customization dependencies; in-game verification beyond currency.',
     'ror2':'Remaining exact record/unlock names, units and dependencies; in-game verification. Live-run inventory is outside the persisted profile format.',
-    'kh1':'Remaining unmapped AP costs and modified-table/character rules, equipment/stock dependencies, full growth and journal/story/reward relationships; in-game verification. Recognized standard AP budgets already include accessory bonuses and duplicate equipped abilities.',
+    'kh1':'Remaining unmapped AP costs, modified-table and character-specific equipment rules, full growth and journal/story/reward relationships; in-game verification. Recognized stock/ownership transactions, standard AP budgets and equipment-aware HP/MP checks already exist. Temporary story weapons remain protected.',
     'kh2':'Complete character-specific behavior, growth/reward rules, named puzzles/journal/story systems and in-game verification. Standard AP checks, stock transfers, spells/shortcuts and recognized acquisitions already exist.',
     'recom':'HP/CP, sleights and full decks/card-state dependencies; native confirmation of all acquisition/completion states and in-game verification.',
     'bbs':'HP counter semantics, full command footprints/capacity and acquisition, D-Link/finisher and story dependencies; in-game verification.',

@@ -430,6 +430,7 @@ class Save:
 
     def _kh1(self):
         from kh_menu import menu_snapshot
+        from kh1_inventory import TEMPORARY_WEAPONS
         self.kh_menu={}
         self.party=PartyEditor(self.raw,'kh1',Field)
         chunks = png_chunks(self.raw, allow_sqex_crc=True)
@@ -474,7 +475,14 @@ class Save:
             for item_id,item_name,category in ITEMS:
                 offset=record+0x499+item_id
                 group={'Synthesis':'Materials','Accessory':'Accessories','Keyblade':'Weapons','Staff':'Weapons','Shield':'Weapons'}.get(category,'Items')
-                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group,item_id=item_id))
+                fields.append(Field(f'inventory:{item_id}',item_name,self.raw[offset],offset,'<B',0,99,group,item_id=item_id,
+                    readonly=item_id in TEMPORARY_WEAPONS,
+                    note=('Temporary story-weapon ownership is preserved. These weapons cannot be acquired outside their story context.'
+                          if item_id in TEMPORARY_WEAPONS else
+                          'Total owned copies, including equipped accessories/weapons. New normal equipment ensures ownership; quantities cannot remove copies still equipped.'
+                          if category in ('Accessory','Keyblade','Staff','Shield') else
+                          'Reserve quantity before carried-item transfers. Equipping consumes a reserve copy; replacing a carried item returns its old copy.'
+                          if category=='Consumable' else 'Saved inventory quantity. Story events, synthesis history and reward delivery are preserved.')))
             for character in range(len(KH1_CHARACTERS)):
                 self.party.character(fields,len(self.slots),record,character)
             self.party.shared(fields,len(self.slots),record)
@@ -737,6 +745,8 @@ class Save:
             if self.game=='rdr2':expected=self.rockstar.rdr2.expected(key,value)
             if self.game=='kh2' and key.startswith('inventory:'):
                 expected=self.party.kh2.expected_stock(index,key,value,changes,self.party.encodings)
+            if self.game=='kh1' and key.startswith('inventory:'):
+                expected=self.party.kh1_inventory.expected_stock(index,key,value,changes,self.party.encodings)
             if self.game=='eldenring' and (key.startswith('spell_slot:') or key=='active_spell'):
                 requested={k:v for (slot,k),v in changes.items() if slot==index}
                 valid=self.elden_ring.spell_loadouts[index].verifies(check.elden_ring.spell_loadouts[index],requested)

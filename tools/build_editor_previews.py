@@ -50,6 +50,13 @@ def populated_kh(game):
             raw[base+1:base+5]=bytes((50,50,5,5))
             raw[base+5]=20
             raw[base+0x42]=0  # A recognized synthetic AP budget, not unknown live data.
+    if game=='kh1':
+        # Accessory/weapon counts include equipped copies in KH1; carried
+        # consumables have separate reserve stock. Keep this example consistent.
+        from kh1_inventory import Kh1Inventory
+        positions,_=Kh1Inventory.slots(raw,record)
+        for identity,count in Kh1Inventory.owned_equipped(raw,positions).items():
+            raw[record+0x499+identity]=max(raw[record+0x499+identity],count)
     if game=='kh2':
         for c,weapon in enumerate((41,75,49)):
             base=record+0x24f0+c*0x114

@@ -62,6 +62,30 @@ the game is still unverified.
 
 Format references and pinned revisions are listed in [SOURCES.md](../SOURCES.md).
 
+## Equipment ownership and carried reserve (v0.52)
+
+Normal equipped weapons and accessories now synchronize their saved ownership.
+The count includes equipped accessories across recognized companions, including
+duplicates. Selecting equipment adds only missing copies; unequipping does not
+sell them. Explicit inventory edits cannot worsen an existing ownership deficit
+or conflict with newly selected equipment. Existing unrelated deficits remain
+unchanged. Sora's temporary Dream/wooden story weapons retain their context and
+cannot be acquired through ordinary equipment or inventory controls.
+
+Carried consumables use a separate reserve quantity. Replacing an unlocked item
+slot returns its old copy and consumes the new one. All slot and reserve edits
+are one transaction: swaps need no spare copy and final reserves must fit 0–99.
+An explicit reserve quantity is the amount before these transfers. Hidden slots,
+unknown identities, unsupported counts and absent characters are not inferred.
+AP/HP/MP checks and review of automatic related changes remain active.
+
+39 native records corroborate 405 recognized owned equipment configurations;
+66 carried counts exceed reserve, so those representations must not be treated
+alike. 39 accessory, 39 consumable and 35 normal weapon changes pass reparsing,
+unrelated-byte checks and exact non-CRC restoration. Originals remain unchanged.
+These file checks do not establish successful game loading or completion of
+all growth, story, reward and character-specific equipment rules.
+
 ## Equipment-aware maximum HP and MP (v0.51)
 
 The character's Attributes section shows recognized maximum HP and MP with
