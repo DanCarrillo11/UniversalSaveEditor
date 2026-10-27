@@ -217767,7 +217767,7 @@
           {
             "key": "0:ap",
             "label": "Sora \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -217879,7 +217879,7 @@
           {
             "key": "1:ap",
             "label": "Donald \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -217991,7 +217991,7 @@
           {
             "key": "2:ap",
             "label": "Goofy \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -220993,7 +220993,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -221141,7 +221141,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -221149,22 +221149,6 @@
           {
             "key": "0:ability:2",
             "label": "Sora \u00b7 Ability entry 3",
-            "value": 126,
-            "fmt": "<B",
-            "minimum": 0,
-            "maximum": 65535,
-            "group": "Abilities",
-            "decimal": false,
-            "boolean": false,
-            "choices": [],
-            "note": "Unidentified saved ID 126. This entry is preserved.",
-            "collection": "",
-            "item_id": null,
-            "art_choices": []
-          },
-          {
-            "key": "0:ability:3",
-            "label": "Sora \u00b7 Ability entry 4",
             "value": 0,
             "fmt": "",
             "minimum": 0,
@@ -221305,7 +221289,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "0:ap_used",
+            "label": "Sora \u00b7 Equipped ability AP",
+            "value": 5,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "0:ap_capacity",
+            "label": "Sora \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -221936,7 +221952,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -222084,7 +222100,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -222092,22 +222108,6 @@
           {
             "key": "1:ability:2",
             "label": "Donald \u00b7 Ability entry 3",
-            "value": 126,
-            "fmt": "<B",
-            "minimum": 0,
-            "maximum": 65535,
-            "group": "Abilities",
-            "decimal": false,
-            "boolean": false,
-            "choices": [],
-            "note": "Unidentified saved ID 126. This entry is preserved.",
-            "collection": "",
-            "item_id": null,
-            "art_choices": []
-          },
-          {
-            "key": "1:ability:3",
-            "label": "Donald \u00b7 Ability entry 4",
             "value": 0,
             "fmt": "",
             "minimum": 0,
@@ -222248,7 +222248,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "1:ap_used",
+            "label": "Donald \u00b7 Equipped ability AP",
+            "value": 5,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "1:ap_capacity",
+            "label": "Donald \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -222844,7 +222876,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -222992,7 +223024,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -223000,22 +223032,6 @@
           {
             "key": "2:ability:2",
             "label": "Goofy \u00b7 Ability entry 3",
-            "value": 126,
-            "fmt": "<B",
-            "minimum": 0,
-            "maximum": 65535,
-            "group": "Abilities",
-            "decimal": false,
-            "boolean": false,
-            "choices": [],
-            "note": "Unidentified saved ID 126. This entry is preserved.",
-            "collection": "",
-            "item_id": null,
-            "art_choices": []
-          },
-          {
-            "key": "2:ability:3",
-            "label": "Goofy \u00b7 Ability entry 4",
             "value": 0,
             "fmt": "",
             "minimum": 0,
@@ -223156,7 +223172,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "2:ap_used",
+            "label": "Goofy \u00b7 Equipped ability AP",
+            "value": 5,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "2:ap_capacity",
+            "label": "Goofy \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -223372,7 +223420,7 @@
           {
             "key": "3:ap",
             "label": "Tarzan \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -223836,7 +223884,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -223984,7 +224032,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -223992,22 +224040,6 @@
           {
             "key": "3:ability:2",
             "label": "Tarzan \u00b7 Ability entry 3",
-            "value": 126,
-            "fmt": "<B",
-            "minimum": 0,
-            "maximum": 65535,
-            "group": "Abilities",
-            "decimal": false,
-            "boolean": false,
-            "choices": [],
-            "note": "Unidentified saved ID 126. This entry is preserved.",
-            "collection": "",
-            "item_id": null,
-            "art_choices": []
-          },
-          {
-            "key": "3:ability:3",
-            "label": "Tarzan \u00b7 Ability entry 4",
             "value": 0,
             "fmt": "",
             "minimum": 0,
@@ -224148,7 +224180,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "3:ap_used",
+            "label": "Tarzan \u00b7 Equipped ability AP",
+            "value": 5,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "3:ap_capacity",
+            "label": "Tarzan \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -224364,7 +224428,7 @@
           {
             "key": "5:ap",
             "label": "Aladdin \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -224572,7 +224636,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "5:ap_used",
+            "label": "Aladdin \u00b7 Equipped ability AP",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "5:ap_capacity",
+            "label": "Aladdin \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -224788,7 +224884,7 @@
           {
             "key": "6:ap",
             "label": "Ariel \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -224996,7 +225092,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "6:ap_used",
+            "label": "Ariel \u00b7 Equipped ability AP",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "6:ap_capacity",
+            "label": "Ariel \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -225212,7 +225340,7 @@
           {
             "key": "7:ap",
             "label": "Jack Skellington \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -225420,7 +225548,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "7:ap_used",
+            "label": "Jack Skellington \u00b7 Equipped ability AP",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "7:ap_capacity",
+            "label": "Jack Skellington \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -225636,7 +225796,7 @@
           {
             "key": "8:ap",
             "label": "Peter Pan \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -225844,7 +226004,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "8:ap_used",
+            "label": "Peter Pan \u00b7 Equipped ability AP",
+            "value": 0,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "8:ap_capacity",
+            "label": "Peter Pan \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -226060,7 +226252,7 @@
           {
             "key": "9:ap",
             "label": "Beast \u00b7 Base AP",
-            "value": 0,
+            "value": 20,
             "fmt": "<B",
             "minimum": 0,
             "maximum": 255,
@@ -226524,7 +226716,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -226672,7 +226864,7 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
             "collection": "",
             "item_id": null,
             "art_choices": []
@@ -226680,22 +226872,6 @@
           {
             "key": "9:ability:2",
             "label": "Beast \u00b7 Ability entry 3",
-            "value": 126,
-            "fmt": "<B",
-            "minimum": 0,
-            "maximum": 65535,
-            "group": "Abilities",
-            "decimal": false,
-            "boolean": false,
-            "choices": [],
-            "note": "Unidentified saved ID 126. This entry is preserved.",
-            "collection": "",
-            "item_id": null,
-            "art_choices": []
-          },
-          {
-            "key": "9:ability:3",
-            "label": "Beast \u00b7 Ability entry 4",
             "value": 0,
             "fmt": "",
             "minimum": 0,
@@ -226836,7 +227012,39 @@
               "Combo Master \u00b7 Unequipped",
               "Combo Master \u00b7 Equipped"
             ],
-            "note": "Choose a known ability and its equipped state. Duplicate entries are retained; AP costs and character-specific behavior are not recalculated. Apply to expose the next empty entry.",
+            "note": "Choose a known ability and its equipped state. Recognized standard AP budgets include accessory bonuses and duplicate equipped entries. Unknown costs, modified tables and character-specific behavior are not inferred. Apply to expose the next empty entry.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "9:ap_used",
+            "label": "Beast \u00b7 Equipped ability AP",
+            "value": 5,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
+            "collection": "",
+            "item_id": null,
+            "art_choices": []
+          },
+          {
+            "key": "9:ap_capacity",
+            "label": "Beast \u00b7 Available AP",
+            "value": 20,
+            "fmt": "",
+            "minimum": 0,
+            "maximum": 255,
+            "group": "Abilities",
+            "decimal": false,
+            "boolean": false,
+            "choices": [],
+            "note": "Calculated from recognized standard Final Mix ability costs, saved base AP and equipped accessory bonuses. Duplicate equipped entries each consume AP. Unknown active costs or accessory identities hide this calculation; modified game tables can differ.",
             "collection": "",
             "item_id": null,
             "art_choices": []
