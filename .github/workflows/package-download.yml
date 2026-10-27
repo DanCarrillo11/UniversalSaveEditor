@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['*.py', '*.qss', '*.spec', 'requirements*.txt', 'assets/**']
+    paths: ['*.py', '*.qss', '*.spec', 'requirements*.txt', 'assets/**', 'tests/**', 'tools/build_editor_previews.py', '.github/workflows/package-download.yml']
 permissions:
   contents: read
 jobs:
