@@ -1,31 +1,19 @@
-# v0.52.0-alpha — KH1 equipment and inventory together
+# v0.52.1-alpha — Documentation and presentation refresh
 
-- Selecting a normal KH1 weapon or accessory automatically adds any missing
-  ownership. Accessory quantities include equipped copies across recognized
-  companions, including duplicates. Unequipping does not remove owned copies.
-- Carried consumables transfer copies to/from reserve stock. Apply simultaneous
-  swaps without a spare copy, or adjust the reserve quantity in the same change.
-  Insufficient stock, overflow and conflicting ownership requests explain what
-  needs changing before saving.
-- Review shows automatic inventory changes. AP and equipment-aware HP/MP checks
-  still apply to the complete transaction. Unknown equipment, unsupported counts
-  and hidden entries stay protected. Temporary story weapons cannot be acquired
-  through normal equipment/inventory controls; existing story context is retained.
+This maintenance release updates the project presentation and documentation.
+There are no new save-editing features or game compatibility claims compared
+with v0.52.0-alpha.
 
-File-level checks: 113 changes across 39 public native records (39 accessory,
-39 consumable and 35 weapon changes), exact non-CRC restoration and preservation
-of unrelated bytes. The reference remains unchanged. 405 recognized owned
-equipment configurations and 66 carried/reserve comparisons corroborate the
-distinct quantity representations. These checks do not prove game loading.
+- Reorganized README with a clearer introduction, downloads, usage guidance,
+  compatibility notes, and development information.
+- Clarified the existing limitations and evidence for supported game formats.
+- Kept instructions and warnings about direct, in-place save edits visible.
 
-549 automated application tests cover transactions, bounds, unknown state,
-AP/HP/MP interactions and review without writing the original file. Updated
-examples remain synthetic and read-only.
+The Windows portable executable and ZIP are rebuilt from the current main
+branch, with automated tests and packaged-app smoke checks in the release
+workflow. Test results do not establish in-game compatibility.
 
-Complete growth, story/journal/reward systems, character-specific rules and
-gameplay checks remain pending. Other catalogue limits, including Max Payne's
-unmapped health, Bullet Time and loaded rounds, remain documented. No game is
-declared full support.
+**Important:** Edits overwrite the opened save in place. The app does not
+create an automatic backup; make your own backup before applying changes.
 
-Download UniversalSaveEditor.exe or the Windows ZIP under Assets. Changes apply
-to the opened save in place, without an automatic backup or renamed edited copy.
+Download `UniversalSaveEditor.exe` or the Windows ZIP from the release assets.
