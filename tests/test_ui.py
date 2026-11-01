@@ -227,6 +227,29 @@ class InterfaceTests(unittest.TestCase):
         for f in fields:
             if f.key.startswith('remove_item:'):self.assertFalse(w.inputs[0,f.key].isChecked())
 
+    def test_webfishing_add_everything_stages_supported_acquisitions_only(self):
+        from test_collection_expansion import fishing as collection_fixture
+        from webfishing_features import ITEMS,COSMETICS,LURES
+        raw=collection_fixture();save=Save(raw,'webfishing');w=self.window
+        w.display_save(save,self.root/'collection.sav');self.app.processEvents()
+        action=w.findChild(QPushButton,'gameAction')
+        self.assertEqual(action.text(),'Add everything');self.assertTrue(action.isEnabled())
+        with patch('app.QMessageBox.question',return_value=QMessageBox.StandardButton.Yes):action.click()
+        changes=w.validated_changes();keys={key for slot,key in changes}
+        expected={f.key for f in save.slots[0].fields if
+                  (f.key.startswith('item_count:') and f.value==0) or
+                  (f.key.startswith(('cosmetic_unlock:','lure_unlock:')) and not f.value) or
+                  (f.key.startswith('bait:') and f.value==0)}
+        self.assertEqual(keys,expected)
+        self.assertFalse(any(key.startswith(('quest:','journal:','equipped_','remove_item:')) for key in keys))
+        output=save.patched(changes);check=Save(output,'webfishing')
+        self.assertTrue(all(check.webfishing.counts[item]>=1 for item in ITEMS))
+        self.assertTrue(set(COSMETICS)<=set(check.info['cosmetics_unlocked']))
+        self.assertTrue(set(LURES)<=set(check.info['lure_unlocked']))
+        self.assertEqual(check.info['bait_inv']['squid'],1)
+        self.assertEqual(check.info['quests'],save.info['quests'])
+        self.assertEqual(check.info['unknown'],save.info['unknown'])
+
     def test_kh3_bulk_ability_actions_preserve_equipped_state_and_restore_originals(self):
         from test_kh_extra import kh3_plain
         import zlib

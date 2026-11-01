@@ -163,6 +163,32 @@ def quick_actions(game, fields, preview=False):
     return actions
 
 
+def game_actions(game, fields, preview=False):
+    """Return deliberate game-wide acquisition actions, never progression edits."""
+    if game!='webfishing':return []
+    values={};counts=defaultdict(int)
+    for field in fields:
+        if field.readonly:continue
+        target=None;kind=''
+        if field.key.startswith('item_count:'):
+            target=max(1,field.value);kind='items'
+        elif field.key.startswith('cosmetic_unlock:'):
+            target=1;kind='cosmetics'
+        elif field.key.startswith('lure_unlock:'):
+            target=1;kind='lures'
+        elif field.key.startswith('bait:'):
+            target=max(1,field.value);kind='bait'
+        if target is not None and target!=field.value:
+            values[field.key]=target;counts[kind]+=1
+    message=(f'Add {counts["items"]} missing supported items, unlock '
+             f'{counts["cosmetics"]} cosmetics and {counts["lures"]} lures, and add '
+             f'one unit of {counts["bait"]} empty bait types?\n\n'
+             'This stages changes for review. It does not change money, level, quests, '
+             'records, selected equipment, rewards, or unknown save entries.')
+    return [('Add everything',values,message,
+             'Add every supported WEBFISHING item and acquisition without changing progression.')]
+
+
 def boolean_states(game, field):
     if field.key.startswith('add_talisman:'):return ('Not acquired','Acquire')
     if field.fmt=='xml-unlock':return ('Locked','Unlocked')

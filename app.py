@@ -17,7 +17,7 @@ from core import Save, discover, read_limited, replace_current, identify_game, b
 from catalog import GAMES, BY_ID, PLATFORMS
 from artwork import Artwork
 from editor_layout import organize_fields
-from editor_presentation import present_categories, is_advanced, section_help, bulk_actions, field_label, quick_actions, boolean_states
+from editor_presentation import present_categories, is_advanced, section_help, bulk_actions, field_label, quick_actions, game_actions, boolean_states
 from editor_navigation import SectionNavigation, AttributeGrid, FieldControls, category_title
 from editor_search import matches_query
 from choice_picker import SearchableComboBox
@@ -383,6 +383,8 @@ class Window(QMainWindow):
         self.repair.toggled.connect(self.update_summary);outer.addWidget(self.repair)
         options=QHBoxLayout()
         self.editor_mode_note=label('Everyday tools','small',True);options.addWidget(self.editor_mode_note,1)
+        self.game_action_button=button('',self.run_game_action,'gameAction')
+        self.game_action_button.hide();options.addWidget(self.game_action_button)
         self.advanced_options=QCheckBox('Advanced options')
         self.advanced_options.setObjectName('advancedOptions')
         self.advanced_options.setToolTip('Show technical records and less common settings in a separate Advanced tab.')
@@ -779,6 +781,14 @@ class Window(QMainWindow):
         while self.tabs.count():
             widget=self.tabs.widget(0);self.tabs.removeTab(0);widget.deleteLater()
         fields=self.save.slots[self.slot_index].fields
+        actions=game_actions(self.save.game,fields,self.preview_mode)
+        self.current_game_action=actions[0] if actions else None
+        self.game_action_button.setVisible(bool(actions))
+        if actions:
+            title,values,message,tooltip=actions[0]
+            self.game_action_button.setText(title)
+            self.game_action_button.setToolTip(tooltip if values else 'Every supported acquisition is already present in the opened save.')
+            self.game_action_button.setEnabled(bool(values) and not self.preview_mode)
         advanced_count=sum(is_advanced(self.save.game,f) for f in fields)
         self.advanced_options.setVisible(bool(advanced_count))
         self.advanced_options.setToolTip(f'Show {advanced_count:,} technical records and less common settings in a separate Advanced tab.')
@@ -1095,9 +1105,20 @@ class Window(QMainWindow):
                 field.validate(value)
                 control=self.inputs.get(key)
                 if isinstance(control,QLineEdit):control.setText(number_text(value))
+                elif isinstance(control,QCheckBox):control.setChecked(bool(value))
+                elif isinstance(control,QComboBox):control.setCurrentIndex(int(value))
                 elif value==field.value:self.edits.pop(key,None)
                 else:self.edits[key]=number_text(value)
         finally:self._batch_edit=False;self.update_summary()
+
+    def run_game_action(self):
+        if self.preview_mode or not self.current_game_action:return
+        title,values,message,tooltip=self.current_game_action
+        if not values:return
+        answer=QMessageBox.question(self,title,message,
+            QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Cancel)
+        if answer==QMessageBox.StandardButton.Yes:self.stage_quick_action(values)
 
     def restore_field(self,key):
         field=self.field_index[key]

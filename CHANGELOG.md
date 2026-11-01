@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Add one WEBFISHING **Add everything** action. After confirmation it stages one
+  copy of every missing supported item, unlocks mapped cosmetics and lures, and
+  adds one unit of each empty saved bait type. Progress, money, quests, records,
+  selected equipment, rewards and unknown save entries remain unchanged; every
+  staged acquisition still appears in review before the save is written.
+
 ## v0.52.0-alpha
 
 - Synchronize KH1 normal weapon and accessory ownership when changing equipment.
