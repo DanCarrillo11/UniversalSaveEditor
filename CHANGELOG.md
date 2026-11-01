@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.53.0-alpha
 
 - Add one WEBFISHING **Add everything** action. After confirmation it stages one
   copy of every missing supported item, unlocks mapped cosmetics and lures, and

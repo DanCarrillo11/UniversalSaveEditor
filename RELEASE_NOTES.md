@@ -1,19 +1,20 @@
-# v0.52.1-alpha — Documentation and presentation refresh
+# v0.53.0-alpha — WEBFISHING Add everything
 
-This maintenance release updates the project presentation and documentation.
-There are no new save-editing features or game compatibility claims compared
-with v0.52.0-alpha.
+WEBFISHING now has one **Add everything** button for supported acquisitions.
 
-- Reorganized README with a clearer introduction, downloads, usage guidance,
-  compatibility notes, and development information.
-- Clarified the existing limitations and evidence for supported game formats.
-- Kept instructions and warnings about direct, in-place save edits visible.
+- After confirmation, stage one copy of each missing supported inventory item,
+  unlock mapped cosmetics and lures, and add one unit of each empty saved bait
+  type. Existing positive item and bait amounts are retained.
+- Inspect all staged changes in **Review and save** before applying them.
+  Confirmation alone does not write the save.
+- Money, level, quests, journal records, selected equipment, rewards and unknown
+  save entries are preserved. This action does not provide full game completion
+  or unlock content outside the supported mappings.
 
-The Windows portable executable and ZIP are rebuilt from the current main
-branch, with automated tests and packaged-app smoke checks in the release
-workflow. Test results do not establish in-game compatibility.
+The existing Windows release pipeline runs the automated tests, rebuilds the
+portable executable and checks packaged resources before publishing. File-level
+and interface checks do not establish successful loading of edited saves in-game.
 
-**Important:** Edits overwrite the opened save in place. The app does not
-create an automatic backup; make your own backup before applying changes.
-
-Download `UniversalSaveEditor.exe` or the Windows ZIP from the release assets.
+Download **UniversalSaveEditor.exe** to open the portable app directly, or extract
+the Windows ZIP first. Changes overwrite the opened save in its original location
+and filename; the application does not create automatic save backups.
